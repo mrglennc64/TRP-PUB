@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
-from api.routes import upload, digital_handshake, splits, attorney
-# Import all routers directly from their files
+
+# Import routers directly from their files
 from api.routes.upload import router as upload_router
 from api.routes.digital_handshake import router as digital_handshake_router
 from api.routes.splits import router as splits_router
-app.include_router(attorney.router)
+from api.routes.attorney import router as attorney_router
 
 app = FastAPI(
     title="TrapRoyaltiesPro API",
@@ -17,7 +17,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(upload_router)
 app.include_router(digital_handshake_router)
 app.include_router(splits_router)
+app.include_router(attorney_router)
 
 @app.get("/")
 async def root():
