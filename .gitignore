@@ -55,3 +55,5 @@ tmp/
 temp/
 packages/backend/app/
 .env
+.env
+*.env
