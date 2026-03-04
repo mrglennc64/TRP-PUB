@@ -1,4 +1,50 @@
-﻿# Dependencies
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+ENV/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+pm2-*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Next.js
+.next/
+out/
+build
+dist
+
+# Backups
+*.backup
+*.tar.gz
+traproyalties-backup-*/﻿# Dependencies
 node_modules/
 .pnp
 .pnp.js

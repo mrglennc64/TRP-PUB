@@ -4,19 +4,19 @@ import Link from 'next/link';
 
 export default function MP3TestPage() {
   const [uploading, setUploading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
 
-  const handleUpload = async (e) => {
+  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const file = e.target.file.files[0];
+    const file = (e.currentTarget as HTMLFormElement).file.files[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('artist', e.target.artist.value);
-    formData.append('title', e.target.title.value);
-    formData.append('isrc', e.target.isrc.value);
+    formData.append('artist', ((e.currentTarget as HTMLFormElement).elements.namedItem('artist') as HTMLInputElement).value);
+    formData.append('title', ((e.currentTarget as HTMLFormElement).elements.namedItem('title') as HTMLInputElement).value);
+    formData.append('isrc', ((e.currentTarget as HTMLFormElement).elements.namedItem('isrc') as HTMLInputElement).value);
 
     setUploading(true);
     setError('');
@@ -36,7 +36,7 @@ export default function MP3TestPage() {
       
       setResult(data);
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
     }

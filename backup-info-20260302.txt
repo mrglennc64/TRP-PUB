@@ -1,0 +1,17 @@
+TRAPROYALTIES BACKUP - Mon Mar  2 07:46:32 PM UTC 2026
+===============================
+Backup File: trappro-full-backup-20260302-194048.tar.gz
+
+WORKING FEATURES AS OF TODAY:
+- ✅ Royalty Finder Audit with MusicBrainz
+- ✅ Free Audit page with ISRC search
+- ✅ Attorney Portal with split verification
+- ✅ MP3 upload and streaming
+- ✅ PDF generation (requires reportlab fix)
+- ✅ API proxy configured in Next.js
+
+NEXT.CONFIG.JS UPDATED WITH:
+- API rewrites to backend on port 8000
+
+LOCATION:
+/root/trappro-full-backup-20260302-194048.tar.gz
