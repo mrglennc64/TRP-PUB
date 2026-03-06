@@ -38,3 +38,63 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Enterprise portal shared styles */
+.glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mono {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+.heatmap-container {
+  background: radial-gradient(circle at center, rgba(147, 51, 234, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
+  height: 300px;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+}
+
+.rail-glow {
+  box-shadow: 0 0 15px rgba(147, 51, 234, 0.2);
+}
+
+.active-conflict-card {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.1);
+}
+
+/* PDF scan animation */
+@keyframes scan {
+  0% { top: 0; opacity: 0; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scan-line {
+  height: 2px;
+  background: #9333ea;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: scan 3s linear infinite;
+  box-shadow: 0 0 10px #9333ea;
+}
+
+.pdf-page {
+  background: white;
+  color: #334155;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+.ai-highlight {
+  background: rgba(147, 51, 234, 0.15);
+  border-left: 3px solid #9333ea;
+  position: absolute;
+}

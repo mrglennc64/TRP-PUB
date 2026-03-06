@@ -1,532 +1,263 @@
-﻿"use client";
+"use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 
-interface Contributor {
+type Step = 1 | 2 | 3 | 4;
+
+interface SplitRow {
   name: string;
   role: string;
-  percentage: number;
-  ipi?: string;
-  pro?: string;
+  split: number;
+  status: 'ok' | 'error' | 'warning';
+  issue?: string;
 }
 
-interface SplitData {
-  id: string;
-  title: string;
-  artist: string;
-  contributors: Contributor[];
-  totalPercentage: number;
-  status: 'complete' | 'incomplete' | 'disputed';
-}
+const SAMPLE_PERFECT: SplitRow[] = [
+  { name: 'Drake', role: 'Artist', split: 50, status: 'ok' },
+  { name: 'Metro Boomin', role: 'Producer', split: 25, status: 'ok' },
+  { name: '21 Savage', role: 'Feature', split: 20, status: 'ok' },
+  { name: 'Republic Records', role: 'Label', split: 5, status: 'ok' },
+];
+
+const SAMPLE_ERRORS: SplitRow[] = [
+  { name: 'Travis Scott', role: 'Artist', split: 60, status: 'error', issue: 'Over-allocated' },
+  { name: 'Mike Dean', role: 'Producer', split: 25, status: 'ok' },
+  { name: 'Quavo', role: 'Feature', split: 25, status: 'warning', issue: 'Missing BMI registration' },
+  { name: 'Epic Records', role: 'Label', split: 5, status: 'ok' },
+];
 
 export default function SplitVerificationPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [splitData, setSplitData] = useState<SplitData | null>(null);
-  const [errors, setErrors] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState(50000);
-  const [showTechDetails, setShowTechDetails] = useState(false);
-  const [verificationHash, setVerificationHash] = useState('');
+  const [step, setStep] = useState<Step>(1);
+  const [splits, setSplits] = useState<SplitRow[] | null>(null);
+  const [amount, setAmount] = useState('');
+  const [verified, setVerified] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  // Sample data
-  const PERFECT_SAMPLE: SplitData = {
-    id: 'sample-1',
-    title: 'SUMMER NIGHTS',
-    artist: 'Kendrick Lamar',
-    totalPercentage: 100,
-    status: 'complete',
-    contributors: [
-      { name: 'Kendrick Lamar', role: 'Artist/Writer', percentage: 40, ipi: '00624789341', pro: 'BMI' },
-      { name: 'Sounwave', role: 'Producer', percentage: 30, ipi: '00472915682', pro: 'ASCAP' },
-      { name: 'Baby Keem', role: 'Writer', percentage: 15, ipi: '00836125497', pro: 'SESAC' },
-      { name: 'Top Dawg Ent.', role: 'Publisher', percentage: 15, ipi: '00987654321', pro: 'BMI' }
-    ]
+  const total = splits ? splits.reduce((s, r) => s + r.split, 0) : 0;
+  const hasErrors = splits ? splits.some(r => r.status !== 'ok') : false;
+  const progressPct = ((step - 1) / 3) * 100;
+
+  const loadSample = (withErrors: boolean) => {
+    setSplits(withErrors ? SAMPLE_ERRORS : SAMPLE_PERFECT);
+    setStep(2);
   };
 
-  const ERROR_SAMPLE: SplitData = {
-    id: 'sample-2',
-    title: 'STREET RUNNER',
-    artist: 'Metro Boomin',
-    totalPercentage: 85,
-    status: 'incomplete',
-    contributors: [
-      { name: 'Metro Boomin', role: 'Producer', percentage: 50, ipi: '00624789341', pro: 'BMI' },
-      { name: 'Future', role: 'Artist/Writer', percentage: 35, ipi: '00472915682', pro: 'ASCAP' },
-      // Missing 15% - feature not registered
-    ]
+  const handleVerify = () => {
+    setVerified(true);
+    setStep(3);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    
-    // Simulate file parsing
-    setTimeout(() => {
-      // Randomly load perfect or error sample for demo
-      if (Math.random() > 0.5) {
-        loadSplitData(PERFECT_SAMPLE);
-      } else {
-        loadSplitData(ERROR_SAMPLE);
-      }
-      setUploading(false);
-    }, 1500);
-  };
-
-  const loadSplitData = (data: SplitData) => {
-    setSplitData(data);
-    validateSplits(data);
-    setCurrentStep(2);
-  };
-
-  const loadPerfectSample = () => {
-    setSplitData(PERFECT_SAMPLE);
-    validateSplits(PERFECT_SAMPLE);
-    setCurrentStep(2);
-  };
-
-  const loadErrorSample = () => {
-    setSplitData(ERROR_SAMPLE);
-    validateSplits(ERROR_SAMPLE);
-    setCurrentStep(2);
-  };
-
-  const validateSplits = (data: SplitData) => {
-    const newErrors: string[] = [];
-    
-    if (Math.abs(data.totalPercentage - 100) > 0.1) {
-      newErrors.push(`Total splits are ${data.totalPercentage}%, must equal 100%`);
-    }
-    
-    data.contributors.forEach(contributor => {
-      if (!contributor.ipi) {
-        newErrors.push(`${contributor.name} missing IPI number`);
-      }
-      if (!contributor.pro) {
-        newErrors.push(`${contributor.name} missing PRO registration`);
-      }
-    });
-    
-    setErrors(newErrors);
-  };
-
-  const autoFixErrors = () => {
-    if (!splitData) return;
-    
-    // Auto-fix logic - just a demo
-    const fixedData = { ...splitData };
-    
-    // Fix total percentage
-    if (Math.abs(fixedData.totalPercentage - 100) > 0.1) {
-      const factor = 100 / fixedData.totalPercentage;
-      fixedData.contributors = fixedData.contributors.map(c => ({
-        ...c,
-        percentage: Math.round(c.percentage * factor * 10) / 10
-      }));
-      fixedData.totalPercentage = 100;
-    }
-    
-    // Add missing IPI/PRO placeholders
-    fixedData.contributors = fixedData.contributors.map(c => ({
-      ...c,
-      ipi: c.ipi || 'PENDING',
-      pro: c.pro || 'UNREGISTERED'
-    }));
-    
-    setSplitData(fixedData);
-    validateSplits(fixedData);
-  };
-
-  const startVerification = () => {
-    if (errors.length > 0) return;
-    
-    // Generate mock verification hash
-    const hash = '0x' + Array.from({ length: 64 }, () => 
-      Math.floor(Math.random() * 16).toString(16)).join('');
-    setVerificationHash(hash);
-    setCurrentStep(3);
-  };
-
-  const calculatePayment = () => {
-    setCurrentStep(4);
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+  const handleProceed = () => {
+    if (amount) setStep(4);
   };
 
   return (
-    <div className="min-h-screen gradient-bg">
-      <Header />
-      
-      <main className="pt-28 pb-20 px-6 max-w-6xl mx-auto">
-        {/* Hero / Intro */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold neon-cyan mb-4">Split Verification</h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto">
-            Lock in splits with crypto proofs — no more disputes over features, producers, or uncleared samples. Verify on Monad, enforce 100% accuracy, get your bag fast.
-          </p>
-          <p className="mt-4 text-lg text-purple-300 font-medium">Upload split sheet → Detect mismatches → Verify on-chain → Simulate payout</p>
+    <div className="min-h-screen bg-[#F8FAFC] text-[#1A202C]">
+      <div className="max-w-7xl mx-auto px-6">
+
+        {/* Nav */}
+        <nav className="flex justify-between items-center py-5 border-b border-gray-200 flex-wrap gap-5">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 bg-indigo-900 rounded-lg flex items-center justify-center text-white text-xl font-semibold">TP</div>
+            <span className="text-[22px] font-semibold text-indigo-900">
+              TrapRoyalties<span className="text-indigo-600">Pro</span>
+            </span>
+          </div>
+          <div className="flex gap-8 items-center">
+            <Link href="/" className="text-gray-600 hover:text-indigo-900 font-medium text-sm">Home</Link>
+            <Link href="/for-attorneys" className="text-gray-600 hover:text-indigo-900 font-medium text-sm">For Attorneys</Link>
+            <Link href="/split-verification" className="text-indigo-900 font-medium text-sm border-b-2 border-indigo-900 pb-1">Split Verification</Link>
+            <Link href="/free-audit" className="text-gray-600 hover:text-indigo-900 font-medium text-sm">Free Audit</Link>
+          </div>
+        </nav>
+
+        {/* Title */}
+        <div className="text-center py-10 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-indigo-900 mb-3">Split Verification & Payment Workflow</h1>
+          <p className="text-gray-600 text-lg">Upload → Detect issues → Verify → Enter amount → Calculate payment → Download PDF</p>
         </div>
 
         {/* Before / After */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
-          <div className="bg-gray-900/60 rounded-2xl border border-red-900/50 p-8">
-            <h3 className="text-2xl font-bold text-red-400 mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3">
-                <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
-              </svg>
-              Before TrapRoyalties Pro
-            </h3>
-            <div className="flex flex-wrap gap-3 text-sm">
-              <span className="px-4 py-2 bg-gray-800 rounded-full">Artist / Producer</span>
-              <svg className="text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              <span className="px-4 py-2 bg-red-900/50 text-red-300 rounded-full">Disputes & Drama</span>
-              <svg className="text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              <span className="px-4 py-2 bg-gray-800 rounded-full">Delayed Bag</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-sm">
+          <div className="md:border-r-2 border-red-100 pr-6">
+            <h3 className="text-xl text-red-600 mb-4 flex items-center gap-2">✗ Before TrapRoyaltiesPro</h3>
+            <div className="flex items-center gap-3 flex-wrap text-sm">
+              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Label</span>
+              <span className="text-gray-300">→</span>
+              <span className="bg-red-100 text-red-600 px-4 py-2 rounded-full border border-red-200">Split Issues</span>
+              <span className="text-gray-300">→</span>
+              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">PRO</span>
+              <span className="text-gray-300">→</span>
+              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Payment Dispute</span>
             </div>
           </div>
-
-          <div className="bg-gray-900/60 rounded-2xl border border-purple-900/50 p-8">
-            <h3 className="text-2xl font-bold neon-cyan mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-              </svg>
-              With TrapRoyalties Pro
-            </h3>
-            <div className="flex flex-wrap gap-3 text-sm">
-              <span className="px-4 py-2 bg-gray-800 rounded-full">Artist / Producer</span>
-              <svg className="text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              <span className="px-4 py-2 bg-purple-900/50 text-purple-300 rounded-full">On-Chain Verification</span>
-              <svg className="text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              <span className="px-4 py-2 bg-green-900/50 text-green-300 rounded-full">Fast, Dispute-Free Bag</span>
+          <div>
+            <h3 className="text-xl text-indigo-900 mb-4 flex items-center gap-2">✓ With TrapRoyaltiesPro</h3>
+            <div className="flex items-center gap-3 flex-wrap text-sm">
+              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Label</span>
+              <span className="text-gray-300">→</span>
+              <span className="bg-indigo-100 text-indigo-900 px-4 py-2 rounded-full border border-indigo-300">TrapRoyaltiesPro</span>
+              <span className="text-gray-300">→</span>
+              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">PRO</span>
+              <span className="text-gray-300">→</span>
+              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Verified Payment</span>
             </div>
           </div>
         </div>
 
-        {/* Workflow Steps */}
-        <div className="mb-16">
-          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-12 relative max-w-5xl mx-auto">
-            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-800 -z-10 rounded-full"></div>
-            <div className={`flex flex-col items-center relative z-10 bg-black/50 px-6 py-4 rounded-2xl border ${currentStep >= 1 ? 'border-purple-400' : 'border-purple-800/50'}`}>
-              <div className={`w-14 h-14 rounded-full ${currentStep >= 1 ? 'bg-purple-600' : 'bg-gray-700'} flex items-center justify-center text-2xl font-bold mb-3 neon-purple`}>1</div>
-              <span className={`font-semibold ${currentStep >= 1 ? 'text-purple-300' : 'text-gray-500'}`}>Upload Splits</span>
-            </div>
-            <div className={`flex flex-col items-center relative z-10 bg-black/50 px-6 py-4 rounded-2xl border ${currentStep >= 2 ? 'border-purple-400' : 'border-purple-800/50'}`}>
-              <div className={`w-14 h-14 rounded-full ${currentStep >= 2 ? 'bg-purple-600' : 'bg-gray-700'} flex items-center justify-center text-2xl font-bold mb-3 neon-purple`}>2</div>
-              <span className={`font-semibold ${currentStep >= 2 ? 'text-purple-300' : 'text-gray-500'}`}>Issues Detected</span>
-            </div>
-            <div className={`flex flex-col items-center relative z-10 bg-black/50 px-6 py-4 rounded-2xl border ${currentStep >= 3 ? 'border-purple-400' : 'border-purple-800/50'}`}>
-              <div className={`w-14 h-14 rounded-full ${currentStep >= 3 ? 'bg-purple-600' : 'bg-gray-700'} flex items-center justify-center text-2xl font-bold mb-3 neon-purple`}>3</div>
-              <span className={`font-semibold ${currentStep >= 3 ? 'text-purple-300' : 'text-gray-500'}`}>Verify On-Chain</span>
-            </div>
-            <div className={`flex flex-col items-center relative z-10 bg-black/50 px-6 py-4 rounded-2xl border ${currentStep >= 4 ? 'border-purple-400' : 'border-purple-800/50'}`}>
-              <div className={`w-14 h-14 rounded-full ${currentStep >= 4 ? 'bg-purple-600' : 'bg-gray-700'} flex items-center justify-center text-2xl font-bold mb-3 neon-purple`}>4</div>
-              <span className={`font-semibold ${currentStep >= 4 ? 'text-purple-300' : 'text-gray-500'}`}>Payout Ready</span>
-            </div>
+        {/* Step tracker */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between max-w-2xl mx-auto relative">
+            <div className="absolute top-5 left-12 right-12 h-1 bg-gray-200 z-0"></div>
+            {[
+              { n: 1, label: 'Upload Data' },
+              { n: 2, label: 'Issues Detected' },
+              { n: 3, label: 'Data Verified' },
+              { n: 4, label: 'Payment Ready' },
+            ].map(({ n, label }) => (
+              <div key={n} className="flex flex-col items-center relative z-10 bg-[#F8FAFC] px-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-all ${
+                  step >= n ? 'bg-indigo-900 border-indigo-900 text-white' : 'bg-white border-2 border-gray-200 text-gray-500'
+                }`}>{n}</div>
+                <span className={`text-sm font-medium ${step >= n ? 'text-indigo-900 font-semibold' : 'text-gray-500'}`}>{label}</span>
+              </div>
+            ))}
+          </div>
+          <div className="max-w-2xl mx-auto mt-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-indigo-900 transition-all duration-500 rounded-full" style={{ width: `${progressPct}%` }}></div>
           </div>
         </div>
 
-        {/* Upload & Verify Section */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          {/* Left Panel - Upload */}
-          <div className="bg-gray-900/60 backdrop-blur-md rounded-3xl border border-purple-900/50 p-8">
-            <h2 className="text-3xl font-bold neon-purple mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-4">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>
-              </svg>
-              Upload Your Split Sheet
+        {/* Main content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
+          {/* Step 1: Upload */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-indigo-900 mb-6 flex items-center gap-2">
+              ☁️ Step 1: Upload split data
             </h2>
-            
-            {!splitData ? (
-              <>
-                <div className="upload-zone rounded-2xl p-12 text-center transition-all cursor-pointer border-2 border-dashed border-purple-600 bg-purple-900/5 hover:border-purple-400 hover:bg-purple-900/10">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-6">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/>
-                  </svg>
-                  <h3 className="text-2xl font-bold neon-purple mb-3">Drop Split Sheet Here</h3>
-                  <p className="text-gray-400 mb-6">CSV, Excel, or PDF — features, producers, writers, % splits</p>
-                  <input 
-                    type="file" 
-                    accept=".csv,.xlsx,.xls,.pdf" 
-                    className="hidden" 
-                    id="split-upload"
-                    onChange={handleFileUpload}
-                    disabled={uploading}
-                  />
-                  <label 
-                    htmlFor="split-upload" 
-                    className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold text-lg hover:from-purple-500 hover:to-pink-500 cursor-pointer shadow-lg shadow-purple-900/50 transition transform hover:scale-105 disabled:opacity-50"
-                  >
-                    {uploading ? 'Uploading...' : 'Choose File or Drop'}
-                  </label>
-                </div>
+            <div
+              onClick={() => fileRef.current?.click()}
+              className="bg-gray-50 border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all border-gray-200 hover:border-indigo-900 hover:bg-indigo-50"
+            >
+              <div className="text-5xl text-indigo-900 mb-4">📄</div>
+              <h3 className="text-lg font-medium mb-2">Drop your split sheet here</h3>
+              <p className="text-gray-500 text-sm mb-4">CSV, Excel, or PDF</p>
+              <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.pdf" onChange={() => loadSample(false)} />
+            </div>
+            <div className="text-center my-4">
+              <button onClick={() => loadSample(false)} className="text-indigo-900 text-sm mx-2 font-medium hover:underline">Load perfect sample</button>
+              <button onClick={() => loadSample(true)} className="text-red-600 text-sm mx-2 font-medium hover:underline">Load test with errors</button>
+            </div>
+          </div>
 
-                <div className="flex justify-center space-x-8 mt-8 text-sm">
-                  <button 
-                    onClick={loadPerfectSample}
-                    className="text-purple-400 hover:text-purple-300"
-                  >
-                    Load Perfect Collab Sample
-                  </button>
-                  <button 
-                    onClick={loadErrorSample}
-                    className="text-red-400 hover:text-red-300"
-                  >
-                    Load One With Drama (Errors)
-                  </button>
+          {/* Steps 2-4 */}
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+            <h2 className="text-xl font-semibold text-indigo-900 mb-6">✅ Steps 2–4: Verify &amp; Calculate Payment</h2>
+
+            {!splits && (
+              <p className="text-gray-400 text-center mt-12">Upload split data to begin verification.</p>
+            )}
+
+            {splits && step === 2 && (
+              <div>
+                <div className={`p-3 rounded-lg mb-4 text-sm font-medium ${
+                  total === 100 && !hasErrors ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'
+                }`}>
+                  Total: {total}% {total !== 100 ? '⚠️ Must equal 100%' : '✓'} · {hasErrors ? '⚠️ Issues found' : '✓ No issues'}
                 </div>
-              </>
-            ) : (
-              <div className="space-y-6">
-                {/* Split Preview */}
-                <div className="bg-gray-800/50 rounded-xl p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold text-purple-300">{splitData.title}</h3>
-                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${
-                      errors.length === 0 ? 'bg-green-600/30 text-green-400' : 'bg-yellow-600/30 text-yellow-400'
+                <div className="space-y-2 mb-6">
+                  {splits.map((row, i) => (
+                    <div key={i} className={`flex justify-between items-center p-3 rounded-lg border ${
+                      row.status === 'ok' ? 'border-green-100 bg-green-50' :
+                      row.status === 'warning' ? 'border-yellow-100 bg-yellow-50' :
+                      'border-red-100 bg-red-50'
                     }`}>
-                      {errors.length === 0 ? '✅ Ready' : `⚠️ ${errors.length} Issue${errors.length > 1 ? 's' : ''}`}
-                    </span>
-                  </div>
-                  <p className="text-gray-400 mb-4">{splitData.artist}</p>
-
-                  {splitData.contributors.map((contributor, idx) => (
-                    <div key={idx} className="flex justify-between items-center py-3 border-b border-gray-700 last:border-0">
                       <div>
-                        <p className="font-medium text-white">{contributor.name}</p>
-                        <p className="text-sm text-gray-400">{contributor.role} • IPI: {contributor.ipi || 'Missing'} • PRO: {contributor.pro || 'Unregistered'}</p>
+                        <span className="font-medium">{row.name}</span>
+                        <span className="text-gray-500 text-sm ml-2">({row.role})</span>
+                        {row.issue && <p className="text-xs text-red-600 mt-0.5">{row.issue}</p>}
                       </div>
-                      <span className="text-xl font-bold text-purple-400">{contributor.percentage}%</span>
+                      <span className="font-semibold">{row.split}%</span>
                     </div>
                   ))}
-
-                  <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between">
-                    <span className="font-medium">Total</span>
-                    <span className={`text-xl font-bold ${
-                      Math.abs(splitData.totalPercentage - 100) < 0.1 ? 'text-green-400' : 'text-red-400'
-                    }`}>
-                      {splitData.totalPercentage}%
-                    </span>
-                  </div>
-                </div>
-
-                {/* Error Panel */}
-                {errors.length > 0 && (
-                  <div className="bg-red-900/30 border border-red-600 rounded-xl p-6">
-                    <h4 className="text-lg font-bold text-red-400 mb-4">Issues Detected</h4>
-                    <ul className="space-y-2">
-                      {errors.map((error, idx) => (
-                        <li key={idx} className="flex items-start">
-                          <svg className="text-red-400 mr-2 mt-1 flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>
-                          </svg>
-                          <span className="text-red-300">{error}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      onClick={autoFixErrors}
-                      className="mt-4 px-6 py-3 bg-purple-600 text-white rounded-full font-bold hover:bg-purple-500 transition"
-                    >
-                      Auto-Fix Issues
-                    </button>
-                  </div>
-                )}
-
-                {/* Verification Button */}
-                {errors.length === 0 && currentStep === 2 && (
-                  <button
-                    onClick={startVerification}
-                    className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold text-lg hover:from-purple-500 hover:to-pink-500 shadow-lg transition transform hover:scale-105"
-                  >
-                    Start Verification
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Right Panel - Verify & Calculate */}
-          <div className="bg-gray-900/60 backdrop-blur-md rounded-3xl border border-purple-900/50 p-8">
-            <h2 className="text-3xl font-bold neon-cyan mb-6 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-4">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-              </svg>
-              Verify & Calculate
-            </h2>
-
-            {currentStep >= 3 && verificationHash && (
-              <div className="bg-gray-800/50 rounded-xl p-6 mb-6">
-                <h3 className="text-lg font-bold text-purple-300 mb-4">Verification Record</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Verification ID</span>
-                    <span className="font-mono text-sm text-purple-300">{verificationHash.substring(0, 16)}...</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Timestamp</span>
-                    <span>{new Date().toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Status</span>
-                    <span className="text-green-400 font-medium">Verified ✓</span>
-                  </div>
                 </div>
                 <button
-                  onClick={() => setShowTechDetails(!showTechDetails)}
-                  className="w-full mt-4 text-sm text-purple-400 hover:text-purple-300"
+                  onClick={handleVerify}
+                  disabled={total !== 100}
+                  className="w-full py-3 bg-indigo-900 text-white rounded-xl font-semibold hover:bg-indigo-800 disabled:opacity-50 transition"
                 >
-                  {showTechDetails ? 'Hide technical details ↑' : 'Show technical details ↓'}
+                  Verify Data
                 </button>
-                {showTechDetails && (
-                  <div className="mt-4 p-4 bg-gray-900/50 rounded-xl text-xs text-gray-400 font-mono">
-                    <div>Network: Monad Testnet (Chain ID: 10143)</div>
-                    <div className="break-all mt-2">Contract: {verificationHash}</div>
-                  </div>
-                )}
               </div>
             )}
 
-            {currentStep >= 3 && (
-              <>
-                <div className="bg-gray-800/50 rounded-xl p-6 mb-6">
-                  <h3 className="text-lg font-bold text-purple-300 mb-4">Enter Payment Amount</h3>
-                  <div className="flex space-x-4">
-                    <div className="flex-1 relative">
-                      <span className="absolute left-4 top-4 text-gray-400">$</span>
-                      <input
-                        type="number"
-                        value={paymentAmount}
-                        onChange={(e) => setPaymentAmount(Number(e.target.value))}
-                        className="w-full pl-10 pr-4 py-4 bg-gray-900 border border-purple-900/50 rounded-2xl focus:outline-none focus:border-purple-500 text-white text-lg"
-                      />
-                    </div>
-                    <button
-                      onClick={calculatePayment}
-                      className="px-8 py-4 bg-purple-600 text-white rounded-2xl font-bold hover:bg-purple-500 transition"
-                    >
-                      Calculate
-                    </button>
-                  </div>
+            {splits && step >= 3 && (
+              <div>
+                <div className="p-3 rounded-lg mb-4 bg-green-50 text-green-700 border border-green-200 text-sm font-medium">
+                  ✅ Data verified — blockchain proof generated
                 </div>
-
-                {currentStep >= 4 && (
-                  <div className="bg-gradient-to-br from-purple-900/40 to-pink-900/20 rounded-xl p-6 mb-6">
-                    <h3 className="text-lg font-bold text-purple-300 mb-4">Payment Summary</h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between text-lg">
-                        <span className="text-gray-400">Gross Royalties</span>
-                        <span className="font-bold text-white">{formatCurrency(paymentAmount)}</span>
-                      </div>
-                      <div className="flex justify-between text-lg">
-                        <span className="text-gray-400">Tax Withholding (25%)</span>
-                        <span className="font-bold text-red-400">-{formatCurrency(paymentAmount * 0.25)}</span>
-                      </div>
-                      <div className="flex justify-between text-2xl font-bold pt-4 border-t border-gray-700">
-                        <span className="text-purple-300">Net Payment</span>
-                        <span className="text-green-400">{formatCurrency(paymentAmount * 0.75)}</span>
-                      </div>
-                    </div>
-
-                    {splitData && (
-                      <div className="mt-6">
-                        <h4 className="text-md font-bold text-purple-300 mb-3">Distribution by Contributor</h4>
-                        <div className="space-y-3">
-                          {splitData.contributors.map((contributor, idx) => {
-                            const grossShare = paymentAmount * (contributor.percentage / 100);
-                            const netShare = grossShare * 0.75;
-                            return (
-                              <div key={idx} className="flex justify-between items-center p-3 bg-gray-900/50 rounded-xl">
-                                <div>
-                                  <p className="font-medium text-white">{contributor.name}</p>
-                                  <p className="text-sm text-gray-400">{contributor.percentage}%</p>
-                                </div>
-                                <div className="text-right">
-                                  <p className="text-green-400 font-bold">{formatCurrency(netShare)}</p>
-                                  <p className="text-xs text-gray-500">net</p>
-                                </div>
-                              </div>
-                            );
-                          })}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Total Payment Amount ($)</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 50000"
+                    value={amount}
+                    onChange={e => setAmount(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-xl mb-4 focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                  />
+                  {amount && splits && (
+                    <div className="space-y-2 mb-4">
+                      {splits.map((row, i) => (
+                        <div key={i} className="flex justify-between p-2 bg-gray-50 rounded-lg text-sm">
+                          <span>{row.name} ({row.split}%)</span>
+                          <span className="font-bold text-indigo-900">${((parseFloat(amount) * row.split) / 100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-
-            {currentStep === 2 && splitData && errors.length === 0 && (
-              <div className="bg-gray-800/50 rounded-xl p-6 text-center">
-                <p className="text-gray-300 mb-4">Ready to verify your splits on-chain?</p>
-                <button
-                  onClick={startVerification}
-                  className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold text-lg hover:from-purple-500 hover:to-pink-500 shadow-lg transition transform hover:scale-105"
-                >
-                  Start Verification
-                </button>
+                      ))}
+                    </div>
+                  )}
+                  {step === 4 ? (
+                    <button className="w-full py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-500 transition">
+                      📄 Download Payment PDF
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleProceed}
+                      disabled={!amount}
+                      className="w-full py-3 bg-indigo-900 text-white rounded-xl font-semibold hover:bg-indigo-800 disabled:opacity-50 transition"
+                    >
+                      Calculate & Proceed
+                    </button>
+                  )}
+                </div>
               </div>
-            )}
-
-            {(currentStep === 1 || !splitData) && (
-              <div className="space-y-4 text-sm text-gray-400">
-                <div className="flex items-center"><svg className="text-green-400 mr-3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Detect duplicate feature claims</div>
-                <div className="flex items-center"><svg className="text-green-400 mr-3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Flag uncleared producer splits</div>
-                <div className="flex items-center"><svg className="text-green-400 mr-3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Enforce exact % with on-chain proof</div>
-              </div>
-            )}
-
-            {currentStep === 4 && (
-              <Link 
-                href="/founding-member" 
-                className="mt-6 block text-center bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold py-5 px-10 rounded-full text-xl shadow-2xl shadow-pink-900/50 transition transform hover:scale-105"
-              >
-                Get Full Verification + Payment Simulator
-              </Link>
             )}
           </div>
         </div>
 
-        {/* Trust Badges */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="bg-gray-900/40 rounded-xl p-6 border border-purple-800/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-            </svg>
-            <p className="font-semibold">Monad Blockchain Proofs</p>
-          </div>
-          <div className="bg-gray-900/40 rounded-xl p-6 border border-purple-800/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-            </svg>
-            <p className="font-semibold">PRO Gap Detection</p>
-          </div>
-          <div className="bg-gray-900/40 rounded-xl p-6 border border-purple-800/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-            </svg>
-            <p className="font-semibold">Hip Hop / R&B Optimized</p>
-          </div>
-          <div className="bg-gray-900/40 rounded-xl p-6 border border-purple-800/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
-            </svg>
-            <p className="font-semibold">Dispute-Proof Splits</p>
+        {/* Trust badges */}
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 my-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            {['Blockchain Verified', 'Court-Admissible', 'PRO Cross-Referenced', 'Tax-Ready'].map(badge => (
+              <div key={badge}>
+                <div className="text-indigo-900 mb-2">✓</div>
+                <div className="font-medium text-sm">{badge}</div>
+              </div>
+            ))}
           </div>
         </div>
-      </main>
 
-      <Footer />
+        {/* Footer */}
+        <footer className="border-t border-gray-200 py-8 mt-12 text-center text-gray-500">
+          <p className="text-sm">TrapRoyaltiesPro ensures split accuracy, payment verification, and blockchain-proof ownership records.</p>
+          <div className="flex justify-center gap-8 mt-4 text-xs">
+            <span>© 2026 TrapRoyaltiesPro</span>
+            <span>ASCAP · BMI · SOCAN Compatible</span>
+            <span>Built for Music Attorneys</span>
+          </div>
+        </footer>
+
+      </div>
     </div>
   );
 }
