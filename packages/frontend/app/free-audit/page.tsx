@@ -51,12 +51,12 @@ export default function FreeAuditPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-[#0a0f1e] text-white bg-[#0a0f1e] text-white py-12">
       <div className="max-w-5xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">Free Royalty Audit</h1>
-          <p className="text-xl text-gray-800 max-w-3xl mx-auto">
+          <h1 className="text-5xl font-bold text-white mb-4">Free Royalty Audit</h1>
+          <p className="text-xl text-slate-200 max-w-3xl mx-auto">
             Enter an ISRC to see exactly how much money you're leaving on the table. 
             We'll scan global databases for metadata gaps that block your payments.
           </p>
@@ -69,7 +69,7 @@ export default function FreeAuditPage() {
             className={`px-6 py-3 rounded-xl font-medium transition ${
               searchMethod === 'isrc' 
                 ? 'bg-indigo-900 text-white' 
-                : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50'
+                : 'bg-[#1e293b] text-slate-200 border border-white/20 hover:bg-[#0a0f1e]'
             }`}
           >
             Search by ISRC
@@ -79,7 +79,7 @@ export default function FreeAuditPage() {
             className={`px-6 py-3 rounded-xl font-medium transition ${
               searchMethod === 'artist' 
                 ? 'bg-indigo-900 text-white' 
-                : 'bg-white text-gray-800 border border-gray-300 hover:bg-gray-50'
+                : 'bg-[#1e293b] text-slate-200 border border-white/20 hover:bg-[#0a0f1e]'
             }`}
           >
             Search by Artist + Track
@@ -87,11 +87,11 @@ export default function FreeAuditPage() {
         </div>
 
         {/* Audit Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+        <div className="bg-[#1e293b] rounded-2xl shadow-xl p-8 mb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {searchMethod === 'isrc' ? (
               <div>
-                <label className="block text-sm font-medium text-gray-800 mb-2">
+                <label className="block text-sm font-medium text-slate-200 mb-2">
                   ISRC Code
                 </label>
                 <input
@@ -99,16 +99,16 @@ export default function FreeAuditPage() {
                   value={isrc}
                   onChange={(e) => setIsrc(e.target.value)}
                   placeholder="e.g., USUM71703861"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-gray-900 bg-white placeholder-gray-500"
+                  className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-indigo-500 text-white bg-[#1e293b] placeholder-slate-600"
                 />
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-slate-400 mt-2">
                   Try: USUM71703861 (Carly Rae Jepsen - Cut to the Feeling)
                 </p>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
                     Artist Name
                   </label>
                   <input
@@ -116,11 +116,11 @@ export default function FreeAuditPage() {
                     value={artist}
                     onChange={(e) => setArtist(e.target.value)}
                     placeholder="Carly Rae Jepsen"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-indigo-500 text-white bg-[#1e293b] placeholder-slate-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-800 mb-2">
+                  <label className="block text-sm font-medium text-slate-200 mb-2">
                     Track Title
                   </label>
                   <input
@@ -128,7 +128,7 @@ export default function FreeAuditPage() {
                     value={track}
                     onChange={(e) => setTrack(e.target.value)}
                     placeholder="Cut to the Feeling"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 text-gray-900 bg-white placeholder-gray-500"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-indigo-500 text-white bg-[#1e293b] placeholder-slate-600"
                   />
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function FreeAuditPage() {
           </form>
 
           {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="mt-6 p-4 bg-red-900/20 border border-red-200 rounded-xl">
               <p className="text-red-800 font-medium">{error}</p>
             </div>
           )}
@@ -165,23 +165,25 @@ export default function FreeAuditPage() {
 
         {/* Trust Signals */}
         <div className="mt-16 grid grid-cols-3 gap-8 text-center">
-          <div className="bg-white p-6 rounded-xl shadow-sm">
+          <div className="bg-[#1e293b] p-6 rounded-xl shadow-sm">
             <div className="text-4xl mb-3">🎵</div>
-            <p className="font-semibold text-gray-900">MusicBrainz Verified</p>
-            <p className="text-sm text-gray-700">Global recording database with 2M+ artists</p>
+            <p className="font-semibold text-white">MusicBrainz Verified</p>
+            <p className="text-sm text-slate-300">Global recording database with 2M+ artists</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm">
+          <div className="bg-[#1e293b] p-6 rounded-xl shadow-sm">
             <div className="text-4xl mb-3">📊</div>
-            <p className="font-semibold text-gray-900">Real ISRC Data</p>
-            <p className="text-sm text-gray-700">Pull real ISRCs from MusicBrainz</p>
+            <p className="font-semibold text-white">Real ISRC Data</p>
+            <p className="text-sm text-slate-300">Pull real ISRCs from MusicBrainz</p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm">
+          <div className="bg-[#1e293b] p-6 rounded-xl shadow-sm">
             <div className="text-4xl mb-3">⚖️</div>
-            <p className="font-semibold text-gray-900">PRO Cross-Referenced</p>
-            <p className="text-sm text-gray-700">ASCAP/BMI/SOCAN metadata validation</p>
+            <p className="font-semibold text-white">PRO Cross-Referenced</p>
+            <p className="text-sm text-slate-300">ASCAP/BMI/SOCAN metadata validation</p>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+

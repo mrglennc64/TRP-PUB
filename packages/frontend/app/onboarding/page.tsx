@@ -127,7 +127,7 @@ const COLOR = {
   blue:   "bg-blue-500/10 border-blue-500/30 text-blue-400",
   purple: "bg-purple-500/10 border-purple-500/30 text-purple-400",
   green:  "bg-green-500/10 border-green-500/30 text-green-400",
-  orange: "bg-orange-500/10 border-orange-500/30 text-orange-400",
+  orange: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
 } as const;
 
 export default function OnboardingPage() {
