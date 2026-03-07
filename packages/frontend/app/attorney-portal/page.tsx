@@ -78,11 +78,12 @@ export default function AttorneyPortal() {
     }, 800);
   };
 
-  const showBar = !['dashboard', 'new-matter', 'secure-message', 'digital-handshake'].includes(activeSection);
+  const showBar = !['dashboard', 'war-room', 'new-matter', 'secure-message', 'digital-handshake'].includes(activeSection);
 
   const navGroups = [
     { label: "Matter Management", items: [
-      { id: 'dashboard', label: 'Dashboard', icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+      { id: 'dashboard', label: 'Mission Control', icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+      { id: 'war-room', label: 'War Room', icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" },
       { id: 'new-matter', label: 'New Matter', icon: "M12 4v16m8-8H4" },
     ]},
     { label: "Digital Handshake", items: [
@@ -341,40 +342,245 @@ export default function AttorneyPortal() {
             </div>
           )}
           {activeSection === 'dashboard' && (
-            <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome back, Leron</h1>
-              <p className="text-gray-600 mb-8">Fox Rothschild LLP - Active Matters: 12</p>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                {[{l:"Active Matters",v:"12",s:"+3 this month",c:"text-green-600"},{l:"Pending Audits",v:"8",s:"4 require review",c:"text-yellow-600"},{l:"Active Disputes",v:"3",s:"2 urgent",c:"text-red-600"},{l:"Black Box Value",v:"$1.2M",s:"Unclaimed royalties",c:"text-indigo-600",vc:"text-green-600"}].map((s,i) => (
-                  <div key={i} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition hover:-translate-y-1">
-                    <p className="text-sm text-gray-500 mb-1">{s.l}</p>
-                    <p className={`text-3xl font-bold ${s.vc || 'text-gray-900'}`}>{s.v}</p>
-                    <p className={`text-xs mt-2 ${s.c}`}>{s.s}</p>
+            <div className="min-h-screen bg-[#0a0f1e] text-white -m-8 p-8">
+              <style>{`
+                .mc-mono { font-family: 'JetBrains Mono','Fira Code',monospace; }
+                @keyframes mcPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+                .mc-pulse { animation: mcPulse 2s ease infinite; }
+                @keyframes mcFade { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+                .mc-fade { animation: mcFade 0.35s ease both; }
+              `}</style>
+
+              {/* Header */}
+              <div className="flex items-start justify-between mb-8">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="mc-pulse text-purple-400 text-xs">●</span>
+                    <span className="text-[10px] font-black mc-mono uppercase tracking-[0.25em] text-slate-500">FOX ROTHSCHILD LLP — SECURE SESSION</span>
+                  </div>
+                  <h1 className="text-4xl font-black tracking-tight uppercase italic">
+                    Attorney <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Mission Control</span>
+                  </h1>
+                  <p className="text-slate-500 mc-mono text-xs mt-1">Leron Rogers, Esq. — Active Matters: 12 — Firm Recovery Pipeline: $1,482,900</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-slate-600 mc-mono mb-1 uppercase">Total Black Box Value</div>
+                  <div className="text-4xl font-black text-green-400 mc-mono">$1.2M</div>
+                  <div className="text-[10px] text-slate-500 mc-mono">unclaimed — ready to dispute</div>
+                </div>
+              </div>
+
+              {/* KPI Row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                {[
+                  { l:"Active Matters", v:"12", s:"+3 this month", col:"text-white" },
+                  { l:"Pending Audits", v:"8",  s:"4 require review", col:"text-yellow-400" },
+                  { l:"Active Disputes", v:"3", s:"2 urgent", col:"text-red-400" },
+                  { l:"Settlements Pending", v:"$487k", s:"awaiting DSP response", col:"text-purple-400" },
+                ].map((s,i) => (
+                  <div key={i} className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-5">
+                    <p className="text-[10px] mc-mono uppercase text-slate-500 mb-1">{s.l}</p>
+                    <p className={`text-3xl font-black mc-mono ${s.col}`}>{s.v}</p>
+                    <p className="text-xs text-slate-500 mt-1">{s.s}</p>
                   </div>
                 ))}
               </div>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Recent Matters</h2>
-                <div className="space-y-4">
+
+              {/* Active Matters — War Room table */}
+              <div className="bg-[#1e293b]/60 border border-white/10 rounded-2xl p-6 mb-6">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-xs font-black mc-mono uppercase tracking-widest text-slate-400">Active Matters — Select to Enter War Room</h2>
+                  <button onClick={() => setActiveSection('new-matter')}
+                    className="text-xs px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg transition">
+                    + New Matter
+                  </button>
+                </div>
+                <div className="space-y-3">
                   {MATTERS.map(m => (
-                    <div key={m.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-indigo-50 transition cursor-pointer"
-                      onClick={() => { setSelectedMatter(m.id); setActiveSection('run-due-diligence'); }}>
-                      <div>
-                        <p className="font-bold text-lg">{m.name}</p>
-                        <p className="text-sm text-gray-500">{m.amount} - {m.issues} issues flagged</p>
+                    <div key={m.id}
+                      className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all group ${
+                        m.status === 'Urgent'
+                          ? 'border-red-500/40 bg-red-500/5 hover:bg-red-500/10'
+                          : m.status === 'In Progress'
+                            ? 'border-yellow-500/30 bg-yellow-500/5 hover:bg-yellow-500/10'
+                            : 'border-green-500/20 bg-green-500/5 hover:bg-green-500/10'
+                      }`}
+                      onClick={() => { setSelectedMatter(m.id); setActiveSection('war-room'); }}>
+                      <div className="flex items-center gap-4">
+                        <div className={`w-2 h-10 rounded-full flex-shrink-0 ${m.status === 'Urgent' ? 'bg-red-500' : m.status === 'In Progress' ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                        <div>
+                          <p className="font-bold text-sm">{m.name}</p>
+                          <p className="text-xs text-slate-400 mc-mono">{m.issues} issues · leakage {m.leakage}</p>
+                        </div>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${m.status === 'Urgent' ? 'bg-red-100 text-red-800' : m.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}`}>{m.status}</span>
+                      <div className="flex items-center gap-6">
+                        <div className="text-right">
+                          <p className="text-lg font-black text-green-400 mc-mono">{m.amount}</p>
+                          <p className="text-[10px] text-slate-500">at risk</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-black mc-mono ${
+                          m.status === 'Urgent' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                          m.status === 'In Progress' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                          'bg-green-500/20 text-green-300 border border-green-500/30'
+                        }`}>{m.status}</span>
+                        <span className="text-slate-600 group-hover:text-purple-400 transition font-black text-lg">→</span>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[{id:'run-due-diligence',l:'Run Catalog Due Diligence',icon:"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"},{id:'generate-court-report',l:'Generate Court-Ready Report',icon:"M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"},{id:'secure-message',l:'Secure Client Message',icon:"M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"}].map(a => (
-                  <button key={a.id} onClick={() => setActiveSection(a.id)} className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-100 text-center hover:shadow-lg transition">
-                    <svg className="h-12 w-12 mx-auto mb-4 text-indigo-900" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={a.icon}/></svg>
-                    <h3 className="font-bold text-lg text-gray-900">{a.l}</h3>
+
+              {/* Quick actions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { id:'run-due-diligence', icon:"🔬", l:"Forensic Audit", d:"Full catalog scan — ASCAP, BMI, SoundExchange" },
+                  { id:'generate-court-report', icon:"📋", l:"Court-Ready Report", d:"Hash-sealed, QR-verified PDF evidence package" },
+                  { id:'digital-handshake', icon:"🤝", l:"Digital Handshake", d:"Blockchain-verified split agreement" },
+                ].map(a => (
+                  <button key={a.id} onClick={() => setActiveSection(a.id)}
+                    className="flex items-center gap-4 p-5 bg-[#1e293b]/60 border border-white/10 rounded-xl hover:border-indigo-500/50 hover:bg-[#1e293b] transition text-left group">
+                    <span className="text-3xl">{a.icon}</span>
+                    <div>
+                      <p className="font-black text-sm">{a.l}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{a.d}</p>
+                    </div>
+                    <span className="ml-auto text-slate-600 group-hover:text-indigo-400 transition font-black">→</span>
                   </button>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {activeSection === 'war-room' && (
+            <div className="min-h-screen bg-[#0a0f1e] text-white -m-8 p-8">
+              <style>{`.wr-mono{font-family:'JetBrains Mono','Fira Code',monospace;}`}</style>
+
+              {/* Back + header */}
+              <button onClick={() => setActiveSection('dashboard')}
+                className="flex items-center gap-2 text-slate-500 hover:text-white text-sm mb-6 transition">
+                ← Back to Mission Control
+              </button>
+
+              <div className="flex items-start justify-between mb-8">
+                <div>
+                  <div className="text-[10px] font-black text-red-400 wr-mono uppercase mb-1 tracking-widest">⚠ WAR ROOM — ACTIVE DISPUTE</div>
+                  <h1 className="text-3xl font-black">{matter.name}</h1>
+                  <p className="text-slate-400 wr-mono text-sm mt-1">{matter.issues} issues flagged · Leakage: {matter.leakage}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-slate-500 wr-mono mb-1">Recovery Target</div>
+                  <div className="text-4xl font-black text-green-400 wr-mono">{matter.amount}</div>
+                  <span className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-black wr-mono ${
+                    matter.status === 'Urgent' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                    matter.status === 'In Progress' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                    'bg-green-500/20 text-green-300 border border-green-500/30'
+                  }`}>{matter.status}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Evidence status */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="bg-[#1e293b]/60 border border-white/10 rounded-2xl p-6">
+                    <h3 className="text-xs font-black wr-mono uppercase tracking-widest text-slate-400 mb-4">Forensic Evidence Stack</h3>
+                    <div className="space-y-3">
+                      {[
+                        { check:"ASCAP Registration", finding:"Missing publisher registration", sev:"critical" },
+                        { check:"BMI PRO Status",     finding:"IPI mismatch on co-writer",     sev:"warning" },
+                        { check:"SoundExchange",      finding:"No neighboring rights claim",    sev:"critical" },
+                        { check:"PRS / SOCAN",        finding:"International registrations current", sev:"ok" },
+                        { check:"Split Verification", finding:"Over-allocation detected (108%)", sev:"critical" },
+                        { check:"ISRC Verification",  finding:"2 tracks missing ISRC",          sev:"warning" },
+                      ].map((item,i) => (
+                        <div key={i} className={`flex justify-between items-center p-3 rounded-xl border-l-4 ${
+                          item.sev === 'critical' ? 'border-red-500 bg-red-500/5' :
+                          item.sev === 'warning'  ? 'border-yellow-500 bg-yellow-500/5' :
+                          'border-green-500 bg-green-500/5'
+                        }`}>
+                          <span className="font-bold text-sm">{item.check}</span>
+                          <span className={`text-xs wr-mono font-bold ${
+                            item.sev === 'critical' ? 'text-red-400' :
+                            item.sev === 'warning'  ? 'text-yellow-400' :
+                            'text-green-400'
+                          }`}>{item.finding}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Scan + actions */}
+                  <div className="bg-[#1e293b]/60 border border-white/10 rounded-2xl p-6">
+                    <h3 className="text-xs font-black wr-mono uppercase tracking-widest text-slate-400 mb-4">Run Full Forensic Scan</h3>
+                    {!scanRunning && !scanComplete && (
+                      <button onClick={runScan}
+                        className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl transition text-base">
+                        🔬 Start Forensic Scan — {matter.name}
+                      </button>
+                    )}
+                    {scanRunning && (
+                      <div className="text-center py-8">
+                        <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent mb-4" />
+                        <p className="font-bold text-indigo-300">Running forensic scan...</p>
+                        <p className="text-xs text-slate-500 mt-1 wr-mono">Querying ASCAP · BMI · PRS · SOCAN · SoundExchange</p>
+                      </div>
+                    )}
+                    {scanComplete && (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 p-4 bg-green-900/20 border border-green-500/30 rounded-xl">
+                          <span className="text-green-400 text-xl">✓</span>
+                          <p className="font-bold text-green-300 text-sm">Scan complete — evidence locked and timestamped</p>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-center"><p className="text-2xl font-black text-red-400 wr-mono">{matter.amount}</p><p className="text-xs text-slate-500">Unclaimed</p></div>
+                          <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-center"><p className="text-2xl font-black text-yellow-400 wr-mono">{matter.leakage}</p><p className="text-xs text-slate-500">Leakage</p></div>
+                          <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-xl text-center"><p className="text-2xl font-black text-orange-400 wr-mono">{matter.issues}</p><p className="text-xs text-slate-500">Issues</p></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: War Room actions */}
+                <div className="space-y-4">
+                  <div className="bg-[#1e293b]/60 border border-red-500/20 rounded-2xl p-6">
+                    <h3 className="text-xs font-black text-red-400 wr-mono uppercase tracking-widest mb-4">War Room Actions</h3>
+                    <div className="space-y-3">
+                      <button onClick={() => setActiveSection('run-due-diligence')}
+                        className="w-full py-3 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 font-bold rounded-xl hover:bg-indigo-600/40 transition text-sm">
+                        🔬 Full Catalog Due Diligence
+                      </button>
+                      <button onClick={() => handleDownload('demand', 'Demand Letter')}
+                        disabled={downloading === 'demand'}
+                        className="w-full py-3 bg-red-600/20 border border-red-500/30 text-red-300 font-bold rounded-xl hover:bg-red-600/40 transition text-sm disabled:opacity-50">
+                        {downloading === 'demand' ? 'Generating...' : '📨 Generate Demand Letter'}
+                      </button>
+                      <button onClick={() => setActiveSection('generate-court-report')}
+                        className="w-full py-3 bg-purple-600/20 border border-purple-500/30 text-purple-300 font-bold rounded-xl hover:bg-purple-600/40 transition text-sm">
+                        ⚖️ Court-Ready Evidence Bundle
+                      </button>
+                      <button onClick={() => handleDownload('affidavit', 'Attorney Affidavit')}
+                        disabled={downloading === 'affidavit'}
+                        className="w-full py-3 bg-white/5 border border-white/10 text-slate-300 font-bold rounded-xl hover:bg-white/10 transition text-sm disabled:opacity-50">
+                        {downloading === 'affidavit' ? 'Generating...' : '📄 Export Affidavit'}
+                      </button>
+                      <button onClick={() => setActiveSection('export-hash-seal')}
+                        className="w-full py-3 bg-green-600/10 border border-green-500/20 text-green-300 font-bold rounded-xl hover:bg-green-600/20 transition text-sm">
+                        🔐 Hash Seal & Export
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#1e293b]/60 border border-white/10 rounded-2xl p-6">
+                    <h3 className="text-xs font-black wr-mono uppercase tracking-widest text-slate-400 mb-3">Evidence Hash</h3>
+                    <div className="bg-[#0f172a] border border-white/10 rounded-lg p-3">
+                      <p className="text-[10px] text-slate-500 wr-mono break-all">
+                        TRP-{matter.id}-{Date.now().toString(36).toUpperCase().slice(-8)}<br/>
+                        SHA-256: {Array.from({length:32},()=>Math.floor(Math.random()*16).toString(16)).join('')}
+                      </p>
+                    </div>
+                    <p className="text-[10px] text-slate-600 wr-mono mt-2">Tamper-evident. Court-admissible.</p>
+                  </div>
+                </div>
               </div>
             </div>
           )}

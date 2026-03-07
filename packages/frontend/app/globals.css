@@ -34,6 +34,10 @@
   .glass-card {
     @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-xl;
   }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10;
+  }
   
   .neon-text-purple {
     @apply text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400;

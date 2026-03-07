@@ -1,96 +1,176 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-from typing import Optional
-from api.services.musicbrainz import search_artist_musicbrainz
-from api.services.discogs import search_artist_discogs
-from api.services.ascap_stub import lookup_ascap
-from api.services.bmi_stub import lookup_bmi
+from typing import Optional, List
+import requests
+from api.utils.musicbrainz_audit import perform_enhanced_audit, get_risk_color, get_risk_message
+from api.utils.isrc_resolver import enhanced_audit_with_fallback
 
-router = APIRouter()
+router = APIRouter(prefix="/api/royalty-finder", tags=["royalty-finder"])
 
-class RoyaltyFinderRequest(BaseModel):
-    title: str
-    artist: str
+class AuditRequest(BaseModel):
     isrc: Optional[str] = None
-    year: Optional[str] = None
+    artist: Optional[str] = None
+    track: Optional[str] = None
 
-@router.post("/catalog/royalty-finder")
-async def royalty_finder(req: RoyaltyFinderRequest):
-    publishing = []
-    pro = []
-    neighboring = []
-    missing = []
+class AuditResponse(BaseModel):
+    score: int
+    status: str
+    risk_level: str
+    risk_color: str
+    summary: str
+    estimated_loss: str
+    flags: List[dict]
+    revenue_impact: dict
+    action_items: List[str]
+    song_title: str
+    artist: str
+    mbid: Optional[str] = None
+    recording_id: Optional[str] = None
+    streaming_stats: dict
+    isrc: str
+    resolution: Optional[dict] = None
 
-    # MusicBrainz lookup
-    mb_results = await search_artist_musicbrainz(req.artist, req.title)
-    if mb_results:
-        for r in mb_results:
-            neighboring.append({
-                "performer": r.get("artist", req.artist),
-                "isrc": r.get("isrc"),
-                "all_isrcs": r.get("all_isrcs", []),
-                "source": "MusicBrainz",
-                "title": r.get("title"),
-                "release_date": r.get("release_date"),
-                "label": r.get("label"),
+@router.get("/search/artist")
+async def search_artist(
+    query: str = Query(..., description="Artist name to search"),
+    limit: int = Query(10, ge=1, le=100)
+):
+    """
+    Search for artists in MusicBrainz database
+    Returns real artist data including MBID, country, type
+    """
+    try:
+        url = "https://musicbrainz.org/ws/2/artist"
+        params = {
+            "query": query,
+            "fmt": "json",
+            "limit": limit
+        }
+        
+        response = requests.get(url, params=params)
+        
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail="MusicBrainz API error")
+        
+        data = response.json()
+        
+        artists = []
+        for artist in data.get('artists', []):
+            artists.append({
+                "mbid": artist.get('id'),
+                "name": artist.get('name'),
+                "sort_name": artist.get('sort-name'),
+                "type": artist.get('type', 'Unknown'),
+                "country": artist.get('country', 'Unknown'),
+                "disambiguation": artist.get('disambiguation', ''),
+                "score": artist.get('score', 0),
+                "life_span": artist.get('life-span', {})
             })
+        
+        return {
+            "count": len(artists),
+            "artists": artists
+        }
+        
+    except ImportError:
+        raise HTTPException(status_code=500, detail="requests library not installed")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # Discogs lookup
-    discogs_results = await search_artist_discogs(req.artist, req.title)
-    if discogs_results:
-        for r in discogs_results:
-            if not any(n.get("title") == r.get("title") for n in neighboring):
-                neighboring.append({
-                    "performer": req.artist,
-                    "isrc": r.get("isrc"),
-                    "source": "Discogs",
-                    "title": r.get("title"),
-                    "release_date": r.get("release_date"),
-                    "label": r.get("label"),
-                })
+@router.post("/audit", response_model=AuditResponse)
+async def audit_track(request: AuditRequest):
+    """
+    Perform an enhanced metadata audit with detailed risk scoring
+    Shows users exactly why they're losing money and how to fix it
+    """
+    try:
+        # Validate ISRC is provided
+        if not request.isrc:
+            raise HTTPException(status_code=400, detail="ISRC is required for audit")
+        
+        # Use enhanced audit from musicbrainz_audit.py
+        result = perform_enhanced_audit(request.isrc)
+        
+        # Check for errors
+        if result["status"] == "ERROR":
+            error_message = result.get("flags", [{}])[0].get("description", "Unknown error")
+            raise HTTPException(status_code=500, detail=error_message)
+        
+        # Add color and message for UI
+        result["color"] = get_risk_color(result["score"])
+        result["message"] = get_risk_message(result["score"])
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # ASCAP/BMI lookups
-    publishing = await lookup_ascap(req.title, req.artist)
-    pro = await lookup_bmi(req.title, req.artist)
+@router.post("/audit-smart", response_model=AuditResponse)
+async def audit_track_smart(request: AuditRequest):
+    """
+    Smart audit with fallback logic:
+    - Tries strict ISRC lookup
+    - Falls back to artist/title search
+    - Finds alternative versions
+    - Handles multiple ISRCs for same song
+    """
+    try:
+        if not request.isrc:
+            raise HTTPException(status_code=400, detail="ISRC is required")
+        
+        result = await enhanced_audit_with_fallback(
+            request.isrc, 
+            request.artist, 
+            request.track
+        )
+        
+        return result
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    # Smart missing rights messages with direct links
-    ascap_url = f"https://www.ascap.com/repertory#ace/search/workID/{req.title.replace(' ', '%20')}"
-    bmi_url = f"https://repertoire.bmi.com/Search/Titles?SearchType=WorkTitle&SearchStr={req.title.replace(' ', '%20')}"
-    soundexchange_url = "https://www.soundexchange.com/performer-copyright-owner/claim-royalties/"
+@router.post("/validate-isrc")
+async def validate_isrc(request: AuditRequest):
+    """
+    Comprehensive two-step ISRC validation:
+    - Format check
+    - Registry existence
+    - MusicBrainz audit
+    """
+    try:
+        if not request.isrc:
+            raise HTTPException(status_code=400, detail="ISRC is required")
+        
+        from api.utils.isrc_validator import enhanced_isrc_audit
+        result = await enhanced_isrc_audit(request.isrc)
+        
+        if result.get('error'):
+            raise HTTPException(status_code=400, detail=result['message'])
+        
+        return result
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-    if not publishing:
-        missing.append({
-            "reason": f"No ASCAP publishing registration found for '{req.title}'",
-            "action": "Verify directly on ASCAP",
-            "link": ascap_url,
-            "type": "ascap"
-        })
-
-    if not pro:
-        missing.append({
-            "reason": f"No BMI PRO registration found for '{req.title}'",
-            "action": "Verify directly on BMI",
-            "link": bmi_url,
-            "type": "bmi"
-        })
-
-    if not any(n.get("isrc") for n in neighboring):
-        missing.append({
-            "reason": f"No ISRC found for '{req.title}' - you may have unclaimed neighboring rights",
-            "action": "Claim SoundExchange royalties",
-            "link": soundexchange_url,
-            "type": "soundexchange"
-        })
-
+@router.get("/risk-categories")
+async def get_risk_categories():
+    """Return risk level categories for UI display"""
     return {
-        "publishing": publishing,
-        "pro": pro,
-        "neighboring": neighboring,
-        "missing": missing,
-        "search": {
-            "title": req.title,
-            "artist": req.artist,
-            "ascap_link": ascap_url,
-            "bmi_link": bmi_url,
+        "SECURE": {
+            "range": "90-100", 
+            "color": "green", 
+            "message": "Metadata is complete. All royalty paths should be open."
+        },
+        "AT_RISK": {
+            "range": "70-89", 
+            "color": "yellow", 
+            "message": "Missing identifiers detected. International royalties may be delayed."
+        },
+        "CRITICAL": {
+            "range": "0-69", 
+            "color": "red", 
+            "message": "Critical issues found. Revenue leakage likely."
         }
     }
