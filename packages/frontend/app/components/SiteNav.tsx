@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/attorney-portal/command-center",   label: "Firm View",     icon: "🖥️" },
   { href: "/artist-portal",                    label: "Artists",       icon: "🎤" },
   { href: "/free-audit",                       label: "Free Audit",    icon: "🔍" },
+  { href: "/onboard",                           label: "Onboarding",    icon: "🔌" },
   { href: "/onboarding",                       label: "How It Works",  icon: "📖" },
   { href: "/faq",                              label: "FAQ",           icon: "❓" },
   { href: "/partnership",                      label: "Partnership",   icon: "🤝" },

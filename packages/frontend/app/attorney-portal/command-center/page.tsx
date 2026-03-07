@@ -501,7 +501,7 @@ export default function CommandCenter() {
                   className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 text-slate-300 rounded-lg hover:bg-white/10 transition text-sm font-bold">
                   <span>🌐</span> Generate DDEX Package
                 </Link>
-                <Link href="/partnership"
+                <Link href="/onboard"
                   className="flex items-center gap-3 px-4 py-3 bg-green-600/10 border border-green-500/20 text-green-300 rounded-lg hover:bg-green-600/20 transition text-sm font-bold">
                   <span>🤝</span> Onboard New Label
                 </Link>
