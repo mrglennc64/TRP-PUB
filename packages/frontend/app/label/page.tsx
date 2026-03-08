@@ -124,6 +124,42 @@ export default function LabelPortal() {
             className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-indigo-300 bg-indigo-600/15 border border-indigo-500/30 hover:bg-indigo-600/25 transition">
             🎵 Label Workspace
           </Link>
+          <Link href="/ingest"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-sky-300 bg-sky-600/15 border border-sky-500/30 hover:bg-sky-600/25 transition">
+            📂 Bulk Ingest
+          </Link>
+          <Link href="/catalog-staging"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-violet-300 bg-violet-600/15 border border-violet-500/30 hover:bg-violet-600/25 transition">
+            🔄 Staging
+          </Link>
+          <Link href="/schema-parser"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-emerald-300 bg-emerald-600/15 border border-emerald-500/30 hover:bg-emerald-600/25 transition">
+            🧩 Parser
+          </Link>
+          <Link href="/cwr-generator"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-amber-300 bg-amber-600/15 border border-amber-500/30 hover:bg-amber-600/25 transition">
+            📋 CWR Generator
+          </Link>
+          <Link href="/master-catalog"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-cyan-300 bg-cyan-600/15 border border-cyan-500/30 hover:bg-cyan-600/25 transition">
+            📂 Master Catalog
+          </Link>
+          <Link href="/forensic-audit"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-pink-300 bg-pink-600/15 border border-pink-500/30 hover:bg-pink-600/25 transition">
+            🔬 Audit PDF
+          </Link>
+          <Link href="/lod-generator"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-orange-300 bg-orange-600/15 border border-orange-500/30 hover:bg-orange-600/25 transition">
+            📜 LOD Generator
+          </Link>
+          <Link href="/mlc-search"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-teal-300 bg-teal-600/15 border border-teal-500/30 hover:bg-teal-600/25 transition">
+            🔎 MLC Search
+          </Link>
+          <Link href="/split-verification"
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-green-300 bg-green-600/15 border border-green-500/30 hover:bg-green-600/25 transition">
+            ✅ Split Verification
+          </Link>
         </nav>
         <div className="flex-1" />
         <div className="mt-4 pt-4 border-t border-white/10 space-y-2">

@@ -4,18 +4,39 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const NAV_LINKS = [
-  { href: "/dashboard",                        label: "Enter Data",    icon: "⚡", cta: true },
-  { href: "/label",                            label: "Label",         icon: "🏢" },
-  { href: "/attorney-portal",                  label: "Attorney",      icon: "⚖️" },
-  { href: "/attorney-portal/command-center",   label: "Firm View",     icon: "🖥️" },
-  { href: "/artist-portal",                    label: "Artists",       icon: "🎤" },
-  { href: "/free-audit",                       label: "Free Audit",    icon: "🔍" },
-  { href: "/onboard",                           label: "Onboarding",    icon: "🔌" },
-  { href: "/onboarding",                       label: "How It Works",  icon: "📖" },
-  { href: "/faq",                              label: "FAQ",           icon: "❓" },
-  { href: "/partnership",                      label: "Partnership",   icon: "🤝" },
+// App / portal links
+const NAV_MAIN = [
+  { href: "/dashboard",                      label: "Enter Data",     icon: "⚡", cta: true },
+  { href: "/label",                          label: "Label Portal",   icon: "🏢" },
+  { href: "/attorney-portal",                label: "Attorney",       icon: "⚖️" },
+  { href: "/attorney-portal/command-center", label: "Firm View",      icon: "🖥️" },
+  { href: "/artist-portal",                  label: "Artists",        icon: "🎤" },
+  { href: "/royalty-finder",                 label: "Royalty Finder", icon: "🔍" },
+  { href: "/free-audit",                     label: "Free Audit",     icon: "🔬" },
 ];
+
+// Tool suite links
+const NAV_TOOLS = [
+  { href: "/ingest",          label: "Bulk Ingest", icon: "📂" },
+  { href: "/catalog-staging", label: "Staging",     icon: "🔄" },
+  { href: "/schema-parser",   label: "Parser",      icon: "🧩" },
+  { href: "/cwr-generator",   label: "CWR",         icon: "📋" },
+  { href: "/master-catalog",  label: "Catalog",     icon: "🗂️" },
+  { href: "/forensic-audit",  label: "Audit PDF",   icon: "🔬" },
+  { href: "/lod-generator",   label: "LOD",         icon: "📜" },
+  { href: "/mlc-search",      label: "MLC",         icon: "🎯" },
+];
+
+// Info / marketing links
+const NAV_INFO = [
+  { href: "/onboard",     label: "Onboarding",   icon: "🔌" },
+  { href: "/onboarding",  label: "How It Works", icon: "📖" },
+  { href: "/faq",         label: "FAQ",          icon: "❓" },
+  { href: "/partnership", label: "Partnership",  icon: "🤝" },
+];
+
+// Combined for mobile dropdown
+const NAV_LINKS = [...NAV_MAIN, ...NAV_TOOLS, ...NAV_INFO];
 
 export default function SiteNav() {
   const [open, setOpen] = useState(false);
@@ -32,7 +53,7 @@ export default function SiteNav() {
 
         {/* Desktop links — scrollable, fills all space */}
         <div className="hidden md:flex items-center gap-1 flex-1 overflow-x-auto scrollbar-hide min-w-0">
-          {NAV_LINKS.map((l) => (
+          {NAV_MAIN.map((l) => (
             <Link
               key={l.href}
               href={l.href}
