@@ -1,14 +1,36 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
+// ISRC format: 2-letter country + 3 alphanumeric registrant + 2-digit year + 5-digit designation
+const ISRC_RE = /^[A-Z]{2}[A-Z0-9]{3}\d{2}\d{5}$/i;
+
 export default function RoyaltyFinderPage() {
+  const searchParams = useSearchParams();
   const [searchType, setSearchType] = useState('artist');
   const [artistQuery, setArtistQuery] = useState('');
   const [isrc, setIsrc] = useState('');
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<any>(null);
   const [error, setError] = useState('');
+
+  // Pre-populate from landing page query and auto-search
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (!q) return;
+    const clean = q.trim().replace(/-/g, '').toUpperCase();
+    if (ISRC_RE.test(clean)) {
+      setSearchType('isrc');
+      setIsrc(q.trim());
+      // auto-trigger search
+      setTimeout(() => document.getElementById('search-btn')?.click(), 100);
+    } else {
+      setSearchType('artist');
+      setArtistQuery(q.trim());
+      setTimeout(() => document.getElementById('search-btn')?.click(), 100);
+    }
+  }, [searchParams]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +85,7 @@ export default function RoyaltyFinderPage() {
           <h1 className="text-4xl font-bold text-white mb-4">Find Missing Royalties</h1>
           <p className="text-lg text-slate-300">
             Hunt down unclaimed bags from streams, syncs, performances & playlists. 
-            Scan MusicBrainz for recordings, ISRCs, and rights gaps — built for hip hop & R&B creators.
+            Scan SMPT for recordings, ISRCs, and rights gaps — built for hip hop & R&B creators.
           </p>
         </div>
 
@@ -107,7 +129,7 @@ export default function RoyaltyFinderPage() {
                   required
                 />
                 <p className="text-sm text-slate-400 mt-2">
-                  Search MusicBrainz for artist information
+                  Search SMPT for artist information
                 </p>
               </div>
             ) : (
@@ -140,11 +162,12 @@ export default function RoyaltyFinderPage() {
             )}
 
             <button
+              id="search-btn"
               type="submit"
               disabled={loading}
               className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
             >
-              {loading ? '🔍 Searching MusicBrainz...' : '🔍 Find Royalties'}
+              {loading ? '🔍 Searching SMPT...' : '🔍 Find Royalties'}
             </button>
           </form>
 
@@ -158,7 +181,7 @@ export default function RoyaltyFinderPage() {
         {/* Results */}
         {results && (
           <div className="bg-[#0f172a] rounded-xl shadow-lg p-6 border border-white/10">
-            <h2 className="text-2xl font-bold text-white mb-6">Results from MusicBrainz</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Results from SMPT</h2>
             
             {searchType === 'artist' && results.artists && (
               <div className="space-y-4">
@@ -228,14 +251,14 @@ export default function RoyaltyFinderPage() {
             <div className="text-3xl mb-3">🔍</div>
             <h3 className="text-lg font-semibold text-white mb-2">Global PRO Coverage</h3>
             <p className="text-slate-300">
-              Scans MusicBrainz + direct links to ASCAP, BMI, SOCAN, PRS — find unclaimed from viral TikToks to radio spins.
+              Scans SMPT + direct links to ASCAP, BMI, SOCAN, PRS — find unclaimed from viral TikToks to radio spins.
             </p>
           </div>
           <div className="bg-[#0f172a] p-6 rounded-xl shadow-sm border border-white/10">
             <div className="text-3xl mb-3">🎫</div>
             <h3 className="text-lg font-semibold text-white mb-2">Real ISRC Data</h3>
             <p className="text-slate-300">
-              Pull real ISRCs from MusicBrainz to verify neighboring rights and SoundExchange claims.
+              Pull real ISRCs from SMPT to verify neighboring rights and SoundExchange claims.
             </p>
           </div>
           <div className="bg-[#0f172a] p-6 rounded-xl shadow-sm border border-white/10">

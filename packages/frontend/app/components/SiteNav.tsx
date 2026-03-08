@@ -69,8 +69,8 @@ export default function SiteNav() {
   }, []);
 
   return (
-    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-[#0f172a] border-b border-white/10 shadow-xl">
-      <div className="px-4 flex items-center h-12 gap-2">
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-[9000] bg-[#0f172a] border-b border-white/10 shadow-xl">
+      <div className="px-4 flex items-center h-12 gap-2 overflow-visible">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0 mr-3">
           <span className="text-base font-black text-indigo-400 tracking-tight">TRP</span>
@@ -116,7 +116,7 @@ export default function SiteNav() {
                 </button>
 
                 {activeDropdown === i && (
-                  <div className="absolute top-full left-0 mt-1 w-52 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl shadow-black/50 py-1 z-50">
+                  <div className="absolute top-full left-0 mt-1 w-52 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl shadow-black/50 py-1 z-[9999]">
                     {mod.items.map((item) => (
                       <Link
                         key={item.href}

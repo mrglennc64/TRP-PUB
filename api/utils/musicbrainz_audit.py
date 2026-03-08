@@ -1,4 +1,3 @@
-import musicbrainzngs as mb
 import requests
 from typing import Dict, List, Optional
 import logging
@@ -7,15 +6,15 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Set up MusicBrainz user agent
-mb.set_useragent("TrapRoyaltiesPro", "1.0", "contact@traproyaltiespro.com")
-
 def perform_enhanced_audit(isrc: str) -> Dict:
     """
     Perform a comprehensive metadata audit using MusicBrainz
     Returns a detailed risk score with specific revenue leakage warnings
     """
     try:
+        import musicbrainzngs as mb
+        mb.set_useragent("TrapRoyaltiesPro", "1.0", "contact@traproyaltiespro.com")
+
         # Clean ISRC
         clean_isrc = isrc.replace('-', '').upper()
         logger.info(f"🔍 Auditing ISRC: {clean_isrc}")
@@ -275,37 +274,6 @@ def perform_enhanced_audit(isrc: str) -> Dict:
             "isrc": isrc
         }
         
-    except mb.ResponseError as e:
-        return {
-            "score": 0,
-            "status": "ERROR",
-            "risk_level": "🚨 ERROR",
-            "risk_color": "red",
-            "summary": f"MusicBrainz lookup failed",
-            "estimated_loss": "Unknown",
-            "flags": [{
-                "type": "error",
-                "icon": "❌",
-                "title": "API Error",
-                "description": str(e),
-                "impact": "Unable to scan",
-                "fix": "Try again later or contact support"
-            }],
-            "revenue_impact": {
-                "streaming": 0,
-                "mechanical": 0,
-                "performance": 0,
-                "sync": 0,
-                "total": 0
-            },
-            "action_items": ["Retry search", "Check ISRC format"],
-            "song_title": "Error",
-            "artist": "Unknown",
-            "mbid": None,
-            "recording_id": None,
-            "streaming_stats": {"total_listens": 0, "unique_listeners": 0},
-            "isrc": isrc
-        }
     except Exception as e:
         logger.error(f"Audit failed: {e}")
         return {

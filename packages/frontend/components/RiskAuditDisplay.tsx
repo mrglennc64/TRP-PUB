@@ -242,10 +242,10 @@ const RiskAuditDisplay: React.FC<RiskAuditDisplayProps> = ({ auditResult }) => {
         
         {showDetails && (
           <div className="p-4 bg-gray-50 border-t border-gray-200 text-xs font-mono text-gray-700">
-            <p><span className="font-bold">MusicBrainz ID:</span> {auditResult.mbid || 'N/A'}</p>
+            <p><span className="font-bold">SMPT ID:</span> {auditResult.mbid || 'N/A'}</p>
             <p><span className="font-bold">Recording ID:</span> {auditResult.recording_id || 'N/A'}</p>
             <p><span className="font-bold">Audit Timestamp:</span> {new Date().toLocaleString()}</p>
-            <p><span className="font-bold">Data Sources:</span> MusicBrainz, ListenBrainz</p>
+            <p><span className="font-bold">Data Sources:</span> SMPT, ListenBrainz</p>
             <p><span className="font-bold">Risk Calculation:</span> Based on metadata completeness and identifier presence</p>
           </div>
         )}

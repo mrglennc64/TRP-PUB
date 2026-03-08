@@ -1,4 +1,3 @@
-import musicbrainzngs as mb
 import requests
 import re
 from typing import Dict, List, Optional, Tuple
@@ -6,8 +5,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Set up MusicBrainz user agent
-mb.set_useragent("TrapRoyaltiesPro", "1.0", "contact@traproyaltiespro.com")
+def _get_mb():
+    import musicbrainzngs as mb
+    mb.set_useragent("TrapRoyaltiesPro", "1.0", "contact@traproyaltiespro.com")
+    return mb
 
 class ISRCResolver:
     """
@@ -73,6 +74,7 @@ class ISRCResolver:
         Attempt 1: Strict ISRC lookup in MusicBrainz
         """
         try:
+            mb = _get_mb()
             clean = ISRCResolver.clean_isrc(isrc)
             result = mb.search_recordings(isrc=clean, limit=5)
             
@@ -96,6 +98,7 @@ class ISRCResolver:
         Attempt 2: Search by artist and title
         """
         try:
+            mb = _get_mb()
             # Build search query
             query = f'artist:"{artist}" AND recording:"{title}"'
             result = mb.search_recordings(query=query, limit=20)
@@ -137,6 +140,7 @@ class ISRCResolver:
                 clean_title = re.sub(r'\s*\([^)]*\)\s*', '', title).strip()
                 clean_title = re.sub(r'\s*-\s*(Radio Edit|Remix|Live|Acoustic).*$', '', clean_title, flags=re.IGNORECASE)
                 
+                mb = _get_mb()
                 query = f'artist:"{artist}" AND recording:"{clean_title}"'
                 result = mb.search_recordings(query=query, limit=50)
                 
