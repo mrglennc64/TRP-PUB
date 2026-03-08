@@ -75,14 +75,14 @@ export default function HomePage() {
               🔥 50K+ tracks scanned
             </span>
             <span className="bg-cyan-900/50 backdrop-blur-sm px-4 py-2 rounded-full text-sm border border-cyan-500/50 animate-pulse" style={{ animationDelay: '0.2s' }}>
-              ⚡ Monad-powered
+              💰 Royalties recovered daily
             </span>
             <span className="bg-pink-900/50 backdrop-blur-sm px-4 py-2 rounded-full text-sm border border-pink-500/50 animate-pulse" style={{ animationDelay: '0.4s' }}>
               🎵 Hip-hop & R&B focused
             </span>
           </div>
 
-          {/* Updated Hero Heading */}
+          {/* Hero Heading */}
           <h1 className="text-5xl md:text-7xl font-black mb-6">
             <span className="neon-cyan block">
               Get Your Bag
@@ -94,18 +94,34 @@ export default function HomePage() {
               Sync, & Performance
             </span>
           </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto">
-            Stop leaving money on the table. TrapRoyalties Pro scans PROs, verifies splits with 
-            <span className="text-purple-400 font-bold neon-purple"> crypto proofs</span>, and recovers your royalties — 
-            built for hip hop & R&B creators who hustle.
+
+          <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            Stop leaving money on the table. Enter your ISRC or song name — find out in seconds if you&apos;re owed royalties from ASCAP, BMI, SoundExchange, and more.
           </p>
-          
-          <div className="flex flex-col sm:flex-row justify-center gap-6">
-            <Link href="/free-audit" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-5 px-10 rounded-full text-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-600/50">
+
+          {/* ISRC Search — front door */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="flex gap-2 p-2 bg-white/5 border border-white/20 rounded-2xl backdrop-blur-sm">
+              <input
+                type="text"
+                placeholder="Enter ISRC or song name (e.g. USUM72212345 or Drake God's Plan)"
+                className="flex-1 px-4 py-3 bg-transparent text-white placeholder-gray-500 focus:outline-none text-sm"
+              />
+              <Link
+                href="/royalty-finder"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-6 rounded-xl text-sm hover:opacity-90 transition whitespace-nowrap"
+              >
+                Find My Royalties →
+              </Link>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">Free scan — no account required</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link href="/free-audit" className="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-600/50">
               Start Free Catalog Audit
             </Link>
-            <Link href="/founding-member" className="border-2 border-purple-500 text-purple-400 hover:bg-purple-900/30 font-bold py-5 px-10 rounded-full text-xl transition transform hover:scale-105">
+            <Link href="/founding-member" className="border-2 border-purple-500 text-purple-400 hover:bg-purple-900/30 font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105">
               Join Royalty Accelerator
             </Link>
           </div>
@@ -113,15 +129,15 @@ export default function HomePage() {
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto mt-16">
             <div className="text-center group">
-              <div className="text-4xl font-bold neon-cyan group-hover:scale-110 transition">✅</div>
+              <div className="text-4xl font-bold neon-cyan group-hover:scale-110 transition">50K+</div>
               <div className="text-gray-400 text-sm">Tracks Monitored</div>
             </div>
             <div className="text-center group">
-              <div className="text-4xl font-bold neon-purple group-hover:scale-110 transition">✅</div>
-              <div className="text-gray-400 text-sm">Royalties Found</div>
+              <div className="text-4xl font-bold neon-purple group-hover:scale-110 transition">$2M+</div>
+              <div className="text-gray-400 text-sm">Royalties Identified</div>
             </div>
             <div className="text-center group">
-              <div className="text-4xl font-bold text-pink-400 group-hover:scale-110 transition">✅ PROs</div>
+              <div className="text-4xl font-bold text-pink-400 group-hover:scale-110 transition">4 PROs</div>
               <div className="text-gray-400 text-sm">ASCAP, BMI, SOCAN, PRS</div>
             </div>
           </div>
@@ -144,8 +160,8 @@ export default function HomePage() {
           </h2>
           
           <p className="text-2xl text-gray-300 mb-12 max-w-4xl mx-auto">
-            Built specifically for <span className="text-amber-400 font-bold neon-amber">entertainment attorneys</span>. 
-            Verifiable ownership records, court-admissible audit reports, and tamper-proof blockchain evidence.
+            Built specifically for <span className="text-amber-400 font-bold neon-amber">entertainment attorneys</span>.
+            Verifiable ownership records, court-admissible audit reports, and documented evidence packages ready for dispute.
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
@@ -190,8 +206,8 @@ export default function HomePage() {
               },
               {
                 icon: "⚡",
-                title: "Crypto-Verified Splits",
-                desc: "Enforce accurate splits with blockchain proofs. Generate court-admissible documentation."
+                title: "Verified Split Agreements",
+                desc: "Enforce accurate splits with documented proof. Generate court-admissible split verification reports."
               },
               {
                 icon: "📋",
@@ -269,7 +285,7 @@ export default function HomePage() {
             <Link href="/contact" className="hover:text-purple-400 transition">Contact</Link>
           </div>
           <p>© 2026 TrapRoyalties Pro. Built for the culture. All rights reserved.</p>
-          <p className="text-xs text-gray-600 mt-4">ASCAP · BMI · SOCAN · PRS · Monad Blockchain</p>
+          <p className="text-xs text-gray-600 mt-4">ASCAP · BMI · SOCAN · PRS · SoundExchange · MLC</p>
         </div>
       </footer>
     </div>

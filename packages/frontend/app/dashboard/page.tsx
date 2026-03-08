@@ -254,6 +254,34 @@ export default function Dashboard() {
           <div className="ml-auto mono text-xs text-slate-600">{store.label.name || "No label set"}</div>
         </div>
 
+        {/* KPI Cards — Money at a Glance */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 py-4 border-b border-white/10 bg-[#0a0f1e]/40">
+          <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Unclaimed Royalties</p>
+            <p className={`text-2xl font-black mono ${totalOwed > 0 ? "text-yellow-400" : "text-green-400"}`}>${totalOwed.toLocaleString()}</p>
+            <p className="text-xs text-slate-600 mt-0.5">{totalOwed > 0 ? "awaiting payment" : "all clear"}</p>
+          </div>
+          <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Songs Registered</p>
+            <p className="text-2xl font-black mono text-indigo-400">
+              {store.tracks.filter(t => t.isrc).length}<span className="text-slate-600 text-sm font-normal"> / {store.tracks.length}</span>
+            </p>
+            <p className="text-xs text-slate-600 mt-0.5">{store.tracks.length === 0 ? "add tracks to start" : `${store.tracks.filter(t => !t.isrc).length} missing ISRC`}</p>
+          </div>
+          <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Money Leaks Found</p>
+            <p className={`text-2xl font-black mono ${totalLeaks > 0 ? "text-red-400" : "text-green-400"}`}>{totalLeaks}</p>
+            <p className="text-xs text-slate-600 mt-0.5">{totalLeaks > 0 ? "critical — fix now" : "catalog is clean"}</p>
+          </div>
+          <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Catalog Health Score</p>
+            <p className={`text-2xl font-black mono ${store.tracks.length === 0 ? "text-slate-500" : totalLeaks === 0 ? "text-green-400" : totalLeaks < 3 ? "text-yellow-400" : "text-red-400"}`}>
+              {store.tracks.length === 0 ? "—" : Math.max(0, 100 - totalLeaks * 12) + "/100"}
+            </p>
+            <p className="text-xs text-slate-600 mt-0.5">{store.tracks.length === 0 ? "add tracks to score" : totalLeaks === 0 ? "excellent" : totalLeaks < 3 ? "needs attention" : "urgent fixes needed"}</p>
+          </div>
+        </div>
+
         <div className="p-6 fade" key={section}>
           {section === "isrc"      && <ISRCSearchSection store={store} save={save} flash={flash} setSection={setSection} />}
           {section === "catalog"   && <CatalogSection    store={store} save={save} flash={flash} setSection={setSection} />}

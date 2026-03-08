@@ -1,49 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// App / portal links
-const NAV_MAIN = [
-  { href: "/dashboard",                      label: "Enter Data",     icon: "⚡", cta: true },
-  { href: "/label",                          label: "Label Portal",   icon: "🏢" },
-  { href: "/attorney-portal",                label: "Attorney",       icon: "⚖️" },
-  { href: "/attorney-portal/command-center", label: "Firm View",      icon: "🖥️" },
-  { href: "/artist-portal",                  label: "Artists",        icon: "🎤" },
-  { href: "/royalty-finder",                 label: "Royalty Finder", icon: "🔍" },
-  { href: "/free-audit",                     label: "Free Audit",     icon: "🔬" },
+const MODULES = [
+  {
+    label: "Royalty Recovery",
+    icon: "💰",
+    items: [
+      { href: "/royalty-finder", label: "Royalty Finder" },
+      { href: "/free-audit",     label: "Free Royalty Audit" },
+      { href: "/mlc-search",     label: "MLC Database Search" },
+    ],
+  },
+  {
+    label: "Legal Tools",
+    icon: "⚖️",
+    items: [
+      { href: "/attorney-portal",                label: "Attorney Portal" },
+      { href: "/lod-generator",                  label: "Legal Demand Letter" },
+      { href: "/attorney-portal/command-center", label: "Firm View" },
+    ],
+  },
+  {
+    label: "Catalog",
+    icon: "🗂️",
+    items: [
+      { href: "/ingest",             label: "Upload Your Catalog" },
+      { href: "/schema-parser",      label: "Metadata Cleaner" },
+      { href: "/split-verification", label: "Split Sheet Verifier" },
+      { href: "/catalog-staging",    label: "Staging" },
+    ],
+  },
+  {
+    label: "Rights",
+    icon: "📋",
+    items: [
+      { href: "/cwr-generator",  label: "Copyright Registration" },
+      { href: "/master-catalog", label: "Global Royalty Verification" },
+      { href: "/forensic-audit", label: "Royalty Audit Report" },
+    ],
+  },
+  {
+    label: "Label Ops",
+    icon: "🏢",
+    items: [
+      { href: "/label",         label: "Label Portal" },
+      { href: "/artist-portal", label: "Artist Portal" },
+    ],
+  },
 ];
-
-// Tool suite links
-const NAV_TOOLS = [
-  { href: "/ingest",          label: "Bulk Ingest", icon: "📂" },
-  { href: "/catalog-staging", label: "Staging",     icon: "🔄" },
-  { href: "/schema-parser",   label: "Parser",      icon: "🧩" },
-  { href: "/cwr-generator",   label: "CWR",         icon: "📋" },
-  { href: "/master-catalog",  label: "Catalog",     icon: "🗂️" },
-  { href: "/forensic-audit",  label: "Audit PDF",   icon: "🔬" },
-  { href: "/lod-generator",   label: "LOD",         icon: "📜" },
-  { href: "/mlc-search",      label: "MLC",         icon: "🎯" },
-];
-
-// Info / marketing links
-const NAV_INFO = [
-  { href: "/onboard",     label: "Onboarding",   icon: "🔌" },
-  { href: "/onboarding",  label: "How It Works", icon: "📖" },
-  { href: "/faq",         label: "FAQ",          icon: "❓" },
-  { href: "/partnership", label: "Partnership",  icon: "🤝" },
-];
-
-// Combined for mobile dropdown
-const NAV_LINKS = [...NAV_MAIN, ...NAV_TOOLS, ...NAV_INFO];
 
 export default function SiteNav() {
   const [open, setOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const path = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0f172a] border-b border-white/10 shadow-xl">
+    <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-[#0f172a] border-b border-white/10 shadow-xl">
       <div className="px-4 flex items-center h-12 gap-2">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0 mr-3">
@@ -51,32 +77,73 @@ export default function SiteNav() {
           <span className="hidden lg:block text-xs text-slate-500 font-medium">TrapRoyaltiesPro</span>
         </Link>
 
-        {/* Desktop links — scrollable, fills all space */}
-        <div className="hidden md:flex items-center gap-1 flex-1 overflow-x-auto scrollbar-hide min-w-0">
-          {NAV_MAIN.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
-                l.cta
-                  ? path === l.href
-                    ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-indigo-400"
-                    : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-500/20"
-                  : path === l.href || path?.startsWith(l.href + "/")
-                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
-                    : "text-slate-400 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <span className="text-sm leading-none">{l.icon}</span>
-              {l.label}
-            </Link>
-          ))}
+        {/* Desktop: Enter Data CTA + 5 module dropdowns */}
+        <div className="hidden md:flex items-center gap-1 flex-1">
+          <Link
+            href="/dashboard"
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
+              path === "/dashboard"
+                ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-indigo-400"
+                : "bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-500/20"
+            }`}
+          >
+            <span className="text-sm leading-none">⚡</span>
+            Enter Data
+          </Link>
+
+          {MODULES.map((mod, i) => {
+            const isActive = mod.items.some(
+              (item) => path === item.href || path?.startsWith(item.href + "/")
+            );
+            return (
+              <div key={i} className="relative flex-shrink-0">
+                <button
+                  onClick={() => setActiveDropdown(activeDropdown === i ? null : i)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
+                    isActive || activeDropdown === i
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
+                      : "text-slate-400 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  <span className="text-sm leading-none">{mod.icon}</span>
+                  {mod.label}
+                  <svg
+                    className={`w-3 h-3 transition-transform ${activeDropdown === i ? "rotate-180" : ""}`}
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {activeDropdown === i && (
+                  <div className="absolute top-full left-0 mt-1 w-52 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl shadow-black/50 py-1 z-50">
+                    {mod.items.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setActiveDropdown(null)}
+                        className={`block px-4 py-2.5 text-xs font-medium transition-colors ${
+                          path === item.href || path?.startsWith(item.href + "/")
+                            ? "text-indigo-400 bg-indigo-600/20"
+                            : "text-slate-400 hover:text-white hover:bg-white/10"
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Mobile: show "Data Hub" pill + hamburger */}
+        {/* Mobile: Enter Data + hamburger */}
         <div className="md:hidden flex items-center gap-2 ml-auto">
-          <Link href="/dashboard"
-            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg">
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg"
+          >
             ⚡ Enter Data
           </Link>
           <button onClick={() => setOpen(!open)} className="flex flex-col gap-1 p-1.5" aria-label="Menu">
@@ -87,24 +154,32 @@ export default function SiteNav() {
         </div>
       </div>
 
-      {/* Mobile dropdown */}
+      {/* Mobile dropdown - grouped by module */}
       {open && (
-        <div className="md:hidden bg-[#0a0f1e] border-t border-white/10 px-4 py-3 grid grid-cols-2 gap-2">
-          {NAV_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
-                path === l.href ? "bg-indigo-600 text-white" : "text-slate-300 hover:bg-white/10"
-              }`}>
-              <span>{l.icon}</span>{l.label}
-            </Link>
+        <div className="md:hidden bg-[#0a0f1e] border-t border-white/10 px-4 py-3 space-y-4">
+          {MODULES.map((mod, i) => (
+            <div key={i}>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2 px-1">
+                {mod.icon} {mod.label}
+              </p>
+              <div className="grid grid-cols-2 gap-1">
+                {mod.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      path === item.href ? "bg-indigo-600 text-white" : "text-slate-300 hover:bg-white/10"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       )}
-
-      <style>{`
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
     </nav>
   );
 }

@@ -23,7 +23,7 @@ function buildContent(type: string, name: string, amount: string, leakage: strin
   }
   if (type === 'affidavit') {
     const d = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    return `<div class="section"><h2>AFFIDAVIT OF LERON ROGERS, ESQ.</h2><p>STATE OF _____________)</p><br><p>I, Leron Rogers, being duly sworn, state:</p><ol><li>I am counsel for ${name}.</li><li>Forensic audit confirms ${amount} in unpaid royalties.</li><li>${issues} material discrepancies identified. Leakage: ${leakage}.</li><li>All findings verified via tamper-evident hash technology.</li></ol><br><p>Executed: ${d}</p><br><p>___________________________<br>Leron Rogers, Esq.</p><br><p>___________________________<br>Notary Public</p></div>`;
+    return `<div class="section"><h2>AFFIDAVIT OF LERON ROGERS, ESQ.</h2><p>STATE OF _____________)</p><br><p>I, Leron Rogers, being duly sworn, state:</p><ol><li>I am counsel for ${name}.</li><li>Forensic audit confirms ${amount} in unpaid royalties.</li><li>${issues} material discrepancies identified. Leakage: ${leakage}.</li><li>All findings verified via the TrapRoyaltiesPro audit system.</li></ol><br><p>Executed: ${d}</p><br><p>___________________________<br>Leron Rogers, Esq.</p><br><p>___________________________<br>Notary Public</p></div>`;
   }
   return `<div class="section"><h2>Custom Report</h2><p>Matter: ${name}</p><table><tr><th>Category</th><th>Finding</th><th>Impact</th></tr><tr><td>Streaming</td><td class="warning">Underreported Q3-Q4</td><td class="danger">-$45,200</td></tr><tr><td>Sync</td><td class="highlight">Verified</td><td>+$0</td></tr><tr><td>Performance</td><td class="danger">No ASCAP registration</td><td class="danger">${amount}</td></tr></table></div>`;
 }
@@ -187,7 +187,7 @@ export default function AttorneyPortal() {
   return (
     <div className="min-h-screen bg-[#0a0f1e] text-white">
       <div className="bg-gradient-to-r from-indigo-700 to-purple-900 text-white py-2 px-6 text-center text-sm font-medium">
-        Attorney Portal - Secure Session - Encrypted and Hash-Verified
+        Attorney Portal - Secure Session - Verified &amp; Documented
       </div>
       <header className="sticky top-0 z-50 bg-[#0a0f1e] border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -241,7 +241,7 @@ export default function AttorneyPortal() {
 
           {activeSection === 'digital-handshake' && (
             <div>
-              <h1 className="text-3xl font-bold text-black mb-2">Digital Handshake</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">Digital Handshake</h1>
               <p className="text-slate-400 mb-6">Create court-admissible royalty split agreements - Georgia Law compliant</p>
               <div className="grid md:grid-cols-2 gap-8">
                 <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-8">
@@ -302,24 +302,24 @@ export default function AttorneyPortal() {
                   </form>
                 </div>
                 <div className="bg-[#0f172a] rounded-xl p-6 border border-white/10">
-                  <h3 className="text-lg font-bold mb-4 text-black">Agreement Preview</h3>
+                  <h3 className="text-lg font-bold mb-4 text-white">Agreement Preview</h3>
                   <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl border border-indigo-500/30 p-6 space-y-4">
                     <div className="flex justify-between items-center border-b pb-3">
-                      <span className="font-bold text-black text-lg">{handshakeTrack || 'Track Name'}</span>
+                      <span className="font-bold text-white text-lg">{handshakeTrack || 'Track Name'}</span>
                       <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-full font-bold">PENDING</span>
                     </div>
                     <div className="space-y-2 text-sm">
-                      <div className="flex justify-between"><span className="text-slate-500">Rights Type</span><span className="font-medium text-black">{handshakeRightsType}</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">Revenue Basis</span><span className="font-medium text-black">{handshakeRevenueBasis}</span></div>
-                      <div className="flex justify-between"><span className="text-slate-500">Jurisdiction</span><span className="font-medium text-black">{handshakeJurisdiction}</span></div>
-                      {handshakeISRC && <div className="flex justify-between"><span className="text-slate-500">ISRC</span><span className="font-mono text-xs text-black">{handshakeISRC}</span></div>}
+                      <div className="flex justify-between"><span className="text-slate-500">Rights Type</span><span className="font-medium text-white">{handshakeRightsType}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">Revenue Basis</span><span className="font-medium text-white">{handshakeRevenueBasis}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-500">Jurisdiction</span><span className="font-medium text-white">{handshakeJurisdiction}</span></div>
+                      {handshakeISRC && <div className="flex justify-between"><span className="text-slate-500">ISRC</span><span className="font-mono text-xs text-white">{handshakeISRC}</span></div>}
                     </div>
                     {handshakeName && (
                       <div className="border-t pt-3">
                         <p className="text-xs font-semibold text-slate-500 mb-2">COLLABORATOR</p>
                         <div className="flex justify-between items-center p-2 bg-yellow-500/10 rounded-lg border border-yellow-500/30">
                           <div>
-                            <span className="text-sm font-medium text-black">{handshakeName}</span>
+                            <span className="text-sm font-medium text-white">{handshakeName}</span>
                             <span className="text-xs text-slate-500 ml-2">({handshakeRole})</span>
                           </div>
                           <span className="text-sm font-bold text-yellow-400">{handshakePercentage || 0}% - PENDING</span>
@@ -334,7 +334,7 @@ export default function AttorneyPortal() {
                       <li>&#10003; Revenue basis specified</li>
                       <li>&#10003; Jurisdiction locked</li>
                       <li>&#10003; Timestamp + IP metadata attached</li>
-                      <li>&#10003; Hash seal on execution</li>
+                      <li>&#10003; Verification seal on execution</li>
                     </ul>
                   </div>
                 </div>
@@ -427,7 +427,7 @@ export default function AttorneyPortal() {
                 {[
                   { id:'run-due-diligence', icon:"🔬", l:"Forensic Audit", d:"Full catalog scan — ASCAP, BMI, SoundExchange" },
                   { id:'generate-court-report', icon:"📋", l:"Court-Ready Report", d:"Hash-sealed, QR-verified PDF evidence package" },
-                  { id:'digital-handshake', icon:"🤝", l:"Digital Handshake", d:"Blockchain-verified split agreement" },
+                  { id:'digital-handshake', icon:"🤝", l:"Digital Handshake", d:"Verified and documented split agreement" },
                 ].map(a => (
                   <button key={a.id} onClick={() => setActiveSection(a.id)}
                     className="flex items-center gap-4 p-5 bg-[#1e293b]/60 border border-white/10 rounded-xl hover:border-indigo-500/50 hover:bg-[#1e293b] transition text-left group">
@@ -568,7 +568,7 @@ export default function AttorneyPortal() {
                         SHA-256: {Array.from({length:32},()=>Math.floor(Math.random()*16).toString(16)).join('')}
                       </p>
                     </div>
-                    <p className="text-[10px] text-slate-600 wr-mono mt-2">Tamper-evident. Court-admissible.</p>
+                    <p className="text-[10px] text-slate-600 wr-mono mt-2">Verified. Court-admissible.</p>
                   </div>
                 </div>
               </div>
@@ -828,7 +828,7 @@ export default function AttorneyPortal() {
 
           {activeSection === 'pre-release-verify' && (
             <div>
-              <h1 className="text-3xl font-bold text-black mb-2">Pre-Release Split Verification</h1>
+              <h1 className="text-3xl font-bold text-white mb-2">Pre-Release Split Verification</h1>
               <p className="text-slate-400 mb-6">Upload &rarr; Detect issues &rarr; Verify &rarr; Calculate payment &rarr; Download PDF</p>
 
               {/* Before/After */}
@@ -875,7 +875,7 @@ export default function AttorneyPortal() {
               <div className="grid md:grid-cols-2 gap-6">
                 {/* LEFT: Upload */}
                 <div className="bg-[#1e293b]/60 rounded-2xl border border-white/10 p-6 ">
-                  <h2 className="text-lg font-bold mb-4 text-black">Step 1: Upload Split Sheet</h2>
+                  <h2 className="text-lg font-bold mb-4 text-white">Step 1: Upload Split Sheet</h2>
                   <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-500/20 transition-all mb-4"
                     onClick={() => { const el = document.getElementById('prvPortalFile') as HTMLInputElement; if(el) el.click(); }}>
                     <p className="font-semibold text-slate-300 mb-1">Drop your split sheet here</p>
@@ -896,7 +896,7 @@ export default function AttorneyPortal() {
                   {splitData.length > 0 && (
                     <div className="bg-[#0f172a] rounded-xl p-4">
                       <div className="flex justify-between items-center mb-3 pb-2 border-b border-white/10">
-                        <span className="font-semibold text-black">Split Table</span>
+                        <span className="font-semibold text-white">Split Table</span>
                         <span className={"text-xs px-2 py-1 rounded-full font-bold " + (splitErrors.length === 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-600')}>{splitErrors.length === 0 ? 'Ready' : splitErrors.length + " issues"}</span>
                       </div>
                       {splitData.map((item: any, i: number) => (
@@ -904,14 +904,14 @@ export default function AttorneyPortal() {
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-300 font-bold text-sm">{(item.name||'?')[0]}</div>
                             <div>
-                              <p className="font-medium text-sm text-black">{item.name||'Unknown'}</p>
+                              <p className="font-medium text-sm text-white">{item.name||'Unknown'}</p>
                               <p className="text-xs text-slate-600">{item.role} - IPI: {item.ipi||'Missing'}</p>
                             </div>
                           </div>
                           <span className={"font-bold text-sm " + (!item.ipi||!item.name ? 'text-red-600' : 'text-indigo-300')}>{item.percentage}%</span>
                         </div>
                       ))}
-                      <div className="text-right text-sm text-slate-500 mt-2">Total: <span className="font-bold text-black">{splitData.reduce((s: number, i: any) => s+(i.percentage||0), 0).toFixed(1)}%</span></div>
+                      <div className="text-right text-sm text-slate-500 mt-2">Total: <span className="font-bold text-white">{splitData.reduce((s: number, i: any) => s+(i.percentage||0), 0).toFixed(1)}%</span></div>
                     </div>
                   )}
                   {splitData.length > 0 && splitErrors.length === 0 && splitStep < 2 && (
@@ -921,18 +921,18 @@ export default function AttorneyPortal() {
 
                 {/* RIGHT: Verify + Payment */}
                 <div className="bg-[#1e293b]/60 rounded-2xl border border-white/10 p-6 ">
-                  <h2 className="text-lg font-bold mb-4 text-black">Steps 2-4: Verify &amp; Calculate Payment</h2>
+                  <h2 className="text-lg font-bold mb-4 text-white">Steps 2-4: Verify &amp; Calculate Payment</h2>
                   {splitStep === 0 && <div className="text-center py-12 text-slate-600"><p>Upload a split sheet to begin</p></div>}
                   {splitStep >= 2 && (
                     <div className="bg-[#0f172a] rounded-xl p-4 mb-4">
-                      <h3 className="font-semibold text-black mb-3">Verification Record</h3>
+                      <h3 className="font-semibold text-white mb-3">Verification Record</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between"><span className="text-slate-500">Verification ID</span><span className="font-mono text-xs text-indigo-700">TRP-{splitVerifyId}</span></div>
-                        <div className="flex justify-between"><span className="text-slate-500">Timestamp</span><span className="text-black">{splitTimestamp}</span></div>
+                        <div className="flex justify-between"><span className="text-slate-500">Timestamp</span><span className="text-white">{splitTimestamp}</span></div>
                         <div className="flex justify-between"><span className="text-slate-500">Status</span><span className="text-green-400 font-bold">Verified &#10003;</span></div>
-                        <div className="flex justify-between"><span className="text-slate-500">Jurisdiction</span><span className="text-black">Georgia Law</span></div>
+                        <div className="flex justify-between"><span className="text-slate-500">Jurisdiction</span><span className="text-white">Georgia Law</span></div>
                       </div>
-                      <div className="mt-3 p-2 bg-indigo-500/10 rounded-lg font-mono text-xs text-indigo-400 break-all">sha256: {splitVerifyId}...monad_sealed</div>
+                      <div className="mt-3 p-2 bg-indigo-500/10 rounded-lg font-mono text-xs text-indigo-400 break-all">sha256: {splitVerifyId}...trp_verified</div>
                     </div>
                   )}
                   {splitStep >= 2 && splitStep < 3 && (
@@ -940,7 +940,7 @@ export default function AttorneyPortal() {
                   )}
                   {splitStep >= 3 && (
                     <div className="bg-[#0f172a] rounded-xl p-4 border border-white/10 mb-4">
-                      <h3 className="font-semibold text-black mb-3">Enter Payment Amount</h3>
+                      <h3 className="font-semibold text-white mb-3">Enter Payment Amount</h3>
                       <div className="flex gap-3 items-center">
                         <div className="relative flex-1">
                           <span className="absolute left-4 top-3 text-slate-600">$</span>
@@ -960,14 +960,14 @@ export default function AttorneyPortal() {
                       <div className="bg-[#1e293b]/60 rounded-lg p-3 mb-3 space-y-2 text-sm border border-white/10">
                         <div className="flex justify-between"><span className="text-slate-500">Gross Royalties</span><span className="font-semibold">${splitPayAmount.toLocaleString()}</span></div>
                         <div className="flex justify-between"><span className="text-slate-500">Tax (25%)</span><span className="font-semibold text-red-600">-${(splitPayAmount*0.25).toLocaleString()}</span></div>
-                        <div className="flex justify-between border-t pt-2"><span className="font-bold text-black">Net Payment</span><span className="font-bold text-green-400">${(splitPayAmount*0.75).toLocaleString()}</span></div>
+                        <div className="flex justify-between border-t pt-2"><span className="font-bold text-white">Net Payment</span><span className="font-bold text-green-400">${(splitPayAmount*0.75).toLocaleString()}</span></div>
                       </div>
                       <div className="space-y-2">
                         {splitData.map((item: any, i: number) => {
                           const gross = splitPayAmount*(item.percentage/100);
                           return (
                             <div key={i} className="flex justify-between items-center py-2 border-b border-green-500/20">
-                              <span className="text-sm text-black">{item.name} ({item.percentage}%)</span>
+                              <span className="text-sm text-white">{item.name} ({item.percentage}%)</span>
                               <div className="text-right">
                                 <div className="font-bold text-green-400 text-sm">${gross.toLocaleString()}</div>
                                 <div className="text-xs text-red-400">-${(gross*0.25).toLocaleString()} tax</div>
