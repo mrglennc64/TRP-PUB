@@ -1,49 +1,357 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import RiskAuditDisplay from '@/components/RiskAuditDisplay';
 
 export default function FreeAuditPage() {
+  return (
+    <Suspense>
+      <FreeAuditContent />
+    </Suspense>
+  );
+}
+
+// ── Types ────────────────────────────────────────────────────────────
+interface Finding {
+  type: string;
+  severity: 'critical' | 'warning' | 'info';
+  title: string;
+  description: string;
+  action: string;
+}
+interface ProResult { status: string; count?: number; results?: any[] }
+interface ForensicResult {
+  isrc: string;
+  song_title: string;
+  artist: string;
+  steps: {
+    probe: { status: string; data: any };
+    verify: { status: string; matched: boolean; mlc_song_code: string | null; iswc: string | null; data: any };
+    detect: { black_box: boolean; severity: string; findings: Finding[]; streaming: { total_listens: number; unique_listeners: number } };
+    pro_scan?: { ascap: ProResult; bmi: ProResult; sesac?: ProResult };
+  };
+  registry_links: Array<{ name: string; org: string; search_type: string; url: string; search_term: string; note: string }>;
+  verdict: { level: string; color: string; summary: string };
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────
+type Tab = 'summary' | 'registries' | 'evidence' | 'legal';
+
+function sha256(str: string): Promise<string> {
+  const buf = new TextEncoder().encode(str);
+  return crypto.subtle.digest('SHA-256', buf).then(b =>
+    Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, '0')).join('')
+  );
+}
+
+function StatusBadge({ status, matched }: { status?: string; matched?: boolean }) {
+  if (matched === true || status === 'found') return (
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-green-900/40 text-green-400 rounded border border-green-800">
+      <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" /> MATCH
+    </span>
+  );
+  if (matched === false || status === 'not_found' || status === 'no_results') return (
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-red-900/30 text-red-400 rounded border border-red-800">
+      <span className="w-1.5 h-1.5 bg-red-400 rounded-full inline-block" /> NOT FOUND
+    </span>
+  );
+  return (
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-slate-700 text-slate-400 rounded">
+      <span className="w-1.5 h-1.5 bg-slate-500 rounded-full inline-block" /> MANUAL
+    </span>
+  );
+}
+
+function SlidePanel({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-[#0f172a] border-l border-slate-700 h-full overflow-y-auto flex flex-col">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-700 sticky top-0 bg-[#0f172a] z-10">
+          <p className="text-sm font-bold text-slate-200">{title}</p>
+          <button onClick={onClose} className="text-slate-500 hover:text-slate-300 transition text-lg leading-none">✕</button>
+        </div>
+        <div className="flex-1 p-5">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Deep Probe Panel ─────────────────────────────────────────────────
+function DeepProbePanel({
+  searchTerm,
+  isrcTerm,
+  deepProbeIsrc,
+  setDeepProbeIsrc,
+  onImport,
+  loading,
+}: {
+  searchTerm: string;
+  isrcTerm?: string;
+  deepProbeIsrc: string;
+  setDeepProbeIsrc: (v: string) => void;
+  onImport: () => void;
+  loading: boolean;
+}) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewName, setPreviewName] = useState('');
+
+  const enc = encodeURIComponent(searchTerm);
+  const isrcEnc = encodeURIComponent(isrcTerm || searchTerm);
+
+  const registries = [
+    {
+      id: 'smpt',
+      name: 'SMPT / MusicBrainz',
+      nodeType: 'DIGITAL',
+      hint: 'Recording registry — search term pre-filled',
+      url: `https://musicbrainz.org/search?query=${enc}&type=recording`,
+    },
+    {
+      id: 'ascap',
+      name: 'ASCAP Repertory',
+      nodeType: 'DIGITAL',
+      hint: 'Performance rights — search term pre-filled',
+      url: `https://www.ascap.com/repertory#/?query=${enc}`,
+    },
+    {
+      id: 'soundexchange',
+      name: 'SoundExchange ISRC',
+      nodeType: 'MANUAL',
+      hint: isrcTerm ? `ISRC deep link: ${isrcTerm}` : `Artist deep link: ${searchTerm}`,
+      url: isrcTerm
+        ? `https://isrc.soundexchange.com/#!/isrc/${isrcEnc}`
+        : `https://isrc.soundexchange.com/#!/search?artistName=${enc}`,
+    },
+    {
+      id: 'bmi',
+      name: 'BMI Repertoire',
+      nodeType: 'MANUAL',
+      hint: 'Copy term below → paste into BMI search',
+      url: 'https://repertoire.bmi.com/',
+    },
+    {
+      id: 'sesac',
+      name: 'SESAC Repertory',
+      nodeType: 'MANUAL',
+      hint: 'Copy term below → paste into SESAC search',
+      url: 'https://www.sesac.com/repertory/',
+    },
+    {
+      id: 'ifpi',
+      name: 'IFPI ISRC',
+      nodeType: 'MANUAL',
+      hint: 'Official ISRC authority',
+      url: 'https://isrc.ifpi.org/',
+    },
+    {
+      id: 'mlc',
+      name: 'The MLC',
+      nodeType: 'DIGITAL',
+      hint: 'US mechanical royalties',
+      url: 'https://www.themlc.com/',
+    },
+    {
+      id: 'cisac',
+      name: 'CISAC',
+      nodeType: 'MANUAL',
+      hint: 'International rights societies',
+      url: 'https://www.cisac.org/',
+    },
+  ];
+
+  const openPreview = (url: string, name: string) => {
+    setPreviewUrl(url);
+    setPreviewName(name);
+  };
+
+  return (
+    <>
+      <div className="mt-4 bg-[#0f172a] border border-indigo-800/50 rounded-lg overflow-hidden">
+        {/* Header */}
+        <div className="px-5 py-4 bg-indigo-950/40 border-b border-indigo-800/40 flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <span className="text-lg mt-0.5">🔭</span>
+            <div>
+              <p className="text-sm font-bold text-indigo-300">Result not found in Primary Cache — Launch SMPT Deep Probe</p>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Search term pre-loaded in every link:{' '}
+                <span className="font-mono text-slate-400">{searchTerm}</span>
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigator.clipboard.writeText(searchTerm)}
+            className="flex-shrink-0 text-[10px] px-2 py-1 border border-slate-700 text-slate-500 hover:text-slate-300 rounded transition mt-1"
+          >
+            Copy term
+          </button>
+        </div>
+
+        {/* Registry rows */}
+        <div className="divide-y divide-slate-800/50">
+          {registries.map(r => (
+            <div key={r.id} className="flex items-center justify-between px-5 py-3 hover:bg-slate-800/20 transition">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-slate-300">{r.name}</p>
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                    r.nodeType === 'DIGITAL'
+                      ? 'bg-green-900/40 text-green-500 border border-green-800/40'
+                      : 'bg-slate-700/50 text-slate-500'
+                  }`}>
+                    {r.nodeType === 'DIGITAL' ? '⚡ Digital Node' : '✋ Manual Node'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 mt-0.5 truncate">{r.hint}</p>
+              </div>
+              <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                <button
+                  onClick={() => openPreview(r.url, r.name)}
+                  className="text-xs px-2 py-1 border border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500 rounded transition"
+                >
+                  Preview ↗
+                </button>
+                <a
+                  href={r.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs px-3 py-1 bg-indigo-700/60 hover:bg-indigo-700 text-indigo-300 rounded transition"
+                >
+                  Open ↗
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Import Manual Finding */}
+        <div className="px-5 py-5 border-t border-slate-700 bg-slate-800/20">
+          <p className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Import Manual Finding</p>
+          <p className="text-xs text-slate-500 mb-3">
+            Found the ISRC in one of the registries above? Paste it here — your tool takes over to run stream counts and Black Box analysis.
+            This creates a verified chain of custody: human-confirmed match, machine-run audit.
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={deepProbeIsrc}
+              onChange={e => setDeepProbeIsrc(e.target.value)}
+              placeholder="Paste ISRC (e.g. USUM71703861)"
+              className="flex-1 px-3 py-2 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition font-mono"
+              onKeyDown={e => { if (e.key === 'Enter') onImport(); }}
+            />
+            <button
+              onClick={onImport}
+              disabled={loading || !deepProbeIsrc.trim()}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white text-sm font-semibold rounded transition whitespace-nowrap"
+            >
+              {loading ? 'Running…' : 'Run Black Box Analysis →'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Iframe preview slide-over */}
+      {previewUrl && (
+        <SlidePanel title={previewName} onClose={() => setPreviewUrl(null)}>
+          <div className="space-y-3 h-full flex flex-col">
+            <div className="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded text-xs text-slate-400 leading-relaxed">
+              Search term <span className="font-mono text-indigo-400">{searchTerm}</span> is pre-loaded in the URL.
+              If the site blocks embedding below, click <strong className="text-slate-300">Open in new tab</strong>.
+            </div>
+            <div className="flex-1 relative min-h-0" style={{ height: '65vh' }}>
+              <iframe
+                src={previewUrl}
+                className="w-full h-full rounded border border-slate-700 bg-white"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+                title={previewName}
+              />
+            </div>
+            <div className="flex gap-2 pt-2">
+              <a
+                href={previewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-2 border border-indigo-700 text-indigo-400 hover:bg-indigo-900/30 rounded transition text-xs font-medium"
+              >
+                Open {previewName} in new tab ↗
+              </a>
+              <button
+                onClick={() => navigator.clipboard.writeText(searchTerm)}
+                className="px-4 py-2 border border-slate-700 text-slate-400 hover:text-slate-200 rounded transition text-xs"
+              >
+                Copy term
+              </button>
+            </div>
+          </div>
+        </SlidePanel>
+      )}
+    </>
+  );
+}
+
+// ── Main ─────────────────────────────────────────────────────────────
+function FreeAuditContent() {
+  const searchParams = useSearchParams();
   const [searchMethod, setSearchMethod] = useState<'isrc' | 'artist'>('isrc');
   const [isrc, setIsrc] = useState('');
   const [artist, setArtist] = useState('');
   const [loading, setLoading] = useState(false);
-  const [auditResult, setAuditResult] = useState<any>(null);
+  const [result, setResult] = useState<ForensicResult | null>(null);
   const [artistResults, setArtistResults] = useState<any[]>([]);
   const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState<Tab>('summary');
+  const [panel, setPanel] = useState<string | null>(null);
+  const [auditHash, setAuditHash] = useState('');
+  const [auditId, setAuditId] = useState('');
+  const [deepProbeIsrc, setDeepProbeIsrc] = useState('');
+
+  useEffect(() => {
+    const q = searchParams.get('isrc');
+    if (!q) return;
+    const clean = q.trim().replace(/-/g, '').toUpperCase();
+    setSearchMethod('isrc');
+    setIsrc(clean);
+    setTimeout(() => document.getElementById('audit-submit-btn')?.click(), 150);
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!result) return;
+    sha256(JSON.stringify(result)).then(h => {
+      setAuditHash(h);
+      setAuditId(`TRP-${Date.now().toString(36).toUpperCase()}`);
+    });
+  }, [result]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setAuditResult(null);
+    setResult(null);
     setArtistResults([]);
+    setActiveTab('summary');
 
     try {
       if (searchMethod === 'isrc') {
-        // --- ISRC path: full metadata audit ---
         const clean = isrc.trim().replace(/-/g, '').toUpperCase();
         if (!clean) throw new Error('Enter an ISRC code');
-
-        const res = await fetch('/api/royalty-finder/audit', {
+        const res = await fetch('/api/forensic/audit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ isrc: clean }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Audit failed');
-        setAuditResult(data);
-
+        setResult(data);
       } else {
-        // --- Artist name path: search SMPT for matching artists ---
         const q = artist.trim();
         if (!q) throw new Error('Enter an artist or song name');
-
         const res = await fetch(`/api/royalty-finder/search/artist?query=${encodeURIComponent(q)}&limit=8`);
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || 'Search failed');
         setArtistResults(data.artists || []);
-        if (!data.artists?.length) setError('No artists found. Try a different spelling or switch to ISRC search.');
+        if (!data.artists?.length) setError('No artists found. Try a different name or use ISRC search.');
       }
     } catch (err: any) {
       setError(err.message);
@@ -52,183 +360,722 @@ export default function FreeAuditPage() {
     }
   };
 
+  const handleImportIsrc = async () => {
+    const clean = deepProbeIsrc.trim().replace(/-/g, '').toUpperCase();
+    if (!clean) return;
+    setIsrc(clean);
+    setSearchMethod('isrc');
+    setLoading(true);
+    setError('');
+    setResult(null);
+    setActiveTab('summary');
+    try {
+      const res = await fetch('/api/forensic/audit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isrc: clean }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Audit failed');
+      setResult(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verdictColor = result?.verdict.color === 'red' ? 'border-red-700 bg-red-950/20'
+    : result?.verdict.color === 'yellow' ? 'border-yellow-700 bg-yellow-950/10'
+    : 'border-green-700 bg-green-950/10';
+
+  const listens = result?.steps.detect.streaming.total_listens ?? 0;
+  const signalLabel = listens >= 1_000_000 ? 'HIGH SIGNAL'
+    : listens >= 100_000 ? 'MEDIUM SIGNAL'
+    : listens > 0 ? 'LOW SIGNAL' : 'NO SIGNAL';
+  const signalClass = listens >= 1_000_000 ? 'text-green-400 bg-green-900/30 border-green-700'
+    : listens >= 100_000 ? 'text-yellow-400 bg-yellow-900/20 border-yellow-700'
+    : listens > 0 ? 'text-orange-400 bg-orange-900/20 border-orange-700'
+    : 'text-slate-500 bg-slate-800/30 border-slate-700';
+  const signalDesc = listens >= 1_000_000 ? 'Active earnings confirmed. High-value claim.'
+    : listens >= 100_000 ? 'Active earnings detected. Claim is viable.'
+    : listens > 0 ? 'Some activity detected. Monitor for growth.'
+    : 'No listening activity found in public data.';
+  const estimatedRevenue = Math.round(listens * 0.003);
+
+  const findingActionLinks: Record<string, { label: string; href: string; external?: boolean }> = {
+    black_box:     { label: 'File MLC Claim →',   href: '/attorney-portal' },
+    mlc_unmatched: { label: 'Submit to MLC →',     href: 'https://www.themlc.com/', external: true },
+    missing_iswc:  { label: 'Generate CWR →',      href: '/cwr-generator' },
+    missing_ipi:   { label: 'Register with PRO →', href: 'https://www.ascap.com/membership/join-ascap', external: true },
+    not_registered:{ label: 'Find Distributor →',  href: '/royalty-finder' },
+    split_audit:   { label: 'Run Split Audit →',   href: '/attorney-portal' },
+  };
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'summary', label: 'Audit Summary' },
+    { id: 'registries', label: 'Registry Nodes' },
+    { id: 'evidence', label: 'Evidence Log' },
+    { id: 'legal', label: 'Legal Package' },
+  ];
+
+  // Build registry node list from result
+  const registryNodes = result ? [
+    {
+      id: 'smpt',
+      name: 'SMPT Global Registry',
+      type: 'ISRC · Recording',
+      status: result.steps.probe.status,
+      matched: result.steps.probe.status === 'found',
+      data: result.steps.probe.data,
+      searchTerm: result.isrc,
+      externalUrl: null,
+    },
+    {
+      id: 'mlc',
+      name: 'The MLC',
+      type: 'Mechanical · US',
+      status: result.steps.verify.status,
+      matched: result.steps.verify.matched,
+      data: result.steps.verify.data,
+      searchTerm: result.isrc,
+      externalUrl: `https://www.themlc.com/`,
+    },
+    {
+      id: 'ascap',
+      name: 'ASCAP',
+      type: 'Performance · US',
+      status: result.steps.pro_scan?.ascap?.status,
+      matched: result.steps.pro_scan?.ascap?.status === 'found',
+      data: result.steps.pro_scan?.ascap,
+      searchTerm: `${result.artist} ${result.song_title}`.trim(),
+      externalUrl: `https://www.ascap.com/repertory#/?query=${encodeURIComponent(result.artist + ' ' + result.song_title)}`,
+    },
+    {
+      id: 'bmi',
+      name: 'BMI',
+      type: 'Performance · US',
+      status: result.steps.pro_scan?.bmi?.status,
+      matched: result.steps.pro_scan?.bmi?.status === 'found',
+      data: result.steps.pro_scan?.bmi,
+      searchTerm: `${result.artist} ${result.song_title}`.trim(),
+      externalUrl: `https://repertoire.bmi.com/`,
+    },
+    {
+      id: 'sesac',
+      name: 'SESAC',
+      type: 'Performance · US',
+      status: result.steps.pro_scan?.sesac?.status,
+      matched: result.steps.pro_scan?.sesac?.status === 'found',
+      data: result.steps.pro_scan?.sesac,
+      searchTerm: `${result.artist} ${result.song_title}`.trim(),
+      externalUrl: `https://www.sesac.com/repertory/`,
+    },
+    {
+      id: 'soundexchange',
+      name: 'SoundExchange',
+      type: 'ISRC · Digital Performance',
+      status: 'manual',
+      matched: undefined,
+      data: null,
+      searchTerm: result.isrc,
+      externalUrl: `https://isrc.soundexchange.com/`,
+    },
+    {
+      id: 'ifpi',
+      name: 'IFPI ISRC',
+      type: 'ISRC · Authority',
+      status: 'manual',
+      matched: undefined,
+      data: null,
+      searchTerm: result.isrc,
+      externalUrl: `https://isrc.ifpi.org/`,
+    },
+    {
+      id: 'cisac',
+      name: 'CISAC',
+      type: 'International Rights',
+      status: 'manual',
+      matched: undefined,
+      data: null,
+      searchTerm: result.isrc,
+      externalUrl: `https://www.cisac.org/`,
+    },
+  ] : [];
+
+  const openPanel = panel ? registryNodes.find(n => n.id === panel) : null;
+
   return (
     <div className="min-h-screen bg-[#0a0f1e] text-white py-12">
       <div className="max-w-4xl mx-auto px-4">
 
         {/* Header */}
         <div className="mb-10">
-          <Link href="/" className="text-xs text-indigo-400 hover:text-indigo-300 mb-4 inline-block">
-            ← Back
-          </Link>
-          <h1 className="text-2xl font-bold text-white mb-2">Free Royalty Audit</h1>
-          <p className="text-sm text-slate-400 max-w-2xl">
-            Enter an ISRC to run a metadata audit across SMPT, ASCAP, BMI, and SoundExchange.
-            Or search by name to find registrations, then look up ISRCs and check MLC.
+          <Link href="/" className="text-xs text-indigo-400 hover:text-indigo-300 mb-4 inline-block">← Back</Link>
+          <h1 className="text-2xl font-bold text-white mb-2">Forensic Royalty Audit</h1>
+          <p className="text-sm text-slate-400 max-w-2xl leading-relaxed">
+            Single-pane command center. One search queries every registry, detects black box claims,
+            and generates a legal evidence package — without leaving this page.
           </p>
         </div>
 
-        {/* Toggle */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => { setSearchMethod('isrc'); setError(''); setArtistResults([]); setAuditResult(null); }}
-            className={`px-5 py-2 rounded text-sm font-medium transition ${
-              searchMethod === 'isrc'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-[#1e293b] text-slate-300 hover:bg-slate-700'
-            }`}
-          >
-            Search by ISRC
-          </button>
-          <button
-            onClick={() => { setSearchMethod('artist'); setError(''); setArtistResults([]); setAuditResult(null); }}
-            className={`px-5 py-2 rounded text-sm font-medium transition ${
-              searchMethod === 'artist'
-                ? 'bg-indigo-600 text-white'
-                : 'bg-[#1e293b] text-slate-300 hover:bg-slate-700'
-            }`}
-          >
-            Search by Artist / Song Name
-          </button>
+        {/* Search */}
+        <div className="flex gap-2 mb-4">
+          {(['isrc', 'artist'] as const).map(m => (
+            <button key={m} onClick={() => { setSearchMethod(m); setError(''); setArtistResults([]); setResult(null); }}
+              className={`px-5 py-2 rounded text-sm font-medium transition ${searchMethod === m ? 'bg-indigo-600 text-white' : 'bg-[#1e293b] text-slate-300 hover:bg-slate-700'}`}>
+              {m === 'isrc' ? 'Search by ISRC' : 'Search by Artist / Song'}
+            </button>
+          ))}
         </div>
 
-        {/* Form */}
         <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-6 mb-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             {searchMethod === 'isrc' ? (
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  ISRC Code
-                </label>
-                <input
-                  type="text"
-                  value={isrc}
-                  onChange={(e) => setIsrc(e.target.value)}
-                  placeholder="e.g. USUM71703861"
-                  className="w-full px-4 py-2.5 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition"
-                />
-                <p className="text-xs text-slate-600 mt-2">
-                  Example: USUM71703861 — Carly Rae Jepsen · Cut to the Feeling
-                </p>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">ISRC Code</label>
+                <input type="text" value={isrc} onChange={e => setIsrc(e.target.value)}
+                  placeholder="CC-XXX-YY-NNNNN"
+                  className="w-full px-4 py-2.5 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition" />
               </div>
             ) : (
               <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  Artist or Song Name
-                </label>
-                <input
-                  type="text"
-                  value={artist}
-                  onChange={(e) => setArtist(e.target.value)}
-                  placeholder="e.g. Carly Rae Jepsen, Drake, SZA..."
-                  className="w-full px-4 py-2.5 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition"
-                />
-                <p className="text-xs text-slate-600 mt-2">
-                  Returns matching artists from SMPT. Select one to look up their ISRCs and MLC registration.
-                </p>
+                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Artist or Song Name</label>
+                <input type="text" value={artist} onChange={e => setArtist(e.target.value)}
+                  placeholder="Enter artist or song name"
+                  className="w-full px-4 py-2.5 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition" />
               </div>
             )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded transition disabled:opacity-50"
-            >
-              {loading
-                ? (searchMethod === 'isrc' ? 'Scanning SMPT...' : 'Searching...')
-                : (searchMethod === 'isrc' ? 'Run Audit' : 'Find Artist')}
+            <button id="audit-submit-btn" type="submit" disabled={loading}
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded transition disabled:opacity-50">
+              {loading ? (searchMethod === 'isrc' ? 'Running forensic audit...' : 'Searching...') : (searchMethod === 'isrc' ? 'Run Forensic Audit' : 'Find Artist')}
             </button>
           </form>
-
           {error && (
-            <div className="mt-4 p-3 bg-red-900/20 border border-red-800 rounded text-sm text-red-300">
-              {error}
-            </div>
+            <>
+              <div className="mt-4 p-3 bg-red-900/20 border border-red-800 rounded text-sm text-red-300">{error}</div>
+              <DeepProbePanel
+                searchTerm={searchMethod === 'isrc' ? isrc : artist}
+                isrcTerm={searchMethod === 'isrc' ? isrc : undefined}
+                deepProbeIsrc={deepProbeIsrc}
+                setDeepProbeIsrc={setDeepProbeIsrc}
+                onImport={handleImportIsrc}
+                loading={loading}
+              />
+            </>
           )}
         </div>
 
-        {/* ISRC Audit Results */}
-        {auditResult && (
-          <div className="mb-6">
-            <RiskAuditDisplay auditResult={auditResult} />
-            {/* MLC cross-check CTA */}
-            <div className="mt-4 p-4 bg-[#0f172a] border border-slate-800 rounded-lg flex items-center justify-between">
+        {/* ── COMMAND CENTER ────────────────────────── */}
+        {result && (
+          <div>
+            {/* Verdict bar */}
+            <div className={`p-4 rounded-lg border mb-4 flex items-center justify-between ${verdictColor}`}>
               <div>
-                <p className="text-sm text-slate-300 font-medium">Check MLC for unclaimed mechanical royalties</p>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  ISRC: {auditResult.isrc} · Song: {auditResult.song_title}
+                <p className={`text-lg font-bold ${result.verdict.color === 'red' ? 'text-red-400' : result.verdict.color === 'yellow' ? 'text-yellow-400' : 'text-green-400'}`}>
+                  {result.verdict.level}
+                  {result.steps.detect.black_box && <span className="ml-3 text-xs font-bold px-2 py-0.5 bg-red-900/60 text-red-300 rounded border border-red-700 animate-pulse">BLACK BOX DETECTED</span>}
                 </p>
+                <p className="text-xs text-slate-400 mt-0.5">{result.verdict.summary}</p>
+                {result.steps.detect.black_box && estimatedRevenue > 0 && (
+                  <p className="text-sm font-bold text-red-300 mt-1">Est. unclaimed: ${estimatedRevenue.toLocaleString()}</p>
+                )}
               </div>
-              <Link
-                href={`/mlc-search?q=${encodeURIComponent(auditResult.isrc)}`}
-                className="flex-shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded transition"
-              >
-                Search MLC →
-              </Link>
+              <div className="text-right text-xs text-slate-500">
+                <p className="font-medium text-slate-300">{result.song_title}</p>
+                <p>{result.artist}</p>
+                <p className="font-mono mt-0.5">{result.isrc}</p>
+              </div>
             </div>
+
+            {/* ── BLACK BOX LEGAL VERDICT ── */}
+            {result.steps.detect.black_box && (
+              <div className="mb-4 border border-red-700/60 rounded-lg overflow-hidden bg-red-950/10">
+                <div className="px-5 py-3 bg-red-900/20 border-b border-red-800/30 flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">🚩</span>
+                    <div>
+                      <p className="text-sm font-bold text-red-300">Audit Verdict: Black Box Detected</p>
+                      <p className="text-[10px] text-red-500/80 uppercase tracking-wide">Status: CRITICAL · Action Required: IMMEDIATE</p>
+                    </div>
+                  </div>
+                  {estimatedRevenue > 0 && (
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-[9px] text-red-600 uppercase tracking-wider">Estimated Unclaimed</p>
+                      <p className="text-xl font-bold text-red-400">${estimatedRevenue.toLocaleString()}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="px-5 py-4 space-y-4 text-xs">
+                  <p className="text-slate-300 leading-relaxed">
+                    The SMPT Protocol has identified a high-confidence revenue leak. This recording is actively generating consumption data, but the payment infrastructure is broken due to a{' '}
+                    <strong className="text-red-400">Metadata Mapping Failure</strong>.
+                  </p>
+
+                  {/* Why flagged */}
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Why This Was Flagged</p>
+                    <div className="space-y-1.5">
+                      {[
+                        ['Registry Disconnect', 'The ISRC is active and earning, but it is not currently linked to a valid ISWC or Writer IPI in the global mechanical database.'],
+                        ['MLC Match Status', 'This work is officially listed as UNMATCHED — no matched owner on record, royalties cannot be distributed.'],
+                        ['Earnings Evidence', `${listens.toLocaleString()} documented listens confirm royalties are being collected by DSPs and held in a Black Box pool.`],
+                      ].map(([k, v]) => (
+                        <div key={k} className="flex gap-2.5 p-2.5 bg-red-900/10 border border-red-800/20 rounded">
+                          <span className="text-red-600 flex-shrink-0 mt-0.5">◆</span>
+                          <div><span className="font-bold text-slate-300">{k}: </span><span className="text-slate-400">{v}</span></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Required legal actions */}
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Required Legal Actions</p>
+                    <div className="space-y-1.5">
+                      {[
+                        { n: '1', label: 'Link Identifiers', desc: 'Register the ISRC-to-ISWC relationship via a CWR file to bridge the data gap.', href: '/cwr-generator', btnLabel: 'Generate CWR →', external: false },
+                        { n: '2', label: 'File Notice of Claim', desc: 'Submit a formal claim to The MLC using the forensic evidence provided in this report.', href: 'https://www.themlc.com/', btnLabel: 'Go to MLC →', external: true },
+                        { n: '3', label: 'Address Splits', desc: 'If MLC shows Partial Claim, resolve the split discrepancy with co-writers to unlock 100% payout.', href: '/attorney-portal', btnLabel: 'Attorney Portal →', external: false },
+                      ].map(a => (
+                        <div key={a.n} className="flex items-start gap-2.5 p-2.5 bg-slate-800/30 rounded">
+                          <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-red-800/50 text-red-300 rounded text-[9px] font-bold mt-0.5">{a.n}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-slate-200">{a.label}</p>
+                            <p className="text-slate-500 mt-0.5 leading-relaxed">{a.desc}</p>
+                          </div>
+                          {a.external ? (
+                            <a href={a.href} target="_blank" rel="noopener noreferrer"
+                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-red-700/60 hover:bg-red-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
+                              {a.btnLabel}
+                            </a>
+                          ) : (
+                            <Link href={a.href}
+                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-red-700/60 hover:bg-red-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
+                              {a.btnLabel}
+                            </Link>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Attorney note */}
+                  <div className="p-3 bg-amber-900/10 border border-amber-800/30 rounded">
+                    <p className="text-[10px] font-bold text-amber-500/80 uppercase mb-1">⚖️ Note to Attorney</p>
+                    <p className="text-slate-500 leading-relaxed">
+                      These funds are subject to a Statute of Limitations. If not claimed within the prescribed holding period, they may be redistributed based on general market share.
+                      {auditId && <span> Evidence ID: <span className="font-mono text-slate-400">{auditId}</span></span>}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Deep Probe — shown when ISRC not in primary registry */}
+            {result.steps.probe.status !== 'found' && (
+              <DeepProbePanel
+                searchTerm={isrc || artist}
+                isrcTerm={isrc || undefined}
+                deepProbeIsrc={deepProbeIsrc}
+                setDeepProbeIsrc={setDeepProbeIsrc}
+                onImport={handleImportIsrc}
+                loading={loading}
+              />
+            )}
+
+            {/* Tab bar */}
+            <div className="flex border-b border-slate-700 mb-4">
+              {tabs.map(t => (
+                <button key={t.id} onClick={() => setActiveTab(t.id)}
+                  className={`px-5 py-2.5 text-xs font-semibold transition border-b-2 -mb-px ${activeTab === t.id ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* ── TAB: AUDIT SUMMARY ── */}
+            {activeTab === 'summary' && (
+              <div className="space-y-3">
+                {/* Steps 1 & 2 */}
+                {[
+                  {
+                    step: '1', label: 'Probe — SMPT Registry',
+                    ok: result.steps.probe.status === 'found',
+                    rows: result.steps.probe.status === 'found' ? [
+                      ['Song', result.steps.probe.data.song_title],
+                      ['Artist', result.steps.probe.data.artist],
+                      ['ISWC', result.steps.probe.data.iswc || '⚠ Not found'],
+                      ['IPI', result.steps.probe.data.ipi || '⚠ Not found'],
+                      ['Work Link', result.steps.probe.data.has_work_relationship ? '✓ Yes' : '⚠ No'],
+                    ] : [['Status', 'ISRC not in global registry']],
+                  },
+                  {
+                    step: '2', label: 'Verify — MLC Mechanical',
+                    ok: result.steps.verify.matched,
+                    rows: [
+                      ['Match Status', result.steps.verify.data.match_status || 'UNMATCHED'],
+                      ['MLC Song Code', result.steps.verify.mlc_song_code || 'N/A'],
+                      ['ISWC (MLC)', result.steps.verify.iswc || 'N/A'],
+                    ],
+                  },
+                ].map(({ step, label, ok, rows }) => (
+                  <div key={step} className="bg-[#0f172a] border border-slate-800 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Step {step}</span>
+                        <span className="text-sm font-medium text-slate-200">{label}</span>
+                      </div>
+                      <StatusBadge matched={ok} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {rows.map(([k, v]) => (
+                        <div key={k} className="bg-slate-800/30 rounded p-2">
+                          <p className="text-[10px] text-slate-500 uppercase">{k}</p>
+                          <p className={`text-xs font-mono mt-0.5 ${String(v).startsWith('⚠') || v === 'N/A' || v === 'UNMATCHED' ? 'text-red-400' : 'text-slate-200'}`}>{v}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Step 3 — Market Activity Probe */}
+                <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Step 3</span>
+                      <span className="text-sm font-medium text-slate-200">Market Activity Probe</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${signalClass}`}>{signalLabel}</span>
+                      <StatusBadge matched={listens > 0} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <div className="bg-slate-800/30 rounded p-2">
+                      <p className="text-[10px] text-slate-500 uppercase">Total Listens</p>
+                      <p className="text-xs font-mono mt-0.5 text-slate-200">{listens.toLocaleString()}</p>
+                      <p className="text-[9px] text-slate-600 mt-0.5">Source: ListenBrainz</p>
+                    </div>
+                    <div className="bg-slate-800/30 rounded p-2">
+                      <p className="text-[10px] text-slate-500 uppercase">Unique Listeners</p>
+                      <p className="text-xs font-mono mt-0.5 text-slate-200">{result.steps.detect.streaming.unique_listeners.toLocaleString()}</p>
+                      <p className="text-[9px] text-slate-600 mt-0.5">Source: ListenBrainz</p>
+                    </div>
+                    {estimatedRevenue > 0 && (
+                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-3">
+                        <p className="text-[10px] text-green-600 uppercase tracking-wider mb-1">Potential Unclaimed Revenue</p>
+                        <p className="text-xl font-bold text-green-400">${estimatedRevenue.toLocaleString()}</p>
+                        <p className="text-[10px] text-slate-600 mt-1">{listens.toLocaleString()} listens × $0.003 avg streaming rate</p>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-600 mb-2">{signalDesc} — Verify activity independently:</p>
+                  <div className="flex gap-2 flex-wrap">
+                    <a href={`https://open.spotify.com/search/${encodeURIComponent(result.artist + ' ' + result.song_title)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-900/20 border border-green-800/30 text-green-400 text-xs rounded hover:bg-green-900/40 transition">
+                      🎵 Verify on Spotify
+                    </a>
+                    <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(result.artist + ' ' + result.song_title)}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/15 border border-red-800/30 text-red-400 text-xs rounded hover:bg-red-900/30 transition">
+                      ▶ Verify on YouTube
+                    </a>
+                  </div>
+                </div>
+
+                {/* Findings with action buttons */}
+                {result.steps.detect.findings.length > 0 && (
+                  <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-4">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Detect — Findings & Actions</p>
+                    <div className="space-y-3">
+                      {result.steps.detect.findings.map((f, i) => {
+                        const fix = findingActionLinks[f.type];
+                        return (
+                          <div key={i} className={`p-3 rounded border-l-2 ${f.severity === 'critical' ? 'bg-red-950/30 border-red-600' : f.severity === 'warning' ? 'bg-yellow-950/20 border-yellow-600' : 'bg-blue-950/20 border-blue-700'}`}>
+                            <p className="text-sm font-semibold text-slate-100 mb-1">{f.title}</p>
+                            <p className="text-xs text-slate-400 mb-2">{f.description}</p>
+                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                              <p className="text-xs text-indigo-400 font-medium flex-1">→ {f.action}</p>
+                              {fix && (
+                                fix.external ? (
+                                  <a href={fix.href} target="_blank" rel="noopener noreferrer"
+                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
+                                    {fix.label}
+                                  </a>
+                                ) : (
+                                  <Link href={fix.href}
+                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
+                                    {fix.label}
+                                  </Link>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── TAB: REGISTRY NODES ── */}
+            {activeTab === 'registries' && (
+              <div className="bg-[#0f172a] border border-slate-800 rounded-lg overflow-hidden">
+                <div className="px-5 py-3 border-b border-slate-800 bg-slate-800/20">
+                  <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">Registry Node Status</p>
+                  <p className="text-[11px] text-slate-600 mt-0.5">All registries probed in a single audit pass</p>
+                </div>
+                <div className="divide-y divide-slate-800/60">
+                  {registryNodes.map(node => (
+                    <div key={node.id} className="flex items-center justify-between px-5 py-3 hover:bg-slate-800/20 transition">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-slate-200">{node.name}</p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 bg-slate-700/60 text-slate-500 rounded uppercase">{node.type}</span>
+                        </div>
+                        <p className="text-[10px] font-mono text-slate-600 mt-0.5 truncate">{node.searchTerm}</p>
+                      </div>
+                      <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                        <StatusBadge status={node.status} matched={node.matched} />
+                        {(node.data?.results?.length > 0 || node.data?.status === 'found') && (
+                          <button onClick={() => setPanel(node.id)}
+                            className="text-xs px-2 py-1 border border-slate-600 text-slate-400 hover:text-slate-200 hover:border-slate-400 rounded transition">
+                            View Data
+                          </button>
+                        )}
+                        {node.externalUrl && (
+                          <a href={node.externalUrl} target="_blank" rel="noopener noreferrer"
+                            className="text-xs px-2 py-1 border border-indigo-800 text-indigo-400 hover:border-indigo-500 rounded transition">
+                            Open ↗
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── TAB: EVIDENCE LOG ── */}
+            {activeTab === 'evidence' && (
+              <div className="space-y-3">
+                <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-5">
+                  <p className="text-xs font-bold tracking-widest text-slate-400 uppercase mb-4">Audit Identity</p>
+                  <div className="space-y-3 font-mono text-xs">
+                    {[
+                      ['Audit ID', auditId],
+                      ['ISRC', result.isrc],
+                      ['Song', result.song_title],
+                      ['Artist', result.artist],
+                      ['Timestamp', new Date().toISOString()],
+                      ['Verdict', result.verdict.level],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex gap-4 border-b border-slate-800/50 pb-2">
+                        <span className="text-slate-500 w-24 flex-shrink-0">{k}</span>
+                        <span className="text-slate-200 break-all">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">Streaming Evidence</p>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${signalClass}`}>{signalLabel}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-slate-800/30 rounded p-3 text-center">
+                      <p className="text-xs text-slate-500 mb-1">Total Listens</p>
+                      <p className="text-2xl font-bold text-slate-100">{listens.toLocaleString()}</p>
+                      <p className="text-[10px] text-slate-600 mt-1">Source: ListenBrainz</p>
+                    </div>
+                    <div className="bg-slate-800/30 rounded p-3 text-center">
+                      <p className="text-xs text-slate-500 mb-1">Unique Listeners</p>
+                      <p className="text-2xl font-bold text-slate-100">{result.steps.detect.streaming.unique_listeners.toLocaleString()}</p>
+                      <p className="text-[10px] text-slate-600 mt-1">Source: ListenBrainz</p>
+                    </div>
+                    {estimatedRevenue > 0 && (
+                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-4 text-center">
+                        <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue</p>
+                        <p className="text-3xl font-bold text-green-400">${estimatedRevenue.toLocaleString()}</p>
+                        <p className="text-[10px] text-slate-600 mt-2">{listens.toLocaleString()} listens × $0.003 avg streaming rate</p>
+                        <p className="text-[10px] text-slate-700 mt-1">{signalDesc}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">SHA-256 Verification Hash</p>
+                    <button onClick={() => navigator.clipboard.writeText(auditHash)}
+                      className="text-[10px] px-2 py-0.5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition">
+                      Copy
+                    </button>
+                  </div>
+                  <p className="font-mono text-[10px] text-indigo-400 break-all leading-relaxed">{auditHash}</p>
+                  <p className="text-[10px] text-slate-600 mt-2">Hash of full audit payload · immutable chain-of-custody fingerprint</p>
+                </div>
+              </div>
+            )}
+
+            {/* ── TAB: LEGAL PACKAGE ── */}
+            {activeTab === 'legal' && (
+              <div className="space-y-3">
+                <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-5">
+                  <p className="text-xs font-bold tracking-widest text-slate-400 uppercase mb-4">Claim Documentation</p>
+                  <div className="space-y-2 text-xs text-slate-400">
+                    {[
+                      ['Recording Title', result.song_title],
+                      ['Artist', result.artist],
+                      ['ISRC', result.isrc],
+                      ['ISWC', result.steps.probe.data?.iswc || result.steps.verify.iswc || 'Not registered'],
+                      ['MLC Song Code', result.steps.verify.mlc_song_code || 'Not found'],
+                      ['MLC Match Status', result.steps.verify.matched ? 'MATCHED' : 'UNMATCHED — Claim eligible'],
+                      ['Black Box Claim', result.steps.detect.black_box ? 'YES — Active earnings detected without matched owner' : 'No'],
+                      ['IPI Number', result.steps.probe.data?.ipi || 'Not on record'],
+                      ['Streaming Evidence', `${result.steps.detect.streaming.total_listens.toLocaleString()} listens documented`],
+                      ['Audit ID', auditId],
+                      ['Audit Hash', auditHash.slice(0, 32) + '…'],
+                    ].map(([k, v]) => (
+                      <div key={k} className="flex gap-4 border-b border-slate-800/50 pb-2">
+                        <span className="text-slate-500 w-40 flex-shrink-0">{k}</span>
+                        <span className={`font-mono ${String(v).includes('Claim eligible') || String(v).startsWith('YES') ? 'text-red-400 font-bold' : 'text-slate-300'}`}>{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-5">
+                  <p className="text-xs font-bold tracking-widest text-slate-400 uppercase mb-3">Next Steps</p>
+                  <div className="space-y-2">
+                    {result.steps.detect.findings.filter(f => f.severity !== 'info').map((f, i) => (
+                      <div key={i} className="flex gap-3 p-3 bg-slate-800/30 rounded">
+                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 h-fit ${f.severity === 'critical' ? 'bg-red-900/50 text-red-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                          {i + 1}
+                        </span>
+                        <p className="text-xs text-slate-300">{f.action}</p>
+                      </div>
+                    ))}
+                    {result.steps.detect.findings.filter(f => f.severity !== 'info').length === 0 && (
+                      <p className="text-xs text-green-400">No critical actions required. Registration chain appears intact.</p>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => window.open(`/api/lawyer-pdf/generate`, '_blank')}
+                  className="w-full py-3 bg-indigo-700 hover:bg-indigo-600 text-white text-sm font-semibold rounded transition flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                  Generate Legal Evidence Package (PDF)
+                </button>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Artist Search Results */}
+        {/* Artist search results */}
         {artistResults.length > 0 && (
-          <div className="bg-[#0f172a] border border-slate-800 rounded-lg overflow-hidden mb-6">
+          <div className="bg-[#0f172a] border border-slate-800 rounded-lg overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-800 bg-slate-800/30">
-              <p className="text-xs font-bold tracking-wider text-slate-400 uppercase">
-                {artistResults.length} Artists Found — Select to check MLC &amp; ISRC registrations
-              </p>
+              <p className="text-xs font-bold tracking-wider text-slate-400 uppercase">{artistResults.length} Artists Found — Select to run forensic audit</p>
             </div>
             <div className="divide-y divide-slate-800">
               {artistResults.map((a: any) => (
                 <div key={a.mbid} className="flex items-center justify-between px-4 py-3 hover:bg-slate-800/20 transition">
                   <div>
                     <p className="text-sm font-medium text-slate-200">{a.name}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      {[a.type, a.country, a.disambiguation].filter(Boolean).join(' · ')}
-                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5">{[a.type, a.country, a.disambiguation].filter(Boolean).join(' · ')}</p>
                     <p className="text-[10px] font-mono text-slate-700 mt-0.5">MBID: {a.mbid}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-                    {/* MLC lookup by name */}
-                    <Link
-                      href={`/mlc-search?q=${encodeURIComponent(a.name)}`}
-                      className="px-3 py-1.5 bg-amber-600/80 hover:bg-amber-600 text-white text-xs font-semibold rounded transition"
-                    >
-                      MLC →
-                    </Link>
-                    {/* Royalty finder for full metadata */}
-                    <Link
-                      href={`/royalty-finder?q=${encodeURIComponent(a.name)}`}
-                      className="px-3 py-1.5 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-semibold rounded transition"
-                    >
-                      ISRCs →
-                    </Link>
+                    <Link href={`/mlc-search?q=${encodeURIComponent(a.name)}`}
+                      className="px-3 py-1.5 bg-amber-600/80 hover:bg-amber-600 text-white text-xs font-semibold rounded transition">MLC →</Link>
+                    <Link href={`/royalty-finder?q=${encodeURIComponent(a.name)}`}
+                      className="px-3 py-1.5 bg-indigo-600/80 hover:bg-indigo-600 text-white text-xs font-semibold rounded transition">ISRCs →</Link>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="px-4 py-3 border-t border-slate-800 bg-slate-800/10">
-              <p className="text-xs text-slate-600">
-                Once you have an ISRC, come back and run a full metadata audit using "Search by ISRC" above.
-              </p>
-            </div>
           </div>
         )}
 
-        {/* Bottom info row */}
+        {/* Bottom info */}
         <div className="grid grid-cols-3 gap-4 mt-8 text-center">
-          {[
-            ['SMPT', 'Global recording registry · 2M+ artists'],
-            ['MLC Database', 'US mechanical royalties · 5.7M+ songs'],
-            ['PRO Coverage', 'ASCAP · BMI · SESAC · SOCAN · PRS'],
-          ].map(([title, sub]) => (
-            <div key={title} className="bg-[#0f172a] border border-slate-800 p-4 rounded-lg">
-              <p className="text-xs font-semibold text-slate-300">{title}</p>
-              <p className="text-[11px] text-slate-600 mt-1">{sub}</p>
+          {[['SMPT', 'Global recording registry · Step 1 Probe'], ['The MLC', 'US mechanical royalties · Step 2 Verify'], ['PRO Registries', 'ASCAP · BMI · SESAC · SOCAN · PRS']].map(([t, s]) => (
+            <div key={t} className="bg-[#0f172a] border border-slate-800 p-4 rounded-lg">
+              <p className="text-xs font-semibold text-slate-300">{t}</p>
+              <p className="text-[11px] text-slate-600 mt-1">{s}</p>
             </div>
           ))}
         </div>
-
       </div>
+
+      {/* Slide-over panel */}
+      {panel && openPanel && (
+        <SlidePanel title={openPanel.name} onClose={() => setPanel(null)}>
+          <div className="space-y-3 text-xs">
+            <div>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Search Term</p>
+              <p className="font-mono text-indigo-400">{openPanel.searchTerm}</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Status</p>
+              <StatusBadge status={openPanel.status} matched={openPanel.matched} />
+            </div>
+
+            {/* SMPT data */}
+            {openPanel.id === 'smpt' && openPanel.data?.status === 'found' && (
+              <div className="space-y-2 mt-4">
+                {[['Recording ID', openPanel.data.recording_id], ['ISWC', openPanel.data.iswc || 'Not found'], ['IPI', openPanel.data.ipi || 'Not found'], ['ISNI', openPanel.data.isni || 'Not found'], ['Work Link', openPanel.data.has_work_relationship ? 'Yes' : 'No']].map(([k, v]) => (
+                  <div key={k} className="flex justify-between border-b border-slate-800 pb-2">
+                    <span className="text-slate-500">{k}</span>
+                    <span className="font-mono text-slate-200">{v}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* MLC data */}
+            {openPanel.id === 'mlc' && (
+              <div className="space-y-2 mt-4">
+                {[['Match Status', openPanel.data?.match_status], ['MLC Song Code', openPanel.data?.mlc_song_code || 'N/A'], ['ISWC', openPanel.data?.iswc || 'N/A']].map(([k, v]) => (
+                  <div key={k} className="flex justify-between border-b border-slate-800 pb-2">
+                    <span className="text-slate-500">{k}</span>
+                    <span className={`font-mono ${v === 'UNMATCHED' ? 'text-red-400' : 'text-slate-200'}`}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* PRO data (ASCAP/BMI/SESAC) */}
+            {['ascap', 'bmi', 'sesac'].includes(openPanel.id) && openPanel.data?.results?.length > 0 && (
+              <div className="mt-4 space-y-3">
+                {openPanel.data.results.map((w: any, i: number) => (
+                  <div key={i} className="bg-slate-800/40 rounded p-3">
+                    <p className="font-medium text-slate-200">{w.title}</p>
+                    {w.iswc && <p className="font-mono text-indigo-400 mt-1">ISWC: {w.iswc}</p>}
+                    {w.writers?.filter(Boolean).length > 0 && <p className="text-slate-500 mt-1">{w.writers.filter(Boolean).join(', ')}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {openPanel.externalUrl && (
+              <a href={openPanel.externalUrl} target="_blank" rel="noopener noreferrer"
+                className="mt-6 flex items-center justify-center gap-2 w-full py-2 border border-slate-600 text-slate-400 hover:text-slate-200 hover:border-slate-400 rounded transition text-xs">
+                Open {openPanel.name} ↗
+              </a>
+            )}
+          </div>
+        </SlidePanel>
+      )}
     </div>
   );
 }
