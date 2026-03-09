@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Footer from './components/Footer';
 
 export default function HomePage() {
   const [query, setQuery] = useState('');
@@ -29,6 +30,7 @@ export default function HomePage() {
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm">
             <Link href="/royalty-finder" className="text-slate-400 hover:text-slate-200 transition">Royalty Finder</Link>
+            <Link href="/cwr-generator" className="text-slate-400 hover:text-slate-200 transition">CWR Generator</Link>
             <Link href="/label" className="text-slate-400 hover:text-slate-200 transition">Label Portal</Link>
             <Link href="/for-attorneys" className="text-amber-400 hover:text-amber-300 transition">For Attorneys</Link>
             <Link href="/free-audit" className="text-indigo-400 hover:text-indigo-300 transition font-medium">Run Audit →</Link>
@@ -130,7 +132,7 @@ export default function HomePage() {
               </h2>
               <p className="text-sm text-slate-400 leading-relaxed max-w-xl">
                 Every diagnostic generates a hash-verified evidence package with immutable ownership
-                chains, split discrepancy analysis, and multi-node PRO registry cross-references —
+                chains, split discrepancy analysis, and multi-node registry verification —
                 engineered for pre-dispute resolution and civil litigation.
               </p>
             </div>
@@ -170,11 +172,12 @@ export default function HomePage() {
               </thead>
               <tbody className="divide-y divide-slate-800/70">
                 {[
-                  ['Ownership Verification', 'SMPT + PRO cross-reference', 'Signed PDF, hash-verified'],
+                  ['Ownership Verification', 'MusicBrainz SMPT probe', 'Signed PDF, hash-verified'],
                   ['Split Discrepancy Analysis', 'Ledger vs. market consumption data', '15–40% avg. gap documented'],
                   ['Forensic Discovery', 'Automated schema parsing engine', 'Minutes vs. months manually'],
-                  ['Black Box Royalties', 'PRO unmatched pool query', 'Claim documentation package'],
+                  ['Black Box Royalties', 'ISRC + ListenBrainz gap analysis', 'Claim documentation package'],
                   ['ISRC Gap Detection', 'Registry existence check', 'Missing registration report'],
+                  ['Automated CWR Registration', 'Multi-Node Registry Verification', 'Audit-Ready Registration File'],
                 ].map(([service, source, deliverable], i) => (
                   <tr key={i} className="hover:bg-slate-800/20 transition">
                     <td className="px-4 py-3 text-slate-200">{service}</td>
@@ -227,22 +230,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-10 border-t border-slate-800 text-slate-600 text-xs">
-        <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row justify-between gap-4">
-          <div className="flex flex-wrap gap-6">
-            <Link href="/privacy" className="hover:text-slate-400 transition">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-slate-400 transition">Terms of Use</Link>
-            <Link href="/label" className="hover:text-slate-400 transition">Label Portal</Link>
-            <Link href="/for-attorneys" className="hover:text-slate-400 transition">For Attorneys</Link>
-            <Link href="/contact" className="hover:text-slate-400 transition">Contact</Link>
-          </div>
-          <div className="text-right">
-            <p>© 2026 TrapRoyaltiesPro</p>
-            <p className="text-slate-700 mt-1">MusicBrainz · ListenBrainz · SMPT Protocol · usesmpt.com</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );
