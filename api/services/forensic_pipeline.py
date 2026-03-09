@@ -1,10 +1,15 @@
 """
 Forensic Royalty Pipeline
 ─────────────────────────
-Step 1  PROBE   — SMPT/IFPI: Find official recording owner, ISWC, IPI
-Step 2  VERIFY  — MLC: Check if mechanical work is linked / matched
-Step 3  STREAMS — ListenBrainz: Confirm active earnings evidence
-Step 4  DETECT  — Black Box: unmatched MLC + active SoundExchange earnings
+HONEST DATA SOURCES:
+  Step 1  PROBE    — MusicBrainz: real ISRC → recording metadata, ISWC, IPI
+  Step 2  STREAMS  — ListenBrainz: recording-level listen count (real data)
+  Step 3  DETECT   — Gap analysis from confirmed SMPT data only (no fake API calls)
+  Step 4  MANUAL   — Pre-filled deep links for MLC / ASCAP / BMI / SESAC / SoundExchange
+
+NOTE: MLC, ASCAP, BMI, SESAC have no public APIs.
+      We do NOT fake these checks. We surface the gaps we CAN confirm,
+      then give attorneys pre-filled links to verify the rest.
 """
 import asyncio
 import logging
@@ -16,7 +21,7 @@ from urllib.parse import quote
 import requests
 
 logger = logging.getLogger(__name__)
-_executor = ThreadPoolExecutor(max_workers=6)
+_executor = ThreadPoolExecutor(max_workers=4)
 
 _HEADERS = {
     "User-Agent": "TrapRoyaltiesPro/1.0 (contact@traproyaltiespro.com)",
@@ -26,22 +31,22 @@ _HEADERS = {
 # Revenue rate constants (per stream)
 _RATE_LOW  = 0.0007   # conservative mechanical only
 _RATE_MID  = 0.003    # industry average blended
-_RATE_HIGH = 0.004    # full stack (mechanical + performance + SoundExchange)
+_RATE_HIGH = 0.004    # full stack
 
-# Statute of limitations thresholds (years)
 _SOL_URGENT_YEARS  = 3.0
 _SOL_WARNING_YEARS = 2.5
+
 
 def _now_iso() -> str:
     return datetime.now(timezone.utc).strftime("%B %d, %Y at %H:%M UTC")
 
 
 # ─────────────────────────────────────────────
-# STEP 1 · PROBE — SMPT (MusicBrainz) / IFPI
+# STEP 1 · PROBE — MusicBrainz (only real open registry)
 # ─────────────────────────────────────────────
 
 def _probe_smpt(isrc: str) -> Dict:
-    """Query global SMPT registry for official recording owner and identifiers."""
+    """Query MusicBrainz for real recording metadata via ISRC."""
     try:
         import musicbrainzngs as mb
         mb.set_useragent("TrapRoyaltiesPro", "1.0", "contact@traproyaltiespro.com")
@@ -52,9 +57,10 @@ def _probe_smpt(isrc: str) -> Dict:
         if not recordings:
             return {
                 "status": "not_found",
-                "message": "ISRC not registered in SMPT global registry",
+                "message": "ISRC not found in MusicBrainz global registry.",
+                "what_this_means": "Either the ISRC was never submitted to MusicBrainz, or it was issued by a distributor that does not share data publicly. This does not mean the song doesn't exist — it means there is no open registry record.",
                 "checked_at": _now_iso(),
-                "source": "SMPT / MusicBrainz",
+                "source": "MusicBrainz (musicbrainz.org)",
             }
 
         rec = recordings[0]
@@ -63,7 +69,6 @@ def _probe_smpt(isrc: str) -> Dict:
         duration_ms = rec.get("length")
         first_release_date = rec.get("first-release-date")
 
-        # Artist credit
         artist_name, artist_mbid = "Unknown", None
         if rec.get("artist-credit"):
             ac = rec["artist-credit"][0]
@@ -72,7 +77,6 @@ def _probe_smpt(isrc: str) -> Dict:
                 artist_name = a.get("name", "Unknown")
                 artist_mbid = a.get("id")
 
-        # Work relationship (ISWC) + artist relations
         iswc, has_work_rel = None, False
         if recording_id:
             try:
@@ -93,7 +97,6 @@ def _probe_smpt(isrc: str) -> Dict:
             except Exception:
                 pass
 
-        # IPI / ISNI
         ipi, isni = None, None
         if artist_mbid:
             try:
@@ -119,91 +122,96 @@ def _probe_smpt(isrc: str) -> Dict:
             "duration_ms": duration_ms,
             "first_release_date": first_release_date,
             "checked_at": _now_iso(),
-            "source": "SMPT / MusicBrainz",
+            "source": "MusicBrainz (musicbrainz.org)",
         }
 
     except Exception as e:
         logger.error(f"PROBE error: {e}")
-        return {"status": "error", "message": str(e), "checked_at": _now_iso(), "source": "SMPT / MusicBrainz"}
+        return {
+            "status": "error",
+            "message": str(e),
+            "checked_at": _now_iso(),
+            "source": "MusicBrainz (musicbrainz.org)",
+        }
 
 
 # ─────────────────────────────────────────────
-# STEP 2 · VERIFY — MLC Mechanical Linkage
+# STEP 2 · STREAMS — ListenBrainz (real listen data)
+# Recording-level first, artist-level fallback
 # ─────────────────────────────────────────────
 
-def _verify_mlc(isrc: str, probe: Dict) -> Dict:
-    """Query The MLC to verify mechanical work is linked and matched."""
-    endpoints = [
-        ("GET", "https://api.themlc.com/search", {"searchTerm": isrc, "types": "work", "pageSize": 5}),
-        ("GET", "https://api.themlc.com/works", {"query": isrc, "limit": 5}),
-        ("GET", "https://api.themlc.com/v1/works/search", {"q": isrc, "limit": 5}),
-    ]
-
-    for method, url, params in endpoints:
+def _get_streaming_stats(recording_id: Optional[str], artist_mbid: Optional[str]) -> Dict:
+    """
+    Try recording-level listen stats first (more accurate for attorneys).
+    Falls back to artist-level if recording MBID not available.
+    """
+    # Try recording-level first
+    if recording_id:
         try:
-            r = requests.get(url, params=params, headers=_HEADERS, timeout=10)
+            r = requests.get(
+                f"https://api.listenbrainz.org/1/popularity/recording",
+                params={"recording_mbid": recording_id},
+                timeout=5,
+            )
             if r.status_code == 200:
                 data = r.json()
-                works = (
-                    data.get("works")
-                    or data.get("results")
-                    or data.get("items")
-                    or []
-                )
-                if works:
-                    w = works[0]
-                    ms = w.get("matchStatus", "MATCHED")
+                if data and isinstance(data, list) and len(data) > 0:
                     return {
-                        "status": "found",
-                        "matched": ms != "UNMATCHED",
-                        "match_status": ms,
-                        "mlc_song_code": w.get("songCode") or w.get("id"),
-                        "iswc": w.get("iswc"),
-                        "title": w.get("title"),
-                        "total_shares": w.get("totalShares"),
+                        "total_listens": data[0].get("total_listen_count", 0),
+                        "unique_listeners": data[0].get("total_user_count", 0),
+                        "data_level": "recording",
                         "checked_at": _now_iso(),
-                        "source": "The MLC (themlc.com)",
+                        "source": "ListenBrainz (listenbrainz.org) — recording-level",
+                    }
+            # Try alternate endpoint
+            r2 = requests.get(
+                "https://api.listenbrainz.org/1/stats/recording",
+                params={"recording_mbid": recording_id, "count": 1},
+                timeout=5,
+            )
+            if r2.status_code == 200:
+                data2 = r2.json()
+                recordings = data2.get("payload", {}).get("recordings", [])
+                if recordings:
+                    return {
+                        "total_listens": recordings[0].get("listen_count", 0),
+                        "unique_listeners": 0,
+                        "data_level": "recording",
+                        "checked_at": _now_iso(),
+                        "source": "ListenBrainz (listenbrainz.org) — recording-level",
                     }
         except Exception:
-            continue
+            pass
+
+    # Fallback: artist-level (labeled honestly)
+    if artist_mbid:
+        try:
+            r = requests.post(
+                "https://api.listenbrainz.org/1/popularity/artist",
+                json={"artist_mbids": [artist_mbid]},
+                timeout=5,
+            )
+            if r.status_code == 200:
+                stats = r.json()
+                if stats:
+                    return {
+                        "total_listens": stats[0].get("listen_count", 0),
+                        "unique_listeners": stats[0].get("listener_count", 0),
+                        "data_level": "artist",
+                        "data_note": "Artist-level estimate — actual track listens may be lower",
+                        "checked_at": _now_iso(),
+                        "source": "ListenBrainz (listenbrainz.org) — artist-level estimate",
+                    }
+        except Exception:
+            pass
 
     return {
-        "status": "not_found",
-        "matched": False,
-        "match_status": "UNMATCHED",
-        "mlc_song_code": None,
-        "iswc": None,
-        "title": None,
+        "total_listens": 0,
+        "unique_listeners": 0,
+        "data_level": "none",
         "checked_at": _now_iso(),
-        "source": "The MLC (themlc.com)",
+        "source": "ListenBrainz (listenbrainz.org)",
     }
-
-
-# ─────────────────────────────────────────────
-# STEP 3 · STREAMS — ListenBrainz (earnings evidence)
-# ─────────────────────────────────────────────
-
-def _get_streaming_stats(artist_mbid: Optional[str]) -> Dict:
-    if not artist_mbid:
-        return {"total_listens": 0, "unique_listeners": 0, "checked_at": _now_iso(), "source": "ListenBrainz"}
-    try:
-        r = requests.post(
-            "https://api.listenbrainz.org/1/popularity/artist",
-            json={"artist_mbids": [artist_mbid]},
-            timeout=5,
-        )
-        if r.status_code == 200:
-            stats = r.json()
-            if stats:
-                return {
-                    "total_listens": stats[0].get("listen_count", 0),
-                    "unique_listeners": stats[0].get("listener_count", 0),
-                    "checked_at": _now_iso(),
-                    "source": "ListenBrainz",
-                }
-    except Exception:
-        pass
-    return {"total_listens": 0, "unique_listeners": 0, "checked_at": _now_iso(), "source": "ListenBrainz"}
 
 
 # ─────────────────────────────────────────────
@@ -211,14 +219,10 @@ def _get_streaming_stats(artist_mbid: Optional[str]) -> Dict:
 # ─────────────────────────────────────────────
 
 def _check_statute(first_release_date: Optional[str]) -> Optional[Dict]:
-    """
-    Check if the claim window is approaching or expired.
-    17 U.S.C. § 507(b): 3-year civil copyright statute of limitations.
-    """
+    """17 U.S.C. § 507(b): 3-year civil copyright statute of limitations."""
     if not first_release_date:
         return None
     try:
-        # Parse partial dates (YYYY, YYYY-MM, YYYY-MM-DD)
         parts = first_release_date.split("-")
         year = int(parts[0])
         month = int(parts[1]) if len(parts) > 1 else 1
@@ -234,9 +238,9 @@ def _check_statute(first_release_date: Optional[str]) -> Optional[Dict]:
                 "color": "red",
                 "message": (
                     f"This recording was released {age_years:.1f} years ago. "
-                    "Under 17 U.S.C. § 507(b), the 3-year civil copyright statute of limitations "
-                    "may have passed for claims predating this window. File immediately or consult "
-                    "counsel about tolling arguments."
+                    "Under 17 U.S.C. § 507(b), the 3-year civil copyright statute "
+                    "of limitations may have passed for claims predating this window. "
+                    "File immediately or consult counsel regarding tolling arguments."
                 ),
                 "release_date": first_release_date,
                 "age_years": round(age_years, 1),
@@ -245,12 +249,13 @@ def _check_statute(first_release_date: Optional[str]) -> Optional[Dict]:
             remaining_months = round((_SOL_URGENT_YEARS - age_years) * 12)
             return {
                 "level": "warning",
-                "label": f"STATUTE WARNING — {remaining_months} months remaining",
+                "label": f"STATUTE WARNING — ~{remaining_months} months remaining",
                 "color": "yellow",
                 "message": (
                     f"This recording is {age_years:.1f} years old. "
-                    f"Approximately {remaining_months} months remain before the 3-year statute "
-                    "of limitations (17 U.S.C. § 507(b)) may limit recovery. Prioritize this claim."
+                    f"Approximately {remaining_months} months remain before the 3-year "
+                    "statute of limitations (17 U.S.C. § 507(b)) may limit recovery. "
+                    "Prioritize this claim."
                 ),
                 "release_date": first_release_date,
                 "age_years": round(age_years, 1),
@@ -261,39 +266,40 @@ def _check_statute(first_release_date: Optional[str]) -> Optional[Dict]:
 
 
 # ─────────────────────────────────────────────
-# STEP 4 · DETECT — Black Box + Gap Analysis
+# STEP 3 · DETECT — Real gap analysis from confirmed data only
 # ─────────────────────────────────────────────
 
-def _detect_black_box(probe: Dict, verify: Dict, streaming: Dict) -> Dict:
+def _detect_gaps(probe: Dict, streaming: Dict) -> Dict:
+    """
+    Detect gaps from CONFIRMED data sources only.
+    We do NOT flag MLC/ASCAP/BMI as 'not found' because we never actually connected.
+    We surface what MusicBrainz tells us is missing.
+    """
     findings: List[Dict] = []
-    black_box_detected = False
 
     is_registered = probe.get("status") == "found"
-    mlc_matched = verify.get("matched", False)
-    has_iswc = bool(probe.get("iswc") or verify.get("iswc"))
+    has_iswc = bool(probe.get("iswc"))
     has_ipi = bool(probe.get("ipi"))
     has_work_rel = probe.get("has_work_relationship", False)
     listens = streaming.get("total_listens", 0)
-    active_streams = listens > 0
+    data_level = streaming.get("data_level", "none")
 
-    # Revenue range calculation
     revenue_low  = round(listens * _RATE_LOW)
     revenue_mid  = round(listens * _RATE_MID)
     revenue_high = round(listens * _RATE_HIGH)
 
-    # Confidence factor based on match quality
-    if is_registered and mlc_matched and has_iswc:
+    if is_registered and has_iswc and has_ipi:
         confidence = 1.0
-        confidence_label = "HIGH — Exact ISRC match across registries"
-    elif is_registered and mlc_matched:
-        confidence = 0.8
-        confidence_label = "MEDIUM — ISRC matched, ISWC pending"
+        confidence_label = "HIGH — ISRC registered, ISWC present, IPI on record"
+    elif is_registered and (has_iswc or has_ipi):
+        confidence = 0.75
+        confidence_label = "MEDIUM — Partial registration data"
     elif is_registered:
-        confidence = 0.65
-        confidence_label = "MEDIUM — Recording found, MLC unmatched"
+        confidence = 0.5
+        confidence_label = "LOW — Recording found but composition identifiers missing"
     else:
-        confidence = 0.4
-        confidence_label = "LOW — No registry match, estimate based on artist streams"
+        confidence = 0.2
+        confidence_label = "VERY LOW — No open registry record found"
 
     severity_rank = {"clear": 0, "warning": 1, "critical": 2}
     severity = "clear"
@@ -303,101 +309,78 @@ def _detect_black_box(probe: Dict, verify: Dict, streaming: Dict) -> Dict:
         if severity_rank[s] > severity_rank[severity]:
             severity = s
 
-    # ── BLACK BOX: MLC unmatched + active stream evidence
-    if not mlc_matched and active_streams:
-        black_box_detected = True
-        bump("critical")
-        findings.append({
-            "type": "black_box",
-            "severity": "critical",
-            "title": "Black Box Royalties Detected",
-            "description": (
-                f"This recording has {listens:,} documented streams but MLC shows no matched "
-                "mechanical work. These royalties are sitting in the unmatched pool — claimable "
-                "with proper copyright chain documentation."
-            ),
-            "action": "File a claim with The MLC. Provide ISRC, ISWC, and ownership chain.",
-            "checked_at": verify.get("checked_at", _now_iso()),
-            "source": "The MLC + ListenBrainz",
-            "estimated_low": revenue_low,
-            "estimated_high": revenue_high,
-        })
-
-    # ── MLC not found but no stream evidence
-    elif not mlc_matched:
-        bump("warning")
-        findings.append({
-            "type": "mlc_unmatched",
-            "severity": "warning",
-            "title": "Mechanical Work Not Matched in MLC",
-            "description": "The MLC does not have a matched mechanical license for this recording. "
-                           "Mechanical royalties from on-demand streaming cannot be distributed.",
-            "action": "Submit this work to The MLC with ISRC and copyright documentation.",
-            "checked_at": verify.get("checked_at", _now_iso()),
-            "source": "The MLC (themlc.com)",
-            "estimated_low": revenue_low,
-            "estimated_high": revenue_high,
-        })
-
-    # ── No ISWC → mechanical royalties blocked
-    if is_registered and not has_iswc:
-        bump("warning")
-        findings.append({
-            "type": "missing_iswc",
-            "severity": "warning",
-            "title": "No ISWC — Mechanical Royalties Blocked",
-            "description": "Recording is not linked to a composition work. Streaming platforms "
-                           "cannot route mechanical royalty payments without an ISWC.",
-            "action": "Register the composition with ASCAP or BMI to obtain an ISWC, "
-                      "then link it to this recording in SMPT.",
-            "checked_at": probe.get("checked_at", _now_iso()),
-            "source": "SMPT / MusicBrainz",
-        })
-
-    # ── No IPI → performance royalties can't route
-    if is_registered and not has_ipi:
-        bump("warning")
-        findings.append({
-            "type": "missing_ipi",
-            "severity": "warning",
-            "title": "No IPI Number — Performance Royalties at Risk",
-            "description": "Artist has no IPI identifier on record. Performance royalties "
-                           "from ASCAP, BMI, SESAC, and international PROs cannot be attributed.",
-            "action": "Register with a PRO (ASCAP/BMI/SESAC) to receive an IPI number.",
-            "checked_at": probe.get("checked_at", _now_iso()),
-            "source": "SMPT / MusicBrainz",
-        })
-
-    # ── ASCAP/BMI split audit flag
-    if is_registered and mlc_matched and has_iswc:
-        findings.append({
-            "type": "split_audit",
-            "severity": "info",
-            "title": "PRO Split Verification Required",
-            "description": "Work is registered and matched. Verify ASCAP/BMI ownership splits "
-                           "match the MLC record — discrepancies of 15–40% are common.",
-            "action": "Cross-reference your ASCAP/BMI registration splits against the MLC "
-                      "total shares using the registry links below.",
-            "checked_at": verify.get("checked_at", _now_iso()),
-            "source": "The MLC + ASCAP/BMI",
-        })
-
-    # ── Not in registry at all
+    # ── NOT IN REGISTRY AT ALL
     if not is_registered:
         bump("critical")
         findings.append({
             "type": "not_registered",
             "severity": "critical",
-            "title": "Not Found in Global Registry",
-            "description": "This ISRC does not exist in the SMPT global database. "
-                           "All royalty collection paths — streaming, mechanical, performance — are blocked.",
-            "action": "Register through a licensed distributor that issues and submits ISRCs globally.",
-            "checked_at": probe.get("checked_at", _now_iso()),
-            "source": "SMPT / MusicBrainz",
+            "title": "ISRC Not Found in Global Registry",
+            "description": "This ISRC has no record in MusicBrainz. Without a global registry record, royalty collection paths — streaming, mechanical, and performance — are all at risk.",
+            "action": "Confirm the ISRC is correct. If correct, register through a distributor that submits ISRCs to MusicBrainz (DistroKid, TuneCore, CD Baby).",
+            "what_attorney_should_do": "Obtain proof of ISRC registration from the distributor. If none exists, this is evidence of improper registration.",
+            "checked_at": probe.get("checked_at"),
+            "source": probe.get("source"),
+        })
+
+    # ── NO ISWC (composition not linked)
+    if is_registered and not has_iswc:
+        bump("warning")
+        findings.append({
+            "type": "missing_iswc",
+            "severity": "warning",
+            "title": "No ISWC — Composition Not Linked",
+            "description": "The recording exists in the global registry but is not linked to a composition work (ISWC). Without this link, mechanical royalties from streaming cannot be attributed to the correct publisher or songwriter.",
+            "action": "Register the composition with a PRO (ASCAP/BMI/SESAC) to obtain an ISWC, then link it to this recording.",
+            "what_attorney_should_do": "Request ISWC documentation from the publisher. Absence of ISWC is a direct cause of unpaid mechanical royalties.",
+            "confirmed_by": "MusicBrainz — no work relationship found for this recording",
+            "checked_at": probe.get("checked_at"),
+            "source": probe.get("source"),
+        })
+
+    # ── NO IPI (performance royalties can't route)
+    if is_registered and not has_ipi:
+        bump("warning")
+        findings.append({
+            "type": "missing_ipi",
+            "severity": "warning",
+            "title": "No IPI Number — Performance Royalties Unattributable",
+            "description": "No IPI (Interested Party Information) number is on record for this artist. PROs use IPI to route performance royalties. Without it, ASCAP, BMI, SESAC, and international PROs cannot attribute earnings.",
+            "action": "Register with a PRO (ASCAP/BMI/SESAC) to receive an IPI number.",
+            "what_attorney_should_do": "Verify whether the artist is registered with any PRO. If not, all performance royalties since release may be in a holding pool.",
+            "confirmed_by": "MusicBrainz — no IPI on record for artist MBID",
+            "checked_at": probe.get("checked_at"),
+            "source": probe.get("source"),
+        })
+
+    # ── NO WORK RELATIONSHIP (recording not tied to composition)
+    if is_registered and not has_work_rel and has_iswc is False:
+        # Only add if not already caught by missing_iswc
+        pass
+
+    # ── STREAM EVIDENCE (informational — not a gap, but supports claim value)
+    if listens > 0 and is_registered and (not has_iswc or not has_ipi):
+        data_note = streaming.get("data_note", "")
+        bump("critical" if listens > 100_000 else "warning")
+        findings.append({
+            "type": "stream_gap",
+            "severity": "critical" if listens > 100_000 else "warning",
+            "title": f"Active Streams With Registration Gaps — Est. ${revenue_low:,}–${revenue_high:,} at Risk",
+            "description": (
+                f"{listens:,} documented {'artist-level ' if data_level == 'artist' else ''}listens confirmed on ListenBrainz. "
+                f"Combined with the registration gaps above, this recording has likely generated royalties that cannot be routed to the correct owner."
+                + (f" Note: {data_note}" if data_note else "")
+            ),
+            "action": "Cross-reference stream count with distributor royalty statements to quantify the gap between earned and paid.",
+            "what_attorney_should_do": "Subpoena or request royalty statements from distributor and compare against ListenBrainz stream evidence. The difference is the claim amount.",
+            "estimated_low": revenue_low,
+            "estimated_high": revenue_high,
+            "checked_at": streaming.get("checked_at"),
+            "source": streaming.get("source"),
         })
 
     return {
-        "black_box_detected": black_box_detected,
+        "black_box_detected": (not has_iswc or not has_ipi) and listens > 0 and is_registered,
         "severity": severity,
         "findings": findings,
         "streaming_stats": streaming,
@@ -412,110 +395,74 @@ def _detect_black_box(probe: Dict, verify: Dict, streaming: Dict) -> Dict:
 
 
 # ─────────────────────────────────────────────
-# PRO REGISTRY AUTO-QUERIES (ASCAP / BMI / SESAC)
+# STEP 4 · MANUAL VERIFICATION CHECKLIST
+# Pre-filled deep links — honest about what requires human verification
 # ─────────────────────────────────────────────
 
-def _query_ascap(term: str) -> Dict:
-    endpoints = [
-        f"https://www.ascap.com/api/1.0/search/composerAndPublisher?q={quote(term)}&territory=USA&page=1&perPage=5",
-        f"https://www.ascap.com/api/1.0/search/all?q={quote(term)}&territory=USA",
+def _build_manual_checklist(isrc: str, probe: Dict) -> List[Dict]:
+    """
+    These registries have no public APIs.
+    We give attorneys pre-filled search links — not fake API results.
+    """
+    artist = probe.get("artist", "")
+    title = probe.get("song_title", "")
+    name_q = f"{artist} {title}".strip()
+    enc_name = quote(name_q)
+    enc_isrc = quote(isrc)
+
+    return [
+        {
+            "registry": "The MLC",
+            "purpose": "US Mechanical Royalties",
+            "check": "Is this work registered and matched in the MLC database?",
+            "url": f"https://search.themlc.com/works?query={enc_name}",
+            "search_term": name_q,
+            "status": "manual_required",
+            "why_manual": "The MLC has no public API. Search must be performed manually.",
+            "what_to_look_for": "Match Status should say 'Matched'. If 'Unmatched' or not found, mechanical royalties cannot be distributed.",
+        },
+        {
+            "registry": "ASCAP",
+            "purpose": "Performance Royalties (US)",
+            "check": "Is the composition registered with ASCAP?",
+            "url": f"https://www.ascap.com/repertory#/?query={enc_name}",
+            "search_term": name_q,
+            "status": "manual_required",
+            "why_manual": "ASCAP repertory has no public API.",
+            "what_to_look_for": "Find the work, confirm writer shares add to 100%, and verify IPI numbers match.",
+        },
+        {
+            "registry": "BMI",
+            "purpose": "Performance Royalties (US)",
+            "check": "Is the composition registered with BMI?",
+            "url": f"https://repertoire.bmi.com/",
+            "search_term": name_q,
+            "status": "manual_required",
+            "why_manual": "BMI repertoire has no public API.",
+            "what_to_look_for": "Confirm work registration and that ownership shares are complete.",
+        },
+        {
+            "registry": "SoundExchange",
+            "purpose": "Digital Performance Royalties",
+            "check": "Is this ISRC registered with SoundExchange for non-interactive streaming?",
+            "url": f"https://isrc.soundexchange.com/#!/isrc/{enc_isrc}",
+            "search_term": isrc,
+            "status": "manual_required",
+            "why_manual": "SoundExchange ISRC lookup is a manual portal.",
+            "what_to_look_for": "Confirm ISRC is claimed. If unclaimed, digital performance royalties (Pandora, SiriusXM, etc.) are in a black box.",
+        },
+        {
+            "registry": "SESAC",
+            "purpose": "Performance Royalties (US)",
+            "check": "Is the composition registered with SESAC?",
+            "url": f"https://www.sesac.com/repertory/",
+            "search_term": name_q,
+            "status": "manual_required",
+            "why_manual": "SESAC repertory has no public API.",
+            "what_to_look_for": "Only relevant if the artist is a SESAC member. Verify registration and splits.",
+        },
     ]
-    for url in endpoints:
-        try:
-            r = requests.get(url, headers={**_HEADERS, "Referer": "https://www.ascap.com/repertory"}, timeout=8)
-            if r.status_code == 200:
-                data = r.json()
-                works = data.get("workSearchResults", data.get("results", data.get("items", [])))
-                if works:
-                    return {
-                        "status": "found",
-                        "count": len(works),
-                        "checked_at": _now_iso(),
-                        "results": [
-                            {
-                                "title": w.get("title", w.get("workTitle", "")),
-                                "iswc": w.get("iswc", ""),
-                                "writers": [p.get("fullName", "") for p in w.get("contributors", w.get("writers", []))],
-                            }
-                            for w in works[:5]
-                        ],
-                    }
-        except Exception:
-            continue
-    return {"status": "no_results", "results": [], "checked_at": _now_iso()}
 
-
-def _query_bmi(term: str) -> Dict:
-    endpoints = [
-        f"https://repertoire.bmi.com/Repertoire/QuickSearch?searchType=Work&query={quote(term)}&page=1",
-        f"https://api.bmi.com/search/v1/works?q={quote(term)}&limit=5",
-    ]
-    for url in endpoints:
-        try:
-            r = requests.get(url, headers={**_HEADERS, "Referer": "https://repertoire.bmi.com/"}, timeout=8)
-            if r.status_code == 200:
-                data = r.json()
-                works = data.get("works", data.get("results", data.get("items", [])))
-                if works:
-                    return {
-                        "status": "found",
-                        "count": len(works),
-                        "checked_at": _now_iso(),
-                        "results": [
-                            {
-                                "title": w.get("title", w.get("workTitle", "")),
-                                "iswc": w.get("iswc", ""),
-                                "writers": [p.get("name", "") for p in w.get("writers", w.get("contributors", []))],
-                            }
-                            for w in works[:5]
-                        ],
-                    }
-        except Exception:
-            continue
-    return {"status": "no_results", "results": [], "checked_at": _now_iso()}
-
-
-def _query_sesac(term: str) -> Dict:
-    endpoints = [
-        f"https://www.sesac.com/api/repertory/search?q={quote(term)}&limit=5",
-        f"https://www.sesac.com/repertory/search?query={quote(term)}",
-    ]
-    for url in endpoints:
-        try:
-            r = requests.get(url, headers={**_HEADERS, "Referer": "https://www.sesac.com/repertory/"}, timeout=8)
-            if r.status_code == 200:
-                data = r.json()
-                works = data.get("works", data.get("results", data.get("items", [])))
-                if works:
-                    return {
-                        "status": "found",
-                        "count": len(works),
-                        "checked_at": _now_iso(),
-                        "results": [
-                            {
-                                "title": w.get("title", w.get("workTitle", "")),
-                                "iswc": w.get("iswc", ""),
-                                "writers": [p.get("name", "") for p in w.get("writers", w.get("contributors", []))],
-                            }
-                            for w in works[:5]
-                        ],
-                    }
-        except Exception:
-            continue
-    return {"status": "no_results", "results": [], "checked_at": _now_iso()}
-
-
-def _run_pro_queries(artist: str, title: str) -> Dict:
-    term = f"{artist} {title}".strip()
-    ascap = _query_ascap(term)
-    bmi = _query_bmi(term)
-    sesac = _query_sesac(term)
-    return {"ascap": ascap, "bmi": bmi, "sesac": sesac}
-
-
-# ─────────────────────────────────────────────
-# REGISTRY LINKS
-# ─────────────────────────────────────────────
 
 def _build_registry_links(isrc: str, probe: Dict) -> List[Dict]:
     artist = probe.get("artist", "")
@@ -523,76 +470,29 @@ def _build_registry_links(isrc: str, probe: Dict) -> List[Dict]:
     name_q = f"{artist} {title}".strip()
 
     return [
-        {
-            "name": "IFPI ISRC Lookup",
-            "org": "IFPI",
-            "search_type": "isrc",
-            "url": "https://isrc.ifpi.org/",
-            "search_term": isrc,
-            "note": "Official ISRC authority",
-        },
-        {
-            "name": "SoundExchange ISRC",
-            "org": "SoundExchange",
-            "search_type": "isrc",
-            "url": "https://isrc.soundexchange.com/",
-            "search_term": isrc,
-            "note": "Digital performance royalties",
-        },
-        {
-            "name": "CISAC",
-            "org": "CISAC",
-            "search_type": "isrc",
-            "url": "https://www.cisac.org/",
-            "search_term": isrc,
-            "note": "International rights societies",
-        },
-        {
-            "name": "ASCAP Repertory",
-            "org": "ASCAP",
-            "search_type": "name",
-            "url": f"https://www.ascap.com/repertory#/?query={quote(name_q)}",
-            "search_term": name_q,
-            "note": "Performance rights · US",
-        },
-        {
-            "name": "BMI Repertoire",
-            "org": "BMI",
-            "search_type": "name",
-            "url": "https://repertoire.bmi.com/",
-            "search_term": name_q,
-            "note": "Performance rights · US",
-        },
-        {
-            "name": "SESAC Repertory",
-            "org": "SESAC",
-            "search_type": "name",
-            "url": "https://www.sesac.com/repertory/",
-            "search_term": name_q,
-            "note": "Performance rights · US",
-        },
+        {"name": "IFPI ISRC Lookup", "org": "IFPI", "url": "https://isrc.ifpi.org/", "search_term": isrc, "note": "Official ISRC authority"},
+        {"name": "SoundExchange ISRC", "org": "SoundExchange", "url": f"https://isrc.soundexchange.com/#!/isrc/{quote(isrc)}", "search_term": isrc, "note": "Digital performance royalties"},
+        {"name": "CISAC", "org": "CISAC", "url": "https://www.cisac.org/", "search_term": isrc, "note": "International rights societies"},
+        {"name": "ASCAP Repertory", "org": "ASCAP", "url": f"https://www.ascap.com/repertory#/?query={quote(name_q)}", "search_term": name_q, "note": "Performance rights · US"},
+        {"name": "BMI Repertoire", "org": "BMI", "url": "https://repertoire.bmi.com/", "search_term": name_q, "note": "Performance rights · US"},
+        {"name": "SESAC Repertory", "org": "SESAC", "url": "https://www.sesac.com/repertory/", "search_term": name_q, "note": "Performance rights · US"},
+        {"name": "The MLC Search", "org": "MLC", "url": f"https://search.themlc.com/works?query={quote(name_q)}", "search_term": name_q, "note": "US mechanical royalties"},
     ]
 
 
-def _build_verdict(probe: Dict, verify: Dict, detect: Dict) -> Dict:
+def _build_verdict(probe: Dict, detect: Dict) -> Dict:
     sev = detect.get("severity", "clear")
+    is_registered = probe.get("status") == "found"
+    has_iswc = bool(probe.get("iswc"))
+    has_ipi = bool(probe.get("ipi"))
+
+    if not is_registered:
+        return {"level": "CRITICAL", "color": "red", "summary": "ISRC not found in any open registry. All royalty paths are at risk."}
     if sev == "critical":
-        return {
-            "level": "CRITICAL",
-            "color": "red",
-            "summary": "Critical royalty gaps detected. Immediate action required.",
-        }
-    if sev == "warning" or not verify.get("matched"):
-        return {
-            "level": "AT RISK",
-            "color": "yellow",
-            "summary": "Registration gaps found. Revenue leakage likely.",
-        }
-    return {
-        "level": "SECURE",
-        "color": "green",
-        "summary": "Registration chain intact. Royalty paths appear open.",
-    }
+        return {"level": "CRITICAL", "color": "red", "summary": "Active streams confirmed with registration gaps. Royalties likely uncollected."}
+    if sev == "warning" or not has_iswc or not has_ipi:
+        return {"level": "AT RISK", "color": "yellow", "summary": "Registration gaps found. Manual verification of MLC and PRO records required."}
+    return {"level": "REGISTERED", "color": "green", "summary": "Recording found with ISWC and IPI on record. Verify MLC and PRO status manually."}
 
 
 # ─────────────────────────────────────────────
@@ -604,24 +504,28 @@ async def run_forensic_audit(isrc: str) -> Dict:
     clean = isrc.replace("-", "").upper()
     audit_started = _now_iso()
 
-    # Step 1: Probe (must complete first — artist_mbid feeds steps 2+3)
+    # Step 1: Probe MusicBrainz
     probe = await loop.run_in_executor(_executor, _probe_smpt, clean)
 
-    # Steps 2, 3, and PRO queries in parallel
-    artist_name = probe.get("artist", "")
-    song_title = probe.get("song_title", "")
+    # Step 2: Stream stats (recording-level if we have MBID, artist-level fallback)
+    recording_id = probe.get("recording_id")
+    artist_mbid = probe.get("artist_mbid")
 
-    verify, streaming, pro_data = await asyncio.gather(
-        loop.run_in_executor(_executor, _verify_mlc, clean, probe),
-        loop.run_in_executor(_executor, _get_streaming_stats, probe.get("artist_mbid")),
-        loop.run_in_executor(_executor, _run_pro_queries, artist_name, song_title),
+    streaming = await loop.run_in_executor(
+        _executor, _get_streaming_stats, recording_id, artist_mbid
     )
 
-    # Step 4
-    detect = _detect_black_box(probe, verify, streaming)
+    # Step 3: Gap detection from confirmed data only
+    detect = _detect_gaps(probe, streaming)
 
-    # Statute of limitations check
+    # Step 4: Manual verification checklist
+    manual_checklist = _build_manual_checklist(clean, probe)
+
+    # Statute check
     statute = _check_statute(probe.get("first_release_date"))
+
+    artist_name = probe.get("artist", "")
+    song_title = probe.get("song_title", "")
 
     return {
         "isrc": clean,
@@ -630,38 +534,54 @@ async def run_forensic_audit(isrc: str) -> Dict:
         "audit_started": audit_started,
         "steps": {
             "probe": {
-                "label": "Probe — Official Recording Owner",
+                "label": "Step 1 — ISRC Registry Probe (MusicBrainz)",
                 "status": probe.get("status"),
                 "checked_at": probe.get("checked_at"),
                 "source": probe.get("source"),
                 "data": probe,
             },
-            "verify": {
-                "label": "Verify — MLC Mechanical Linkage",
-                "status": verify.get("status"),
-                "matched": verify.get("matched"),
-                "mlc_song_code": verify.get("mlc_song_code"),
-                "iswc": verify.get("iswc"),
-                "checked_at": verify.get("checked_at"),
-                "source": verify.get("source"),
-                "data": verify,
+            "streams": {
+                "label": "Step 2 — Stream Activity (ListenBrainz)",
+                "total_listens": streaming.get("total_listens", 0),
+                "unique_listeners": streaming.get("unique_listeners", 0),
+                "data_level": streaming.get("data_level", "none"),
+                "data_note": streaming.get("data_note", ""),
+                "checked_at": streaming.get("checked_at"),
+                "source": streaming.get("source"),
             },
             "detect": {
-                "label": "Detect — Black Box Analysis",
+                "label": "Step 3 — Confirmed Gap Analysis",
                 "black_box": detect.get("black_box_detected"),
                 "severity": detect.get("severity"),
                 "findings": detect.get("findings", []),
                 "streaming": streaming,
                 "revenue": detect.get("revenue", {}),
             },
+            "manual_checklist": {
+                "label": "Step 4 — Manual Verification Required",
+                "note": "These registries have no public APIs. Each link is pre-filled for the attorney to verify.",
+                "items": manual_checklist,
+            },
+            # Keep verify/pro_scan keys for backward compat with frontend
+            "verify": {
+                "label": "MLC — Manual Verification Required",
+                "status": "manual_required",
+                "matched": None,
+                "mlc_song_code": None,
+                "iswc": probe.get("iswc"),
+                "checked_at": audit_started,
+                "source": "Manual verification required — no public MLC API",
+                "data": {"match_status": "NOT CHECKED — verify manually at search.themlc.com"},
+            },
             "pro_scan": {
-                "label": "PRO Registry Scan — ASCAP / BMI / SESAC",
-                "ascap": pro_data.get("ascap", {}),
-                "bmi": pro_data.get("bmi", {}),
-                "sesac": pro_data.get("sesac", {}),
+                "label": "PRO Scan — Manual Verification Required",
+                "ascap": {"status": "manual_required", "results": []},
+                "bmi": {"status": "manual_required", "results": []},
+                "sesac": {"status": "manual_required", "results": []},
             },
         },
         "statute": statute,
+        "manual_checklist": manual_checklist,
         "registry_links": _build_registry_links(clean, probe),
-        "verdict": _build_verdict(probe, verify, detect),
+        "verdict": _build_verdict(probe, detect),
     }

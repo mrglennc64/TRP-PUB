@@ -52,7 +52,7 @@ export default function HomePage() {
             Unclaimed Music Royalties
           </h1>
           <p className="text-sm text-slate-400 mb-8 max-w-2xl leading-relaxed">
-            Audit-grade metadata analysis across ASCAP, BMI, SESAC, SOCAN, PRS, and SoundExchange.
+            ISRC-level forensic analysis via MusicBrainz and ListenBrainz — confirmed data only.
             Generates verifiable reports accepted as evidence in royalty dispute proceedings.
           </p>
 
@@ -97,9 +97,9 @@ export default function HomePage() {
           <p className="text-xs font-bold tracking-widest text-slate-500 uppercase mb-6">System Capabilities</p>
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-800">
             <div className="py-4 md:pr-8">
-              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">PRO Coverage</p>
-              <p className="text-sm text-slate-200 font-medium">ASCAP · BMI · SESAC · SOCAN · PRS</p>
-              <p className="text-xs text-slate-500 mt-1">Real-time registry queries per session</p>
+              <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Registry Sources</p>
+              <p className="text-sm text-slate-200 font-medium">MusicBrainz · ListenBrainz</p>
+              <p className="text-xs text-slate-500 mt-1">Open registries — confirmed data only. PRO verification is manual.</p>
             </div>
             <div className="py-4 md:px-8">
               <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Processing Capacity</p>
@@ -239,7 +239,7 @@ export default function HomePage() {
           </div>
           <div className="text-right">
             <p>© 2026 TrapRoyaltiesPro</p>
-            <p className="text-slate-700 mt-1">ASCAP · BMI · SESAC · SOCAN · PRS · SoundExchange · MLC</p>
+            <p className="text-slate-700 mt-1">MusicBrainz · ListenBrainz · SMPT Protocol · usesmpt.com</p>
           </div>
         </div>
       </footer>

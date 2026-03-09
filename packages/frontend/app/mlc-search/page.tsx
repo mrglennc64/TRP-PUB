@@ -175,9 +175,17 @@ export default function MLCSearchPage() {
   const [batchSelected, setBatchSelected] = useState<Set<string>>(new Set());
   const [batchPhase, setBatchPhase] = useState<"idle" | "running" | "done">("idle");
   const [batchLog, setBatchLog]     = useState<string[]>([]);
+  const [verifiedIds, setVerifiedIds] = useState<Set<string>>(new Set());
   const inputRef = useRef<HTMLInputElement>(null);
 
   const pushLog = (msg: string) => setBatchLog(p => [...p, `[${new Date().toLocaleTimeString()}] ${msg}`]);
+
+  /* ── Verify Live Status ── */
+  const handleVerifyLive = (work: MLCWork) => {
+    const url = `https://portal.themlc.com/search?title=${encodeURIComponent(work.title)}&isrc=${encodeURIComponent(work.isrc)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setVerifiedIds(p => new Set([...p, work.id]));
+  };
 
   /* ── Search ── */
   const runSearch = useCallback(async () => {
@@ -324,6 +332,17 @@ export default function MLCSearchPage() {
         {/* Results area */}
         {searched && (
           <>
+            {/* ── Disclaimer banner ── */}
+            <div className="flex gap-3 items-start p-4 bg-amber-950/30 border border-amber-700/50 rounded-xl">
+              <span className="text-lg flex-shrink-0 mt-0.5">⚖️</span>
+              <div className="text-xs text-amber-200/80 leading-relaxed">
+                <span className="font-bold text-amber-400 block mb-0.5">Local Snapshot — Live Verification Required</span>
+                Real-time registry verification in progress. Our local snapshot indicates potential matches, but{' '}
+                <strong className="text-amber-300">live verification via The MLC Portal is required before any claim can be filed.</strong>{' '}
+                Use <span className="font-semibold text-white">Verify Live Status</span> on each work to confirm current registration status at themlc.com.
+              </div>
+            </div>
+
             {/* Summary row */}
             {results.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -463,8 +482,21 @@ export default function MLCSearchPage() {
                               <div className="text-xs text-green-400 font-semibold">✓ Current</div>
                             )}
 
-                            {/* Claim button */}
-                            <div onClick={e => e.stopPropagation()}>
+                            {/* Verify + Claim buttons */}
+                            <div className="flex flex-col items-end gap-1.5" onClick={e => e.stopPropagation()}>
+                              {/* Verify Live button — always shown */}
+                              <button
+                                onClick={() => handleVerifyLive(work)}
+                                className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition whitespace-nowrap ${
+                                  verifiedIds.has(work.id)
+                                    ? 'bg-green-900/30 border-green-700/50 text-green-400'
+                                    : 'bg-amber-900/20 border-amber-700/40 text-amber-400 hover:bg-amber-900/40'
+                                }`}
+                              >
+                                {verifiedIds.has(work.id) ? '✓ Live Verified ↗' : 'Verify Live Status ↗'}
+                              </button>
+
+                              {/* Claim — only after live verify */}
                               {claimState?.phase === "done" ? (
                                 <div className="text-xs text-sky-400 font-semibold text-right">
                                   ✓ Filed<br />
@@ -472,13 +504,15 @@ export default function MLCSearchPage() {
                                 </div>
                               ) : claimState?.phase === "submitting" ? (
                                 <div className="text-xs text-indigo-400 animate-pulse">Filing…</div>
-                              ) : isClaimable ? (
+                              ) : isClaimable && verifiedIds.has(work.id) ? (
                                 <button
                                   onClick={() => initClaim(work.id)}
                                   className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition whitespace-nowrap"
                                 >
                                   Claim Now
                                 </button>
+                              ) : isClaimable ? (
+                                <span className="text-[10px] text-slate-600 text-right max-w-[90px] leading-tight">Verify live first to unlock claim</span>
                               ) : null}
                             </div>
                           </div>
@@ -518,28 +552,53 @@ export default function MLCSearchPage() {
                       ))}
                     </div>
 
+                    {/* Local snapshot notice */}
+                    <div className="p-3 bg-amber-950/30 border border-amber-700/40 rounded-xl text-xs text-amber-200/70 leading-relaxed">
+                      <span className="font-bold text-amber-400">Local snapshot only.</span> Live verification via The MLC Portal is required before filing. Status, amounts, and deadlines shown here reflect our reference database, not real-time MLC data.
+                    </div>
+
                     {/* Unclaimed banner */}
                     {selected.unclaimed_amount && (selected.status === "unregistered" || selected.status === "partial") && (
-                      <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 flex items-center justify-between gap-4">
-                        <div>
-                          <div className="text-xs text-rose-400 font-bold mb-0.5">Unclaimed Mechanical Royalties</div>
-                          <div className="text-2xl font-black text-rose-400">{fmtMoney(selected.unclaimed_amount)}</div>
-                          {selected.claim_deadline && (
-                            <div className="text-xs text-orange-400 mt-1">⏰ Claim deadline: {selected.claim_deadline}</div>
+                      <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 space-y-3">
+                        <div className="flex items-center justify-between gap-4">
+                          <div>
+                            <div className="text-xs text-rose-400 font-bold mb-0.5">Estimated Unclaimed (snapshot)</div>
+                            <div className="text-2xl font-black text-rose-400">{fmtMoney(selected.unclaimed_amount)}</div>
+                            {selected.claim_deadline && (
+                              <div className="text-xs text-orange-400 mt-1">⏰ Reference deadline: {selected.claim_deadline}</div>
+                            )}
+                          </div>
+                          {claims[selected.id]?.phase === "done" ? (
+                            <div className="text-right">
+                              <div className="text-xs text-sky-400 font-bold">Filed ✓</div>
+                              <div className="text-xs font-mono text-slate-500">{claims[selected.id].refNum}</div>
+                            </div>
+                          ) : claims[selected.id]?.phase === "submitting" ? (
+                            <div className="text-xs text-indigo-400 animate-pulse">Submitting…</div>
+                          ) : null}
+                        </div>
+
+                        {/* Verify → Claim flow */}
+                        <div className="flex gap-2 pt-1 border-t border-rose-800/30">
+                          <button
+                            onClick={() => handleVerifyLive(selected)}
+                            className={`flex-1 py-2 text-xs font-bold rounded-lg border transition ${
+                              verifiedIds.has(selected.id)
+                                ? 'bg-green-900/30 border-green-700/50 text-green-400'
+                                : 'bg-amber-900/20 border-amber-600/50 text-amber-400 hover:bg-amber-900/40'
+                            }`}
+                          >
+                            {verifiedIds.has(selected.id) ? '✓ Live Verified at MLC ↗' : 'Step 1 — Verify Live Status at MLC ↗'}
+                          </button>
+                          {verifiedIds.has(selected.id) && !claims[selected.id] && (
+                            <button onClick={() => initClaim(selected.id)}
+                              className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-black rounded-xl transition">
+                              Step 2 — File Claim →
+                            </button>
                           )}
                         </div>
-                        {claims[selected.id]?.phase === "done" ? (
-                          <div className="text-right">
-                            <div className="text-xs text-sky-400 font-bold">Filed ✓</div>
-                            <div className="text-xs font-mono text-slate-500">{claims[selected.id].refNum}</div>
-                          </div>
-                        ) : claims[selected.id]?.phase === "submitting" ? (
-                          <div className="text-xs text-indigo-400 animate-pulse">Submitting…</div>
-                        ) : (
-                          <button onClick={() => initClaim(selected.id)}
-                            className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-sm font-black rounded-xl transition whitespace-nowrap">
-                            Claim Now →
-                          </button>
+                        {!verifiedIds.has(selected.id) && (
+                          <p className="text-[10px] text-slate-600">Verify live status first to unlock claim filing.</p>
                         )}
                       </div>
                     )}
@@ -613,16 +672,42 @@ export default function MLCSearchPage() {
               The Mechanical Licensing Collective (MLC) administers mechanical royalties for all digital streaming in the US.
               Search for your works to find unregistered royalties, file claims, and ensure every stream generates income.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto text-left">
               {[
                 { icon: "💰", title: "Unclaimed Royalties",    desc: "Billions in mechanical royalties sit unclaimed due to missing ISRC/ISWC registrations" },
                 { icon: "⏰", title: "Claim Deadlines",        desc: "The MLC holds funds for 3 years. After the deadline, unclaimed royalties are distributed to registered publishers" },
-                { icon: "⚡", title: "One-Click Filing",       desc: "Identify eligible works and file claims directly from this dashboard" },
+                {
+                  icon: "🔍", title: "ISRC Gap Detection",
+                  desc: "Registry existence check across all nodes. Surfaces missing registrations with a full gap report.",
+                  meta: [['Service', 'Registry Existence Check'], ['Output', 'Missing Registration Report']],
+                },
+                {
+                  icon: "📄", title: "Automated CWR Registration",
+                  desc: "Convert raw metadata into a submission-ready CWR file in one step.",
+                  meta: [['Forensic Service', 'Instant CWR Metadata Conversion'], ['Data Source', 'Multi-Node Registry Verification'], ['Deliverable', 'Audit-Ready Registration File']],
+                  link: { href: '/cwr-generator', label: 'Open CWR Generator →' },
+                },
               ].map(c => (
-                <div key={c.title} className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <div className="text-2xl mb-2">{c.icon}</div>
-                  <div className="text-sm font-semibold text-white mb-1">{c.title}</div>
+                <div key={c.title} className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2">
+                  <div className="text-2xl">{c.icon}</div>
+                  <div className="text-sm font-semibold text-white">{c.title}</div>
                   <div className="text-xs text-slate-400 leading-relaxed">{c.desc}</div>
+                  {(c as any).meta && (
+                    <div className="pt-2 border-t border-white/10 space-y-1">
+                      {(c as any).meta.map(([k, v]: [string, string]) => (
+                        <div key={k} className="flex gap-2 text-[11px]">
+                          <span className="text-slate-600 w-28 flex-shrink-0">{k}</span>
+                          <span className="text-slate-300 font-medium">{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {(c as any).link && (
+                    <Link href={(c as any).link.href}
+                      className="inline-block mt-1 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition">
+                      {(c as any).link.label}
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>

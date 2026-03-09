@@ -22,6 +22,16 @@ interface Finding {
 interface ProResult { status: string; count?: number; results?: any[] }
 interface RevenueRange { low: number; mid: number; high: number; confidence: number; confidence_label: string }
 interface StatuteWarning { level: 'urgent' | 'warning'; label: string; color: string; message: string; release_date: string; age_years: number }
+interface ManualCheckItem {
+  registry: string;
+  purpose: string;
+  check: string;
+  url: string;
+  search_term: string;
+  status: string;
+  why_manual: string;
+  what_to_look_for: string;
+}
 interface ForensicResult {
   isrc: string;
   song_title: string;
@@ -29,12 +39,15 @@ interface ForensicResult {
   audit_started?: string;
   steps: {
     probe: { status: string; checked_at?: string; source?: string; data: any };
-    verify: { status: string; matched: boolean; mlc_song_code: string | null; iswc: string | null; checked_at?: string; source?: string; data: any };
+    streams?: { total_listens: number; unique_listeners: number; data_level?: string; data_note?: string; checked_at?: string; source?: string };
+    verify: { status: string; matched: boolean | null; mlc_song_code: string | null; iswc: string | null; checked_at?: string; source?: string; data: any };
     detect: { black_box: boolean; severity: string; findings: Finding[]; streaming: { total_listens: number; unique_listeners: number; checked_at?: string; source?: string }; revenue?: RevenueRange };
+    manual_checklist?: { label: string; note: string; items: ManualCheckItem[] };
     pro_scan?: { ascap: ProResult; bmi: ProResult; sesac?: ProResult };
   };
   statute?: StatuteWarning | null;
-  registry_links: Array<{ name: string; org: string; search_type: string; url: string; search_term: string; note: string }>;
+  manual_checklist?: ManualCheckItem[];
+  registry_links: Array<{ name: string; org: string; url: string; search_term: string; note: string }>;
   verdict: { level: string; color: string; summary: string };
 }
 
@@ -48,7 +61,7 @@ function sha256(str: string): Promise<string> {
   );
 }
 
-function StatusBadge({ status, matched }: { status?: string; matched?: boolean }) {
+function StatusBadge({ status, matched }: { status?: string; matched?: boolean | null }) {
   if (matched === true || status === 'found') return (
     <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-green-900/40 text-green-400 rounded border border-green-800">
       <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" /> MATCH
@@ -97,9 +110,6 @@ function DeepProbePanel({
   onImport: () => void;
   loading: boolean;
 }) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewName, setPreviewName] = useState('');
-
   const enc = encodeURIComponent(searchTerm);
   const isrcEnc = encodeURIComponent(isrcTerm || searchTerm);
 
@@ -164,134 +174,85 @@ function DeepProbePanel({
     },
   ];
 
-  const openPreview = (url: string, name: string) => {
-    setPreviewUrl(url);
-    setPreviewName(name);
-  };
-
   return (
-    <>
-      <div className="mt-4 bg-[#0f172a] border border-indigo-800/50 rounded-lg overflow-hidden">
-        {/* Header */}
-        <div className="px-5 py-4 bg-indigo-950/40 border-b border-indigo-800/40 flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <span className="text-lg mt-0.5">🔭</span>
-            <div>
-              <p className="text-sm font-bold text-indigo-300">Result not found in Primary Cache — Launch SMPT Deep Probe</p>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Search term pre-loaded in every link:{' '}
-                <span className="font-mono text-slate-400">{searchTerm}</span>
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => navigator.clipboard.writeText(searchTerm)}
-            className="flex-shrink-0 text-[10px] px-2 py-1 border border-slate-700 text-slate-500 hover:text-slate-300 rounded transition mt-1"
-          >
-            Copy term
-          </button>
-        </div>
-
-        {/* Registry rows */}
-        <div className="divide-y divide-slate-800/50">
-          {registries.map(r => (
-            <div key={r.id} className="flex items-center justify-between px-5 py-3 hover:bg-slate-800/20 transition">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-slate-300">{r.name}</p>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
-                    r.nodeType === 'DIGITAL'
-                      ? 'bg-green-900/40 text-green-500 border border-green-800/40'
-                      : 'bg-slate-700/50 text-slate-500'
-                  }`}>
-                    {r.nodeType === 'DIGITAL' ? '⚡ Digital Node' : '✋ Manual Node'}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-600 mt-0.5 truncate">{r.hint}</p>
-              </div>
-              <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                <button
-                  onClick={() => openPreview(r.url, r.name)}
-                  className="text-xs px-2 py-1 border border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500 rounded transition"
-                >
-                  Preview ↗
-                </button>
-                <a
-                  href={r.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs px-3 py-1 bg-indigo-700/60 hover:bg-indigo-700 text-indigo-300 rounded transition"
-                >
-                  Open ↗
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Import Manual Finding */}
-        <div className="px-5 py-5 border-t border-slate-700 bg-slate-800/20">
-          <p className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Import Manual Finding</p>
-          <p className="text-xs text-slate-500 mb-3">
-            Found the ISRC in one of the registries above? Paste it here — your tool takes over to run stream counts and Black Box analysis.
-            This creates a verified chain of custody: human-confirmed match, machine-run audit.
-          </p>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={deepProbeIsrc}
-              onChange={e => setDeepProbeIsrc(e.target.value)}
-              placeholder="Paste ISRC (e.g. USUM71703861)"
-              className="flex-1 px-3 py-2 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition font-mono"
-              onKeyDown={e => { if (e.key === 'Enter') onImport(); }}
-            />
-            <button
-              onClick={onImport}
-              disabled={loading || !deepProbeIsrc.trim()}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white text-sm font-semibold rounded transition whitespace-nowrap"
-            >
-              {loading ? 'Running…' : 'Run Black Box Analysis →'}
-            </button>
+    <div className="mt-4 bg-[#0f172a] border border-indigo-800/50 rounded-lg overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-4 bg-indigo-950/40 border-b border-indigo-800/40 flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <span className="text-lg mt-0.5">🔭</span>
+          <div>
+            <p className="text-sm font-bold text-indigo-300">Result not found in Primary Cache — Launch SMPT Deep Probe</p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Search term pre-loaded in every link:{' '}
+              <span className="font-mono text-slate-400">{searchTerm}</span>
+            </p>
           </div>
         </div>
+        <button
+          onClick={() => navigator.clipboard.writeText(searchTerm)}
+          className="flex-shrink-0 text-[10px] px-2 py-1 border border-slate-700 text-slate-500 hover:text-slate-300 rounded transition mt-1"
+        >
+          Copy term
+        </button>
       </div>
 
-      {/* Iframe preview slide-over */}
-      {previewUrl && (
-        <SlidePanel title={previewName} onClose={() => setPreviewUrl(null)}>
-          <div className="space-y-3 h-full flex flex-col">
-            <div className="p-3 bg-indigo-950/30 border border-indigo-800/40 rounded text-xs text-slate-400 leading-relaxed">
-              Search term <span className="font-mono text-indigo-400">{searchTerm}</span> is pre-loaded in the URL.
-              If the site blocks embedding below, click <strong className="text-slate-300">Open in new tab</strong>.
+      {/* Registry rows */}
+      <div className="divide-y divide-slate-800/50">
+        {registries.map(r => (
+          <div key={r.id} className="flex items-center justify-between px-5 py-3 hover:bg-slate-800/20 transition">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-slate-300">{r.name}</p>
+                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                  r.nodeType === 'DIGITAL'
+                    ? 'bg-green-900/40 text-green-500 border border-green-800/40'
+                    : 'bg-slate-700/50 text-slate-500'
+                }`}>
+                  {r.nodeType === 'DIGITAL' ? '⚡ Digital Node' : '✋ Manual Node'}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 mt-0.5 truncate">{r.hint}</p>
             </div>
-            <div className="flex-1 relative min-h-0" style={{ height: '65vh' }}>
-              <iframe
-                src={previewUrl}
-                className="w-full h-full rounded border border-slate-700 bg-white"
-                sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-                title={previewName}
-              />
-            </div>
-            <div className="flex gap-2 pt-2">
+            <div className="flex items-center gap-2 ml-4 flex-shrink-0">
               <a
-                href={previewUrl}
+                href={r.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-2 border border-indigo-700 text-indigo-400 hover:bg-indigo-900/30 rounded transition text-xs font-medium"
+                className="text-xs px-3 py-1 bg-indigo-700/60 hover:bg-indigo-700 text-indigo-300 rounded transition"
               >
-                Open {previewName} in new tab ↗
+                Open ↗
               </a>
-              <button
-                onClick={() => navigator.clipboard.writeText(searchTerm)}
-                className="px-4 py-2 border border-slate-700 text-slate-400 hover:text-slate-200 rounded transition text-xs"
-              >
-                Copy term
-              </button>
             </div>
           </div>
-        </SlidePanel>
-      )}
-    </>
+        ))}
+      </div>
+
+      {/* Import Manual Finding */}
+      <div className="px-5 py-5 border-t border-slate-700 bg-slate-800/20">
+        <p className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Import Manual Finding</p>
+        <p className="text-xs text-slate-500 mb-3">
+          Found the ISRC in one of the registries above? Paste it here — your tool takes over to run stream counts and Black Box analysis.
+          This creates a verified chain of custody: human-confirmed match, machine-run audit.
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={deepProbeIsrc}
+            onChange={e => setDeepProbeIsrc(e.target.value)}
+            placeholder="Paste ISRC (e.g. USUM71703861)"
+            className="flex-1 px-3 py-2 bg-[#0a0f1e] border border-slate-700 text-slate-200 placeholder-slate-600 text-sm rounded focus:outline-none focus:border-indigo-500 transition font-mono"
+            onKeyDown={e => { if (e.key === 'Enter') onImport(); }}
+          />
+          <button
+            onClick={onImport}
+            disabled={loading || !deepProbeIsrc.trim()}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white text-sm font-semibold rounded transition whitespace-nowrap"
+          >
+            {loading ? 'Running…' : 'Run Black Box Analysis →'}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -444,9 +405,9 @@ function FreeAuditContent() {
       id: 'mlc',
       name: 'The MLC',
       type: 'Mechanical · US',
-      status: result.steps.verify.status,
-      matched: result.steps.verify.matched,
-      data: result.steps.verify.data,
+      status: 'manual_required',
+      matched: null,
+      data: null,
       searchTerm: result.isrc,
       externalUrl: `https://www.themlc.com/`,
     },
@@ -454,9 +415,9 @@ function FreeAuditContent() {
       id: 'ascap',
       name: 'ASCAP',
       type: 'Performance · US',
-      status: result.steps.pro_scan?.ascap?.status,
-      matched: result.steps.pro_scan?.ascap?.status === 'found',
-      data: result.steps.pro_scan?.ascap,
+      status: 'manual_required',
+      matched: null,
+      data: null,
       searchTerm: `${result.artist} ${result.song_title}`.trim(),
       externalUrl: `https://www.ascap.com/repertory#/?query=${encodeURIComponent(result.artist + ' ' + result.song_title)}`,
     },
@@ -464,9 +425,9 @@ function FreeAuditContent() {
       id: 'bmi',
       name: 'BMI',
       type: 'Performance · US',
-      status: result.steps.pro_scan?.bmi?.status,
-      matched: result.steps.pro_scan?.bmi?.status === 'found',
-      data: result.steps.pro_scan?.bmi,
+      status: 'manual_required',
+      matched: null,
+      data: null,
       searchTerm: `${result.artist} ${result.song_title}`.trim(),
       externalUrl: `https://repertoire.bmi.com/`,
     },
@@ -474,9 +435,9 @@ function FreeAuditContent() {
       id: 'sesac',
       name: 'SESAC',
       type: 'Performance · US',
-      status: result.steps.pro_scan?.sesac?.status,
-      matched: result.steps.pro_scan?.sesac?.status === 'found',
-      data: result.steps.pro_scan?.sesac,
+      status: 'manual_required',
+      matched: null,
+      data: null,
       searchTerm: `${result.artist} ${result.song_title}`.trim(),
       externalUrl: `https://www.sesac.com/repertory/`,
     },
@@ -742,13 +703,13 @@ function FreeAuditContent() {
                   },
                   {
                     step: '2', label: 'Verify — MLC Mechanical',
-                    ok: result.steps.verify.matched,
+                    ok: null as boolean | null,
                     checkedAt: result.steps.verify.checked_at,
                     source: result.steps.verify.source,
                     rows: [
-                      ['Match Status', result.steps.verify.data.match_status || 'UNMATCHED'],
-                      ['MLC Song Code', result.steps.verify.mlc_song_code || 'N/A'],
-                      ['ISWC (MLC)', result.steps.verify.iswc || 'N/A'],
+                      ['Status', 'Manual verification required'],
+                      ['Why', 'MLC has no public API — attorney must search directly'],
+                      ['Action', 'Use manual checklist below ↓'],
                     ],
                   },
                 ].map(({ step, label, ok, checkedAt, source, rows }) => (
@@ -836,20 +797,34 @@ function FreeAuditContent() {
                       </div>
                     )}
                   </div>
-                  <p className="text-[10px] text-slate-600 mb-2">{signalDesc} — Verify activity independently:</p>
-                  <div className="flex gap-2 flex-wrap">
-                    <a href={`https://open.spotify.com/search/${encodeURIComponent(result.artist + ' ' + result.song_title)}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-900/20 border border-green-800/30 text-green-400 text-xs rounded hover:bg-green-900/40 transition">
-                      🎵 Verify on Spotify
-                    </a>
-                    <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(result.artist + ' ' + result.song_title)}`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/15 border border-red-800/30 text-red-400 text-xs rounded hover:bg-red-900/30 transition">
-                      ▶ Verify on YouTube
-                    </a>
-                  </div>
+                  <p className="text-[10px] text-slate-600">{signalDesc}</p>
                 </div>
+
+                {/* Manual Checklist */}
+                {(result.manual_checklist ?? result.steps.manual_checklist?.items ?? []).length > 0 && (
+                  <div className="bg-[#0f172a] border border-slate-800 rounded-lg p-4">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Manual Attorney Verification</p>
+                    <p className="text-[11px] text-slate-600 mb-3">These registries have no public API. Each link is pre-filled — open in a new tab and search manually.</p>
+                    <div className="space-y-2">
+                      {(result.manual_checklist ?? result.steps.manual_checklist?.items ?? []).map((item: ManualCheckItem) => (
+                        <div key={item.registry} className="flex items-start justify-between gap-3 p-3 bg-slate-800/30 rounded border border-slate-700/40">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <p className="text-xs font-semibold text-slate-200">{item.registry}</p>
+                              <span className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-900/30 text-amber-500 border border-amber-800/30 rounded uppercase">Manual</span>
+                            </div>
+                            <p className="text-[11px] text-slate-500">{item.check}</p>
+                            <p className="text-[10px] text-slate-600 mt-0.5">{item.what_to_look_for}</p>
+                          </div>
+                          <a href={item.url} target="_blank" rel="noopener noreferrer"
+                            className="flex-shrink-0 px-2.5 py-1 bg-indigo-700/60 hover:bg-indigo-700 text-indigo-300 text-xs rounded transition whitespace-nowrap">
+                            Open ↗
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Findings with action buttons */}
                 {result.steps.detect.findings.length > 0 && (
@@ -1088,7 +1063,7 @@ function FreeAuditContent() {
 
         {/* Bottom info */}
         <div className="grid grid-cols-3 gap-4 mt-8 text-center">
-          {[['SMPT', 'Global recording registry · Step 1 Probe'], ['The MLC', 'US mechanical royalties · Step 2 Verify'], ['PRO Registries', 'ASCAP · BMI · SESAC · SOCAN · PRS']].map(([t, s]) => (
+          {[['SMPT / MusicBrainz', 'Global recording registry · confirms ISRC'], ['ListenBrainz', 'Open stream data · confirms listen activity'], ['Manual Checklist', 'MLC · ASCAP · BMI · SoundExchange · SESAC']].map(([t, s]) => (
             <div key={t} className="bg-[#0f172a] border border-slate-800 p-4 rounded-lg">
               <p className="text-xs font-semibold text-slate-300">{t}</p>
               <p className="text-[11px] text-slate-600 mt-1">{s}</p>
@@ -1122,28 +1097,11 @@ function FreeAuditContent() {
               </div>
             )}
 
-            {/* MLC data */}
-            {openPanel.id === 'mlc' && (
-              <div className="space-y-2 mt-4">
-                {[['Match Status', openPanel.data?.match_status], ['MLC Song Code', openPanel.data?.mlc_song_code || 'N/A'], ['ISWC', openPanel.data?.iswc || 'N/A']].map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-slate-800 pb-2">
-                    <span className="text-slate-500">{k}</span>
-                    <span className={`font-mono ${v === 'UNMATCHED' ? 'text-red-400' : 'text-slate-200'}`}>{v}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* PRO data (ASCAP/BMI/SESAC) */}
-            {['ascap', 'bmi', 'sesac'].includes(openPanel.id) && openPanel.data?.results?.length > 0 && (
-              <div className="mt-4 space-y-3">
-                {openPanel.data.results.map((w: any, i: number) => (
-                  <div key={i} className="bg-slate-800/40 rounded p-3">
-                    <p className="font-medium text-slate-200">{w.title}</p>
-                    {w.iswc && <p className="font-mono text-indigo-400 mt-1">ISWC: {w.iswc}</p>}
-                    {w.writers?.filter(Boolean).length > 0 && <p className="text-slate-500 mt-1">{w.writers.filter(Boolean).join(', ')}</p>}
-                  </div>
-                ))}
+            {/* MLC / PRO registries — manual only */}
+            {['mlc', 'ascap', 'bmi', 'sesac'].includes(openPanel.id) && (
+              <div className="mt-4 p-3 bg-amber-900/10 border border-amber-800/30 rounded text-xs text-slate-400 leading-relaxed">
+                <p className="font-bold text-amber-400 mb-1">Manual verification required</p>
+                <p>This registry has no public API. An attorney must search directly on their website using the search term above.</p>
               </div>
             )}
 
