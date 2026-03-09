@@ -3,6 +3,7 @@ Forensic Royalty Pipeline
 ─────────────────────────
 HONEST DATA SOURCES:
   Step 1  PROBE    — MusicBrainz: real ISRC → recording metadata, ISWC, IPI
+  Step 1b DISCOGS  — Discogs API: real ISRC → release metadata, label, genre
   Step 2  STREAMS  — ListenBrainz: recording-level listen count (real data)
   Step 3  DETECT   — Gap analysis from confirmed SMPT data only (no fake API calls)
   Step 4  MANUAL   — Pre-filled deep links for MLC / ASCAP / BMI / SESAC / SoundExchange
@@ -132,6 +133,85 @@ def _probe_smpt(isrc: str) -> Dict:
             "message": str(e),
             "checked_at": _now_iso(),
             "source": "MusicBrainz (musicbrainz.org)",
+        }
+
+
+# ─────────────────────────────────────────────
+# STEP 1b · DISCOGS — Real release database (public API, token optional)
+# ─────────────────────────────────────────────
+
+def _probe_discogs(isrc: str, artist: str = "", title: str = "") -> Dict:
+    """Query Discogs for real release metadata via ISRC, with artist/title fallback."""
+    import os
+    token = os.getenv("DISCOGS_TOKEN")
+    base = "https://api.discogs.com"
+    headers = {"User-Agent": "TrapRoyaltiesPro/1.0 (traproyaltiespro.com)"}
+
+    try:
+        # Primary: ISRC lookup
+        params: Dict = {"type": "release", "track_isrc": isrc}
+        if token:
+            params["token"] = token
+        r = requests.get(f"{base}/database/search", params=params, headers=headers, timeout=8)
+        if r.status_code == 200:
+            results = r.json().get("results", [])
+            if results:
+                r0 = results[0]
+                return {
+                    "status": "found",
+                    "title": r0.get("title"),
+                    "label": (r0.get("label") or [None])[0],
+                    "release_date": str(r0.get("year", "")),
+                    "genres": r0.get("genre", []),
+                    "styles": r0.get("style", []),
+                    "country": r0.get("country"),
+                    "result_count": len(results),
+                    "checked_at": _now_iso(),
+                    "source": "Discogs (discogs.com)",
+                }
+
+        # Fallback: artist + title search
+        if artist or title:
+            params2: Dict = {"type": "release"}
+            if artist:
+                params2["artist"] = artist
+            if title:
+                params2["track"] = title
+            if token:
+                params2["token"] = token
+            r2 = requests.get(f"{base}/database/search", params=params2, headers=headers, timeout=8)
+            if r2.status_code == 200:
+                results2 = r2.json().get("results", [])
+                if results2:
+                    r0 = results2[0]
+                    return {
+                        "status": "found_by_name",
+                        "title": r0.get("title"),
+                        "label": (r0.get("label") or [None])[0],
+                        "release_date": str(r0.get("year", "")),
+                        "genres": r0.get("genre", []),
+                        "styles": r0.get("style", []),
+                        "country": r0.get("country"),
+                        "result_count": len(results2),
+                        "note": "Found by artist/title — ISRC not indexed in Discogs",
+                        "checked_at": _now_iso(),
+                        "source": "Discogs (discogs.com)",
+                    }
+
+        return {
+            "status": "not_found",
+            "message": "ISRC not indexed in Discogs database.",
+            "checked_at": _now_iso(),
+            "source": "Discogs (discogs.com)",
+        }
+
+    except Exception as e:
+        logger.error(f"Discogs probe error: {e}")
+        return {
+            "status": "error",
+            "message": str(e),
+            "checked_at": _now_iso(),
+            "source": "Discogs (discogs.com)",
         }
 
 
@@ -507,12 +587,18 @@ async def run_forensic_audit(isrc: str) -> Dict:
     # Step 1: Probe MusicBrainz
     probe = await loop.run_in_executor(_executor, _probe_smpt, clean)
 
+    # Step 1b: Discogs — run in parallel with streams
+    probe_artist = probe.get("artist", "")
+    probe_title = probe.get("song_title", "")
+
     # Step 2: Stream stats (recording-level if we have MBID, artist-level fallback)
     recording_id = probe.get("recording_id")
     artist_mbid = probe.get("artist_mbid")
 
-    streaming = await loop.run_in_executor(
-        _executor, _get_streaming_stats, recording_id, artist_mbid
+    # Run Discogs + ListenBrainz in parallel
+    streaming, discogs = await asyncio.gather(
+        loop.run_in_executor(_executor, _get_streaming_stats, recording_id, artist_mbid),
+        loop.run_in_executor(_executor, _probe_discogs, clean, probe_artist, probe_title),
     )
 
     # Step 3: Gap detection from confirmed data only
@@ -524,8 +610,8 @@ async def run_forensic_audit(isrc: str) -> Dict:
     # Statute check
     statute = _check_statute(probe.get("first_release_date"))
 
-    artist_name = probe.get("artist", "")
-    song_title = probe.get("song_title", "")
+    artist_name = probe_artist
+    song_title = probe_title
 
     return {
         "isrc": clean,
@@ -539,6 +625,13 @@ async def run_forensic_audit(isrc: str) -> Dict:
                 "checked_at": probe.get("checked_at"),
                 "source": probe.get("source"),
                 "data": probe,
+            },
+            "discogs": {
+                "label": "Step 1b — Discogs Release Database",
+                "status": discogs.get("status"),
+                "checked_at": discogs.get("checked_at"),
+                "source": discogs.get("source"),
+                "data": discogs,
             },
             "streams": {
                 "label": "Step 2 — Stream Activity (ListenBrainz)",

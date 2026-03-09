@@ -39,6 +39,7 @@ interface ForensicResult {
   audit_started?: string;
   steps: {
     probe: { status: string; checked_at?: string; source?: string; data: any };
+    discogs?: { status: string; checked_at?: string; source?: string; data: any };
     streams?: { total_listens: number; unique_listeners: number; data_level?: string; data_note?: string; checked_at?: string; source?: string };
     verify: { status: string; matched: boolean | null; mlc_song_code: string | null; iswc: string | null; checked_at?: string; source?: string; data: any };
     detect: { black_box: boolean; severity: string; findings: Finding[]; streaming: { total_listens: number; unique_listeners: number; checked_at?: string; source?: string }; revenue?: RevenueRange };
@@ -120,6 +121,13 @@ function DeepProbePanel({
       nodeType: 'DIGITAL',
       hint: 'Recording registry — search term pre-filled',
       url: `https://musicbrainz.org/search?query=${enc}&type=recording`,
+    },
+    {
+      id: 'discogs',
+      name: 'Discogs',
+      nodeType: 'DIGITAL',
+      hint: 'Release database — ISRC + artist search pre-filled',
+      url: `https://www.discogs.com/search/?q=${enc}&type=release`,
     },
     {
       id: 'ascap',
@@ -400,6 +408,16 @@ function FreeAuditContent() {
       data: result.steps.probe.data,
       searchTerm: result.isrc,
       externalUrl: null,
+    },
+    {
+      id: 'discogs',
+      name: 'Discogs',
+      type: 'ISRC · Release Database',
+      status: result.steps.discogs?.status ?? 'not_checked',
+      matched: result.steps.discogs?.status === 'found' || result.steps.discogs?.status === 'found_by_name',
+      data: result.steps.discogs?.data ?? null,
+      searchTerm: result.isrc,
+      externalUrl: `https://www.discogs.com/search/?q=${encodeURIComponent(result.artist + ' ' + result.song_title)}&type=release`,
     },
     {
       id: 'mlc',
@@ -1023,7 +1041,32 @@ function FreeAuditContent() {
                 </div>
 
                 <button
-                  onClick={() => window.open(`/api/lawyer-pdf/generate`, '_blank')}
+                  onClick={async () => {
+                    try {
+                      const body = {
+                        track_id: result.isrc,
+                        title: result.song_title,
+                        artist: result.artist,
+                        isrc: result.isrc,
+                        contributors: [{
+                          name: result.artist || 'Unknown',
+                          role: 'Artist',
+                          ipi: result.steps.probe.data?.ipi || '',
+                          share: 100,
+                        }],
+                      };
+                      const res = await fetch('/api/lawyer-pdf/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                      });
+                      const data = await res.json();
+                      if (data.url) window.open(data.url, '_blank');
+                      else alert(data.detail || 'PDF generation failed');
+                    } catch (e) {
+                      alert('Error: ' + (e as Error).message);
+                    }
+                  }}
                   className="w-full py-3 bg-indigo-700 hover:bg-indigo-600 text-white text-sm font-semibold rounded transition flex items-center justify-center gap-2">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
