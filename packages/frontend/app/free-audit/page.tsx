@@ -20,16 +20,20 @@ interface Finding {
   action: string;
 }
 interface ProResult { status: string; count?: number; results?: any[] }
+interface RevenueRange { low: number; mid: number; high: number; confidence: number; confidence_label: string }
+interface StatuteWarning { level: 'urgent' | 'warning'; label: string; color: string; message: string; release_date: string; age_years: number }
 interface ForensicResult {
   isrc: string;
   song_title: string;
   artist: string;
+  audit_started?: string;
   steps: {
-    probe: { status: string; data: any };
-    verify: { status: string; matched: boolean; mlc_song_code: string | null; iswc: string | null; data: any };
-    detect: { black_box: boolean; severity: string; findings: Finding[]; streaming: { total_listens: number; unique_listeners: number } };
+    probe: { status: string; checked_at?: string; source?: string; data: any };
+    verify: { status: string; matched: boolean; mlc_song_code: string | null; iswc: string | null; checked_at?: string; source?: string; data: any };
+    detect: { black_box: boolean; severity: string; findings: Finding[]; streaming: { total_listens: number; unique_listeners: number; checked_at?: string; source?: string }; revenue?: RevenueRange };
     pro_scan?: { ascap: ProResult; bmi: ProResult; sesac?: ProResult };
   };
+  statute?: StatuteWarning | null;
   registry_links: Array<{ name: string; org: string; search_type: string; url: string; search_term: string; note: string }>;
   verdict: { level: string; color: string; summary: string };
 }
@@ -401,7 +405,12 @@ function FreeAuditContent() {
     : listens >= 100_000 ? 'Active earnings detected. Claim is viable.'
     : listens > 0 ? 'Some activity detected. Monitor for growth.'
     : 'No listening activity found in public data.';
-  const estimatedRevenue = Math.round(listens * 0.003);
+
+  // Revenue range from backend (with fallback to client-side estimate)
+  const revLow  = result?.steps.detect.revenue?.low  ?? Math.round(listens * 0.0007);
+  const revMid  = result?.steps.detect.revenue?.mid  ?? Math.round(listens * 0.003);
+  const revHigh = result?.steps.detect.revenue?.high ?? Math.round(listens * 0.004);
+  const revConfLabel = result?.steps.detect.revenue?.confidence_label ?? '';
 
   const findingActionLinks: Record<string, { label: string; href: string; external?: boolean }> = {
     black_box:     { label: 'File MLC Claim →',   href: '/attorney-portal' },
@@ -577,8 +586,8 @@ function FreeAuditContent() {
                   {result.steps.detect.black_box && <span className="ml-3 text-xs font-bold px-2 py-0.5 bg-red-900/60 text-red-300 rounded border border-red-700 animate-pulse">BLACK BOX DETECTED</span>}
                 </p>
                 <p className="text-xs text-slate-400 mt-0.5">{result.verdict.summary}</p>
-                {result.steps.detect.black_box && estimatedRevenue > 0 && (
-                  <p className="text-sm font-bold text-red-300 mt-1">Est. unclaimed: ${estimatedRevenue.toLocaleString()}</p>
+                {result.steps.detect.black_box && revMid > 0 && (
+                  <p className="text-sm font-bold text-red-300 mt-1">Est. unclaimed: ${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                 )}
               </div>
               <div className="text-right text-xs text-slate-500">
@@ -587,6 +596,20 @@ function FreeAuditContent() {
                 <p className="font-mono mt-0.5">{result.isrc}</p>
               </div>
             </div>
+
+            {/* ── STATUTE OF LIMITATIONS BANNER ── */}
+            {result.statute && (
+              <div className={`mb-4 p-4 rounded-lg border flex gap-3 items-start ${result.statute.level === 'urgent' ? 'bg-red-950/30 border-red-700' : 'bg-yellow-950/20 border-yellow-700'}`}>
+                <span className="text-lg flex-shrink-0">{result.statute.level === 'urgent' ? '🚨' : '⚠️'}</span>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${result.statute.level === 'urgent' ? 'text-red-400' : 'text-yellow-400'}`}>
+                    {result.statute.label}
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed">{result.statute.message}</p>
+                  <p className="text-[10px] text-slate-600 mt-1">Release date on record: {result.statute.release_date} · Age: {result.statute.age_years} years</p>
+                </div>
+              </div>
+            )}
 
             {/* ── BLACK BOX LEGAL VERDICT ── */}
             {result.steps.detect.black_box && (
@@ -599,10 +622,11 @@ function FreeAuditContent() {
                       <p className="text-[10px] text-red-500/80 uppercase tracking-wide">Status: CRITICAL · Action Required: IMMEDIATE</p>
                     </div>
                   </div>
-                  {estimatedRevenue > 0 && (
+                  {revMid > 0 && (
                     <div className="text-right flex-shrink-0">
                       <p className="text-[9px] text-red-600 uppercase tracking-wider">Estimated Unclaimed</p>
-                      <p className="text-xl font-bold text-red-400">${estimatedRevenue.toLocaleString()}</p>
+                      <p className="text-xl font-bold text-red-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                      <p className="text-[9px] text-red-700 mt-0.5">mid: ${revMid.toLocaleString()}</p>
                     </div>
                   )}
                 </div>
@@ -664,10 +688,12 @@ function FreeAuditContent() {
                   {/* Attorney note */}
                   <div className="p-3 bg-amber-900/10 border border-amber-800/30 rounded">
                     <p className="text-[10px] font-bold text-amber-500/80 uppercase mb-1">⚖️ Note to Attorney</p>
-                    <p className="text-slate-500 leading-relaxed">
-                      These funds are subject to a Statute of Limitations. If not claimed within the prescribed holding period, they may be redistributed based on general market share.
-                      {auditId && <span> Evidence ID: <span className="font-mono text-slate-400">{auditId}</span></span>}
+                    <p className="text-slate-500 leading-relaxed text-xs">
+                      {result.statute
+                        ? result.statute.message
+                        : 'These funds are subject to a statute of limitations. If not claimed within the prescribed holding period, they may be redistributed based on general market share.'}
                     </p>
+                    {auditId && <p className="text-[10px] text-slate-600 mt-1">Evidence ID: <span className="font-mono text-slate-400">{auditId}</span></p>}
                   </div>
                 </div>
               </div>
@@ -703,32 +729,44 @@ function FreeAuditContent() {
                   {
                     step: '1', label: 'Probe — SMPT Registry',
                     ok: result.steps.probe.status === 'found',
+                    checkedAt: result.steps.probe.checked_at,
+                    source: result.steps.probe.source,
                     rows: result.steps.probe.status === 'found' ? [
                       ['Song', result.steps.probe.data.song_title],
                       ['Artist', result.steps.probe.data.artist],
                       ['ISWC', result.steps.probe.data.iswc || '⚠ Not found'],
                       ['IPI', result.steps.probe.data.ipi || '⚠ Not found'],
                       ['Work Link', result.steps.probe.data.has_work_relationship ? '✓ Yes' : '⚠ No'],
+                      ['Release Date', result.steps.probe.data.first_release_date || 'Unknown'],
                     ] : [['Status', 'ISRC not in global registry']],
                   },
                   {
                     step: '2', label: 'Verify — MLC Mechanical',
                     ok: result.steps.verify.matched,
+                    checkedAt: result.steps.verify.checked_at,
+                    source: result.steps.verify.source,
                     rows: [
                       ['Match Status', result.steps.verify.data.match_status || 'UNMATCHED'],
                       ['MLC Song Code', result.steps.verify.mlc_song_code || 'N/A'],
                       ['ISWC (MLC)', result.steps.verify.iswc || 'N/A'],
                     ],
                   },
-                ].map(({ step, label, ok, rows }) => (
+                ].map(({ step, label, ok, checkedAt, source, rows }) => (
                   <div key={step} className="bg-[#0f172a] border border-slate-800 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Step {step}</span>
                         <span className="text-sm font-medium text-slate-200">{label}</span>
                       </div>
                       <StatusBadge matched={ok} />
                     </div>
+                    {(source || checkedAt) && (
+                      <p className="text-[10px] text-slate-600 mb-3">
+                        {source && <span>Source: <span className="text-slate-500">{source}</span></span>}
+                        {source && checkedAt && <span className="mx-1">·</span>}
+                        {checkedAt && <span>Checked: <span className="text-slate-500">{checkedAt}</span></span>}
+                      </p>
+                    )}
                     <div className="grid grid-cols-2 gap-2">
                       {rows.map(([k, v]) => (
                         <div key={k} className="bg-slate-800/30 rounded p-2">
@@ -763,11 +801,38 @@ function FreeAuditContent() {
                       <p className="text-xs font-mono mt-0.5 text-slate-200">{result.steps.detect.streaming.unique_listeners.toLocaleString()}</p>
                       <p className="text-[9px] text-slate-600 mt-0.5">Source: ListenBrainz</p>
                     </div>
-                    {estimatedRevenue > 0 && (
-                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-3">
-                        <p className="text-[10px] text-green-600 uppercase tracking-wider mb-1">Potential Unclaimed Revenue</p>
-                        <p className="text-xl font-bold text-green-400">${estimatedRevenue.toLocaleString()}</p>
-                        <p className="text-[10px] text-slate-600 mt-1">{listens.toLocaleString()} listens × $0.003 avg streaming rate</p>
+                    {revMid > 0 && (
+                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-3 space-y-2">
+                        <p className="text-[10px] text-green-600 uppercase tracking-wider">Estimated Unclaimed Revenue Range</p>
+                        <div className="flex items-end gap-2">
+                          <p className="text-2xl font-bold text-green-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                          <p className="text-xs text-slate-500 mb-0.5">mid: ${revMid.toLocaleString()}</p>
+                        </div>
+                        {revConfLabel && <p className="text-[10px] text-slate-500">Confidence: {revConfLabel}</p>}
+                        <p className="text-[10px] text-slate-600">{listens.toLocaleString()} listens · low=$0.0007 / avg=$0.003 / high=$0.004 per stream</p>
+                        {/* Gap chart */}
+                        <div className="mt-3 pt-3 border-t border-green-800/20">
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Revenue Gap Visualization</p>
+                          {[
+                            { label: 'Streams Documented', value: listens, max: listens, color: 'bg-indigo-500', unit: 'plays' },
+                            { label: 'Expected Revenue (mid)', value: revMid, max: revHigh, color: 'bg-green-500', unit: '$', prefix: '$' },
+                            { label: 'Reported / Paid', value: 0, max: revHigh, color: 'bg-red-500', unit: '$', note: 'Not verifiable without statement' },
+                          ].map(row => (
+                            <div key={row.label} className="mb-2">
+                              <div className="flex justify-between text-[9px] text-slate-500 mb-0.5">
+                                <span>{row.label}</span>
+                                <span>{row.note ?? `${row.prefix ?? ''}${row.value.toLocaleString()}`}</span>
+                              </div>
+                              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full ${row.color} rounded-full transition-all`}
+                                  style={{ width: row.max > 0 ? `${Math.min(100, (row.value / row.max) * 100)}%` : '0%' }}
+                                />
+                              </div>
+                            </div>
+                          ))}
+                          <p className="text-[9px] text-slate-700 mt-1">Gap = Expected − Reported = potential black box or unmatched royalties</p>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -796,7 +861,18 @@ function FreeAuditContent() {
                         return (
                           <div key={i} className={`p-3 rounded border-l-2 ${f.severity === 'critical' ? 'bg-red-950/30 border-red-600' : f.severity === 'warning' ? 'bg-yellow-950/20 border-yellow-600' : 'bg-blue-950/20 border-blue-700'}`}>
                             <p className="text-sm font-semibold text-slate-100 mb-1">{f.title}</p>
-                            <p className="text-xs text-slate-400 mb-2">{f.description}</p>
+                            <p className="text-xs text-slate-400 mb-1">{f.description}</p>
+                            {(f as any).source && (
+                              <p className="text-[10px] text-slate-600 mb-2">
+                                Source: <span className="text-slate-500">{(f as any).source}</span>
+                                {(f as any).checked_at && <span> · Checked: <span className="text-slate-500">{(f as any).checked_at}</span></span>}
+                              </p>
+                            )}
+                            {(f as any).estimated_low != null && (f as any).estimated_high != null && (f as any).estimated_high > 0 && (
+                              <p className="text-xs font-bold text-green-400 mb-2">
+                                Est. recoverable: ${(f as any).estimated_low.toLocaleString()} – ${(f as any).estimated_high.toLocaleString()}
+                              </p>
+                            )}
                             <div className="flex items-center justify-between gap-3 flex-wrap">
                               <p className="text-xs text-indigo-400 font-medium flex-1">→ {f.action}</p>
                               {fix && (
@@ -898,11 +974,13 @@ function FreeAuditContent() {
                       <p className="text-2xl font-bold text-slate-100">{result.steps.detect.streaming.unique_listeners.toLocaleString()}</p>
                       <p className="text-[10px] text-slate-600 mt-1">Source: ListenBrainz</p>
                     </div>
-                    {estimatedRevenue > 0 && (
+                    {revMid > 0 && (
                       <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-4 text-center">
-                        <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue</p>
-                        <p className="text-3xl font-bold text-green-400">${estimatedRevenue.toLocaleString()}</p>
-                        <p className="text-[10px] text-slate-600 mt-2">{listens.toLocaleString()} listens × $0.003 avg streaming rate</p>
+                        <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue Range</p>
+                        <p className="text-3xl font-bold text-green-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                        <p className="text-sm text-slate-400 mt-1">Mid estimate: ${revMid.toLocaleString()}</p>
+                        <p className="text-[10px] text-slate-600 mt-1">{listens.toLocaleString()} listens · rates: $0.0007–$0.004/stream</p>
+                        {revConfLabel && <p className="text-[10px] text-indigo-400/70 mt-1">Confidence: {revConfLabel}</p>}
                         <p className="text-[10px] text-slate-700 mt-1">{signalDesc}</p>
                       </div>
                     )}
@@ -939,6 +1017,8 @@ function FreeAuditContent() {
                       ['Black Box Claim', result.steps.detect.black_box ? 'YES — Active earnings detected without matched owner' : 'No'],
                       ['IPI Number', result.steps.probe.data?.ipi || 'Not on record'],
                       ['Streaming Evidence', `${result.steps.detect.streaming.total_listens.toLocaleString()} listens documented`],
+                      ['Est. Revenue Range', revMid > 0 ? `$${revLow.toLocaleString()} – $${revHigh.toLocaleString()} (mid: $${revMid.toLocaleString()})` : 'N/A'],
+                      ['Statute of Limitations', result.statute ? `${result.statute.label} — ${result.statute.age_years} yrs old` : 'Within window'],
                       ['Audit ID', auditId],
                       ['Audit Hash', auditHash.slice(0, 32) + '…'],
                     ].map(([k, v]) => (
