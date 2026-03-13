@@ -44,6 +44,10 @@ export default function VerifySplitsPage() {
   })
   const [verificationId, setVerificationId] = useState<string>('QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco')
   const [timestamp, setTimestamp] = useState<string>('')
+  const [smptAnalysis, setSmptAnalysis] = useState<any>(null)
+  const [smptLoading, setSmptLoading] = useState(false)
+  const [smptError, setSmptError] = useState<string | null>(null)
+  const [dismissedIssues, setDismissedIssues] = useState<Set<number>>(new Set())
 
   // Constants
   const TAX_RATE = 0.25 // 25% Swedish tax withholding
@@ -181,6 +185,54 @@ export default function VerifySplitsPage() {
     }
   }
 
+  const runSmptAnalysis = async (data: Contributor[]) => {
+    setSmptLoading(true)
+    setSmptError(null)
+    setSmptAnalysis(null)
+    setDismissedIssues(new Set())
+    try {
+      const res = await fetch('/api/split-verify-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          splits: data.map(c => ({ name: c.name, role: c.role, percentage: c.percentage })),
+          totalAmount: grossAmount,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok || !json.success) throw new Error(json.error || 'Analysis failed')
+      setSmptAnalysis(json.analysis)
+    } catch (err) {
+      setSmptError(err instanceof Error ? err.message : 'Analysis failed')
+    } finally {
+      setSmptLoading(false)
+    }
+  }
+
+  const acceptFix = (i: number) => {
+    const issue = smptAnalysis?.issues?.[i]
+    if (!issue) return
+    // Apply split normalization if it's a total issue
+    if (issue.party === 'All Parties') {
+      const total = currentData.reduce((s, c) => s + c.percentage, 0)
+      if (total > 0) {
+        const normalized = currentData.map(c => ({ ...c, percentage: Math.round((c.percentage / total) * 1000) / 10 }))
+        setCurrentData(normalized)
+        setErrors(validateData(normalized))
+      }
+    }
+    const next = new Set(dismissedIssues)
+    next.add(i)
+    setDismissedIssues(next)
+    showToast('Fix applied')
+  }
+
+  const dismissFix = (i: number) => {
+    const next = new Set(dismissedIssues)
+    next.add(i)
+    setDismissedIssues(next)
+  }
+
   const startVerification = () => {
     if (errors.length > 0) {
       showToast('Please fix issues before verification', 'error')
@@ -196,6 +248,7 @@ export default function VerifySplitsPage() {
     
     updateStep(3)
     showToast('Data verified successfully')
+    runSmptAnalysis(currentData)
   }
 
   // Payment Calculations
@@ -755,6 +808,105 @@ export default function VerifySplitsPage() {
             )}
           </div>
         </div>
+
+        {/* SMPT Analysis Panel */}
+        {currentStep >= 3 && (smptLoading || smptError || smptAnalysis) && (
+          <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm my-8">
+            <h2 className="text-xl font-semibold text-indigo-600 mb-4 flex items-center gap-2">
+              <i className="fas fa-brain"></i> SMPT Engine Analysis
+            </h2>
+
+            {smptLoading && (
+              <div className="flex items-center gap-3 text-gray-500 py-4">
+                <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                Analyzing splits with AI...
+              </div>
+            )}
+
+            {smptError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
+                ⚠️ SMPT engine error: {smptError}
+                <button onClick={() => runSmptAnalysis(currentData)} className="ml-3 underline font-medium">Try again</button>
+              </div>
+            )}
+
+            {smptAnalysis && (
+              <div className="space-y-5">
+                {/* Forensic Summary */}
+                <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-800">
+                  <div className="font-semibold mb-1">Forensic Summary</div>
+                  {smptAnalysis.forensicSummary}
+                </div>
+
+                {/* Risk + Status */}
+                <div className="flex gap-3 flex-wrap">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    smptAnalysis.riskLevel === 'low' ? 'bg-green-100 text-green-700' :
+                    smptAnalysis.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>Risk: {smptAnalysis.riskLevel?.toUpperCase()}</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${smptAnalysis.blockchainReady ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {smptAnalysis.blockchainReady ? '✓ Blockchain Ready' : '✗ Not Blockchain Ready'}
+                  </span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${smptAnalysis.courtAdmissible ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {smptAnalysis.courtAdmissible ? '✓ Court Admissible' : '✗ Not Court Admissible'}
+                  </span>
+                </div>
+
+                {/* Issues with Yes/No */}
+                {smptAnalysis.issues?.length > 0 && (
+                  <div>
+                    <div className="font-semibold text-gray-700 mb-3">Issues & Suggested Fixes</div>
+                    <div className="space-y-3">
+                      {smptAnalysis.issues.map((issue: any, i: number) => (
+                        !dismissedIssues.has(i) && (
+                          <div key={i} className={`rounded-xl p-4 border ${issue.severity === 'error' ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'}`}>
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1">
+                                <div className={`text-xs font-bold uppercase mb-1 ${issue.severity === 'error' ? 'text-red-600' : 'text-yellow-600'}`}>
+                                  {issue.severity} — {issue.party}
+                                </div>
+                                <div className="text-sm text-gray-800 mb-1">{issue.description}</div>
+                                <div className="text-xs text-gray-500">Suggested fix: <span className="font-medium text-gray-700">{issue.suggestedFix}</span></div>
+                              </div>
+                              <div className="flex gap-2 shrink-0">
+                                <button
+                                  onClick={() => acceptFix(i)}
+                                  className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition"
+                                >Yes, fix</button>
+                                <button
+                                  onClick={() => dismissFix(i)}
+                                  className="px-3 py-1.5 bg-white border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:border-gray-400 transition"
+                                >Dismiss</button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      ))}
+                      {smptAnalysis.issues.every((_: any, i: number) => dismissedIssues.has(i)) && (
+                        <div className="text-sm text-green-600 font-medium">✓ All issues addressed</div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Items */}
+                {smptAnalysis.actionItems?.length > 0 && (
+                  <div>
+                    <div className="font-semibold text-gray-700 mb-2">Action Items</div>
+                    <ul className="space-y-1">
+                      {smptAnalysis.actionItems.map((item: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                          <span className="text-indigo-600 mt-0.5">→</span> {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Trust Signals */}
         <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 my-8">
