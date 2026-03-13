@@ -1,14 +1,67 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+const ISRC_RE = /^[A-Z]{2}[A-Z0-9]{3}\d{2}\d{5}$/i;
+
 export default function RoyaltyFinderPage() {
+  return (
+    <Suspense>
+      <RoyaltyFinderContent />
+    </Suspense>
+  );
+}
+
+function RoyaltyFinderContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [searchType, setSearchType] = useState('artist');
   const [artistQuery, setArtistQuery] = useState('');
   const [isrc, setIsrc] = useState('');
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<any>(null);
   const [error, setError] = useState('');
+
+  // Per-artist expanded state: mbid → { open, loadingIsrcs, recordings }
+  const [expanded, setExpanded] = useState<Record<string, { open: boolean; loading: boolean; recordings: any[] }>>({});
+
+  const toggleArtist = async (mbid: string) => {
+    if (expanded[mbid]?.open) {
+      setExpanded(p => ({ ...p, [mbid]: { ...p[mbid], open: false } }));
+      return;
+    }
+    if (expanded[mbid]?.recordings?.length) {
+      setExpanded(p => ({ ...p, [mbid]: { ...p[mbid], open: true } }));
+      return;
+    }
+    // Fetch ISRCs
+    setExpanded(p => ({ ...p, [mbid]: { open: true, loading: true, recordings: [] } }));
+    try {
+      const res = await fetch(`/api/royalty-finder/artist/${mbid}/recordings?limit=15`);
+      const data = await res.json();
+      setExpanded(p => ({ ...p, [mbid]: { open: true, loading: false, recordings: data.recordings || [] } }));
+    } catch {
+      setExpanded(p => ({ ...p, [mbid]: { open: true, loading: false, recordings: [] } }));
+    }
+  };
+
+  // Pre-populate from landing page query and auto-search
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (!q) return;
+    const clean = q.trim().replace(/-/g, '').toUpperCase();
+    if (ISRC_RE.test(clean)) {
+      setSearchType('isrc');
+      setIsrc(q.trim());
+      // auto-trigger search
+      setTimeout(() => document.getElementById('search-btn')?.click(), 100);
+    } else {
+      setSearchType('artist');
+      setArtistQuery(q.trim());
+      setTimeout(() => document.getElementById('search-btn')?.click(), 100);
+    }
+  }, [searchParams]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +116,7 @@ export default function RoyaltyFinderPage() {
           <h1 className="text-4xl font-bold text-white mb-4">Find Missing Royalties</h1>
           <p className="text-lg text-slate-300">
             Hunt down unclaimed bags from streams, syncs, performances & playlists. 
-            Scan MusicBrainz for recordings, ISRCs, and rights gaps — built for hip hop & R&B creators.
+            Scan SMPT for recordings, ISRCs, and rights gaps — built for hip hop & R&B creators.
           </p>
         </div>
 
@@ -107,7 +160,7 @@ export default function RoyaltyFinderPage() {
                   required
                 />
                 <p className="text-sm text-slate-400 mt-2">
-                  Search MusicBrainz for artist information
+                  Search SMPT for artist information
                 </p>
               </div>
             ) : (
@@ -140,11 +193,12 @@ export default function RoyaltyFinderPage() {
             )}
 
             <button
+              id="search-btn"
               type="submit"
               disabled={loading}
               className="w-full bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 transition"
             >
-              {loading ? '🔍 Searching MusicBrainz...' : '🔍 Find Royalties'}
+              {loading ? '🔍 Searching SMPT...' : '🔍 Find Royalties'}
             </button>
           </form>
 
@@ -158,33 +212,69 @@ export default function RoyaltyFinderPage() {
         {/* Results */}
         {results && (
           <div className="bg-[#0f172a] rounded-xl shadow-lg p-6 border border-white/10">
-            <h2 className="text-2xl font-bold text-white mb-6">Results from MusicBrainz</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Results from SMPT</h2>
             
             {searchType === 'artist' && results.artists && (
-              <div className="space-y-4">
-                {results.artists.map((artist: any) => (
-                  <div key={artist.mbid} className="border border-white/10 rounded-lg p-4 hover:shadow-md transition">
-                    <h3 className="text-xl font-semibold text-indigo-400">{artist.name}</h3>
-                    <div className="grid grid-cols-2 gap-4 mt-3 text-sm">
-                      <div>
-                        <span className="text-slate-400">MBID:</span>
-                        <span className="ml-2 font-mono text-xs text-slate-300">{artist.mbid}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Type:</span>
-                        <span className="ml-2 text-slate-300">{artist.type || 'Unknown'}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Country:</span>
-                        <span className="ml-2 text-slate-300">{artist.country || 'Unknown'}</span>
-                      </div>
-                      <div>
-                        <span className="text-slate-400">Score:</span>
-                        <span className="ml-2 text-slate-300">{artist.score}%</span>
-                      </div>
+              <div className="space-y-3">
+                {results.artists.map((artist: any) => {
+                  const state = expanded[artist.mbid];
+                  return (
+                    <div key={artist.mbid} className="border border-slate-700 rounded-lg overflow-hidden">
+                      {/* Artist row — click to expand */}
+                      <button
+                        onClick={() => toggleArtist(artist.mbid)}
+                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-slate-800/40 transition text-left"
+                      >
+                        <div>
+                          <p className="text-sm font-semibold text-slate-100">{artist.name}</p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {[artist.type, artist.country, artist.disambiguation].filter(Boolean).join(' · ')}
+                            {' · '}
+                            <span className="font-mono">{artist.mbid.slice(0,8)}…</span>
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0 ml-4">
+                          <span className="text-[11px] font-bold text-indigo-400">{artist.score}%</span>
+                          <span className="text-xs text-slate-400 border border-slate-600 px-2 py-0.5 rounded">
+                            {state?.open ? '▲ Hide ISRCs' : '▼ Get ISRCs'}
+                          </span>
+                        </div>
+                      </button>
+
+                      {/* Expanded: recordings / ISRCs */}
+                      {state?.open && (
+                        <div className="border-t border-slate-700 bg-[#080d1a]">
+                          {state.loading && (
+                            <p className="px-4 py-3 text-xs text-slate-400">Loading recordings from SMPT...</p>
+                          )}
+                          {!state.loading && state.recordings.length === 0 && (
+                            <p className="px-4 py-3 text-xs text-slate-500">No ISRC-linked recordings found in SMPT.</p>
+                          )}
+                          {!state.loading && state.recordings.map((rec: any) => (
+                            <div key={rec.id} className="flex items-center justify-between px-4 py-2.5 border-b border-slate-800/60 last:border-0 hover:bg-slate-800/20 transition">
+                              <div className="min-w-0 flex-1">
+                                <p className="text-xs font-medium text-slate-200 truncate">{rec.title}</p>
+                                {rec.primary_isrc ? (
+                                  <p className="text-[10px] font-mono text-indigo-400 mt-0.5">{rec.primary_isrc}</p>
+                                ) : (
+                                  <p className="text-[10px] text-slate-600 mt-0.5">No ISRC on record</p>
+                                )}
+                              </div>
+                              {rec.primary_isrc && (
+                                <button
+                                  onClick={() => router.push(`/free-audit?isrc=${rec.primary_isrc}`)}
+                                  className="ml-3 flex-shrink-0 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold rounded transition"
+                                >
+                                  Forensic Audit →
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -228,14 +318,14 @@ export default function RoyaltyFinderPage() {
             <div className="text-3xl mb-3">🔍</div>
             <h3 className="text-lg font-semibold text-white mb-2">Global PRO Coverage</h3>
             <p className="text-slate-300">
-              Scans MusicBrainz + direct links to ASCAP, BMI, SOCAN, PRS — find unclaimed from viral TikToks to radio spins.
+              Scans SMPT + direct links to ASCAP, BMI, SOCAN, PRS — find unclaimed from viral TikToks to radio spins.
             </p>
           </div>
           <div className="bg-[#0f172a] p-6 rounded-xl shadow-sm border border-white/10">
             <div className="text-3xl mb-3">🎫</div>
             <h3 className="text-lg font-semibold text-white mb-2">Real ISRC Data</h3>
             <p className="text-slate-300">
-              Pull real ISRCs from MusicBrainz to verify neighboring rights and SoundExchange claims.
+              Pull real ISRCs from SMPT to verify neighboring rights and SoundExchange claims.
             </p>
           </div>
           <div className="bg-[#0f172a] p-6 rounded-xl shadow-sm border border-white/10">

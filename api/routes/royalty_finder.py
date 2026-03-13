@@ -154,6 +154,45 @@ async def validate_isrc(request: AuditRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/artist/{mbid}/recordings")
+async def get_artist_recordings(
+    mbid: str,
+    limit: int = Query(10, ge=1, le=50)
+):
+    """
+    Fetch an artist's recordings from MusicBrainz, extracting ISRCs.
+    Used to drill into an artist and run per-recording forensic audits.
+    """
+    try:
+        url = f"https://musicbrainz.org/ws/2/recording"
+        params = {
+            "artist": mbid,
+            "fmt": "json",
+            "limit": limit,
+            "inc": "isrcs",
+        }
+        headers = {"User-Agent": "TrapRoyaltiesPro/1.0 (contact@traproyaltiespro.com)"}
+        r = requests.get(url, params=params, headers=headers, timeout=10)
+        if r.status_code != 200:
+            raise HTTPException(status_code=r.status_code, detail="SMPT API error")
+        data = r.json()
+        recordings = []
+        for rec in data.get("recordings", []):
+            isrcs = rec.get("isrcs", [])
+            recordings.append({
+                "id": rec.get("id"),
+                "title": rec.get("title"),
+                "length_ms": rec.get("length"),
+                "isrcs": isrcs,
+                "primary_isrc": isrcs[0] if isrcs else None,
+            })
+        return {"mbid": mbid, "count": len(recordings), "recordings": recordings}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/risk-categories")
 async def get_risk_categories():
     """Return risk level categories for UI display"""

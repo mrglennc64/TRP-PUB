@@ -12,6 +12,8 @@ from api.routes.label_branding import router as label_branding_router
 from api.routes.label_contracts import router as label_contracts_router
 from api.routes.label_payouts import router as label_payouts_router
 from api.routes.ddex import router as ddex_router
+from api.routes.forensic import router as forensic_router
+from api.routes.catalog_scan import router as catalog_scan_router
 
 app = FastAPI(
     title="TrapRoyaltiesPro API",
@@ -40,6 +42,8 @@ app.include_router(label_branding_router)
 app.include_router(label_contracts_router)
 app.include_router(label_payouts_router)
 app.include_router(ddex_router)
+app.include_router(forensic_router)
+app.include_router(catalog_scan_router)
 
 @app.get("/")
 async def root():
