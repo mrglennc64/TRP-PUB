@@ -144,19 +144,19 @@ export default function LabelWorkspace() {
 
       {/* ── Top Nav ── */}
       <nav className="sticky top-0 z-40 bg-[#0a0f1e] border-b border-white/10 flex items-center px-6 py-3 gap-1">
-        <span className="text-sm font-black text-indigo-400 mr-6">TrapRoyalties<span className="text-white">Pro</span></span>
+        <span className="text-sm font-black text-purple-300 mr-6">TrapRoyalties<span className="text-white">Pro</span></span>
         <div className="flex gap-1">
           {[
             { label: 'Label Workspace', active: true,  action: () => {} },
             { label: 'Label Portal',    active: false, action: () => setPortal(true) },
           ].map(t => (
             <button key={t.label} onClick={t.action}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${t.active ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition ${t.active ? 'bg-purple-600/30 text-indigo-300 border border-purple-500/40' : 'text-slate-500 hover:text-white hover:bg-slate-900/5'}`}>
               {t.label}
             </button>
           ))}
-          <Link href="/attorney-portal" className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white hover:bg-white/5 transition">Attorney Portal</Link>
-          <Link href="/split-verification" className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white hover:bg-white/5 transition">Split Verification</Link>
+          <Link href="/attorney-portal" className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white hover:bg-slate-900/5 transition">Attorney Portal</Link>
+          <Link href="/split-verification" className="px-4 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-white hover:bg-slate-900/5 transition">Split Verification</Link>
         </div>
         <Link href="/" className="ml-auto text-xs text-slate-500 hover:text-white transition">← Main Site</Link>
       </nav>
@@ -177,7 +177,7 @@ export default function LabelWorkspace() {
                 <div key={artist.id}>
                   <button
                     onClick={() => toggleArtist(artist.id)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold hover:bg-white/5 transition text-left">
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold hover:bg-slate-900/5 transition text-left">
                     <span className="text-slate-500 w-3">{open ? '▼' : '▶'}</span>
                     <span className="text-yellow-400">📁</span>
                     <span className="text-slate-300">{artist.name}</span>
@@ -191,7 +191,7 @@ export default function LabelWorkspace() {
                         draggable
                         onDragStart={e => e.dataTransfer.setData('trackId', t.id)}
                         onClick={() => selectTrack(t)}
-                        className={`w-full flex items-center gap-2 pl-8 pr-3 py-1.5 text-xs hover:bg-indigo-600/10 transition text-left group ${auditing?.id === t.id ? 'bg-indigo-600/20 text-indigo-300' : 'text-slate-400'}`}>
+                        className={`w-full flex items-center gap-2 pl-8 pr-3 py-1.5 text-xs hover:bg-purple-600/10 transition text-left group ${auditing?.id === t.id ? 'bg-purple-600/20 text-indigo-300' : 'text-slate-400'}`}>
                         <span className={crit > 0 ? 'text-red-400' : 'text-slate-500'}>🎵</span>
                         <span className="truncate flex-1">{t.title}</span>
                         {crit > 0 && <span className="text-red-400 text-[9px] font-black">{crit}</span>}
@@ -202,7 +202,7 @@ export default function LabelWorkspace() {
               );
             })}
           </div>
-          <div className="px-3 py-3 border-t border-white/10 text-[10px] text-slate-600 text-center">
+          <div className="px-3 py-3 border-t border-white/10 text-[10px] text-slate-500 text-center">
             Drag tracks to audit panel →
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function LabelWorkspace() {
           {!auditing ? (
             // Drop zone
             <div
-              className={`flex-1 flex flex-col items-center justify-center gap-4 border-2 border-dashed m-6 rounded-2xl transition ${dragOver ? 'border-indigo-500 bg-indigo-500/10' : 'border-white/10'}`}
+              className={`flex-1 flex flex-col items-center justify-center gap-4 border-2 border-dashed m-6 rounded-2xl transition ${dragOver ? 'border-purple-500 bg-purple-500/10' : 'border-white/10'}`}
               onDragOver={e => { e.preventDefault(); setDragOver(true); }}
               onDragLeave={() => setDragOver(false)}
               onDrop={e => {
@@ -223,7 +223,7 @@ export default function LabelWorkspace() {
               }}>
               <div className="text-5xl opacity-30">📂</div>
               <p className="text-slate-500 font-bold text-sm">Drop a track here to audit</p>
-              <p className="text-slate-600 text-xs">Drag from the Explorer panel on the left, or click a track</p>
+              <p className="text-slate-500 text-xs">Drag from the Explorer panel on the left, or click a track</p>
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
@@ -231,7 +231,7 @@ export default function LabelWorkspace() {
               {/* Track header */}
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-[10px] text-indigo-400 font-mono uppercase tracking-widest mb-1">Audit Panel</p>
+                  <p className="text-[10px] text-purple-300 font-mono uppercase tracking-widest mb-1">Audit Panel</p>
                   <h2 className="text-2xl font-black">{auditing.title}</h2>
                   <p className="text-xs text-slate-400 mt-0.5">{ARTISTS.find(a=>a.id===auditing.artistId)?.name} · {auditing.genre}</p>
                 </div>
@@ -280,8 +280,8 @@ export default function LabelWorkspace() {
                   <div className="space-y-2">
                     {auditing.splits.map((s, i) => (
                       <div key={i} className="flex items-center gap-3">
-                        <div className="flex-1 bg-white/10 rounded-full h-2">
-                          <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${s.pct}%` }} />
+                        <div className="flex-1 bg-slate-900/10 rounded-full h-2">
+                          <div className="bg-purple-500 h-2 rounded-full" style={{ width: `${s.pct}%` }} />
                         </div>
                         <span className="text-xs text-slate-300 w-28 text-right truncate">{s.name}</span>
                         <span className="text-xs font-black text-indigo-300 w-10 text-right">{s.pct}%</span>
@@ -319,7 +319,7 @@ export default function LabelWorkspace() {
               )}
 
               <button onClick={() => { setAuditing(null); setFixLog([]); setFixedTrack(null); }}
-                className="w-full py-2 text-xs text-slate-600 hover:text-slate-400 border border-white/5 rounded-xl transition">
+                className="w-full py-2 text-xs text-slate-500 hover:text-slate-400 border border-white/5 rounded-xl transition">
                 Clear audit panel
               </button>
             </div>
@@ -338,7 +338,7 @@ export default function LabelWorkspace() {
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
               {chatMsgs.map((m, i) => (
                 <div key={i} className={`flex ${m.role==='user'?'justify-end':''}`}>
-                  <div className={`max-w-[85%] px-3 py-2 rounded-xl text-xs ${m.role==='user'?'bg-indigo-600 text-white':'bg-[#1e293b] text-slate-300'}`}>
+                  <div className={`max-w-[85%] px-3 py-2 rounded-xl text-xs ${m.role==='user'?'bg-purple-600 text-white':'bg-[#1e293b] text-slate-300'}`}>
                     {m.text}
                   </div>
                 </div>
@@ -351,7 +351,7 @@ export default function LabelWorkspace() {
                 onKeyDown={e => e.key === 'Enter' && sendChat()}
                 placeholder="Ask about ISRC, splits, PROs..."
                 className="flex-1 bg-[#0a0f1e] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-              <button onClick={sendChat} className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-xs font-bold transition">Send</button>
+              <button onClick={sendChat} className="px-3 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-xs font-bold transition">Send</button>
             </div>
           </div>
 
@@ -376,7 +376,7 @@ export default function LabelWorkspace() {
             </div>
             <div className="flex-1 overflow-y-auto p-3">
               {fixLog.length === 0 && !fixedTrack && (
-                <p className="text-xs text-slate-600 text-center mt-4">Run auto-fix and click Push to see updated info here</p>
+                <p className="text-xs text-slate-500 text-center mt-4">Run auto-fix and click Push to see updated info here</p>
               )}
               {fixLog.length > 0 && (
                 <div className="space-y-1 font-mono text-[10px]">
@@ -446,7 +446,7 @@ function LabelPortalView({ onBack }: { onBack: () => void }) {
     <div className="min-h-screen bg-[#0a0f1e] text-white flex flex-col">
       <div className="flex items-center px-6 py-3 border-b border-white/10 bg-[#0a0f1e]">
         <button onClick={onBack} className="text-xs text-slate-500 hover:text-white mr-4 transition">← Back to Workspace</button>
-        <span className="text-sm font-black text-indigo-400">Label<span className="text-white"> Operations Portal</span></span>
+        <span className="text-sm font-black text-purple-300">Label<span className="text-white"> Operations Portal</span></span>
         <Link href="/attorney-portal" className="ml-auto text-xs text-slate-500 hover:text-white transition">⚖️ Attorney Portal</Link>
       </div>
       <div className="flex flex-1">
@@ -454,7 +454,7 @@ function LabelPortalView({ onBack }: { onBack: () => void }) {
           <nav className="space-y-1 flex-1">
             {NAV.map(n => (
               <button key={n.id} onClick={() => setView(n.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left ${view===n.id?'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 font-semibold':'text-slate-400 hover:text-white hover:bg-white/5'}`}>
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left ${view===n.id?'bg-purple-600/20 text-indigo-300 border border-purple-500/30 font-semibold':'text-slate-400 hover:text-white hover:bg-slate-900/5'}`}>
                 <span>{n.icon}</span>{n.label}
               </button>
             ))}
@@ -483,7 +483,7 @@ function LabelPortalView({ onBack }: { onBack: () => void }) {
                   {artists.map(a=>(
                     <div key={a.id} className="flex justify-between items-center p-3 bg-[#0f172a] rounded-xl border border-white/5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-black text-indigo-300">{a.stage[0]}</div>
+                        <div className="w-8 h-8 rounded-full bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-xs font-black text-indigo-300">{a.stage[0]}</div>
                         <div><p className="font-bold text-sm">{a.stage}</p><p className="text-xs text-slate-500">{a.genre}</p></div>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-green-500/20 text-green-300':'bg-yellow-500/20 text-yellow-300'}`}>{a.recouped?'RECOUPED':'UNRECOUPED'}</span>
@@ -498,7 +498,7 @@ function LabelPortalView({ onBack }: { onBack: () => void }) {
               <div className="text-4xl mb-4">{NAV.find(n=>n.id===view)?.icon}</div>
               <h2 className="text-xl font-black mb-2">{NAV.find(n=>n.id===view)?.label}</h2>
               <p className="text-slate-500 text-sm">This section is available in the full dashboard.</p>
-              <Link href="/dashboard" className="inline-block mt-4 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm transition">Open Full Dashboard →</Link>
+              <Link href="/dashboard" className="inline-block mt-4 px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-sm transition">Open Full Dashboard →</Link>
             </div>
           )}
         </div>

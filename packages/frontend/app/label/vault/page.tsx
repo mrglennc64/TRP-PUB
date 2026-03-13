@@ -80,7 +80,7 @@ export default function VaultPage() {
                     className={`w-full p-3 rounded-lg border text-left transition ${
                       noticeType === 'formal'
                         ? 'bg-slate-800 border-purple-500/30'
-                        : 'bg-slate-900 border-transparent hover:border-slate-700'
+                        : 'bg-slate-900 border-transparent hover:border-slate-800'
                     }`}
                   >
                     <p className="text-xs font-bold text-white">Formal Notice of Claim</p>
@@ -91,7 +91,7 @@ export default function VaultPage() {
                     className={`w-full p-3 rounded-lg border text-left transition ${
                       noticeType === 'cease'
                         ? 'bg-slate-800 border-purple-500/30'
-                        : 'bg-slate-900 border-transparent hover:border-slate-700'
+                        : 'bg-slate-900 border-transparent hover:border-slate-800'
                     }`}
                   >
                     <p className="text-xs font-bold text-white">Cease &amp; Desist (Royalties)</p>
@@ -102,7 +102,7 @@ export default function VaultPage() {
             </div>
 
             {/* Letter preview */}
-            <div className="md:col-span-2 bg-white text-slate-900 p-8 rounded shadow-2xl h-[400px] overflow-y-auto text-[11px] leading-relaxed font-serif" style={{ boxShadow: '0 10px 30px rgba(147,51,234,0.1)' }}>
+            <div className="md:col-span-2 bg-slate-900 text-slate-900 p-8 rounded shadow-2xl h-[400px] overflow-y-auto text-[11px] leading-relaxed font-serif" style={{ boxShadow: '0 10px 30px rgba(147,51,234,0.1)' }}>
               <p className="font-bold text-right mb-8 font-sans uppercase text-xs">Date: March 06, 2026</p>
               <p className="mb-4 font-bold">RE: NOTICE OF OWNERSHIP DISCREPANCY</p>
               <p className="mb-4">
@@ -126,7 +126,7 @@ export default function VaultPage() {
           </div>
 
           <div className="mt-8 flex justify-end gap-4 border-t border-slate-800 pt-6">
-            <button className="px-6 py-2 border border-slate-700 rounded-lg text-xs font-bold text-slate-400 hover:bg-slate-800 transition">
+            <button className="px-6 py-2 border border-slate-800 rounded-lg text-xs font-bold text-slate-400 hover:bg-slate-800 transition">
               Download PDF
             </button>
             <button className="px-6 py-2 bg-purple-600 rounded-lg text-xs font-bold hover:bg-purple-500 transition shadow-lg shadow-purple-900/40">
