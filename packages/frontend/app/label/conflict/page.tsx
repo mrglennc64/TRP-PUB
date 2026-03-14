@@ -56,7 +56,7 @@ export default function ConflictCenterPage() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-500 mono">{CONFLICTS.length} active conflicts</span>
-            <Link href="/attorney-portal" className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700 transition">
+            <Link href="/attorney-portal" className="px-4 py-2 bg-slate-800 border border-slate-800 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700 transition">
               Attorney Portal →
             </Link>
           </div>
@@ -82,7 +82,7 @@ export default function ConflictCenterPage() {
 
               {/* Claims */}
               <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: '1px', backgroundColor: '#1e293b' }}>
-                <div className="p-8 bg-slate-900/50">
+                <div className="p-8 bg-[#0f172a]">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-6">Your Verified Claim</h3>
                   <div className="flex items-baseline gap-2 mb-4">
                     <span className="text-5xl font-black mono text-white">{c.ourClaim}</span>
@@ -95,7 +95,7 @@ export default function ConflictCenterPage() {
                   </ul>
                 </div>
 
-                <div className="p-8 bg-slate-900/50">
+                <div className="p-8 bg-[#0f172a]">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-6">Rival Claim: {c.rival}</h3>
                   <div className="flex items-baseline gap-2 mb-4">
                     <span className="text-5xl font-black mono text-red-400">{c.overlap}</span>
@@ -111,10 +111,10 @@ export default function ConflictCenterPage() {
 
               {/* Actions */}
               <div className="p-6 flex justify-end gap-4 border-t border-slate-800 bg-slate-900/80">
-                <Link href="/attorney-portal" className="px-6 py-2 border border-slate-700 rounded-lg text-xs font-bold text-slate-400 hover:bg-slate-800 transition">
+                <Link href="/attorney-portal" className="px-6 py-2 border border-slate-800 rounded-lg text-xs font-bold text-slate-400 hover:bg-slate-800 transition">
                   Open in Contract Auditor
                 </Link>
-                <button className="px-6 py-2 border border-slate-700 rounded-lg text-xs font-bold text-slate-400 hover:bg-slate-800 transition">
+                <button className="px-6 py-2 border border-slate-800 rounded-lg text-xs font-bold text-slate-400 hover:bg-slate-800 transition">
                   Request External Audit
                 </button>
                 <Link href="/label/vault" className="px-6 py-2 bg-purple-600 rounded-lg text-xs font-bold hover:bg-purple-500 transition shadow-lg shadow-purple-900/40">

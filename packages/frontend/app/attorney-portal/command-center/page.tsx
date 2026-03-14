@@ -165,7 +165,7 @@ const TOTAL_PIPELINE = LABELS.reduce((s, l) => s + l.pipeline, 0);
 
 const STATUS_STYLE: Record<string, string> = {
   active:  "border-purple-500 bg-purple-500/10 ring-2 ring-purple-500",
-  idle:    "border-slate-700 hover:border-slate-500",
+  idle:    "border-slate-800 hover:border-slate-500",
   urgent:  "border-red-500/50 bg-red-500/5 hover:border-red-500",
   action:  "border-yellow-500/40 bg-yellow-500/5 hover:border-yellow-500/50",
 };
@@ -182,7 +182,7 @@ const SEVERITY_STYLE: Record<string, string> = {
 };
 const ALERT_STYLE: Record<string, string> = {
   urgent:   "bg-red-950/20 border-red-900/30 text-red-300",
-  notice:   "bg-slate-900 border-slate-700 text-slate-300",
+  notice:   "bg-slate-900 border-slate-800 text-slate-300",
   resolved: "bg-green-950/20 border-green-900/30 text-green-300",
 };
 
@@ -301,7 +301,7 @@ export default function CommandCenter() {
             <h1 className="text-2xl font-black tracking-tight uppercase italic">
               TrapRoyaltiesPro <span className="text-purple-400">Attorney Terminal</span>
             </h1>
-            <p className="text-slate-600 mono text-[10px] mt-0.5">
+            <p className="text-slate-500 mono text-[10px] mt-0.5">
               Managed Portfolios: {LABELS.length} Labels / {LABELS.reduce((s, l) => s + l.artists, 0)} Artists
             </p>
           </div>
@@ -419,7 +419,7 @@ export default function CommandCenter() {
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {label.roster.map(r => (
-                      <tr key={r.name} className="hover:bg-white/5 transition">
+                      <tr key={r.name} className="hover:bg-slate-900/5 transition">
                         <td className="py-3 font-bold">{r.name}</td>
                         <td className="py-3 text-right mono text-slate-400">{r.tracks}</td>
                         <td className="py-3 text-right">
@@ -494,11 +494,11 @@ export default function CommandCenter() {
                   <span>⚖️</span> Contract Risk Analyzer
                 </Link>
                 <Link href="/dashboard"
-                  className="flex items-center gap-3 px-4 py-3 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 rounded-lg hover:bg-indigo-600/30 transition text-sm font-bold">
+                  className="flex items-center gap-3 px-4 py-3 bg-purple-600/20 border border-purple-500/30 text-indigo-300 rounded-lg hover:bg-purple-600/30 transition text-sm font-bold">
                   <span>🔎</span> ISRC Search & Register
                 </Link>
                 <Link href="/dashboard"
-                  className="flex items-center gap-3 px-4 py-3 bg-white/5 border border-white/10 text-slate-300 rounded-lg hover:bg-white/10 transition text-sm font-bold">
+                  className="flex items-center gap-3 px-4 py-3 bg-slate-900/5 border border-white/10 text-slate-300 rounded-lg hover:bg-slate-900/10 transition text-sm font-bold">
                   <span>🌐</span> Generate DDEX Package
                 </Link>
                 <Link href="/onboard"

@@ -82,7 +82,7 @@ export default function SettlementRailsPage() {
                   </tr>
                 </thead>
                 <tbody className="text-xs mono text-slate-300">
-                  <tr className="border-b border-slate-800/50 hover:bg-slate-800/30 transition">
+                  <tr className="border-b border-slate-800 hover:bg-slate-800 transition">
                     <td className="py-4 font-bold text-white">
                       Jumpman<br />
                       <span className="text-[10px] text-slate-500">US-S1Z-15-00001</span>
@@ -93,7 +93,7 @@ export default function SettlementRailsPage() {
                     </td>
                     <td className="py-4 text-right text-green-400 font-bold">+$24,150.00</td>
                   </tr>
-                  <tr className="border-b border-slate-800/50 hover:bg-slate-800/30 transition">
+                  <tr className="border-b border-slate-800 hover:bg-slate-800 transition">
                     <td className="py-4 font-bold text-white">
                       Creepin<br />
                       <span className="text-[10px] text-slate-500">US-S1Z-22-00442</span>
@@ -104,7 +104,7 @@ export default function SettlementRailsPage() {
                     </td>
                     <td className="py-4 text-right text-slate-400 font-bold">+$18,920.12</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30 transition">
+                  <tr className="hover:bg-slate-800 transition">
                     <td className="py-4 font-bold text-white">
                       Mask Off<br />
                       <span className="text-[10px] text-slate-500">US-S1Z-17-00001</span>
@@ -156,7 +156,7 @@ export default function SettlementRailsPage() {
 
             <button
               onClick={() => setShowModal(true)}
-              className="w-full bg-slate-100 text-slate-900 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white transition shadow-xl"
+              className="w-full bg-slate-100 text-slate-900 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-900 transition shadow-[0_0_50px_rgba(147,51,234,0.2)]"
             >
               Request Early Withdrawal
             </button>
@@ -166,7 +166,7 @@ export default function SettlementRailsPage() {
 
       {/* Withdrawal Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0f172a]/80 backdrop-blur-sm">
           <div className="glass max-w-lg w-full p-8 rounded-3xl shadow-[0_0_50px_rgba(147,51,234,0.2)] mx-4" style={{ borderColor: 'rgba(168,85,247,0.4)' }}>
             <div className="flex justify-between items-start mb-8">
               <div>
@@ -182,7 +182,7 @@ export default function SettlementRailsPage() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
+              <div className="bg-[#0f172a] p-6 rounded-2xl border border-slate-800">
                 <div className="flex justify-between mb-2">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">Accrued Digital Balance</span>
                   <span className="text-[10px] text-green-400 mono">Verified</span>
@@ -206,9 +206,9 @@ export default function SettlementRailsPage() {
               </div>
             </div>
 
-            <div className="mt-8 p-4 bg-slate-800/30 rounded-xl border border-slate-700 mb-8">
+            <div className="mt-8 p-4 bg-slate-800 rounded-xl border border-slate-800 mb-8">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-white rounded-lg flex items-center justify-center font-bold text-slate-900 text-xs uppercase">BANK</div>
+                <div className="h-10 w-10 bg-slate-900 rounded-lg flex items-center justify-center font-bold text-slate-900 text-xs uppercase">BANK</div>
                 <div className="text-left">
                   <p className="text-xs font-bold">CHASE BUSINESS CHECKING</p>
                   <p className="text-[10px] text-slate-500 mono">Routing: ****6789 | Acct: ****1234</p>
@@ -216,7 +216,7 @@ export default function SettlementRailsPage() {
               </div>
             </div>
 
-            <button className="w-full bg-white text-slate-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-purple-400 transition shadow-2xl">
+            <button className="w-full bg-slate-900 text-slate-900 py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-purple-400 transition shadow-2xl">
               Confirm Instant Disbursement
             </button>
 

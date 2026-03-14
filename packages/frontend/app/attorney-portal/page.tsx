@@ -185,11 +185,11 @@ export default function AttorneyPortal() {
   const resetSplitWorkflow = () => { setSplitStep(0); setSplitData([]); setSplitErrors([]); setSplitVerifyId(''); setSplitPayAmount(50000); };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white">
+    <div className="min-h-screen bg-[#0f172a] text-white">
       <div className="bg-gradient-to-r from-indigo-700 to-purple-900 text-white py-2 px-6 text-center text-sm font-medium">
         Attorney Portal - Secure Session - Verified &amp; Documented
       </div>
-      <header className="sticky top-0 z-50 bg-gray-50 border-b border-gray-200">
+      <header className="sticky top-0 z-50 bg-[#0f172a] border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link href="/" className="text-2xl font-bold text-indigo-300">TrapRoyalties<span className="text-indigo-400">Pro</span></Link>
@@ -203,15 +203,15 @@ export default function AttorneyPortal() {
       </header>
 
       <div className="flex">
-        <div className="w-72 bg-gray-50 border-r border-gray-200 min-h-screen p-6">
+        <div className="w-72 bg-slate-900 border-r border-slate-800 min-h-screen p-6">
           <div className="space-y-8">
             {navGroups.map((group) => (
               <div key={group.label}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">{group.label}</p>
+                <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-4">{group.label}</p>
                 <div className="space-y-2">
                   {group.items.map((item) => (
                     <button key={item.id} onClick={() => setActiveSection(item.id)}
-                      className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeSection === item.id ? 'bg-indigo-600/20 text-indigo-300 font-semibold border border-indigo-500/30' : 'text-gray-500 hover:text-white hover:bg-gray-100'}`}>
+                      className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeSection === item.id ? 'bg-indigo-600/20 text-indigo-300 font-semibold border border-indigo-500/30' : 'text-gray-500 hover:text-white hover:bg-white/10'}`}>
                       <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                       </svg>
@@ -230,7 +230,7 @@ export default function AttorneyPortal() {
             <div className="mb-6 flex items-center gap-4 p-4 bg-indigo-500/10 rounded-xl border border-indigo-500/20">
               <span className="text-sm font-medium text-indigo-300 whitespace-nowrap">Active Matter:</span>
               <select value={selectedMatter} onChange={(e) => { setSelectedMatter(Number(e.target.value)); setScanComplete(false); }}
-                className="flex-1 px-4 py-2 border border-indigo-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-white placeholder-gray-300">
+                className="flex-1 px-4 py-2 border border-indigo-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-white placeholder-slate-600">
                 {MATTERS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
               </select>
               <span className={`px-3 py-1 rounded-full text-xs font-bold ${matter.status === 'Urgent' ? 'bg-red-500/20 text-red-300' : matter.status === 'In Progress' ? 'bg-yellow-500/20 text-yellow-300' : 'bg-green-500/20 text-green-300'}`}>
@@ -244,20 +244,20 @@ export default function AttorneyPortal() {
               <h1 className="text-3xl font-bold text-white mb-2">Digital Handshake</h1>
               <p className="text-gray-500 mb-6">Create court-admissible royalty split agreements - Georgia Law compliant</p>
               <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8">
                   <h3 className="text-xl font-bold mb-6 text-white">Create New Split Agreement</h3>
                   <form onSubmit={handleHandshakeSubmit} className="space-y-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-400 mb-1">Track / Project Name</label>
-                      <input type="text" value={handshakeTrack} onChange={e => setHandshakeTrack(e.target.value)} placeholder="e.g. Neon Dreams (Rough Mix v3)" className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                      <label className="block text-sm font-semibold text-slate-300 mb-1">Track / Project Name</label>
+                      <input type="text" value={handshakeTrack} onChange={e => setHandshakeTrack(e.target.value)} placeholder="e.g. Neon Dreams (Rough Mix v3)" className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-400 mb-1">ISRC / ISWC (optional)</label>
-                      <input type="text" value={handshakeISRC} onChange={e => setHandshakeISRC(e.target.value)} placeholder="e.g. USUM72212345" className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                      <label className="block text-sm font-semibold text-slate-300 mb-1">ISRC / ISWC (optional)</label>
+                      <input type="text" value={handshakeISRC} onChange={e => setHandshakeISRC(e.target.value)} placeholder="e.g. USUM72212345" className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-400 mb-1">Rights Type</label>
-                      <select value={handshakeRightsType} onChange={e => setHandshakeRightsType(e.target.value)} className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      <label className="block text-sm font-semibold text-slate-300 mb-1">Rights Type</label>
+                      <select value={handshakeRightsType} onChange={e => setHandshakeRightsType(e.target.value)} className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="all-in">All-In (Master + Publishing)</option>
                         <option value="master">Master Only (Sound Recording)</option>
                         <option value="publishing">Publishing Only (Composition)</option>
@@ -266,16 +266,16 @@ export default function AttorneyPortal() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-400 mb-1">Revenue Basis</label>
-                      <select value={handshakeRevenueBasis} onChange={e => setHandshakeRevenueBasis(e.target.value)} className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      <label className="block text-sm font-semibold text-slate-300 mb-1">Revenue Basis</label>
+                      <select value={handshakeRevenueBasis} onChange={e => setHandshakeRevenueBasis(e.target.value)} className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="net">Net Receipts</option>
                         <option value="gross">Gross Receipts</option>
                         <option value="nps">Net Publisher Share</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-400 mb-1">Jurisdiction</label>
-                      <select value={handshakeJurisdiction} onChange={e => setHandshakeJurisdiction(e.target.value)} className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      <label className="block text-sm font-semibold text-slate-300 mb-1">Jurisdiction</label>
+                      <select value={handshakeJurisdiction} onChange={e => setHandshakeJurisdiction(e.target.value)} className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="georgia">Georgia Law (Atlanta)</option>
                         <option value="california">California Law (LA)</option>
                         <option value="new-york">New York Law</option>
@@ -283,11 +283,11 @@ export default function AttorneyPortal() {
                       </select>
                     </div>
                     <div className="border-t pt-4">
-                      <label className="block text-sm font-semibold text-gray-400 mb-3">Collaborator Details</label>
+                      <label className="block text-sm font-semibold text-slate-300 mb-3">Collaborator Details</label>
                       <div className="grid grid-cols-3 gap-2 mb-2">
-                        <input type="text" placeholder="Name" value={handshakeName} onChange={e => setHandshakeName(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                        <input type="email" placeholder="Email" value={handshakeEmail} onChange={e => setHandshakeEmail(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
-                        <input type="number" placeholder="%" value={handshakePercentage} onChange={e => setHandshakePercentage(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                        <input type="text" placeholder="Name" value={handshakeName} onChange={e => setHandshakeName(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input type="email" placeholder="Email" value={handshakeEmail} onChange={e => setHandshakeEmail(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                        <input type="number" placeholder="%" value={handshakePercentage} onChange={e => setHandshakePercentage(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
                       </div>
                       <select value={handshakeRole} onChange={e => setHandshakeRole(e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="artist">Artist</option>
@@ -301,9 +301,9 @@ export default function AttorneyPortal() {
                     <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-500 transition">Send Digital Handshake</button>
                   </form>
                 </div>
-                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
                   <h3 className="text-lg font-bold mb-4 text-white">Agreement Preview</h3>
-                  <div className="bg-gray-50 border border-gray-200 rounded-xl border border-indigo-500/30 p-6 space-y-4">
+                  <div className="bg-slate-900/50 border border-indigo-500/30 rounded-xl p-6 space-y-4">
                     <div className="flex justify-between items-center border-b pb-3">
                       <span className="font-bold text-white text-lg">{handshakeTrack || 'Track Name'}</span>
                       <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-full font-bold">PENDING</span>
@@ -342,7 +342,7 @@ export default function AttorneyPortal() {
             </div>
           )}
           {activeSection === 'dashboard' && (
-            <div className="min-h-screen bg-gray-50 text-white -m-8 p-8">
+            <div className="min-h-screen bg-[#0f172a] text-white -m-8 p-8">
               {/* Header */}
               <div className="flex items-start justify-between mb-8">
                 <div>
@@ -356,7 +356,7 @@ export default function AttorneyPortal() {
                   <p className="text-gray-500 mc-mono text-xs mt-1">Leron Rogers, Esq. — Active Matters: 12 — Firm Recovery Pipeline: $1,482,900</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] text-gray-400 mc-mono mb-1 uppercase">Total Black Box Value</div>
+                  <div className="text-[10px] text-slate-600 mc-mono mb-1 uppercase">Total Black Box Value</div>
                   <div className="text-4xl font-black text-green-400 mc-mono">$1.2M</div>
                   <div className="text-[10px] text-gray-500 mc-mono">unclaimed — ready to dispute</div>
                 </div>
@@ -370,7 +370,7 @@ export default function AttorneyPortal() {
                   { l:"Active Disputes", v:"3", s:"2 urgent", col:"text-red-400" },
                   { l:"Settlements Pending", v:"$487k", s:"awaiting DSP response", col:"text-purple-400" },
                 ].map((s,i) => (
-                  <div key={i} className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+                  <div key={i} className="bg-slate-900/50 border border-slate-800 rounded-xl p-5">
                     <p className="text-[10px] mc-mono uppercase text-gray-500 mb-1">{s.l}</p>
                     <p className={`text-3xl font-black mc-mono ${s.col}`}>{s.v}</p>
                     <p className="text-xs text-gray-500 mt-1">{s.s}</p>
@@ -379,7 +379,7 @@ export default function AttorneyPortal() {
               </div>
 
               {/* Active Matters — War Room table */}
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 mb-6">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-6">
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="text-xs font-black mc-mono uppercase tracking-widest text-gray-500">Active Matters — Select to Enter War Room</h2>
                   <button onClick={() => setActiveSection('new-matter')}
@@ -415,7 +415,7 @@ export default function AttorneyPortal() {
                           m.status === 'In Progress' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                           'bg-green-500/20 text-green-300 border border-green-500/30'
                         }`}>{m.status}</span>
-                        <span className="text-gray-400 group-hover:text-purple-400 transition font-black text-lg">→</span>
+                        <span className="text-slate-600 group-hover:text-purple-400 transition font-black text-lg">→</span>
                       </div>
                     </div>
                   ))}
@@ -430,13 +430,13 @@ export default function AttorneyPortal() {
                   { id:'digital-handshake', icon:"🤝", l:"Digital Handshake", d:"Verified and documented split agreement" },
                 ].map(a => (
                   <button key={a.id} onClick={() => setActiveSection(a.id)}
-                    className="flex items-center gap-4 p-5 bg-gray-50 border border-gray-200 rounded-xl hover:border-indigo-500/50 hover:bg-gray-100 transition text-left group">
+                    className="flex items-center gap-4 p-5 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-indigo-500/50 hover:bg-white/5 transition text-left group">
                     <span className="text-3xl">{a.icon}</span>
                     <div>
                       <p className="font-black text-sm">{a.l}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{a.d}</p>
                     </div>
-                    <span className="ml-auto text-gray-400 group-hover:text-indigo-400 transition font-black">→</span>
+                    <span className="ml-auto text-slate-600 group-hover:text-indigo-400 transition font-black">→</span>
                   </button>
                 ))}
               </div>
@@ -444,7 +444,7 @@ export default function AttorneyPortal() {
           )}
 
           {activeSection === 'war-room' && (
-            <div className="min-h-screen bg-gray-50 text-white -m-8 p-8">
+            <div className="min-h-screen bg-[#0f172a] text-white -m-8 p-8">
               {/* Back + header */}
               <button onClick={() => setActiveSection('dashboard')}
                 className="flex items-center gap-2 text-gray-500 hover:text-white text-sm mb-6 transition">
@@ -471,7 +471,7 @@ export default function AttorneyPortal() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Evidence status */}
                 <div className="lg:col-span-2 space-y-4">
-                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                  <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                     <h3 className="text-xs font-black wr-mono uppercase tracking-widest text-gray-500 mb-4">Forensic Evidence Stack</h3>
                     <div className="space-y-3">
                       {[
@@ -499,7 +499,7 @@ export default function AttorneyPortal() {
                   </div>
 
                   {/* Scan + actions */}
-                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                  <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                     <h3 className="text-xs font-black wr-mono uppercase tracking-widest text-gray-500 mb-4">Run Full Forensic Scan</h3>
                     {!scanRunning && !scanComplete && (
                       <button onClick={runScan}
@@ -532,7 +532,7 @@ export default function AttorneyPortal() {
 
                 {/* Right: War Room actions */}
                 <div className="space-y-4">
-                  <div className="bg-gray-50 border border-red-500/20 rounded-2xl p-6">
+                  <div className="bg-slate-900/50 border border-red-500/20 rounded-2xl p-6">
                     <h3 className="text-xs font-black text-red-400 wr-mono uppercase tracking-widest mb-4">War Room Actions</h3>
                     <div className="space-y-3">
                       <button onClick={() => setActiveSection('run-due-diligence')}
@@ -550,7 +550,7 @@ export default function AttorneyPortal() {
                       </button>
                       <button onClick={() => handleDownload('affidavit', 'Attorney Affidavit')}
                         disabled={downloading === 'affidavit'}
-                        className="w-full py-3 bg-white/5 border border-gray-200 text-gray-400 font-bold rounded-xl hover:bg-gray-100 transition text-sm disabled:opacity-50">
+                        className="w-full py-3 bg-white/5 border border-gray-200 text-slate-300 font-bold rounded-xl hover:bg-white/10 transition text-sm disabled:opacity-50">
                         {downloading === 'affidavit' ? 'Generating...' : '📄 Export Affidavit'}
                       </button>
                       <button onClick={() => setActiveSection('export-hash-seal')}
@@ -560,15 +560,15 @@ export default function AttorneyPortal() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                  <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                     <h3 className="text-xs font-black wr-mono uppercase tracking-widest text-gray-500 mb-3">Evidence Hash</h3>
-                    <div className="bg-white border border-gray-200 rounded-lg p-3">
+                    <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-3">
                       <p className="text-[10px] text-gray-500 wr-mono break-all">
                         TRP-{matter.id}-{Date.now().toString(36).toUpperCase().slice(-8)}<br/>
                         SHA-256: {Array.from({length:32},()=>Math.floor(Math.random()*16).toString(16)).join('')}
                       </p>
                     </div>
-                    <p className="text-[10px] text-gray-400 wr-mono mt-2">Verified. Court-admissible.</p>
+                    <p className="text-[10px] text-slate-600 wr-mono mt-2">Verified. Court-admissible.</p>
                   </div>
                 </div>
               </div>
@@ -579,7 +579,7 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Run Catalog Due Diligence</h1>
               <p className="text-gray-500 mb-8">Forensic audit for: <strong>{matter.name}</strong></p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8">
                 <h2 className="text-lg font-semibold mb-4">Audit Scope</h2>
                 <div className="grid md:grid-cols-2 gap-4 mb-8">
                   {["Streaming Royalties","Sync Licensing","Performance Rights","360 Deal (All Revenue)"].map((s,i) => (
@@ -638,7 +638,7 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Generate Court-Ready Report</h1>
               <p className="text-gray-500 mb-8">For: <strong>{matter.name}</strong></p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div>
                     <h3 className="font-semibold mb-4">Select Sections</h3>
@@ -653,13 +653,13 @@ export default function AttorneyPortal() {
                       {downloading==='court'?'Generating...':' Download Court-Ready Report'}
                     </button>
                   </div>
-                  <div className="bg-white rounded-xl p-6">
+                  <div className="bg-slate-800/30 rounded-xl p-6">
                     <h3 className="font-semibold mb-4">Preview</h3>
                     <p className="font-medium text-sm">{matter.name}</p>
                     <p className="text-green-400 text-sm mt-1">Hash Verified</p>
                     <p className="text-sm mt-1">Unclaimed: <strong className="text-green-400">{matter.amount}</strong></p>
                     <p className="text-sm">Leakage: <strong className="text-red-600">{matter.leakage}</strong></p>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 mt-4">
+                    <div className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg border border-slate-800 mt-4">
                       <QRCode value={`https://traproyaltiespro.com/verify/TRP-COURT-${selectedMatter}`} size={80}/>
                       <div><p className="text-xs font-bold text-green-400">QR Verification Seal</p><p className="text-xs text-gray-500">Included on all exports</p></div>
                     </div>
@@ -673,22 +673,22 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Create Legal Demand Letter</h1>
               <p className="text-gray-500 mb-8">For: <strong>{matter.name}</strong></p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <div><label className="block text-sm font-medium text-gray-400 mb-2">Recipient</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" defaultValue="Republic Records"/></div>
-                    <div><label className="block text-sm font-medium text-gray-400 mb-2">Amount</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" defaultValue={matter.amount}/></div>
-                    <div><label className="block text-sm font-medium text-gray-400 mb-2">Deadline (Days)</label><input type="number" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" defaultValue={30}/></div>
+                    <div><label className="block text-sm font-medium text-slate-300 mb-2">Recipient</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" defaultValue="Republic Records"/></div>
+                    <div><label className="block text-sm font-medium text-slate-300 mb-2">Amount</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" defaultValue={matter.amount}/></div>
+                    <div><label className="block text-sm font-medium text-slate-300 mb-2">Deadline (Days)</label><input type="number" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" defaultValue={30}/></div>
                     <button onClick={() => handleDownload('demand','Legal Demand Letter')} disabled={downloading==='demand'} className="w-full py-4 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition disabled:opacity-50">
                       {downloading==='demand'?'Generating...':' Download Demand Letter'}
                     </button>
                   </div>
-                  <div className="bg-white rounded-xl p-6">
+                  <div className="bg-slate-800/30 rounded-xl p-6">
                     <h3 className="font-semibold mb-3">Preview</h3>
                     <p className="text-sm font-medium">RE: Unpaid Royalties - {matter.name}</p>
                     <p className="text-sm text-gray-500 mt-2">We demand payment of <strong>{matter.amount}</strong> within 30 days.</p>
                     <p className="text-sm text-gray-500 mt-2">Leron Rogers, Esq. - Fox Rothschild LLP</p>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 mt-4">
+                    <div className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg border border-slate-800 mt-4">
                       <QRCode value={`https://traproyaltiespro.com/verify/TRP-DEMAND-${selectedMatter}`} size={80}/>
                       <div><p className="text-xs font-bold text-green-400">QR Verification Seal</p><p className="text-xs text-gray-500">Included on export</p></div>
                     </div>
@@ -702,8 +702,8 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Export Affidavit</h1>
               <p className="text-gray-500 mb-8">For: <strong>{matter.name}</strong></p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 max-w-3xl">
-                <div className="bg-white rounded-xl p-6 mb-6">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 max-w-3xl">
+                <div className="bg-slate-800/30 rounded-xl p-6 mb-6">
                   <p className="font-medium">AFFIDAVIT OF LERON ROGERS, ESQ.</p>
                   <p className="text-sm text-gray-500 mt-2">1. I am counsel for {matter.name}...</p>
                   <p className="text-sm text-gray-500">2. Unpaid royalties of {matter.amount} verified...</p>
@@ -725,7 +725,7 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Generate Custom Report</h1>
               <p className="text-gray-500 mb-8">For: <strong>{matter.name}</strong></p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <select className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -742,11 +742,11 @@ export default function AttorneyPortal() {
                       {downloading==='custom'?'Generating...':' Download Custom Report'}
                     </button>
                   </div>
-                  <div className="bg-white rounded-xl p-6">
+                  <div className="bg-slate-800/30 rounded-xl p-6">
                     <p className="font-medium mb-1">Preview</p>
                     <p className="text-sm text-gray-500">{matter.name}</p>
                     <p className="text-green-400 text-sm mt-1">Hash Verified</p>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200 mt-4">
+                    <div className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg border border-slate-800 mt-4">
                       <QRCode value={`https://traproyaltiespro.com/verify/TRP-CUSTOM-${selectedMatter}`} size={80}/>
                       <div><p className="text-xs font-bold text-green-400">QR Verification Seal</p><p className="text-xs text-gray-500">Included on export</p></div>
                     </div>
@@ -760,10 +760,10 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Export with Hash Seal</h1>
               <p className="text-gray-500 mb-8">For: <strong>{matter.name}</strong></p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center max-w-2xl mx-auto">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 text-center max-w-2xl mx-auto">
                 <div className="text-6xl mb-4">&#10003;</div>
                 <h2 className="text-2xl font-bold mb-2">Ready to Export</h2>
-                <div className="bg-white rounded-xl p-6 mb-6">
+                <div className="bg-slate-800/30 rounded-xl p-6 mb-6">
                   <p className="font-bold text-indigo-300 mb-3">Hash Seal Verification</p>
                   <div className="flex justify-center mb-3"><QRCode value={`https://traproyaltiespro.com/verify/TRP-SEAL-${selectedMatter}`} size={120}/></div>
                   <p className="text-xs text-gray-500">Scan to verify authenticity</p>
@@ -772,7 +772,7 @@ export default function AttorneyPortal() {
                   <button onClick={() => handleDownload('court','Hash-Sealed Audit Report')} disabled={downloading==='court'} className="flex-1 py-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-500 transition disabled:opacity-50">
                     {downloading==='court'?'Generating...':' Download Sealed PDF'}
                   </button>
-                  <button className="flex-1 py-4 border border-gray-200 rounded-lg font-medium hover:bg-white transition">Share Secure Link</button>
+                  <button className="flex-1 py-4 border border-slate-700 rounded-lg font-medium hover:bg-slate-800 transition">Share Secure Link</button>
                 </div>
               </div>
             </div>
@@ -782,7 +782,7 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Audit Report</h1>
               <p className="text-gray-500 mb-8">{matter.name}</p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8">
                 <div className="flex justify-between items-start mb-8">
                   <div>
                     <p className="text-sm text-gray-500">Generated: {new Date().toLocaleDateString()} | ID: TRP-AUDIT-2026-0{selectedMatter}</p>
@@ -796,7 +796,7 @@ export default function AttorneyPortal() {
                   </div>
                 </div>
                 <table className="w-full">
-                  <thead className="bg-white"><tr><th className="p-3 text-left">Party</th><th className="p-3 text-left">Claimed</th><th className="p-3 text-left">Verified</th><th className="p-3 text-left">Status</th></tr></thead>
+                  <thead className="bg-slate-800/50"><tr><th className="p-3 text-left">Party</th><th className="p-3 text-left">Claimed</th><th className="p-3 text-left">Verified</th><th className="p-3 text-left">Status</th></tr></thead>
                   <tbody className="divide-y divide-white/10">
                     <tr><td className="p-3">Artist (Primary)</td><td className="p-3">50%</td><td className="p-3 text-green-400">50%</td><td className="p-3 text-green-400">Verified</td></tr>
                     <tr><td className="p-3">Producer</td><td className="p-3">30%</td><td className="p-3 text-yellow-600">25%</td><td className="p-3 text-yellow-600">Under-claimed</td></tr>
@@ -811,15 +811,15 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Create New Matter</h1>
               <p className="text-gray-500 mb-8">Add a new client matter for royalty audit or dispute</p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 max-w-3xl">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-8 max-w-3xl">
                 <form className="space-y-6" onSubmit={e => { e.preventDefault(); setActiveSection('run-due-diligence'); }}>
                   <div className="grid md:grid-cols-2 gap-6">
-                    <div><label className="block text-sm font-medium text-gray-400 mb-2">Client Name</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Artist / Estate Name"/></div>
-                    <div><label className="block text-sm font-medium text-gray-400 mb-2">Matter Type</label><select className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>Royalty Dispute</option><option>Catalog Due Diligence</option><option>360 Deal Audit</option><option>Pre-Release Verification</option></select></div>
+                    <div><label className="block text-sm font-medium text-slate-300 mb-2">Client Name</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Artist / Estate Name"/></div>
+                    <div><label className="block text-sm font-medium text-slate-300 mb-2">Matter Type</label><select className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"><option>Royalty Dispute</option><option>Catalog Due Diligence</option><option>360 Deal Audit</option><option>Pre-Release Verification</option></select></div>
                   </div>
-                  <div><label className="block text-sm font-medium text-gray-400 mb-2">Project / Release Name</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Album, single, or dispute title"/></div>
-                  <div><label className="block text-sm font-medium text-gray-400 mb-2">Key ISRCs / UPCs</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="USUM72212345"/></div>
-                  <div><label className="block text-sm font-medium text-gray-400 mb-2">Notes</label><textarea rows={4} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Unpaid streaming royalties..."></textarea></div>
+                  <div><label className="block text-sm font-medium text-slate-300 mb-2">Project / Release Name</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Album, single, or dispute title"/></div>
+                  <div><label className="block text-sm font-medium text-slate-300 mb-2">Key ISRCs / UPCs</label><input type="text" className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="USUM72212345"/></div>
+                  <div><label className="block text-sm font-medium text-slate-300 mb-2">Notes</label><textarea rows={4} className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Unpaid streaming royalties..."></textarea></div>
                   <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-500 transition">Create Matter and Start Audit</button>
                 </form>
               </div>
@@ -832,28 +832,28 @@ export default function AttorneyPortal() {
               <p className="text-gray-500 mb-6">Upload &rarr; Detect issues &rarr; Verify &rarr; Calculate payment &rarr; Download PDF</p>
 
               {/* Before/After */}
-              <div className="grid grid-cols-2 gap-6 bg-gray-50 border border-gray-200 rounded-2xl p-5 mb-6 ">
+              <div className="grid grid-cols-2 gap-6 bg-slate-900/50 border border-slate-800 rounded-2xl p-5 mb-6 ">
                 <div className="border-r border-red-500/20 pr-6">
                   <h3 className="text-red-600 font-bold mb-2">Before TrapRoyaltiesPro</h3>
                   <div className="flex items-center gap-2 flex-wrap text-sm">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">Publisher</span>
-                    <span className="text-gray-400">&rarr;</span>
+                    <span className="bg-slate-700 px-3 py-1 rounded-full">Publisher</span>
+                    <span className="text-slate-600">&rarr;</span>
                     <span className="bg-red-500/20 text-red-600 px-3 py-1 rounded-full">Issues</span>
-                    <span className="text-gray-400">&rarr;</span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">PRO</span>
-                    <span className="text-gray-400">&rarr;</span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">Delay</span>
+                    <span className="text-slate-600">&rarr;</span>
+                    <span className="bg-slate-700 px-3 py-1 rounded-full">PRO</span>
+                    <span className="text-slate-600">&rarr;</span>
+                    <span className="bg-slate-700 px-3 py-1 rounded-full">Delay</span>
                   </div>
                 </div>
                 <div>
                   <h3 className="text-indigo-300 font-bold mb-2">With TrapRoyaltiesPro</h3>
                   <div className="flex items-center gap-2 flex-wrap text-sm">
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">Publisher</span>
-                    <span className="text-gray-400">&rarr;</span>
+                    <span className="bg-slate-700 px-3 py-1 rounded-full">Publisher</span>
+                    <span className="text-slate-600">&rarr;</span>
                     <span className="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full border border-indigo-500/30">TRP Verified</span>
-                    <span className="text-gray-400">&rarr;</span>
-                    <span className="bg-gray-100 px-3 py-1 rounded-full">PRO</span>
-                    <span className="text-gray-400">&rarr;</span>
+                    <span className="text-slate-600">&rarr;</span>
+                    <span className="bg-slate-700 px-3 py-1 rounded-full">PRO</span>
+                    <span className="text-slate-600">&rarr;</span>
                     <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full">Fast Payment</span>
                   </div>
                 </div>
@@ -864,22 +864,22 @@ export default function AttorneyPortal() {
                 {['Upload Data','Issues Detected','Data Verified','Payment Ready'].map((label, i) => (
                   <div key={i} className="flex items-center">
                     <div className="flex flex-col items-center">
-                      <div className={"w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border-2 " + (splitStep > i || splitStep === i ? 'bg-indigo-600 border-indigo-900 text-white' : 'bg-gray-100 border-gray-300 text-gray-400')}>{i+1}</div>
-                      <span className={"text-xs mt-1 " + (splitStep === i ? 'text-indigo-300 font-semibold' : 'text-gray-400')}>{label}</span>
+                      <div className={"w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm border-2 " + (splitStep > i || splitStep === i ? 'bg-indigo-600 border-indigo-900 text-white' : 'bg-gray-100 border-gray-300 text-slate-600')}>{i+1}</div>
+                      <span className={"text-xs mt-1 " + (splitStep === i ? 'text-indigo-300 font-semibold' : 'text-slate-600')}>{label}</span>
                     </div>
-                    {i < 3 && <div className={"w-12 h-1 mb-4 " + (splitStep > i ? 'bg-indigo-600' : 'bg-gray-100')}></div>}
+                    {i < 3 && <div className={"w-12 h-1 mb-4 " + (splitStep > i ? 'bg-indigo-600' : 'bg-white/10')}></div>}
                   </div>
                 ))}
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 {/* LEFT: Upload */}
-                <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 ">
+                <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 ">
                   <h2 className="text-lg font-bold mb-4 text-white">Step 1: Upload Split Sheet</h2>
                   <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-500/20 transition-all mb-4"
                     onClick={() => { const el = document.getElementById('prvPortalFile') as HTMLInputElement; if(el) el.click(); }}>
-                    <p className="font-semibold text-gray-400 mb-1">Drop your split sheet here</p>
-                    <p className="text-sm text-gray-400">CSV, Excel, or PDF</p>
+                    <p className="font-semibold text-slate-300 mb-1">Drop your split sheet here</p>
+                    <p className="text-sm text-slate-600">CSV, Excel, or PDF</p>
                     <input type="file" id="prvPortalFile" className="hidden" accept=".csv,.xlsx,.xls,.pdf" onChange={() => loadPerfectSplit()} />
                   </div>
                   <div className="flex justify-center gap-6 text-sm mb-4">
@@ -894,7 +894,7 @@ export default function AttorneyPortal() {
                     </div>
                   )}
                   {splitData.length > 0 && (
-                    <div className="bg-white rounded-xl p-4">
+                    <div className="bg-slate-800/30 rounded-xl p-4">
                       <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
                         <span className="font-semibold text-white">Split Table</span>
                         <span className={"text-xs px-2 py-1 rounded-full font-bold " + (splitErrors.length === 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-600')}>{splitErrors.length === 0 ? 'Ready' : splitErrors.length + " issues"}</span>
@@ -905,7 +905,7 @@ export default function AttorneyPortal() {
                             <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-300 font-bold text-sm">{(item.name||'?')[0]}</div>
                             <div>
                               <p className="font-medium text-sm text-white">{item.name||'Unknown'}</p>
-                              <p className="text-xs text-gray-400">{item.role} - IPI: {item.ipi||'Missing'}</p>
+                              <p className="text-xs text-slate-600">{item.role} - IPI: {item.ipi||'Missing'}</p>
                             </div>
                           </div>
                           <span className={"font-bold text-sm " + (!item.ipi||!item.name ? 'text-red-600' : 'text-indigo-300')}>{item.percentage}%</span>
@@ -920,11 +920,11 @@ export default function AttorneyPortal() {
                 </div>
 
                 {/* RIGHT: Verify + Payment */}
-                <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 ">
+                <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 ">
                   <h2 className="text-lg font-bold mb-4 text-white">Steps 2-4: Verify &amp; Calculate Payment</h2>
-                  {splitStep === 0 && <div className="text-center py-12 text-gray-400"><p>Upload a split sheet to begin</p></div>}
+                  {splitStep === 0 && <div className="text-center py-12 text-slate-600"><p>Upload a split sheet to begin</p></div>}
                   {splitStep >= 2 && (
-                    <div className="bg-white rounded-xl p-4 mb-4">
+                    <div className="bg-slate-800/30 rounded-xl p-4 mb-4">
                       <h3 className="font-semibold text-white mb-3">Verification Record</h3>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between"><span className="text-gray-500">Verification ID</span><span className="font-mono text-xs text-indigo-700">TRP-{splitVerifyId}</span></div>
@@ -939,16 +939,16 @@ export default function AttorneyPortal() {
                     <button onClick={() => setSplitStep(3)} className="w-full py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-500 transition mb-4">Calculate Payment</button>
                   )}
                   {splitStep >= 3 && (
-                    <div className="bg-white rounded-xl p-4 border border-gray-200 mb-4">
+                    <div className="bg-slate-800/30 rounded-xl p-4 border border-slate-700 mb-4">
                       <h3 className="font-semibold text-white mb-3">Enter Payment Amount</h3>
                       <div className="flex gap-3 items-center">
                         <div className="relative flex-1">
-                          <span className="absolute left-4 top-3 text-gray-400">$</span>
-                          <input type="number" value={splitPayAmount} onChange={(e) => setSplitPayAmount(Number(e.target.value))} className="w-full pl-8 pr-4 py-3 bg-white border border-gray-300 rounded-full text-lg font-bold text-white focus:outline-none focus:border-indigo-400" />
+                          <span className="absolute left-4 top-3 text-slate-600">$</span>
+                          <input type="number" value={splitPayAmount} onChange={(e) => setSplitPayAmount(Number(e.target.value))} className="w-full pl-8 pr-4 py-3 bg-slate-800 border border-slate-600 rounded-full text-lg font-bold text-white focus:outline-none focus:border-indigo-400" />
                         </div>
                         <button onClick={() => setSplitStep(4)} className="bg-indigo-600 text-white px-5 py-3 rounded-full font-medium hover:bg-indigo-500">Calculate</button>
                       </div>
-                      <p className="text-xs text-gray-400 mt-2">25% tax withholding auto-calculated</p>
+                      <p className="text-xs text-slate-600 mt-2">25% tax withholding auto-calculated</p>
                     </div>
                   )}
                   {splitStep >= 4 && (
@@ -957,7 +957,7 @@ export default function AttorneyPortal() {
                         <span className="font-bold text-green-300">Payment Summary</span>
                         <span className="text-2xl font-bold text-green-400">${splitPayAmount.toLocaleString()}</span>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-3 mb-3 space-y-2 text-sm border border-gray-200">
+                      <div className="bg-slate-900/50 rounded-lg p-3 mb-3 space-y-2 text-sm border border-slate-800">
                         <div className="flex justify-between"><span className="text-gray-500">Gross Royalties</span><span className="font-semibold">${splitPayAmount.toLocaleString()}</span></div>
                         <div className="flex justify-between"><span className="text-gray-500">Tax (25%)</span><span className="font-semibold text-red-600">-${(splitPayAmount*0.25).toLocaleString()}</span></div>
                         <div className="flex justify-between border-t pt-2"><span className="font-bold text-white">Net Payment</span><span className="font-bold text-green-400">${(splitPayAmount*0.75).toLocaleString()}</span></div>
@@ -992,14 +992,14 @@ export default function AttorneyPortal() {
             <div>
               <h1 className="text-3xl font-bold text-white mb-2">Secure Client Message</h1>
               <p className="text-gray-500 mb-8">End-to-end encrypted</p>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 h-[600px] flex flex-col">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6 h-[600px] flex flex-col">
                 <div className="flex items-center space-x-4 mb-6 pb-4 border-b border-gray-200">
                   <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">M</div>
                   <div><p className="font-bold">Metro Boomin</p><p className="text-sm text-gray-500">Online - End-to-End Encrypted</p></div>
                 </div>
                 <div className="flex-1 overflow-y-auto space-y-4 mb-4">
                   <div className="flex justify-end"><div className="bg-indigo-600 text-white p-4 rounded-2xl max-w-lg"><p>Ready to send demand letter?</p></div></div>
-                  <div className="flex justify-start"><div className="bg-gray-100 p-4 rounded-2xl max-w-lg"><p>Lets move forward. Can we add merch gap?</p></div></div>
+                  <div className="flex justify-start"><div className="bg-slate-700/50 p-4 rounded-2xl max-w-lg"><p>Lets move forward. Can we add merch gap?</p></div></div>
                 </div>
                 <div className="flex gap-4">
                   <input type="text" placeholder="Type your message..." className="flex-1 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"/>

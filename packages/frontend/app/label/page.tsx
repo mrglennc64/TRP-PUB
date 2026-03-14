@@ -8,12 +8,7 @@ interface Artist {
   isrc: string; email: string; phone: string;
 }
 
-const INIT_ARTISTS: Artist[] = [
-  { id: 1, name: 'Drake',       stage: 'Drake',       genre: 'Hip-Hop', recouped: true,  earnings: 1250000, expenses: 800000,  isrc: 'USRC17607839', email: 'mgmt@drake.com',      phone: '404-555-0101' },
-  { id: 2, name: 'Travis Scott',stage: 'Travis Scott',genre: 'Trap',    recouped: false, earnings: 950000,  expenses: 1200000, isrc: 'USRC17801922', email: 'travis@asts.com',      phone: '713-555-0202' },
-  { id: 3, name: '21 Savage',   stage: '21 Savage',   genre: 'Trap',    recouped: true,  earnings: 750000,  expenses: 450000,  isrc: 'GBUM71402025', email: 'mgmt@21savage.com',   phone: '404-555-0303' },
-  { id: 4, name: 'Metro Boomin',stage: 'Metro Boomin',genre: 'Trap',    recouped: false, earnings: 450000,  expenses: 600000,  isrc: 'USRC17611045', email: 'metro@republic.com',  phone: '404-555-0404' },
-];
+const INIT_ARTISTS: Artist[] = [];
 
 const TERRITORY_DATA = [
   { region: 'United States',  code: 'US',  amount: 142800, pct: 38, status: 'collecting' },
@@ -58,7 +53,14 @@ export default function LabelPortal() {
   const [importStatus, setImportStatus]     = useState<string | null>(null);
   const [importRows, setImportRows]   = useState<string[][]>([]);
   const [csvFixed, setCsvFixed]       = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [mp3Artist, setMp3Artist]     = useState('');
+  const [mp3Title, setMp3Title]       = useState('');
+  const [mp3Isrc, setMp3Isrc]         = useState('');
+  const [mp3File, setMp3File]         = useState<File | null>(null);
+  const [uploading, setUploading]     = useState(false);
+  const [uploadResult, setUploadResult] = useState<any>(null);
+  const fileRef   = useRef<HTMLInputElement>(null);
+  const mp3Ref    = useRef<HTMLInputElement>(null);
 
   const totalEarnings  = artists.reduce((s, a) => s + a.earnings, 0);
   const unrecouped     = artists.filter(a => !a.recouped).reduce((s, a) => s + (a.expenses - a.earnings), 0);
@@ -82,29 +84,53 @@ export default function LabelPortal() {
     const file = e.target.files?.[0];
     if (!file) return;
     setImportStatus('Reading file...'); setCsvFixed(false); setImportRows([]);
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const text = ev.target?.result as string;
-      if (file.name.endsWith('.csv')) {
+    if (file.name.endsWith('.csv')) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const text = ev.target?.result as string;
         const rows = text.split('\n').filter(r => r.trim()).map(r => r.split(',').map(c => c.trim().replace(/^"|"$/g, '')));
         setImportRows(rows.slice(0, 8));
         const issues: string[] = [];
         if (rows.some(r => r.some(c => c === ''))) issues.push('empty cells');
         if (rows[0]?.some(h => !h)) issues.push('missing headers');
-        setImportStatus(issues.length ? `Found ${issues.length} issue(s): ${issues.join(', ')}` : `Loaded ${rows.length - 1} records — no issues detected`);
-      } else {
-        setImportStatus(`PDF loaded: "${file.name}" — ${Math.round(file.size / 1024)}KB. Contract parser running...`);
-        setTimeout(() => setImportStatus('Contract parsed — 3 royalty clauses, 2 advance terms extracted.'), 1800);
-      }
-    };
-    reader.readAsText(file);
+        setImportStatus(issues.length ? `Found ${issues.length} issue(s): ${issues.join(', ')}` : `Loaded ${rows.length - 1} records — preview shown below`);
+      };
+      reader.readAsText(file);
+    } else if (file.name.endsWith('.pdf')) {
+      setImportStatus(`PDF loaded: "${file.name}" — ${Math.round(file.size / 1024)}KB. Manual review required — automated PDF parsing is not available. Use the CSV templates below for structured import.`);
+    } else {
+      setImportStatus(`Unsupported file type. Upload CSV for data import or MP3 for audio upload.`);
+    }
+  }
+
+  async function handleMp3Upload() {
+    if (!mp3File || !mp3Artist.trim() || !mp3Title.trim()) return;
+    setUploading(true);
+    setUploadResult(null);
+    try {
+      const form = new FormData();
+      form.append('file', mp3File);
+      form.append('artist', mp3Artist.trim());
+      form.append('title', mp3Title.trim());
+      if (mp3Isrc.trim()) form.append('isrc', mp3Isrc.trim());
+      const res = await fetch('/api/catalog/upload', { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Upload failed');
+      setUploadResult(data);
+      setMp3File(null); setMp3Artist(''); setMp3Title(''); setMp3Isrc('');
+      if (mp3Ref.current) mp3Ref.current.value = '';
+    } catch (err: any) {
+      setUploadResult({ error: err.message });
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white flex">
+    <div className="min-h-screen bg-[#0f172a] text-[#f8fafc] flex">
 
       {/* ── Sidebar ── */}
-      <div className="w-56 bg-white border-r border-gray-200 min-h-screen flex flex-col p-4 flex-shrink-0">
+      <div className="w-56 bg-slate-900 border-r border-slate-800 min-h-screen flex flex-col p-4 flex-shrink-0">
         <div className="mb-6">
           <p className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-1">Label OS</p>
           <h2 className="text-sm font-black text-white">Operations Portal</h2>
@@ -162,11 +188,11 @@ export default function LabelPortal() {
           </Link>
         </nav>
         <div className="flex-1" />
-        <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
-          <Link href="/attorney-portal" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-500 hover:text-gray-400 hover:bg-white/5 transition">
+        <div className="mt-4 pt-4 border-t border-slate-800 space-y-2">
+          <Link href="/attorney-portal" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-500 hover:text-slate-300 hover:bg-white/5 transition">
             ⚖️ Attorney Portal
           </Link>
-          <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-500 hover:text-gray-400 hover:bg-white/5 transition">
+          <Link href="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-500 hover:text-slate-300 hover:bg-white/5 transition">
             ← Main Site
           </Link>
         </div>
@@ -176,13 +202,13 @@ export default function LabelPortal() {
       <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* Top header */}
-        <div className="flex items-center justify-between px-8 py-3 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+        <div className="flex items-center justify-between px-8 py-3 border-b border-gray-200 bg-slate-900/80 flex-shrink-0">
           <p className="text-xs text-gray-500 font-mono">Label Operations Portal</p>
           <div className="flex items-center gap-3">
             <Link href="/label-workspace" className="flex items-center gap-2 px-4 py-1.5 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 text-xs font-bold rounded-lg hover:bg-indigo-600/40 transition">
               🎵 Catalog Audit
             </Link>
-            <Link href="/attorney-portal" className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-gray-200 text-gray-500 text-xs font-bold rounded-lg hover:text-white hover:bg-gray-100 transition">
+            <Link href="/attorney-portal" className="flex items-center gap-2 px-4 py-1.5 bg-white/5 border border-gray-200 text-gray-500 text-xs font-bold rounded-lg hover:text-white hover:bg-white/10 transition">
               ⚖️ Attorney Portal
             </Link>
           </div>
@@ -206,7 +232,7 @@ export default function LabelPortal() {
                   { label: 'Unrecouped Balance',value: '$'+unrecouped.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}),           color: 'yellow',  sub: `${artists.filter(a=>!a.recouped).length} artists` },
                   { label: 'Ready to Pay',      value: '$'+readyToPay.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}),           color: 'emerald', sub: `${artists.filter(a=>a.recouped).length} artists` },
                 ].map(kpi => (
-                  <div key={kpi.label} className="bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                  <div key={kpi.label} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-5">
                     <p className="text-xs text-gray-500 mb-2 uppercase tracking-wider font-bold">{kpi.label}</p>
                     <p className={`text-2xl font-black text-${kpi.color}-400`}>{kpi.value}</p>
                     <p className="text-xs text-gray-500 mt-1">{kpi.sub}</p>
@@ -215,16 +241,16 @@ export default function LabelPortal() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                   <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">Metadata Health Score</p>
                   <div className="flex items-center gap-4 mb-3">
                     <div className="text-5xl font-black text-red-400">{healthScore}%</div>
                     <div>
-                      <p className="text-sm text-gray-400 font-bold">Needs Attention</p>
+                      <p className="text-sm text-slate-300 font-bold">Needs Attention</p>
                       <p className="text-xs text-gray-500">1,242 assets scanned</p>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
+                  <div className="w-full bg-white/10 rounded-full h-2 mb-4">
                     <div className="bg-red-500 h-2 rounded-full" style={{width:`${healthScore}%`}} />
                   </div>
                   <button onClick={() => setView('metadata')}
@@ -233,12 +259,12 @@ export default function LabelPortal() {
                   </button>
                 </div>
 
-                <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                   <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">Global Leakage</p>
                   <p className="text-3xl font-black text-green-400">${totalUnclaimed.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                   <p className="text-xs text-gray-500 mt-1 mb-4">uncollected across territories</p>
                   {TERRITORY_DATA.filter(t=>t.status!=='collecting').slice(0,3).map(t=>(
-                    <div key={t.code} className="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0 last:pb-0">
+                    <div key={t.code} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 last:pb-0">
                       <span className="text-xs text-gray-500">{t.region}</span>
                       <span className="text-xs font-bold text-indigo-400">${t.amount.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</span>
                     </div>
@@ -249,12 +275,12 @@ export default function LabelPortal() {
                   </button>
                 </div>
 
-                <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                   <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">Monthly Leak</p>
                   <p className="text-3xl font-black text-yellow-400">${totalLeak.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                   <p className="text-xs text-gray-500 mt-1 mb-4">estimated monthly loss</p>
                   {METADATA_ISSUES.slice(0,3).map(i=>(
-                    <div key={i.type} className="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0 last:pb-0">
+                    <div key={i.type} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 last:pb-0">
                       <span className="text-xs text-gray-500">{i.type}</span>
                       <span className="text-xs font-bold text-yellow-400">${i.value.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}/mo</span>
                     </div>
@@ -266,7 +292,7 @@ export default function LabelPortal() {
                 </div>
               </div>
 
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="font-black text-sm uppercase tracking-wider text-gray-500">Artists</h3>
                   <button onClick={() => { setView('artists'); setShowAddArtist(true); }}
@@ -277,7 +303,7 @@ export default function LabelPortal() {
                 <div className="space-y-2">
                   {artists.map(a => (
                     <div key={a.id} onClick={() => { setSelectedArtist(a); setView('recoupment'); }}
-                      className="flex justify-between items-center p-3 bg-white rounded-xl border border-gray-100 hover:border-indigo-500/30 cursor-pointer transition">
+                      className="flex justify-between items-center p-3 bg-white rounded-xl border border-white/5 hover:border-indigo-500/30 cursor-pointer transition">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-black text-indigo-300">
                           {a.stage[0]}
@@ -319,7 +345,7 @@ export default function LabelPortal() {
               </div>
 
               {showAddArtist && (
-                <div className="bg-gray-50 border border-indigo-500/30 rounded-2xl p-6 mb-6">
+                <div className="bg-gray-100/80 border border-indigo-500/30 rounded-2xl p-6 mb-6">
                   <h3 className="font-black mb-4 text-indigo-300">New Artist</h3>
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     {[
@@ -333,7 +359,7 @@ export default function LabelPortal() {
                         <label className="block text-xs font-bold text-gray-500 mb-1">{f.label}</label>
                         <input type="text" placeholder={f.ph} value={(newArtist as any)[f.key]}
                           onChange={e => setNewArtist(p => ({...p, [f.key]: e.target.value}))}
-                          className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-white text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                          className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-white text-sm placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                       </div>
                     ))}
                     <div>
@@ -382,7 +408,7 @@ export default function LabelPortal() {
                   </div>
                 ))}
                 <button onClick={() => setShowAddArtist(true)}
-                  className="bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-5 flex flex-col items-center justify-center gap-2 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition cursor-pointer min-h-[160px]">
+                  className="bg-gray-100/30 border-2 border-dashed border-gray-200 rounded-2xl p-5 flex flex-col items-center justify-center gap-2 hover:border-indigo-500/30 hover:bg-indigo-500/5 transition cursor-pointer min-h-[160px]">
                   <span className="text-3xl">+</span>
                   <span className="text-sm text-gray-500 font-bold">Add Artist</span>
                 </button>
@@ -393,10 +419,13 @@ export default function LabelPortal() {
           {/* ── TERRITORY MAP ── */}
           {view === 'territory' && (
             <div>
-              <div className="mb-8">
+              <div className="mb-6">
                 <p className="text-[10px] text-indigo-400 font-mono uppercase tracking-widest mb-1">Global Royalty Coverage</p>
                 <h1 className="text-3xl font-black">Revenue Map</h1>
-                <p className="text-gray-500 text-sm mt-1">${totalUnclaimed.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})} uncollected across territories</p>
+              </div>
+              <div className="flex gap-3 items-start p-3 mb-6 bg-amber-950/30 border border-amber-700/40 rounded-xl text-xs text-amber-200/70">
+                <span className="text-base flex-shrink-0">⚠️</span>
+                <span><strong className="text-amber-400">Illustrative data.</strong> Territory figures are sample data for layout purposes. Connect your DSP royalty statements via Import CSV to populate real numbers.</span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
                 {TERRITORY_DATA.map(t => (
@@ -407,16 +436,16 @@ export default function LabelPortal() {
                         {t.status.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-400 mb-2">{t.region}</p>
+                    <p className="text-xs text-slate-300 mb-2">{t.region}</p>
                     <p className={`text-lg font-black ${t.status==='collecting'?'text-green-400':t.status==='gap'?'text-yellow-400':'text-red-400'}`}>${t.amount.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
-                    <div className="mt-2 bg-gray-100 rounded-full h-1.5">
+                    <div className="mt-2 bg-white/10 rounded-full h-1.5">
                       <div className={`h-1.5 rounded-full ${t.status==='collecting'?'bg-green-500':t.status==='gap'?'bg-yellow-500':'bg-red-500'}`} style={{width:`${t.pct}%`}} />
                     </div>
                     <p className="text-[10px] text-gray-500 mt-1">{t.pct}% of total</p>
                   </div>
                 ))}
               </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                   <h3 className="font-black text-sm uppercase tracking-wider text-gray-500">Territory Action List</h3>
                   <div className="flex gap-4 text-xs">
@@ -437,7 +466,7 @@ export default function LabelPortal() {
                   <tbody className="divide-y divide-white/5">
                     {TERRITORY_DATA.filter(t=>t.status!=='collecting').map(t=>(
                       <tr key={t.code} className="hover:bg-white/5 transition">
-                        <td className="p-4 font-bold text-gray-400">{t.region}</td>
+                        <td className="p-4 font-bold text-slate-300">{t.region}</td>
                         <td className="p-4">
                           <span className={`font-mono text-[10px] font-black ${t.status==='gap'?'text-yellow-400':'text-red-400'}`}>{t.status.toUpperCase()}</span>
                         </td>
@@ -458,6 +487,11 @@ export default function LabelPortal() {
           {/* ── METADATA HEALTH ── */}
           {view === 'metadata' && (
             <div>
+              <div className="flex gap-3 items-start p-3 mb-6 bg-amber-950/30 border border-amber-700/40 rounded-xl text-xs text-amber-200/70">
+                <span className="text-base flex-shrink-0">⚠️</span>
+                <span><strong className="text-amber-400">Illustrative data.</strong> Metadata issues shown are sample patterns. Run the <Link href="/free-audit" className="text-indigo-400 underline">Free Audit</Link> on real ISRCs to surface actual gaps.</span>
+              </div>
+              <div>
               <div className="flex justify-between items-end mb-8">
                 <div>
                   <p className="text-[10px] text-indigo-400 font-mono uppercase tracking-widest mb-1">Command Center</p>
@@ -469,7 +503,7 @@ export default function LabelPortal() {
                     <p className="text-[10px] font-bold text-gray-500 uppercase">Health Score</p>
                     <p className="text-3xl font-black text-red-400">{healthScore}%</p>
                   </div>
-                  <div className="w-px bg-gray-100" />
+                  <div className="w-px bg-white/10" />
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-gray-500 uppercase">Est. Monthly Leak</p>
                     <p className="text-3xl font-black text-green-400">${totalLeak.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}.00</p>
@@ -530,7 +564,7 @@ export default function LabelPortal() {
                       { title: "Midnight Frequency", artist: "Travis Scott", issue: "MISSING_ISWC",   value: 720.00,  issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20' },
                     ] as const).map((r, i) => (
                       <tr key={i} className="hover:bg-white/5 transition">
-                        <td className="p-4 font-bold text-gray-400">{r.title}</td>
+                        <td className="p-4 font-bold text-slate-300">{r.title}</td>
                         <td className="p-4 text-gray-500">{r.artist}</td>
                         <td className="p-4"><span className={`${r.issueClass} font-mono text-[10px]`}>{r.issue}</span></td>
                         <td className="p-4 text-right font-mono text-green-400 font-bold">+${r.value.toFixed(2)}</td>
@@ -542,6 +576,7 @@ export default function LabelPortal() {
                   </tbody>
                 </table>
               </div>
+            </div>
             </div>
           )}
 
@@ -557,11 +592,11 @@ export default function LabelPortal() {
               {/* Summary row */}
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {[
-                  { label: 'Total Advances',  value: '$'+artists.reduce((s,a)=>s+a.expenses,0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-gray-400' },
+                  { label: 'Total Advances',  value: '$'+artists.reduce((s,a)=>s+a.expenses,0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-slate-300' },
                   { label: 'Total Earned',    value: '$'+artists.reduce((s,a)=>s+a.earnings,0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-green-400' },
                   { label: 'Net Unrecouped',  value: '$'+artists.filter(a=>!a.recouped).reduce((s,a)=>s+(a.expenses-a.earnings),0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-yellow-400' },
                 ].map(s => (
-                  <div key={s.label} className="bg-white border border-gray-200 rounded-xl px-5 py-4">
+                  <div key={s.label} className="bg-slate-900/50 border border-slate-800 rounded-xl px-5 py-4">
                     <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mb-1">{s.label}</p>
                     <p className={`text-xl font-bold font-mono ${s.color}`}>{s.value}</p>
                   </div>
@@ -586,19 +621,19 @@ export default function LabelPortal() {
                       const pct = Math.min(100, Math.round((a.earnings / Math.max(a.expenses, 1)) * 100));
                       const balance = a.earnings - a.expenses;
                       return (
-                        <tr key={a.id} className="hover:bg-white/[0.03] transition">
+                        <tr key={a.id} className="hover:bg-white/5 transition">
                           <td className="px-5 py-4">
                             <p className="font-semibold text-slate-200">{a.stage}</p>
                             <p className="text-[10px] text-gray-500 mt-0.5">{a.genre} · {a.isrc}</p>
                           </td>
                           <td className="px-5 py-4 text-right font-mono text-gray-500">${a.expenses.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
-                          <td className="px-5 py-4 text-right font-mono text-gray-400">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
+                          <td className="px-5 py-4 text-right font-mono text-slate-300">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
                           <td className={`px-5 py-4 text-right font-mono font-semibold ${balance >= 0 ? 'text-green-400' : 'text-yellow-400'}`}>
                             {balance >= 0 ? '+' : '-'}${Math.abs(balance).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}
                           </td>
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-2">
-                              <div className="flex-1 bg-gray-100 rounded-full h-1.5">
+                              <div className="flex-1 bg-white/10 rounded-full h-1.5">
                                 <div className={`h-1.5 rounded-full ${a.recouped ? 'bg-green-500' : 'bg-yellow-500'}`} style={{width:`${pct}%`}} />
                               </div>
                               <span className="text-[10px] text-gray-500 font-mono w-8 text-right">{pct}%</span>
@@ -632,7 +667,7 @@ export default function LabelPortal() {
                   { title: '21 Savage — Co-Pub Deal',    type: 'Publishing', date: '2021-01-10', status: 'Active',   risk: 'Low' },
                   { title: 'Metro Boomin — Producer Agmt',type:'Production', date: '2018-09-22', status: 'Expiring', risk: 'High' },
                 ].map((c, i) => (
-                  <div key={i} className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex items-center justify-between">
+                  <div key={i} className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 flex items-center justify-between">
                     <div>
                       <p className="font-bold">{c.title}</p>
                       <p className="text-xs text-gray-500 mt-0.5">{c.type} · {c.date}</p>
@@ -655,7 +690,7 @@ export default function LabelPortal() {
                 <p className="text-[10px] text-indigo-400 font-mono uppercase tracking-widest mb-1">Disbursements</p>
                 <h1 className="text-3xl font-black">Payouts</h1>
               </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+              <div className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden">
                 <table className="w-full text-xs">
                   <thead className="bg-white/50 text-gray-500 uppercase tracking-widest">
                     <tr>
@@ -669,7 +704,7 @@ export default function LabelPortal() {
                   <tbody className="divide-y divide-white/5">
                     {artists.filter(a=>a.recouped).map(a=>(
                       <tr key={a.id} className="hover:bg-white/5 transition">
-                        <td className="p-4 font-bold text-gray-400">{a.stage}</td>
+                        <td className="p-4 font-bold text-slate-300">{a.stage}</td>
                         <td className="p-4 text-right font-mono font-black text-green-400">${(a.earnings-a.expenses).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
                         <td className="p-4 text-right text-gray-500">Feb 2026</td>
                         <td className="p-4 text-right"><span className="text-green-400 font-black text-[10px]">READY</span></td>
@@ -680,12 +715,12 @@ export default function LabelPortal() {
                     ))}
                     {artists.filter(a=>!a.recouped).map(a=>(
                       <tr key={a.id} className="hover:bg-white/5 transition opacity-50">
-                        <td className="p-4 font-bold text-gray-400">{a.stage}</td>
+                        <td className="p-4 font-bold text-slate-300">{a.stage}</td>
                         <td className="p-4 text-right font-mono text-yellow-400">Unrecouped</td>
                         <td className="p-4 text-right text-gray-500">—</td>
                         <td className="p-4 text-right"><span className="text-yellow-400 font-black text-[10px]">PENDING</span></td>
                         <td className="p-4 text-right">
-                          <button disabled className="px-3 py-1 border border-gray-200 text-gray-400 text-[10px] font-black rounded-lg cursor-not-allowed">Hold</button>
+                          <button disabled className="px-3 py-1 border border-gray-200 text-slate-600 text-[10px] font-black rounded-lg cursor-not-allowed">Hold</button>
                         </td>
                       </tr>
                     ))}
@@ -697,75 +732,164 @@ export default function LabelPortal() {
 
           {/* ── IMPORT CSV/PDF ── */}
           {view === 'import' && (
-            <div>
-              <div className="mb-8">
+            <div className="space-y-8">
+              <div>
                 <p className="text-[10px] text-indigo-400 font-mono uppercase tracking-widest mb-1">Data Import</p>
-                <h1 className="text-3xl font-black">Import CSV / PDF</h1>
-                <p className="text-gray-500 text-sm mt-1">Upload royalty statements or contracts for auto-parsing</p>
+                <h1 className="text-3xl font-black">Upload & Import</h1>
+                <p className="text-gray-500 text-sm mt-1">Upload MP3 tracks to secure storage or preview CSV data locally</p>
               </div>
 
-              <div
-                onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-2xl p-12 text-center cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition mb-6">
-                <div className="text-5xl mb-4">📥</div>
-                <p className="font-bold text-gray-400 mb-2">Drop CSV or PDF here</p>
-                <p className="text-xs text-gray-500">Royalty statements · Split sheets · Contracts · DSP reports</p>
-                <input ref={fileRef} type="file" accept=".csv,.pdf" className="hidden" onChange={handleFile} />
-              </div>
+              {/* ── REAL: MP3 Upload ── */}
+              <div className="bg-white border border-indigo-500/30 rounded-2xl overflow-hidden">
+                <div className="px-6 py-4 bg-indigo-950/30 border-b border-indigo-500/20 flex items-center gap-3">
+                  <span className="text-xl">🎵</span>
+                  <div>
+                    <p className="text-sm font-bold text-white">MP3 Upload — Real Storage</p>
+                    <p className="text-xs text-gray-500">Uploads to IDrive e2 with SHA-256 hash for chain of custody</p>
+                  </div>
+                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 bg-green-900/40 text-green-400 border border-green-700/40 rounded">⚡ Live</span>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-xs text-gray-500 font-semibold mb-1">Artist Name *</label>
+                      <input value={mp3Artist} onChange={e => setMp3Artist(e.target.value)}
+                        placeholder="e.g. Young Metro"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 font-semibold mb-1">Track Title *</label>
+                      <input value={mp3Title} onChange={e => setMp3Title(e.target.value)}
+                        placeholder="e.g. No Limit"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 font-semibold mb-1">ISRC</label>
+                      <input value={mp3Isrc} onChange={e => setMp3Isrc(e.target.value)}
+                        placeholder="e.g. USRC11600001"
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm text-white font-mono placeholder-slate-600 focus:outline-none focus:border-indigo-500" />
+                    </div>
+                  </div>
 
-              {importStatus && (
-                <div className={`mb-4 p-4 rounded-xl border text-sm font-bold ${importStatus.includes('issue')?'bg-yellow-500/10 border-yellow-500/30 text-yellow-300':'bg-green-500/10 border-green-500/30 text-green-300'}`}>
-                  {importStatus}
-                  {importStatus.includes('issue') && !csvFixed && (
-                    <button onClick={() => { setCsvFixed(true); setImportStatus('Auto-fixed — ready to import.'); }}
-                      className="ml-4 px-3 py-1 bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 text-xs rounded-lg hover:bg-yellow-500/30 transition">
-                      Auto-Fix
-                    </button>
+                  <div
+                    onClick={() => mp3Ref.current?.click()}
+                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${mp3File ? 'border-green-500/50 bg-green-500/5' : 'border-gray-300 hover:border-indigo-500/50 hover:bg-indigo-500/5'}`}>
+                    <div className="text-4xl mb-2">{mp3File ? '✅' : '🎵'}</div>
+                    <p className="text-sm font-bold text-slate-300">
+                      {mp3File ? mp3File.name : 'Click to select MP3 file'}
+                    </p>
+                    {mp3File && <p className="text-xs text-gray-500 mt-1">{Math.round(mp3File.size / 1024)}KB</p>}
+                    <input ref={mp3Ref} type="file" accept=".mp3" className="hidden"
+                      onChange={e => setMp3File(e.target.files?.[0] ?? null)} />
+                  </div>
+
+                  <button
+                    onClick={handleMp3Upload}
+                    disabled={uploading || !mp3File || !mp3Artist.trim() || !mp3Title.trim()}
+                    className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-white/10 disabled:text-slate-600 text-white font-bold rounded-xl text-sm transition">
+                    {uploading ? 'Uploading…' : 'Upload to Secure Storage →'}
+                  </button>
+
+                  {uploadResult && !uploadResult.error && (
+                    <div className="p-4 bg-green-900/20 border border-green-700/40 rounded-xl space-y-2">
+                      <p className="text-sm font-bold text-green-400">✓ Upload successful</p>
+                      <div className="text-xs text-gray-500 space-y-1">
+                        <div className="flex gap-3"><span className="text-slate-600 w-24">Track ID</span><span className="font-mono text-slate-300">{uploadResult.track_id}</span></div>
+                        <div className="flex gap-3"><span className="text-slate-600 w-24">SHA-256</span><span className="font-mono text-slate-300 break-all">{uploadResult.hash}</span></div>
+                        {uploadResult.public_url && (
+                          <div className="pt-1">
+                            <a href={uploadResult.public_url} target="_blank" rel="noopener noreferrer"
+                              className="text-indigo-400 hover:text-indigo-300 text-xs font-semibold">
+                              Stream preview ↗
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {uploadResult?.error && (
+                    <div className="p-3 bg-red-900/20 border border-red-700/40 rounded-xl text-xs text-red-400 font-semibold">
+                      Error: {uploadResult.error}
+                    </div>
                   )}
                 </div>
-              )}
+              </div>
 
-              {importRows.length > 0 && (
-                <div className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden mb-6">
-                  <div className="px-6 py-3 border-b border-gray-200">
-                    <p className="text-xs font-black text-gray-500 uppercase tracking-wider">Preview (first 8 rows)</p>
+              {/* ── CSV Preview (local only) ── */}
+              <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
+                  <span className="text-xl">📋</span>
+                  <div>
+                    <p className="text-sm font-bold text-white">CSV Preview — Local</p>
+                    <p className="text-xs text-gray-500">Validates structure client-side — no data is sent to the server</p>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-xs">
-                      <thead className="bg-white/50">
-                        <tr>{importRows[0]?.map((h,i)=><th key={i} className="p-3 text-left text-gray-500 font-black uppercase tracking-wider">{h}</th>)}</tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/5">
-                        {importRows.slice(1).map((row,i)=>(
-                          <tr key={i} className="hover:bg-white/5">
-                            {row.map((cell,j)=><td key={j} className={`p-3 ${cell===''?'bg-red-500/10 text-red-400':'text-gray-400'}`}>{cell||'⚠ empty'}</td>)}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 bg-slate-700 text-gray-500 rounded">Local Only</span>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div
+                    onClick={() => fileRef.current?.click()}
+                    className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition">
+                    <div className="text-4xl mb-2">📥</div>
+                    <p className="text-sm font-bold text-slate-300 mb-1">Drop CSV or PDF here</p>
+                    <p className="text-xs text-gray-500">Royalty statements · Split sheets · Contracts · DSP reports</p>
+                    <input ref={fileRef} type="file" accept=".csv,.pdf" className="hidden" onChange={handleFile} />
+                  </div>
+
+                  {importStatus && (
+                    <div className={`p-4 rounded-xl border text-sm font-semibold ${importStatus.includes('issue') ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' : importStatus.includes('Error') || importStatus.includes('Unsupported') ? 'bg-red-500/10 border-red-500/30 text-red-300' : 'bg-slate-800/60 border-gray-200 text-slate-300'}`}>
+                      {importStatus}
+                      {importStatus.includes('issue') && !csvFixed && (
+                        <button onClick={() => { setCsvFixed(true); setImportStatus('Issues noted — fix in your spreadsheet app then re-upload.'); }}
+                          className="ml-4 px-3 py-1 bg-yellow-500/20 border border-yellow-500/40 text-yellow-200 text-xs rounded-lg hover:bg-yellow-500/30 transition">
+                          Acknowledge
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {importRows.length > 0 && (
+                    <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+                      <div className="px-4 py-2 border-b border-gray-200">
+                        <p className="text-xs font-black text-gray-500 uppercase tracking-wider">Preview (first 8 rows)</p>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead className="bg-white/50">
+                            <tr>{importRows[0]?.map((h,i)=><th key={i} className="p-3 text-left text-gray-500 font-black uppercase tracking-wider">{h}</th>)}</tr>
+                          </thead>
+                          <tbody className="divide-y divide-white/5">
+                            {importRows.slice(1).map((row,i)=>(
+                              <tr key={i} className="hover:bg-white/5">
+                                {row.map((cell,j)=><td key={j} className={`p-3 ${cell===''?'bg-red-500/10 text-red-400':'text-slate-300'}`}>{cell||'⚠ empty'}</td>)}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                      { name: 'Royalty Statement', icon: '💰', cols: 'Track,ISRC,DSP,Period,Streams,Amount,Currency,Paid' },
+                      { name: 'Artist Catalog',    icon: '🎵', cols: 'Title,ISRC,UPC,ReleaseDate,Label,Genre,Producer,Songwriter' },
+                      { name: 'Split Sheet',       icon: '✂️',  cols: 'Track,ISRC,Party,Role,IPI,SplitPct,ProAffiliation' },
+                    ].map(t => (
+                      <div key={t.name} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                        <div className="text-xl mb-2">{t.icon}</div>
+                        <p className="font-bold text-sm mb-1">{t.name} Template</p>
+                        <p className="text-[10px] text-gray-500 font-mono mb-3 break-all">{t.cols}</p>
+                        <button onClick={() => {
+                          const blob = new Blob([t.cols+'\n'], {type:'text/csv'});
+                          const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+                          a.download = t.name.replace(/\s+/g,'-')+'.csv'; a.click();
+                        }} className="w-full py-2 text-xs font-bold bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 rounded-lg hover:bg-indigo-600/40 transition">
+                          Download Template
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { name: 'Royalty Statement Template', icon: '💰', cols: 'Track,ISRC,DSP,Period,Streams,Amount,Currency,Paid' },
-                  { name: 'Artist Catalog Template',    icon: '🎵', cols: 'Title,ISRC,UPC,ReleaseDate,Label,Genre,Producer,Songwriter' },
-                  { name: 'Split Sheet Template',       icon: '✂️',  cols: 'Track,ISRC,Party,Role,IPI,SplitPct,ProAffiliation' },
-                ].map(t => (
-                  <div key={t.name} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                    <div className="text-2xl mb-2">{t.icon}</div>
-                    <p className="font-bold text-sm mb-1">{t.name}</p>
-                    <p className="text-[10px] text-gray-500 font-mono mb-3">{t.cols}</p>
-                    <button onClick={() => {
-                      const blob = new Blob([t.cols+'\n'], {type:'text/csv'});
-                      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-                      a.download = t.name.replace(/\s+/g,'-')+'.csv'; a.click();
-                    }} className="w-full py-2 text-xs font-bold bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 rounded-lg hover:bg-indigo-600/40 transition">
-                      Download Template
-                    </button>
-                  </div>
-                ))}
               </div>
             </div>
           )}

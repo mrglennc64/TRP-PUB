@@ -1,0 +1,615 @@
+'use client';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+
+// Mock data for matters
+const MATTERS = [
+  { id: 1, name: "RICO Investigation - Label A", status: "Urgent", amount: 250000, leakage: 12.5, issues: 8 },
+  { id: 2, name: "Copyright Infringement - Artist B", status: "In Progress", amount: 175000, leakage: 5.2, issues: 3 },
+  { id: 3, name: "Royalty Audit - Catalog C", status: "Review", amount: 89000, leakage: 2.8, issues: 1 },
+];
+
+export default function AttorneyPortal() {
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [selectedMatter, setSelectedMatter] = useState(1);
+  const [downloading, setDownloading] = useState(null);
+  const [scanComplete, setScanComplete] = useState(false);
+  const [showSignaturePad, setShowSignaturePad] = useState(false);
+  const [currentDocument, setCurrentDocument] = useState(null);
+  const [showPdfPreview, setShowPdfPreview] = useState(false);
+  const [signatureData, setSignatureData] = useState(null);
+
+  const matter = MATTERS.find(m => m.id === selectedMatter) || MATTERS[0];
+  const showBar = !['dashboard', 'secure-message', 'digital-handshake'].includes(activeSection);
+
+  // Action Center Data
+  const urgentTasks = [
+    { id: 1, type: 'signature', label: 'Pending Signatures', count: 3, urgency: 'high' },
+    { id: 2, type: 'dispute', label: 'Disputed Splits (Expiring Soon)', count: 2, urgency: 'high' },
+    { id: 3, type: 'message', label: 'New Messages', count: 1, urgency: 'medium' },
+  ];
+
+  const disputes = [
+    { id: 1, name: "Producer Split Dispute", daysLeft: 14, status: "orange" },
+    { id: 2, name: "Writer Share Disagreement", daysLeft: 5, status: "red" },
+  ];
+
+  // Activity Log
+  const activityLog = [
+    { id: 1, action: "Split Approved", user: "Leron Rogers", ip: "192.168.1.1", timestamp: "2026-03-01 14:32", hash: "0x7a3f...b8e2" },
+    { id: 2, action: "Document Signed", user: "Artist A", ip: "192.168.1.45", timestamp: "2026-03-01 13:15", hash: "0x9c2d...f4a1" },
+  ];
+
+  const handleDownload = (type, title, matterName, matterId) => {
+    setDownloading(type);
+    // Generate audit log entry
+    const logEntry = {
+      action: `Downloaded ${title}`,
+      user: "Leron Rogers",
+      ip: "192.168.1.1",
+      timestamp: new Date().toISOString(),
+      hash: generateHash(`${title}-${Date.now()}`)
+    };
+    console.log("Audit Log:", logEntry);
+    
+    setTimeout(() => {
+      alert(`✅ Downloading ${title} for ${matterName} (Matter #${matterId})...\nAudit trail recorded.`);
+      setDownloading(null);
+    }, 800);
+  };
+
+  const generateHash = (input) => {
+    return '0x' + Math.random().toString(36).substring(2, 10) + '...' + Math.random().toString(36).substring(2, 6);
+  };
+
+  const handleSignature = () => {
+    const signature = {
+      user: "Leron Rogers",
+      ip: "192.168.1.1",
+      timestamp: new Date().toISOString(),
+      hash: generateHash('signature'),
+      documentId: currentDocument
+    };
+    setSignatureData(signature);
+    setShowSignaturePad(false);
+    alert(`✅ Document signed!\nAudit trail recorded:\nIP: ${signature.ip}\nHash: ${signature.hash}`);
+  };
+
+  const requestRevision = (documentId) => {
+    const message = prompt("Enter revision notes for the producer:");
+    if (message) {
+      alert(`✉️ Revision request sent:\n${message}\nAudit trail updated.`);
+    }
+  };
+
+  const runScan = () => {
+    setScanComplete(false);
+    setTimeout(() => {
+      setScanComplete(true);
+    }, 2000);
+  };
+
+  const getDaysLeftColor = (days) => {
+    if (days > 15) return 'text-green-600';
+    if (days > 5) return 'text-orange-600';
+    return 'text-red-600';
+  };
+
+  const navGroups = [
+    { label: "Matter Management", items: [
+      { id: 'dashboard', label: 'Dashboard', icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+      { id: 'new-matter', label: 'New Matter', icon: "M12 4v16m8-8H4" },
+    ]},
+    { label: "Digital Handshake", items: [
+      { id: 'digital-handshake', label: 'Digital Handshake', icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },
+    ]},
+    { label: "Audit & Due Diligence", items: [
+      { id: 'run-due-diligence', label: 'Run Catalog Due Diligence', icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
+      { id: 'pre-release-verify', label: 'Pre-Release Split Verification', icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", href: '/attorney-portal/pre-release-verify' },
+    ]},
+    { label: "Reports & Documents", items: [
+      { id: 'view-audit-report', label: 'View Audit Report', icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" },
+      { id: 'generate-court-report', label: 'Generate Court-Ready Report', icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+    ]},
+    { label: "Legal Actions", items: [
+      { id: 'create-demand-letter', label: 'Create Demand Letter', icon: "M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" },
+      { id: 'export-affidavit', label: 'Export Affidavit', icon: "M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" },
+      { id: 'export-hash-seal', label: 'Export with Hash Seal', icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" },
+    ]},
+    { label: "Communication", items: [
+      { id: 'secure-message', label: 'Secure Client Message', icon: "M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z", badge: "2" },
+    ]},
+{ label: "Reports & Documents", items: [
+  { id: 'view-audit-report', label: 'View Audit Report', icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" },
+  { id: 'generate-court-report', label: 'Generate Court-Ready Report', icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" },
+  { id: 'contracts', label: 'Split Contracts', icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", href: '/attorney-portal/contracts' },
+]},
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-900 to-purple-900 text-white py-2 px-6 text-center text-sm font-medium">
+        ⚖️ Attorney Portal - Secure Session - All actions logged and hash-verified
+      </div>
+
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="w-72 bg-white border-r border-gray-200 min-h-screen p-6">
+          <div className="mb-8">
+            <Link href="/" className="text-2xl font-bold text-indigo-900">
+              TrapRoyalties<span className="text-indigo-600">Pro</span>
+            </Link>
+            <p className="text-sm text-gray-600 mt-1">Attorney Portal</p>
+          </div>
+
+          {/* Navigation Groups */}
+          <div className="space-y-8">
+            {navGroups.map((group) => (
+              <div key={group.label}>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">{group.label}</p>
+                <div className="space-y-2">
+                  {group.items.map((item) => {
+                    if (item.href) {
+                      return (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          className="w-full flex items-center space-x-3 p-3 rounded-lg transition text-gray-600 hover:bg-indigo-50"
+                        >
+                          <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                          </svg>
+                          <span className="text-left text-sm flex-1">{item.label}</span>
+                          {item.badge && <span className="ml-auto bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full animate-pulse">{item.badge}</span>}
+                        </Link>
+                      );
+                    } else {
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => setActiveSection(item.id)}
+                          className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${
+                            activeSection === item.id
+                              ? 'bg-indigo-50 text-indigo-900 font-medium'
+                              : 'text-gray-600 hover:bg-indigo-50'
+                          }`}
+                        >
+                          <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                          </svg>
+                          <span className="text-left text-sm flex-1">{item.label}</span>
+                          {item.badge && <span className="ml-auto bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full animate-pulse">{item.badge}</span>}
+                        </button>
+                      );
+                    }
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 p-8">
+          {/* Action Center - Always visible at top */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              Action Center
+            </h2>
+            
+            <div className="grid grid-cols-4 gap-4">
+              {urgentTasks.map((task) => (
+                <div key={task.id} className={`p-4 rounded-lg border ${
+                  task.urgency === 'high' ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'
+                }`}>
+                  <div className="flex justify-between items-start">
+                    <span className="text-sm text-gray-600">{task.label}</span>
+                    <span className={`text-lg font-bold ${
+                      task.urgency === 'high' ? 'text-red-700' : 'text-yellow-700'
+                    }`}>{task.count}</span>
+                  </div>
+                  {task.type === 'dispute' && (
+                    <div className="mt-2 space-y-1">
+                      {disputes.map((d) => (
+                        <div key={d.id} className="flex justify-between text-xs">
+                          <span>{d.name}</span>
+                          <span className={d.status === 'red' ? 'text-red-600 font-bold' : 'text-orange-600'}>
+                            {d.daysLeft} days
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {showBar && (
+            <div className="mb-6 flex items-center gap-4 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+              <span className="text-sm font-medium text-indigo-900 whitespace-nowrap">Active Matter:</span>
+              <select
+                value={selectedMatter}
+                onChange={(e) => { setSelectedMatter(Number(e.target.value)); setScanComplete(false); }}
+                className="flex-1 px-4 py-2 border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+              >
+                {MATTERS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </select>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                matter.status === 'Urgent' ? 'bg-red-100 text-red-800' :
+                matter.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-green-100 text-green-800'
+              }`}>
+                {matter.status}
+              </span>
+            </div>
+          )}
+
+          {/* Dashboard Section */}
+          {activeSection === 'dashboard' && (
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Leron</h1>
+              <p className="text-gray-600 mb-8">Here's what's happening with your cases today.</p>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-4 gap-6 mb-8">
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-100">
+                  <p className="text-sm text-indigo-600 mb-1">Active Cases</p>
+                  <p className="text-3xl font-bold text-indigo-900">24</p>
+                  <p className="text-xs text-indigo-500 mt-2">+3 this week</p>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
+                  <p className="text-sm text-green-600 mb-1">Pending Verifications</p>
+                  <p className="text-3xl font-bold text-green-900">12</p>
+                  <p className="text-xs text-green-500 mt-2">8 awaiting response</p>
+                </div>
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-100">
+                  <p className="text-sm text-amber-600 mb-1">Digital Handshakes</p>
+                  <p className="text-3xl font-bold text-amber-900">47</p>
+                  <p className="text-xs text-amber-500 mt-2">32 completed</p>
+                </div>
+                <div className="bg-gradient-to-br from-rose-50 to-pink-50 p-6 rounded-xl border border-rose-100">
+                  <p className="text-sm text-rose-600 mb-1">Revenue Tracked</p>
+                  <p className="text-3xl font-bold text-rose-900">$2.4M</p>
+                  <p className="text-xs text-rose-500 mt-2">This quarter</p>
+                </div>
+              </div>
+
+              {/* Audit Trail Section */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  Recent Activity Log (Audit Trail)
+                </h2>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">IP Address</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hash</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {activityLog.map((log) => (
+                        <tr key={log.id} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 text-sm text-gray-900">{log.action}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">{log.user}</td>
+                          <td className="px-6 py-4 text-sm font-mono text-gray-600">{log.ip}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">{log.timestamp}</td>
+                          <td className="px-6 py-4 text-sm font-mono text-indigo-600">{log.hash}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Signature Pad Modal */}
+              {showSignaturePad && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-xl p-6 max-w-md w-full">
+                    <h3 className="text-lg font-semibold mb-4">Digital Signature</h3>
+                    <div className="border-2 border-gray-300 rounded-lg h-40 mb-4 flex items-center justify-center bg-gray-50">
+                      <p className="text-gray-400">Signature pad would appear here</p>
+                    </div>
+                    <div className="text-xs text-gray-500 mb-4">
+                      <p>IP: 192.168.1.1</p>
+                      <p>Timestamp: {new Date().toLocaleString()}</p>
+                      <p>Hash: {generateHash('signature')}</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleSignature}
+                        className="flex-1 bg-indigo-900 text-white py-2 rounded-lg hover:bg-indigo-800"
+                      >
+                        Sign Document
+                      </button>
+                      <button
+                        onClick={() => setShowSignaturePad(false)}
+                        className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Quick Actions with Revision */}
+              <div className="mb-8">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div className="grid grid-cols-4 gap-4">
+                  <button
+                    onClick={() => setActiveSection('run-due-diligence')}
+                    className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-100 text-center hover:shadow-lg transition"
+                  >
+                    <span className="text-2xl mb-2 block">🔍</span>
+                    <span className="text-sm font-medium text-indigo-900">Run Due Diligence</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveSection('digital-handshake')}
+                    className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-100 text-center hover:shadow-lg transition"
+                  >
+                    <span className="text-2xl mb-2 block">🤝</span>
+                    <span className="text-sm font-medium text-indigo-900">Create Handshake</span>
+                  </button>
+                  <button
+                    onClick={() => requestRevision('doc-123')}
+                    className="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-xl border border-yellow-200 text-center hover:shadow-lg transition"
+                  >
+                    <span className="text-2xl mb-2 block">✏️</span>
+                    <span className="text-sm font-medium text-yellow-800">Request Revision</span>
+                  </button>
+                  <button
+                    onClick={() => setShowSignaturePad(true)}
+                    className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200 text-center hover:shadow-lg transition"
+                  >
+                    <span className="text-2xl mb-2 block">📝</span>
+                    <span className="text-sm font-medium text-green-800">Sign Document</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pre-Release Split Verification Section */}
+          {activeSection === 'pre-release-verify' && (
+            <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
+              <span className="text-6xl mb-4 block">🔐</span>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Pre-Release Split Verification</h2>
+              <p className="text-gray-600 mb-6">You are being redirected to the verification page...</p>
+              <Link
+                href="/attorney-portal/pre-release-verify"
+                className="inline-flex items-center px-6 py-3 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition"
+              >
+                Go to Verification Page
+              </Link>
+            </div>
+          )}
+
+          {/* Digital Handshake Section */}
+          {activeSection === 'digital-handshake' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Digital Handshake</h1>
+              <p className="text-gray-600 mb-6">Create legally binding digital handshake agreements.</p>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h3 className="font-semibold mb-2">Pending Handshakes</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-yellow-50 rounded">
+                      <span>Artist B - 15% split</span>
+                      <span className="text-xs text-yellow-700">Expires in 3 days</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <h3 className="font-semibold mb-2">Completed</h3>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                      <span>Artist A - 25% split</span>
+                      <span className="text-xs text-green-700">Hash verified</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* New Matter Section */}
+          {activeSection === 'new-matter' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Create New Matter</h1>
+              <p className="text-gray-600 mb-6">Add a new legal matter with IPI/ISRC tracking.</p>
+              
+              <form className="space-y-4 max-w-2xl">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Artist/Writer Name *</label>
+                    <input type="text" className="w-full p-2 border rounded-lg" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">IPI Number</label>
+                    <input type="text" className="w-full p-2 border rounded-lg" placeholder="00624789341" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Track Title *</label>
+                    <input type="text" className="w-full p-2 border rounded-lg" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">ISRC</label>
+                    <input type="text" className="w-full p-2 border rounded-lg" placeholder="US-TST-25-00001" />
+                  </div>
+                </div>
+                <button className="bg-indigo-900 text-white px-6 py-2 rounded-lg hover:bg-indigo-800">
+                  Create Matter
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* Run Due Diligence Section */}
+          {activeSection === 'run-due-diligence' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Run Catalog Due Diligence</h1>
+              <p className="text-gray-600 mb-4">Matter: {matter.name}</p>
+              
+              <div className="grid md:grid-cols-3 gap-4 mb-6">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <p className="text-sm text-gray-600">Recoupment Status</p>
+                  <p className="text-lg font-semibold text-green-600">Recouped</p>
+                  <p className="text-xs text-gray-500">Artist owed $12,500</p>
+                </div>
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <p className="text-sm text-gray-600">Missing IPI/ISRC</p>
+                  <p className="text-lg font-semibold text-red-600">3 issues</p>
+                  <p className="text-xs text-gray-500">Not PRO-ready</p>
+                </div>
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <p className="text-sm text-gray-600">Dispute Timer</p>
+                  <p className="text-lg font-semibold text-orange-600">14 days left</p>
+                  <p className="text-xs text-gray-500">Resolution required</p>
+                </div>
+              </div>
+
+              <button
+                onClick={runScan}
+                disabled={downloading === 'scan'}
+                className="px-6 py-3 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition disabled:opacity-50"
+              >
+                {downloading === 'scan' ? 'Scanning...' : 'Start Scan'}
+              </button>
+              {scanComplete && (
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-green-800">✓ Scan complete! Audit trail generated.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* View Audit Report Section */}
+          {activeSection === 'view-audit-report' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">View Audit Report</h1>
+              <p className="text-gray-600 mb-4">Matter: {matter.name}</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border border-gray-100 rounded-lg hover:bg-indigo-50 cursor-pointer" onClick={() => setShowPdfPreview(true)}>
+                  <div>
+                    <h3 className="font-medium text-gray-900">Q4 2025 Audit Report</h3>
+                    <p className="text-sm text-gray-500">Generated: Feb 15, 2026 • Hash: 0x7a3f...b8e2</p>
+                  </div>
+                  <button className="text-indigo-600">Preview</button>
+                </div>
+              </div>
+
+              {/* PDF Preview Modal */}
+              {showPdfPreview && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-xl p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold">Audit Report Preview</h3>
+                      <button onClick={() => setShowPdfPreview(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    <div className="border rounded-lg p-8 bg-gray-50 min-h-[400px] flex items-center justify-center">
+                      <p className="text-gray-400">PDF preview would appear here using react-pdf</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Generate Court Report Section */}
+          {activeSection === 'generate-court-report' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Generate Court-Ready Report</h1>
+              <p className="text-gray-600 mb-4">Matter: {matter.name}</p>
+              <button
+                onClick={() => handleDownload('court', 'Court Report', matter.name, matter.id)}
+                disabled={downloading === 'court'}
+                className="px-6 py-3 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition disabled:opacity-50"
+              >
+                {downloading === 'court' ? 'Generating...' : 'Generate Court Report'}
+              </button>
+            </div>
+          )}
+
+          {/* Create Demand Letter Section */}
+          {activeSection === 'create-demand-letter' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Create Demand Letter</h1>
+              <p className="text-gray-600 mb-4">Matter: {matter.name}</p>
+              
+              <div className="space-y-4 max-w-2xl">
+                <div className="flex gap-4">
+                  <button className="flex-1 bg-indigo-900 text-white py-2 rounded-lg hover:bg-indigo-800">
+                    Generate Standard
+                  </button>
+                  <button className="flex-1 bg-yellow-600 text-white py-2 rounded-lg hover:bg-yellow-700">
+                    Request Revision
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Export Affidavit Section */}
+          {activeSection === 'export-affidavit' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Export Affidavit</h1>
+              <p className="text-gray-600 mb-4">Matter: {matter.name}</p>
+              <button
+                onClick={() => handleDownload('affidavit', 'Affidavit', matter.name, matter.id)}
+                disabled={downloading === 'affidavit'}
+                className="px-6 py-3 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition disabled:opacity-50"
+              >
+                {downloading === 'affidavit' ? 'Generating...' : 'Export Affidavit'}
+              </button>
+            </div>
+          )}
+
+          {/* Export Hash Seal Section */}
+          {activeSection === 'export-hash-seal' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Export with Hash Seal</h1>
+              <p className="text-gray-600 mb-4">Matter: {matter.name}</p>
+              <button
+                onClick={() => handleDownload('hash', 'Hash-Sealed Document', matter.name, matter.id)}
+                disabled={downloading === 'hash'}
+                className="px-6 py-3 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 transition disabled:opacity-50"
+              >
+                {downloading === 'hash' ? 'Generating...' : 'Export with Hash Seal'}
+              </button>
+            </div>
+          )}
+
+          {/* Secure Message Section */}
+          {activeSection === 'secure-message' && (
+            <div className="bg-white rounded-xl border border-gray-200 p-8">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Secure Client Message</h1>
+              <p className="text-gray-600 mb-4">You have 2 unread messages.</p>
+              
+              <div className="space-y-4">
+                <div className="p-4 border border-gray-200 rounded-lg">
+                  <div className="flex justify-between mb-2">
+                    <span className="font-medium">Client A</span>
+                    <span className="text-xs text-gray-500">2 hours ago</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Please review the updated split sheet...</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

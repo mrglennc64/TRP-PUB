@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function LabelPortal() {
   const [activeView, setActiveView] = useState('dashboard');
-  const [selectedArtist, setSelectedArtist] = useState(null);
+  const [selectedArtist, setSelectedArtist] = useState<any>(null);
 
   // Mock data for demonstration
   const artists = [

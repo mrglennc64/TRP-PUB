@@ -185,53 +185,26 @@ export default function VerifySplitsPage() {
     }
   }
 
-  const runSmptAnalysis = async (data: Contributor[]) => {
-    setSmptLoading(true)
-    setSmptError(null)
-    setSmptAnalysis(null)
-    setDismissedIssues(new Set())
+  const runSmptAnalysis = async (data: any[]) => {
+    setSmptLoading(true); setSmptError(null); setSmptAnalysis(null); setDismissedIssues(new Set())
     try {
-      const res = await fetch('/api/split-verify-ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          splits: data.map(c => ({ name: c.name, role: c.role, percentage: c.percentage })),
-          totalAmount: grossAmount,
-        }),
-      })
+      const res = await fetch('/api/split-verify-ai', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ splits: data.map((c:any) => ({ name: c.name, role: c.role, percentage: c.percentage })), totalAmount: grossAmount }) })
       const json = await res.json()
       if (!res.ok || !json.success) throw new Error(json.error || 'Analysis failed')
       setSmptAnalysis(json.analysis)
-    } catch (err) {
-      setSmptError(err instanceof Error ? err.message : 'Analysis failed')
-    } finally {
-      setSmptLoading(false)
-    }
+    } catch (err: any) { setSmptError(err.message || 'Analysis failed') }
+    finally { setSmptLoading(false) }
   }
-
   const acceptFix = (i: number) => {
     const issue = smptAnalysis?.issues?.[i]
-    if (!issue) return
-    // Apply split normalization if it's a total issue
-    if (issue.party === 'All Parties') {
-      const total = currentData.reduce((s, c) => s + c.percentage, 0)
-      if (total > 0) {
-        const normalized = currentData.map(c => ({ ...c, percentage: Math.round((c.percentage / total) * 1000) / 10 }))
-        setCurrentData(normalized)
-        setErrors(validateData(normalized))
-      }
+    if (issue?.party === 'All Parties') {
+      const total = currentData.reduce((s:number,c:any) => s+c.percentage, 0)
+      if (total > 0) { const n = currentData.map((c:any) => ({...c, percentage: Math.round(c.percentage/total*1000)/10})); setCurrentData(n); setErrors(validateData(n)) }
     }
-    const next = new Set(dismissedIssues)
-    next.add(i)
-    setDismissedIssues(next)
-    showToast('Fix applied')
+    const next = new Set(dismissedIssues); next.add(i); setDismissedIssues(next); showToast('Fix applied')
   }
-
-  const dismissFix = (i: number) => {
-    const next = new Set(dismissedIssues)
-    next.add(i)
-    setDismissedIssues(next)
-  }
+  const dismissFix = (i: number) => { const next = new Set(dismissedIssues); next.add(i); setDismissedIssues(next) }
 
   const startVerification = () => {
     if (errors.length > 0) {
@@ -341,12 +314,12 @@ export default function VerifySplitsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-['Inter',_sans-serif]">
+    <div className="min-h-screen bg-gray-50 text-white font-['Inter',_sans-serif]">
       {/* Loading Overlay */}
       {isLoading && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-[10000]">
-          <div className="bg-white p-8 rounded-xl text-center text-gray-900">
-            <i className="fas fa-spinner fa-pulse text-4xl text-indigo-600"></i>
+          <div className="bg-white p-8 rounded-xl text-center">
+            <i className="fas fa-spinner fa-pulse text-4xl text-[#2B6F4B]"></i>
             <p className="mt-4 font-medium">Generating PDF...</p>
           </div>
         </div>
@@ -355,9 +328,9 @@ export default function VerifySplitsPage() {
       {/* Toast */}
       {toast.visible && (
         <div 
-          className={`fixed bottom-8 right-8 bg-white border border-gray-200 border-l-4 ${
-            toast.type === 'success' ? 'border-l-green-500' : 'border-l-red-500'
-          } rounded-lg p-4 shadow-xl z-[9999] transition-transform duration-300 translate-x-0 text-gray-900`}
+          className={`fixed bottom-8 right-8 bg-white border-l-4 ${
+            toast.type === 'success' ? 'border-[#2B6F4B]' : 'border-[#C53030]'
+          } rounded-lg p-4 shadow-xl z-[9999] transition-transform duration-300 translate-x-0`}
         >
           <div className="flex items-center gap-3">
             <i className={`fas fa-check-circle ${toast.type === 'success' ? 'text-[#2B6F4B]' : 'text-[#C53030]'}`}></i>
@@ -378,11 +351,11 @@ export default function VerifySplitsPage() {
           <div className="flex gap-8 items-center">
             <Link href="/" className="text-gray-500 hover:text-indigo-600 font-medium text-sm">Home</Link>
             <Link href="/for-attorneys" className="text-gray-500 hover:text-indigo-600 font-medium text-sm">For Attorneys</Link>
-            <Link href="/verify-splits" className="text-indigo-600 font-medium text-sm border-b-2 border-indigo-200 pb-1">Split Verification</Link>
+            <Link href="/verify-splits" className="text-indigo-600 font-medium text-sm border-b-2 border-indigo-900 pb-1">Split Verification</Link>
             <Link href="/free-audit" className="text-gray-500 hover:text-indigo-600 font-medium text-sm">Free Audit</Link>
             <Link href="/pilot" className="text-gray-500 hover:text-indigo-600 font-medium text-sm">Pilot</Link>
           </div>
-          <button className="bg-transparent border border-gray-300 text-gray-700 px-5 py-2 rounded-full font-medium hover:border-indigo-500 hover:text-indigo-600 transition">
+          <button className="bg-transparent border border-gray-200 px-5 py-2 rounded-full font-medium hover:border-indigo-500 hover:text-indigo-600 transition">
             <i className="far fa-envelope mr-2"></i> Contact
           </button>
         </nav>
@@ -400,13 +373,13 @@ export default function VerifySplitsPage() {
               <i className="fas fa-times-circle"></i> Before TrapRoyaltiesPro
             </h3>
             <div className="flex items-center gap-3 flex-wrap text-sm">
-              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Label</span>
-              <i className="fas fa-arrow-right text-gray-400"></i>
+              <span className="bg-white/10 px-4 py-2 rounded-full border border-gray-200">Label</span>
+              <i className="fas fa-arrow-right text-gray-300"></i>
               <span className="bg-red-100 text-red-600 px-4 py-2 rounded-full border border-red-500/30">Split Issues</span>
-              <i className="fas fa-arrow-right text-gray-400"></i>
-              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">PRO</span>
-              <i className="fas fa-arrow-right text-gray-400"></i>
-              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Payment Dispute</span>
+              <i className="fas fa-arrow-right text-gray-300"></i>
+              <span className="bg-white/10 px-4 py-2 rounded-full border border-gray-200">PRO</span>
+              <i className="fas fa-arrow-right text-gray-300"></i>
+              <span className="bg-white/10 px-4 py-2 rounded-full border border-gray-200">Payment Dispute</span>
             </div>
           </div>
           <div>
@@ -414,13 +387,13 @@ export default function VerifySplitsPage() {
               <i className="fas fa-check-circle text-indigo-600"></i> With TrapRoyaltiesPro
             </h3>
             <div className="flex items-center gap-3 flex-wrap text-sm">
-              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Label</span>
-              <i className="fas fa-arrow-right text-gray-400"></i>
+              <span className="bg-white/10 px-4 py-2 rounded-full border border-gray-200">Label</span>
+              <i className="fas fa-arrow-right text-gray-300"></i>
               <span className="bg-indigo-600/20 text-indigo-600 px-4 py-2 rounded-full border border-indigo-500/40">TrapRoyaltiesPro</span>
-              <i className="fas fa-arrow-right text-gray-400"></i>
-              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">PRO</span>
-              <i className="fas fa-arrow-right text-gray-400"></i>
-              <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Verified Payment</span>
+              <i className="fas fa-arrow-right text-gray-300"></i>
+              <span className="bg-white/10 px-4 py-2 rounded-full border border-gray-200">PRO</span>
+              <i className="fas fa-arrow-right text-gray-300"></i>
+              <span className="bg-white/10 px-4 py-2 rounded-full border border-gray-200">Verified Payment</span>
             </div>
           </div>
         </div>
@@ -429,13 +402,13 @@ export default function VerifySplitsPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between max-w-2xl mx-auto relative">
             {/* Progress line background */}
-            <div className="absolute top-5 left-12 right-12 h-1 bg-gray-200 z-0"></div>
+            <div className="absolute top-5 left-12 right-12 h-1 bg-white/20 z-0"></div>
             
             {/* Step 1 */}
             <div className="flex flex-col items-center relative z-10 bg-gray-50 px-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-all ${
                 currentStep >= 1 
-                  ? 'bg-indigo-600 border-indigo-200 text-white' 
+                  ? 'bg-indigo-600 border-indigo-900 text-white' 
                   : 'bg-gray-100 border-2 border-gray-300 text-gray-500'
               }`}>
                 {currentStep > 1 ? <i className="fas fa-check"></i> : '1'}
@@ -449,7 +422,7 @@ export default function VerifySplitsPage() {
             <div className="flex flex-col items-center relative z-10 bg-gray-50 px-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-all ${
                 currentStep >= 2 
-                  ? 'bg-indigo-600 border-indigo-200 text-white' 
+                  ? 'bg-indigo-600 border-indigo-900 text-white' 
                   : 'bg-gray-100 border-2 border-gray-300 text-gray-500'
               }`}>
                 {currentStep > 2 ? <i className="fas fa-check"></i> : '2'}
@@ -463,7 +436,7 @@ export default function VerifySplitsPage() {
             <div className="flex flex-col items-center relative z-10 bg-gray-50 px-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-all ${
                 currentStep >= 3 
-                  ? 'bg-indigo-600 border-indigo-200 text-white' 
+                  ? 'bg-indigo-600 border-indigo-900 text-white' 
                   : 'bg-gray-100 border-2 border-gray-300 text-gray-500'
               }`}>
                 {currentStep > 3 ? <i className="fas fa-check"></i> : '3'}
@@ -477,7 +450,7 @@ export default function VerifySplitsPage() {
             <div className="flex flex-col items-center relative z-10 bg-gray-50 px-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold mb-2 transition-all ${
                 currentStep >= 4 
-                  ? 'bg-indigo-600 border-indigo-200 text-white' 
+                  ? 'bg-indigo-600 border-indigo-900 text-white' 
                   : 'bg-gray-100 border-2 border-gray-300 text-gray-500'
               }`}>
                 4
@@ -489,7 +462,7 @@ export default function VerifySplitsPage() {
           </div>
 
           {/* Green Progress Bar */}
-          <div className="max-w-2xl mx-auto mt-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div className="max-w-2xl mx-auto mt-8 h-2 bg-white/20 rounded-full overflow-hidden">
             <div 
               className="h-full bg-indigo-600 transition-all duration-500 rounded-full" 
               style={{ width: progressWidth }}
@@ -509,7 +482,7 @@ export default function VerifySplitsPage() {
             {/* Upload Area */}
             <div 
               className={`bg-gray-50 border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all ${
-                isDragging ? 'border-indigo-200 bg-indigo-50' : 'border-gray-200 hover:border-indigo-500 hover:bg-indigo-50'
+                isDragging ? 'border-indigo-900 bg-indigo-50' : 'border-gray-200 hover:border-indigo-500 hover:bg-indigo-50'
               }`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={handleDragOver}
@@ -548,7 +521,7 @@ export default function VerifySplitsPage() {
 
             {/* Error Panel */}
             {errors.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 my-4">
+              <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4 my-4">
                 <div className="flex items-center gap-2 text-red-600 font-semibold mb-3">
                   <i className="fas fa-exclamation-triangle"></i>
                   <span>Issues Detected</span>
@@ -592,7 +565,7 @@ export default function VerifySplitsPage() {
                       return (
                         <div key={i} className={`flex justify-between items-center py-2 ${hasError ? 'bg-red-900/20 -mx-5 px-5' : ''}`}>
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center font-semibold text-indigo-600">
+                            <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-semibold text-indigo-600">
                               {item.name?.[0] || '?'}
                             </div>
                             <div>
@@ -668,7 +641,7 @@ export default function VerifySplitsPage() {
                   </div>
 
                   {/* System Reference */}
-                  <div className="text-xs text-gray-400 pt-2 border-t border-gray-200">
+                  <div className="text-xs text-gray-500 pt-2 border-t border-gray-200">
                     <span>System reference: 0xAa19...B2ea4</span>
                     <button 
                       onClick={() => setShowTechDetails(!showTechDetails)}
@@ -680,7 +653,7 @@ export default function VerifySplitsPage() {
                   
                   {/* Technical details */}
                   {showTechDetails && (
-                    <div className="text-xs text-gray-400 mt-2">
+                    <div className="text-xs text-gray-500 mt-2">
                       <div>Contract: 0xAa19bFC7Bd852efe49ef31297bB082FB044B2ea4</div>
                       <div>Network: Monad Testnet (Chain ID: 10143)</div>
                     </div>
@@ -706,7 +679,7 @@ export default function VerifySplitsPage() {
                       min="0"
                       step="1000"
                       onChange={(e) => setGrossAmount(parseFloat(e.target.value) || 0)}
-                      className="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-full text-lg font-semibold focus:outline-none focus:border-indigo-500 bg-white text-gray-900"
+                      className="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-full text-lg font-semibold focus:outline-none focus:border-indigo-500 bg-gray-100 text-white"
                     />
                   </div>
                   <button 
@@ -726,7 +699,7 @@ export default function VerifySplitsPage() {
 
             {/* Payment Summary */}
             {currentStep >= 4 && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+              <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
                   <span className="font-semibold text-indigo-600 flex items-center gap-2">
                     <i className="fas fa-credit-card"></i> Payment Summary
@@ -751,7 +724,7 @@ export default function VerifySplitsPage() {
                   </div>
                 </div>
 
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-600 flex items-center gap-2 mb-4">
+                <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3 text-xs text-red-600 flex items-center gap-2 mb-4">
                   <i className="fas fa-info-circle"></i>
                   <span>25% tax withholding automatically calculated for Swedish payees</span>
                 </div>
@@ -798,9 +771,9 @@ export default function VerifySplitsPage() {
             )}
             
             {currentStep === 4 && (
-              <button
+              <button 
                 onClick={resetWorkflow}
-                className="w-full bg-white border border-gray-300 text-gray-500 py-3 rounded-full font-medium flex items-center justify-center gap-2 hover:border-indigo-500 hover:text-indigo-600 transition mt-4"
+                className="w-full bg-white/5 border border-gray-200 text-gray-500 py-3 rounded-full font-medium flex items-center justify-center gap-2 hover:border-indigo-500 hover:text-indigo-600 transition mt-4"
               >
                 <i className="fas fa-redo"></i>
                 Start New Verification
@@ -809,98 +782,44 @@ export default function VerifySplitsPage() {
           </div>
         </div>
 
+
         {/* SMPT Analysis Panel */}
         {currentStep >= 3 && (smptLoading || smptError || smptAnalysis) && (
           <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm my-8">
-            <h2 className="text-xl font-semibold text-indigo-600 mb-4 flex items-center gap-2">
-              <i className="fas fa-brain"></i> SMPT Engine Analysis
-            </h2>
-
-            {smptLoading && (
-              <div className="flex items-center gap-3 text-gray-500 py-4">
-                <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-                Analyzing splits with AI...
-              </div>
-            )}
-
-            {smptError && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">
-                ⚠️ SMPT engine error: {smptError}
-                <button onClick={() => runSmptAnalysis(currentData)} className="ml-3 underline font-medium">Try again</button>
-              </div>
-            )}
-
+            <h2 className="text-xl font-semibold text-indigo-600 mb-4">SMPT Engine Analysis</h2>
+            {smptLoading && <div className="flex items-center gap-3 text-gray-500 py-4"><div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>Analyzing splits with AI...</div>}
+            {smptError && <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-600 text-sm">⚠️ {smptError} <button onClick={() => runSmptAnalysis(currentData)} className="ml-3 underline font-medium">Try again</button></div>}
             {smptAnalysis && (
               <div className="space-y-5">
-                {/* Forensic Summary */}
-                <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-800">
-                  <div className="font-semibold mb-1">Forensic Summary</div>
-                  {smptAnalysis.forensicSummary}
-                </div>
-
-                {/* Risk + Status */}
+                <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-800"><div className="font-semibold mb-1">Forensic Summary</div>{smptAnalysis.forensicSummary}</div>
                 <div className="flex gap-3 flex-wrap">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    smptAnalysis.riskLevel === 'low' ? 'bg-green-100 text-green-700' :
-                    smptAnalysis.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>Risk: {smptAnalysis.riskLevel?.toUpperCase()}</span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${smptAnalysis.blockchainReady ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {smptAnalysis.blockchainReady ? '✓ Blockchain Ready' : '✗ Not Blockchain Ready'}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${smptAnalysis.courtAdmissible ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {smptAnalysis.courtAdmissible ? '✓ Court Admissible' : '✗ Not Court Admissible'}
-                  </span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${smptAnalysis.riskLevel==='low'?'bg-green-100 text-green-700':smptAnalysis.riskLevel==='medium'?'bg-yellow-100 text-yellow-700':'bg-red-100 text-red-700'}`}>Risk: {smptAnalysis.riskLevel?.toUpperCase()}</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${smptAnalysis.blockchainReady?'bg-green-100 text-green-700':'bg-gray-100 text-gray-500'}`}>{smptAnalysis.blockchainReady?'✓ Blockchain Ready':'✗ Not Blockchain Ready'}</span>
                 </div>
-
-                {/* Issues with Yes/No */}
                 {smptAnalysis.issues?.length > 0 && (
-                  <div>
-                    <div className="font-semibold text-gray-700 mb-3">Issues & Suggested Fixes</div>
+                  <div><div className="font-semibold text-gray-700 mb-3">Issues & Suggested Fixes</div>
                     <div className="space-y-3">
-                      {smptAnalysis.issues.map((issue: any, i: number) => (
-                        !dismissedIssues.has(i) && (
-                          <div key={i} className={`rounded-xl p-4 border ${issue.severity === 'error' ? 'bg-red-50 border-red-200' : 'bg-yellow-50 border-yellow-200'}`}>
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="flex-1">
-                                <div className={`text-xs font-bold uppercase mb-1 ${issue.severity === 'error' ? 'text-red-600' : 'text-yellow-600'}`}>
-                                  {issue.severity} — {issue.party}
-                                </div>
-                                <div className="text-sm text-gray-800 mb-1">{issue.description}</div>
-                                <div className="text-xs text-gray-500">Suggested fix: <span className="font-medium text-gray-700">{issue.suggestedFix}</span></div>
-                              </div>
-                              <div className="flex gap-2 shrink-0">
-                                <button
-                                  onClick={() => acceptFix(i)}
-                                  className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition"
-                                >Yes, fix</button>
-                                <button
-                                  onClick={() => dismissFix(i)}
-                                  className="px-3 py-1.5 bg-white border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:border-gray-400 transition"
-                                >Dismiss</button>
-                              </div>
+                      {smptAnalysis.issues.map((issue: any, i: number) => !dismissedIssues.has(i) && (
+                        <div key={i} className={`rounded-xl p-4 border ${issue.severity==='error'?'bg-red-50 border-red-200':'bg-yellow-50 border-yellow-200'}`}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1">
+                              <div className={`text-xs font-bold uppercase mb-1 ${issue.severity==='error'?'text-red-600':'text-yellow-600'}`}>{issue.severity} — {issue.party}</div>
+                              <div className="text-sm text-gray-800 mb-1">{issue.description}</div>
+                              <div className="text-xs text-gray-500">Fix: <span className="font-medium text-gray-700">{issue.suggestedFix}</span></div>
+                            </div>
+                            <div className="flex gap-2 shrink-0">
+                              <button onClick={() => acceptFix(i)} className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700">Yes, fix</button>
+                              <button onClick={() => dismissFix(i)} className="px-3 py-1.5 bg-white border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg">Dismiss</button>
                             </div>
                           </div>
-                        )
+                        </div>
                       ))}
-                      {smptAnalysis.issues.every((_: any, i: number) => dismissedIssues.has(i)) && (
-                        <div className="text-sm text-green-600 font-medium">✓ All issues addressed</div>
-                      )}
                     </div>
                   </div>
                 )}
-
-                {/* Action Items */}
                 {smptAnalysis.actionItems?.length > 0 && (
-                  <div>
-                    <div className="font-semibold text-gray-700 mb-2">Action Items</div>
-                    <ul className="space-y-1">
-                      {smptAnalysis.actionItems.map((item: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                          <span className="text-indigo-600 mt-0.5">→</span> {item}
-                        </li>
-                      ))}
-                    </ul>
+                  <div><div className="font-semibold text-gray-700 mb-2">Action Items</div>
+                    <ul className="space-y-1">{smptAnalysis.actionItems.map((item:string,i:number) => <li key={i} className="flex items-start gap-2 text-sm text-gray-600"><span className="text-indigo-600">→</span>{item}</li>)}</ul>
                   </div>
                 )}
               </div>
