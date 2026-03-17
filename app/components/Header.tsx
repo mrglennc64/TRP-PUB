@@ -3,8 +3,37 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+function LiveModal({ onClose }: { onClose: () => void }) {
+  const [val, setVal] = useState('');
+  const [err, setErr] = useState(false);
+  const submit = () => {
+    if (val === 'stockholm1' || val === 'trap') {
+      localStorage.setItem('tpLiveMode', val);
+      onClose();
+      window.location.href = '/split-verification';
+    } else { setErr(true); setVal(''); }
+  };
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <div style={{background:'#0d0020',border:'1px solid rgba(168,85,247,0.35)',borderRadius:16,padding:'36px 32px',minWidth:300,textAlign:'center'}}>
+        <div style={{fontSize:22,marginBottom:8}}>🔴 Live Mode</div>
+        <p style={{color:'rgba(224,224,224,0.45)',fontSize:13,margin:'0 0 20px'}}>Enter access code</p>
+        <input type="password" value={val} onChange={e=>{setVal(e.target.value);setErr(false);}}
+          onKeyDown={e=>e.key==='Enter'&&submit()} placeholder="Access code" autoFocus
+          style={{width:'100%',boxSizing:'border-box',padding:'10px 14px',borderRadius:8,border:'1px solid rgba(168,85,247,0.35)',background:'rgba(0,0,0,0.4)',color:'#e0e0e0',fontSize:15,outline:'none',marginBottom:12,fontFamily:'Inter,sans-serif'}}/>
+        {err && <p style={{color:'#f87171',fontSize:13,marginBottom:10}}>Incorrect code</p>}
+        <div style={{display:'flex',gap:10}}>
+          <button onClick={submit} style={{flex:1,padding:10,background:'linear-gradient(135deg,#dc2626,#ef4444)',color:'#fff',border:'none',borderRadius:8,fontSize:14,cursor:'pointer'}}>Enter</button>
+          <button onClick={onClose} style={{flex:1,padding:10,background:'rgba(168,85,247,0.1)',color:'#e0e0e0',border:'1px solid rgba(168,85,247,0.3)',borderRadius:8,fontSize:14,cursor:'pointer'}}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showLive, setShowLive] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-black/90 backdrop-blur-md text-white py-4 border-b border-purple-900/50">
@@ -41,7 +70,10 @@ export default function Header() {
           >
             Start Free Audit
           </Link>
+          <Link href="/split-verification" className="bg-amber-500 hover:bg-amber-400 text-black px-5 py-2 rounded-full font-semibold transition text-sm">🎬 Demo</Link>
+          <button onClick={() => setShowLive(true)} className="border border-white/20 hover:border-red-500 text-white px-5 py-2 rounded-full font-semibold transition text-sm flex items-center gap-1.5">🔴 Live</button>
         </nav>
+        {showLive && <LiveModal onClose={() => setShowLive(false)} />}
 
         {/* Mobile hamburger */}
         <button
