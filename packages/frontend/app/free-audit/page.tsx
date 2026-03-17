@@ -2,6 +2,13 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useDemoMode } from '../lib/DemoModeProvider';
+import { DEMO_FREE_AUDIT, DEMO_ISRC, DEMO_AUDIT_ATLANTA, DEMO_AUDIT_STOCKHOLM } from '../lib/demoData';
+
+const DEMO_AUDIT_BY_ISRC: Record<string, any> = {
+  USATL2300001: DEMO_AUDIT_ATLANTA,
+  SEMSM2300002: DEMO_AUDIT_STOCKHOLM,
+};
 
 export default function FreeAuditPage() {
   return (
@@ -138,7 +145,7 @@ function DeepProbePanel({
     },
     {
       id: 'soundexchange',
-      name: 'SoundExchange ISRC',
+      name: 'Rights Administrator ISRC',
       nodeType: 'MANUAL',
       hint: isrcTerm ? `ISRC deep link: ${isrcTerm}` : `Artist deep link: ${searchTerm}`,
       url: isrcTerm
@@ -267,6 +274,7 @@ function DeepProbePanel({
 // ── Main ─────────────────────────────────────────────────────────────
 function FreeAuditContent() {
   const searchParams = useSearchParams();
+  const { demoMode, consumeProbe } = useDemoMode();
   const [searchMethod, setSearchMethod] = useState<'isrc' | 'artist'>('isrc');
   const [isrc, setIsrc] = useState('');
   const [artist, setArtist] = useState('');
@@ -280,13 +288,29 @@ function FreeAuditContent() {
   const [auditId, setAuditId] = useState('');
   const [deepProbeIsrc, setDeepProbeIsrc] = useState('');
 
+  // Demo mode: auto-populate ISRC and show mock result
+  useEffect(() => {
+    if (demoMode) {
+      setSearchMethod('isrc');
+      setIsrc(DEMO_ISRC);
+      setResult(DEMO_FREE_AUDIT as ForensicResult);
+    }
+  }, [demoMode]);
+
   useEffect(() => {
     const q = searchParams.get('isrc');
     if (!q) return;
     const clean = q.trim().replace(/-/g, '').toUpperCase();
     setSearchMethod('isrc');
     setIsrc(clean);
-    setTimeout(() => document.getElementById('audit-submit-btn')?.click(), 150);
+    setDeepProbeIsrc(clean);
+    // If a specific demo entry exists for this ISRC, use it directly
+    const specificDemo = DEMO_AUDIT_BY_ISRC[clean];
+    if (specificDemo) {
+      setResult(specificDemo as ForensicResult);
+    } else {
+      setTimeout(() => document.getElementById('audit-submit-btn')?.click(), 150);
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -304,6 +328,12 @@ function FreeAuditContent() {
     setResult(null);
     setArtistResults([]);
     setActiveTab('summary');
+
+    if (!consumeProbe()) {
+      setError('Live probe quota reached. Switching back to Demo Mode.');
+      setLoading(false);
+      return;
+    }
 
     try {
       if (searchMethod === 'isrc') {
@@ -342,6 +372,14 @@ function FreeAuditContent() {
     setError('');
     setResult(null);
     setActiveTab('summary');
+    // Use demo data for known demo ISRCs
+    const specificDemo = DEMO_AUDIT_BY_ISRC[clean];
+    if (specificDemo) {
+      await new Promise(r => setTimeout(r, 600));
+      setResult(specificDemo as ForensicResult);
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch('/api/forensic/audit', {
         method: 'POST',
@@ -461,7 +499,7 @@ function FreeAuditContent() {
     },
     {
       id: 'soundexchange',
-      name: 'SoundExchange',
+      name: 'Rights Administrator',
       type: 'ISRC · Digital Performance',
       status: 'manual',
       matched: undefined,
@@ -1040,6 +1078,92 @@ function FreeAuditContent() {
                   </div>
                 </div>
 
+                {/* ── Legal Fulfillment ── */}
+                {result.steps.detect.black_box && (
+                  <div className="bg-[#0c1220] border border-indigo-700/40 rounded-lg p-5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                      <p className="text-xs font-black tracking-widest text-indigo-400 uppercase">Legal Fulfillment — 3 Steps</p>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mb-4">Our Market Activity Probe has flagged a revenue leakage on this track. The attorney can instantly export the following three documents to begin recovery:</p>
+                    <div className="space-y-3">
+
+                      {/* Step 1 — Letter of Direction */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-600/80 text-white text-[10px] font-black flex items-center justify-center">1</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Letter of Direction (LOD)</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Directs Rights Administrator to update the registry with the correct rights holder for this master recording.</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const name = `${result.song_title || result.isrc} — ${result.artist || ''}`;
+                            const rev = result.steps.detect.revenue;
+                            const amount = rev ? `$${rev.mid.toLocaleString()}` : 'Est. Amount TBD';
+                            const d = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                            const hash = 'TRP-LOD-' + Date.now().toString(36).toUpperCase();
+                            const sha = Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
+                            const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Letter of Direction</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}.highlight{color:#16a34a;font-weight:bold}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">Letter of Direction — Rights Administrator Registry Update</h1><p style="color:#6b7280">Date: ${d} | ID: ${hash} | Fox Rothschild LLP | Leron Rogers, Esq.</p><div class="section"><h2>RE: Direction to Update Neighboring Rights Registration</h2><p><b>To:</b> the Rights Administrator, Legal Department</p><p><b>RE: ISRC:</b> ${result.isrc} | <b>Track:</b> ${name}</p><br><p>Dear Sir or Madam:</p><br><p>This Letter of Direction is issued on behalf of the rights holder of the above-referenced master recording. Our forensic audit system (TrapRoyaltiesPro SMPT Node) has confirmed <b>${result.steps.detect.streaming.total_listens.toLocaleString()} documented streams</b> with <b>no corresponding Neighboring Rights registration</b> on file at Rights Administrator.</p><br><p>Estimated unclaimed revenue: <b>${amount}</b>. You are hereby directed to update your registry to reflect the correct rights holder immediately. All supporting forensic data is available upon request.</p><br><p>SHA-256 Verification: <code style="font-size:.7rem;word-break:break-all">${sha}</code></p><br><p>Respectfully,<br>Leron Rogers, Esq.<br>Fox Rothschild LLP</p></div><div class="footer">TrapRoyaltiesPro.com | Confidential | ID: ${hash}</div></body></html>`;
+                            const blob = new Blob([html], {type:'text/html'});
+                            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `LOD-${result.isrc}-${hash}.html`; a.click();
+                          }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-red-700 hover:bg-red-600 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                        >
+                          Export LOD →
+                        </button>
+                      </div>
+
+                      {/* Step 2 — Hashed Affidavit */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600/80 text-white text-[10px] font-black flex items-center justify-center">2</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Hashed Affidavit of Ownership</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">SHA-256 signed affidavit creating an immutable record of ownership — prevents future disputes and satisfies PRO documentation requirements.</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const name = `${result.song_title || result.isrc} — ${result.artist || ''}`;
+                            const rev = result.steps.detect.revenue;
+                            const amount = rev ? `$${rev.mid.toLocaleString()}` : 'Est. Amount TBD';
+                            const d = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                            const hash = 'TRP-AFF-' + Date.now().toString(36).toUpperCase();
+                            const sha = Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
+                            const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Affidavit of Ownership</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">Affidavit of Ownership — Hashed & Sealed</h1><p style="color:#6b7280">Date: ${d} | ID: ${hash} | Fox Rothschild LLP | Leron Rogers, Esq.</p><div class="section"><h2>AFFIDAVIT OF LERON ROGERS, ESQ.</h2><p>STATE OF GEORGIA)</p><br><p>I, Leron Rogers, being duly sworn, state:</p><ol><li>I am counsel for the rights holder of <b>${name}</b> (ISRC: ${result.isrc}).</li><li>Forensic audit confirms <b>${result.steps.detect.streaming.total_listens.toLocaleString()} documented streams</b> with no corresponding Rights Administrator registration.</li><li>Estimated unclaimed Neighboring Rights revenue: <b>${amount}</b>.</li><li>All findings verified via the TrapRoyaltiesPro SMPT forensic audit system (Swedish Engineering Standard).</li><li>This affidavit is sealed with SHA-256 hash to prevent future ownership disputes.</li></ol><br><p>Executed: ${d}</p><br><p>SHA-256 Seal: <code style="font-size:.7rem;word-break:break-all">${sha}</code></p><br><p>___________________________<br>Leron Rogers, Esq.</p><br><p>___________________________<br>Notary Public</p></div><div class="footer">TrapRoyaltiesPro.com | Confidential | Verify: ${hash}</div></body></html>`;
+                            const blob = new Blob([html], {type:'text/html'});
+                            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Affidavit-${result.isrc}-${hash}.html`; a.click();
+                          }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-indigo-700 hover:bg-indigo-600 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                        >
+                          Export Affidavit →
+                        </button>
+                      </div>
+
+                      {/* Step 3 — Forensic Audit Log */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-700/80 text-white text-[10px] font-black flex items-center justify-center">3</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Forensic Audit Log</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Proves commercial traction — {result.steps.detect.streaming.total_listens.toLocaleString()} streams documented. Court-admissible log with source citations, timestamps, and chain of custody.</p>
+                        </div>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const body = { track_id: result.isrc, title: result.song_title, artist: result.artist, isrc: result.isrc, contributors: [{ name: result.artist || 'Unknown', role: 'Artist', ipi: result.steps.probe.data?.ipi || '', share: 100 }] };
+                              const res = await fetch('/api/lawyer-pdf/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                              if (res.ok) { const html = await res.text(); const blob = new Blob([html], { type: 'text/html' }); window.open(URL.createObjectURL(blob), '_blank'); }
+                              else { const data = await res.json().catch(() => ({})); alert(data.detail || 'Generation failed'); }
+                            } catch (e) { alert('Error: ' + (e as Error).message); }
+                          }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-green-800 hover:bg-green-700 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                        >
+                          Export Log →
+                        </button>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
                 <button
                   onClick={async () => {
                     try {
@@ -1060,9 +1184,15 @@ function FreeAuditContent() {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(body),
                       });
-                      const data = await res.json();
-                      if (data.url) window.open(data.url, '_blank');
-                      else alert(data.detail || 'PDF generation failed');
+                      if (res.ok) {
+                        const html = await res.text();
+                        const blob = new Blob([html], { type: 'text/html' });
+                        const url = URL.createObjectURL(blob);
+                        window.open(url, '_blank');
+                      } else {
+                        const data = await res.json().catch(() => ({}));
+                        alert(data.detail || 'PDF generation failed');
+                      }
                     } catch (e) {
                       alert('Error: ' + (e as Error).message);
                     }
@@ -1106,7 +1236,7 @@ function FreeAuditContent() {
 
         {/* Bottom info */}
         <div className="grid grid-cols-3 gap-4 mt-8 text-center">
-          {[['SMPT / MusicBrainz', 'Global recording registry · confirms ISRC'], ['ListenBrainz', 'Open stream data · confirms listen activity'], ['Manual Checklist', 'MLC · ASCAP · BMI · SoundExchange · SESAC']].map(([t, s]) => (
+          {[['SMPT / MusicBrainz', 'Global recording registry · confirms ISRC'], ['ListenBrainz', 'Open stream data · confirms listen activity'], ['Manual Checklist', 'MLC · ASCAP · BMI · Rights Administrator · SESAC']].map(([t, s]) => (
             <div key={t} className="bg-[#0f172a] border border-slate-800 p-4 rounded-lg">
               <p className="text-xs font-semibold text-slate-300">{t}</p>
               <p className="text-[11px] text-slate-600 mt-1">{s}</p>

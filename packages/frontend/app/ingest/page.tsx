@@ -49,7 +49,7 @@ const ZONE_DEFS = [
     id: "society",
     label: "Society Statements",
     icon: "🏛️",
-    hint: "ASCAP, BMI, SESAC, SoundExchange PDFs / XLS",
+    hint: "ASCAP, BMI, SESAC, Rights Administrator PDFs / XLS",
     color: "violet",
   },
   {
@@ -141,7 +141,6 @@ export default function IngestPage() {
   const [commitPct, setCommitPct] = useState(0);
   const [activeTab, setActiveTab] = useState<"files" | "log" | "catalog">("files");
   const [log, setLog] = useState<string[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
 
   const pushLog = useCallback((msg: string) => {
@@ -453,10 +452,31 @@ export default function IngestPage() {
                   className="hidden"
                   onChange={(e) => handleFileInput(e, zone.id as ZoneId)}
                 />
+                <input
+                  id={`folder-input-${zone.id}`}
+                  type="file"
+                  multiple
+                  className="hidden"
+                  {...({ webkitdirectory: "" } as any)}
+                  onChange={(e) => handleFileInput(e, zone.id as ZoneId)}
+                />
                 <div className={`text-4xl mb-3 ${iconColor[zone.color]}`}>{zone.icon}</div>
                 <div className="font-bold text-white text-sm mb-1">{zone.label}</div>
                 <div className="text-xs text-slate-400 leading-relaxed">{zone.hint}</div>
-                <div className="mt-4 text-xs text-slate-500">Drop folder or click to browse</div>
+                <div className="mt-4 flex items-center justify-center gap-3 text-xs text-slate-500">
+                  <span>Drop folder or</span>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); (document.getElementById(`file-input-${zone.id}`) as HTMLInputElement)?.click(); }}
+                    className="underline hover:text-slate-300 transition"
+                  >files</button>
+                  <span>/</span>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); (document.getElementById(`folder-input-${zone.id}`) as HTMLInputElement)?.click(); }}
+                    className="underline hover:text-slate-300 transition"
+                  >📁 folder</button>
+                </div>
                 {files.filter((f) => f.type === zone.id).length > 0 && (
                   <div className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-bold ${iconColor[zone.color]} bg-white/10`}>
                     {files.filter((f) => f.type === zone.id).length}

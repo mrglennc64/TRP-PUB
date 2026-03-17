@@ -4,10 +4,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Footer from './components/Footer';
+import { useDemoMode } from './lib/DemoModeProvider';
 
 export default function HomePage() {
   const [query, setQuery] = useState('');
   const router = useRouter();
+  const { setDemoMode } = useDemoMode();
+
+  const enterDemo = () => { setDemoMode(true); router.push('/gap-finder'); };
 
   const handleScan = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +93,12 @@ export default function HomePage() {
             <Link href="/label" className="text-slate-400 hover:text-slate-300 underline underline-offset-4 transition">
               Label and roster management
             </Link>
+            <button
+              onClick={enterDemo}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-sm rounded-xl transition"
+            >
+              🎬 Try Demo Mode
+            </button>
           </div>
         </div>
       </section>

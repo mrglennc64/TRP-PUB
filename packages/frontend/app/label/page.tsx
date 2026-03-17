@@ -25,10 +25,10 @@ const TERRITORY_DATA = [
 ];
 
 const METADATA_ISSUES = [
-  { type: 'Black Box Gap',     severity: 'critical', count: 14, desc: '14 tracks have an ISRC but no ISWC. Publishing revenue is unroutable.', value: 4120, action: 'Auto-Link via MLC API', color: 'red' },
-  { type: 'Artist Name Drift', severity: 'warning',  count: 3,  desc: '3 variations of "Lil Baby" detected. 12% dip in algorithmic reach.',   value: 1840, action: 'Merge Artist Identity',  color: 'orange' },
-  { type: 'Duplicate ISRC',    severity: 'warning',  count: 2,  desc: 'ISRC US-QX9-26-001 assigned to two track titles. Payment locked.',       value: 2670, action: 'Assign New ISRC',       color: 'purple' },
-  { type: 'Missing UPC',       severity: 'info',     count: 7,  desc: '7 releases missing UPC — distribution may fail on some DSPs.',           value: 890,  action: 'Generate UPC Batch',    color: 'blue' },
+  { type: 'Black Box Gap',     severity: 'critical', count: 14, desc: '14 tracks have an ISRC but no ISWC. Publishing revenue is unroutable.', value: 4120, action: 'Auto-Link via MLC API', href: '/mlc-search',          color: 'red' },
+  { type: 'Artist Name Drift', severity: 'warning',  count: 3,  desc: '3 variations of "Lil Baby" detected. 12% dip in algorithmic reach.',   value: 1840, action: 'Merge Artist Identity',  href: '/schema-parser',       color: 'orange' },
+  { type: 'Duplicate ISRC',    severity: 'warning',  count: 2,  desc: 'ISRC US-QX9-26-001 assigned to two track titles. Payment locked.',       value: 2670, action: 'Assign New ISRC',       href: '/royalty-finder',      color: 'purple' },
+  { type: 'Missing UPC',       severity: 'info',     count: 7,  desc: '7 releases missing UPC — distribution may fail on some DSPs.',           value: 890,  action: 'Generate UPC Batch',    href: '/dashboard',           color: 'blue' },
 ];
 
 type View = 'dashboard' | 'artists' | 'territory' | 'metadata' | 'recoupment' | 'contracts' | 'payouts' | 'import';
@@ -533,9 +533,9 @@ export default function LabelPortal() {
                         <span className="text-xs text-gray-500">Recovery value</span>
                         <span className="text-sm font-black text-green-400">+${issue.value.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}/mo</span>
                       </div>
-                      <button className={`w-full py-3 text-[10px] font-black uppercase rounded-xl transition border ${s.btn}`}>
+                      <Link href={(issue as any).href} className={`block w-full py-3 text-[10px] font-black uppercase rounded-xl transition border text-center ${s.btn}`}>
                         {issue.action}
-                      </button>
+                      </Link>
                     </div>
                   );
                 })}
@@ -557,11 +557,11 @@ export default function LabelPortal() {
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {([
-                      { title: "Trappin' Hard",     artist: "Young Thug",   issue: "MISSING_ISWC",   value: 1240.50, issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20' },
-                      { title: "Neon Drip",          artist: "21 Savage",    issue: "DUPLICATE_ISRC", value: 890.00,  issueClass: 'text-purple-400', btnClass: 'border-purple-500/30 text-purple-300 hover:bg-purple-500/20' },
-                      { title: "Street Ballad",      artist: "Metro Boomin", issue: "MISSING_UPC",    value: 450.25,  issueClass: 'text-blue-400',   btnClass: 'border-blue-500/30 text-blue-300 hover:bg-blue-500/20' },
-                      { title: "Zone 6 Forever",     artist: "Drake",        issue: "NAME_DRIFT",     value: 1100.75, issueClass: 'text-orange-400', btnClass: 'border-orange-500/30 text-orange-300 hover:bg-orange-500/20' },
-                      { title: "Midnight Frequency", artist: "Travis Scott", issue: "MISSING_ISWC",   value: 720.00,  issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20' },
+                      { title: "Trappin' Hard",     artist: "Young Thug",   issue: "MISSING_ISWC",   value: 1240.50, issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20',     href: '/mlc-search' },
+                      { title: "Neon Drip",          artist: "21 Savage",    issue: "DUPLICATE_ISRC", value: 890.00,  issueClass: 'text-purple-400', btnClass: 'border-purple-500/30 text-purple-300 hover:bg-purple-500/20', href: '/royalty-finder' },
+                      { title: "Street Ballad",      artist: "Metro Boomin", issue: "MISSING_UPC",    value: 450.25,  issueClass: 'text-blue-400',   btnClass: 'border-blue-500/30 text-blue-300 hover:bg-blue-500/20',     href: '/dashboard' },
+                      { title: "Zone 6 Forever",     artist: "Drake",        issue: "NAME_DRIFT",     value: 1100.75, issueClass: 'text-orange-400', btnClass: 'border-orange-500/30 text-orange-300 hover:bg-orange-500/20', href: '/schema-parser' },
+                      { title: "Midnight Frequency", artist: "Travis Scott", issue: "MISSING_ISWC",   value: 720.00,  issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20',         href: '/mlc-search' },
                     ] as const).map((r, i) => (
                       <tr key={i} className="hover:bg-white/5 transition">
                         <td className="p-4 font-bold text-slate-300">{r.title}</td>
@@ -569,7 +569,7 @@ export default function LabelPortal() {
                         <td className="p-4"><span className={`${r.issueClass} font-mono text-[10px]`}>{r.issue}</span></td>
                         <td className="p-4 text-right font-mono text-green-400 font-bold">+${r.value.toFixed(2)}</td>
                         <td className="p-4 text-right">
-                          <button className={`px-3 py-1 border text-[10px] font-black rounded-lg transition ${r.btnClass}`}>Auto-Fix</button>
+                          <Link href={(r as any).href} className={`px-3 py-1 border text-[10px] font-black rounded-lg transition ${r.btnClass}`}>Auto-Fix</Link>
                         </td>
                       </tr>
                     ))}

@@ -112,7 +112,7 @@ const CATALOG: CatalogTrack[] = [
     territories_gap: ["GB", "DE", "FR", "AU", "JP", "BR"],
     audit_flags: ["missing_iswc", "unclaimed_territory"],
     revenue_ytd: 74200, revenue_unclaimed: 31800,
-    last_updated: "2025-09-15", source: "SoundExchange Q4",
+    last_updated: "2025-09-15", source: "Rights Administrator Q4",
     status: "active",
   },
   {

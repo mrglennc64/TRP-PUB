@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TrapRoyaltiesPro — Production Server
 
-## Getting Started
+## Server Info
+- **Host**: srv1406833.hstgr.cloud (Hostinger VPS)
+- **App Root**: /traproyalties-new
+- **OS**: Ubuntu 22.04
 
-First, run the development server:
+## Stack
+- **Frontend**: Next.js 14 App Router — port 4000 (PM2: traproyalties-next, id 3)
+- **Backend**: FastAPI + uvicorn — port 8000 (PM2: fastapi, id 42)
+- **DB**: SQLite isrc_mappings.db (primary), PostgreSQL optional
+- **Storage**: IDrive e2 S3-compatible (eu-central-2)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Nginx Configuration
+Nginx reverse proxies both services:
+
+```nginx
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name traproyaltiespro.com www.traproyaltiespro.com srv1406833.hstgr.cloud;
+
+    # Frontend (Next.js on port 4000)
+    location / {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Backend API (FastAPI on port 8000)
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## PM2 Process Management
+```bash
+pm2 list                    # show all processes
+pm2 restart 3               # restart frontend
+pm2 logs 3 --lines 50       # frontend logs
+pm2 restart fastapi         # restart backend
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy Workflow
+```bash
+# After file changes:
+cd /traproyalties-new/packages/frontend
+npm run build
+pm2 restart 3
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Backend restart:
+pm2 restart fastapi
+```
 
-## Learn More
+## Key Directories
+- Frontend: /traproyalties-new/packages/frontend
+- Backend API: /traproyalties-new/api
+- PM2 config: /traproyalties-new/ecosystem.config.js
+- Nginx config: /etc/nginx/sites-enabled/traproyalties
+- SSL certs: /etc/letsencrypt/live/traproyaltiespro.com/
 
-To learn more about Next.js, take a look at the following resources:
+## Backups
+Timestamped backups at: /backups/traproyalties-new-YYYYMMDD-HHMMSS/
+Full site tarballs at: /backups/traproyalties-full-YYYYMMDD-HHMMSS.tar.gz
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Environment Variables
+Stored in /traproyalties-new/packages/frontend/.env.local
+Keys: OPENAI_API_KEY, YOUTUBE_API_KEY, DISCOGS_TOKEN, STRIPE_SECRET_KEY, ACRCLOUD_TOKEN
+IDrive e2 keys: in ecosystem.config.js (move to .env)

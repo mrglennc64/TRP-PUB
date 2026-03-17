@@ -53,7 +53,7 @@ const FEATURES = [
     path: "/dashboard",
     section: "isrc",
     desc: "Search any track by title + artist across MusicBrainz and Deezer. Pulls ISRC, label, release date, and credits automatically. No ISRC? We find it or register one.",
-    detail: "Every track needs an ISRC to collect from PROs, SoundExchange, and international societies. Missing one = money left behind.",
+    detail: "Every track needs an ISRC to collect from PROs, Rights Administrator, and international societies. Missing one = money left behind.",
   },
   {
     icon: "🎵",
@@ -114,7 +114,7 @@ const FEATURES = [
 ];
 
 const LEAKS = [
-  { emoji: "❌", title: "Missing ISRC", impact: "Cannot collect from SoundExchange, PROs, or international societies", freq: "68% of indie catalogs" },
+  { emoji: "❌", title: "Missing ISRC", impact: "Cannot collect from Rights Administrator, PROs, or international societies", freq: "68% of indie catalogs" },
   { emoji: "❌", title: "No Songwriter Credits", impact: "Mechanical royalties go unclaimed — 9.1¢/stream stays at publisher", freq: "54% of tracks" },
   { emoji: "⚠️", title: "Splits Don't Add to 100%", impact: "Disputed ownership = frozen payments, potential lawsuit", freq: "31% of multi-artist tracks" },
   { emoji: "⚠️", title: "Wrong Label Code", impact: "Streaming payouts go to wrong entity, requires dispute to recover", freq: "22% of catalog transfers" },

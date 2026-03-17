@@ -21,9 +21,9 @@ const FOLDERS = [
     sub: 'The "Evidence"',
     icon: '📋',
     color: 'purple',
-    desc: 'PDF or CSV statements from SoundExchange, ASCAP/BMI, and The MLC. This is where the gap between what you earned and what you collected becomes visible.',
+    desc: 'PDF or CSV statements from Rights Administrator, ASCAP/BMI, and The MLC. This is where the gap between what you earned and what you collected becomes visible.',
     accepts: '.pdf, .csv',
-    examples: ['SoundExchange quarterly statement', 'ASCAP/BMI royalty statement', 'The MLC matching report'],
+    examples: ['Rights Administrator quarterly statement', 'ASCAP/BMI royalty statement', 'The MLC matching report'],
   },
   {
     id: 'splits',
@@ -65,7 +65,7 @@ const AUTO_FIX_ITEMS = [
 const LEAKAGE_TABLE = [
   { source: 'Missing ISWC → ISRC Link', tracks: 38, estLoss: 84000,  severity: 'critical' },
   { source: 'IPI Mismatch / Writer Gaps', tracks: 12, estLoss: 22500, severity: 'critical' },
-  { source: 'Unclaimed SoundExchange',   tracks: 22, estLoss: 41200,  severity: 'warning'  },
+  { source: 'Unclaimed Rights Administrator',   tracks: 22, estLoss: 41200,  severity: 'warning'  },
   { source: 'Double Claims / Over-Alloc', tracks: 5, estLoss: 39500,  severity: 'warning'  },
 ];
 
@@ -73,7 +73,7 @@ const STEPS = [
   { n: '01', icon: '🔌', title: 'Plug in USB',          desc: 'Arrive at the office with a portable external drive containing the 4 data folders.' },
   { n: '02', icon: '📂', title: 'Drag Folders In',       desc: 'Client drags each USB folder into the corresponding upload zone. All encryption happens locally in the browser before any data leaves their machine.' },
   { n: '03', icon: '🧠', title: 'AI Parsing Engine',     desc: 'Schema-agnostic parser identifies columns across any distributor format. DistroKid, The Orchard, UnitedMasters — all normalized to the same Master Catalog JSON.' },
-  { n: '04', icon: '🔍', title: 'Forensic Scan',         desc: 'Cross-references 15+ databases: MusicBrainz, SoundExchange, ASCAP, BMI, The MLC, ISRC Registry, Spotify, Apple Music, AcoustID.' },
+  { n: '04', icon: '🔍', title: 'Forensic Scan',         desc: 'Cross-references 15+ databases: MusicBrainz, Rights Administrator, ASCAP, BMI, The MLC, ISRC Registry, Spotify, Apple Music, AcoustID.' },
   { n: '05', icon: '⚡', title: 'Auto-Fix Triggers',     desc: 'Critical errors surface instantly. One-click submission generates CWR files, submits ISRC requests, and flags splits for attorney review.' },
   { n: '06', icon: '💰', title: 'Live Dashboard',        desc: 'Mock data is replaced by real forensic math. The "$187,200 Projected Recovery Opportunity" becomes specific to their catalog.' },
 ];

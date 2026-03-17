@@ -28,10 +28,11 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Legal &amp; Compliance</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/privacy-policy" className="hover:text-purple-400 transition">Privacy Policy (GDPR/CCPA)</Link></li>
+              <li><Link href="/about" className="hover:text-purple-400 transition">About Us</Link></li>
+              <li><Link href="/privacy" className="hover:text-purple-400 transition">Privacy Policy (GDPR/CCPA)</Link></li>
               <li><Link href="/terms" className="hover:text-purple-400 transition">Terms of Use</Link></li>
-              <li><Link href="/data-protection" className="hover:text-purple-400 transition">Data Protection Addendum</Link></li>
-              <li><Link href="/cookie-policy" className="hover:text-purple-400 transition">Cookie Policy</Link></li>
+              <li><Link href="/data-addendum" className="hover:text-purple-400 transition">Data Protection Addendum</Link></li>
+              <li><Link href="/cookies" className="hover:text-purple-400 transition">Cookie Policy</Link></li>
             </ul>
           </div>
 

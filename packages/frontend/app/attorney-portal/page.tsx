@@ -15,7 +15,7 @@ const MATTERS = [
 
 function buildContent(type: string, name: string, amount: string, leakage: string, issues: number) {
   if (type === 'court') {
-    return `<div class="section"><h2>Executive Summary</h2><p>Forensic audit for ${name}.</p><table><tr><th>Metric</th><th>Value</th></tr><tr><td>Unclaimed</td><td class="highlight">${amount}</td></tr><tr><td>Leakage</td><td class="danger">${leakage}</td></tr><tr><td>Issues</td><td class="warning">${issues}</td></tr></table></div><div class="section"><h2>Ownership</h2><table><tr><th>Party</th><th>Claimed</th><th>Verified</th><th>Status</th></tr><tr><td>Artist</td><td>50%</td><td class="highlight">50%</td><td class="highlight">Verified</td></tr><tr><td>Producer</td><td>30%</td><td class="warning">25%</td><td class="warning">Under-claimed</td></tr><tr><td>Co-Writer</td><td>20%</td><td class="danger">15%</td><td class="danger">Disputed</td></tr></table></div>`;
+    return `<div class="section"><h2>Executive Summary</h2><p>Forensic audit for ${name}.</p><table><tr><th>Metric</th><th>Value</th></tr><tr><td>Unclaimed</td><td class="highlight">${amount}</td></tr><tr><td>Leakage</td><td class="danger">${leakage}</td></tr><tr><td>Issues</td><td class="warning">${issues}</td></tr></table></div><div class="section"><h2>Ownership</h2><table><tr><th>Role</th><th>Entity / Legal Name</th><th>IPI Number</th><th>Claimed</th><th>Verified</th><th>Status</th></tr><tr><td>Artist</td><td>Leland Tyler Wayne</td><td>0064010xxxx</td><td>50%</td><td class="highlight">50%</td><td class="highlight">Verified</td></tr><tr><td>Producer</td><td>[Leland Tyler Wayne]</td><td>0064010xxxx</td><td>30%</td><td class="warning">25%</td><td class="warning">Under-claimed</td></tr><tr><td>Co-Writer</td><td>[Government Name]</td><td>[IPI Number]</td><td>20%</td><td class="danger">15%</td><td class="danger">Disputed</td></tr></table></div>`;
   }
   if (type === 'demand') {
     const d = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
@@ -32,7 +32,30 @@ function generatePDF(title: string, content: string, matterName: string, matterI
   const hash = 'TRP-' + matterId + '-' + Date.now().toString(36).toUpperCase();
   const url = 'https://traproyaltiespro.com/verify/' + hash;
   const sha = Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.qr{display:flex;align-items:center;gap:20px;padding:16px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac;margin-top:24px}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}.highlight{color:#16a34a;font-weight:bold}.warning{color:#d97706;font-weight:bold}.danger{color:#dc2626;font-weight:bold}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">${title}</h1><p style="color:#6b7280">Matter: ${matterName} | Fox Rothschild LLP | Leron Rogers, Esq. | ID: ${hash}</p>${content}<div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(url)}" width="100" height="100" style="border-radius:8px"/><div><div style="font-weight:bold;color:#166534">QR Verification Seal</div><div style="font-size:.8rem;margin:4px 0">Scan to verify authenticity</div><div style="font-size:.7rem;color:#6b7280">${url}</div><div style="font-family:monospace;font-size:.7rem;background:#f3f4f6;padding:6px;border-radius:4px;margin-top:6px;word-break:break-all">SHA-256: ${sha}</div></div></div><div class="footer">TrapRoyaltiesPro.com | Confidential | Verify: ${url}</div></body></html>`;
+  const qrSeal = `
+    <div style="display:flex;align-items:flex-start;gap:20px;padding:20px 24px;background:#f0fdf4;border-radius:10px;border:1.5px solid #86efac;margin-top:32px">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(url)}" width="100" height="100" style="border-radius:8px;flex-shrink:0"/>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px;color:#166534;margin-bottom:4px">QR Verification Seal</div>
+        <div style="font-size:12px;color:#374151;margin-bottom:2px">Scan to verify authenticity</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;word-break:break-all">${url}</div>
+        <div style="font-family:'Courier New',monospace;font-size:10px;background:#f3f4f6;padding:7px 10px;border-radius:5px;border:1px solid #e5e7eb;word-break:break-all;color:#374151">SHA-256:&#8203; ${sha}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:#1e1b4b;border:1.5px solid #6366f1;border-radius:10px;padding:10px 16px 10px 12px;flex-shrink:0;align-self:center">
+        <div style="width:30px;height:30px;background:#1e1b4b;border:2px solid #6366f1;border-radius:6px;transform:rotate(15deg);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0">
+          <span style="font-size:14px;color:#34d399;transform:rotate(-15deg);display:inline-block">&#128274;</span>
+          <span style="position:absolute;top:-4px;right:-4px;width:9px;height:9px;background:#10b981;border-radius:50%;border:2px solid #1e1b4b"></span>
+        </div>
+        <div style="line-height:1.3">
+          <div style="font-weight:800;font-size:13px;color:white;letter-spacing:.5px">SMPT</div>
+          <div style="font-weight:300;font-size:9px;color:#9ca3af;letter-spacing:1.5px;text-transform:uppercase">SECURED</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:28px;padding-top:14px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;text-align:center">
+      TrapRoyaltiesPro.com &nbsp;|&nbsp; Confidential &nbsp;|&nbsp; Verify: ${url}
+    </div>`;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>*{box-sizing:border-box}body{font-family:Arial,sans-serif;max-width:820px;margin:40px auto;padding:0 28px;color:#1a1a1a;line-height:1.6}.section{margin:24px 0;padding:18px 20px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px 12px;text-align:left;color:#4f46e5;font-size:13px}td{padding:10px 12px;border-bottom:1px solid #e5e7eb;font-size:13px}.highlight{color:#16a34a;font-weight:bold}.warning{color:#d97706;font-weight:bold}.danger{color:#dc2626;font-weight:bold}h1{color:#1e1b4b;font-size:22px;margin-bottom:4px}h2{color:#1e1b4b;font-size:16px;margin:0 0 12px 0}h3{color:#374151;font-size:14px;margin:14px 0 6px 0}.meta{color:#6b7280;font-size:12px;margin-bottom:24px;padding-bottom:14px;border-bottom:2px solid #e5e7eb}.ts-title{font-size:26px;font-weight:800;color:#1e1b4b;text-transform:uppercase;letter-spacing:-0.5px;line-height:1.2}.ts-sub{font-size:15px;color:#4f46e5;font-weight:600;margin:4px 0 16px 0}.ts-section{margin:24px 0}.ts-section h2{font-size:15px;font-weight:700;color:#1e1b4b;border-bottom:2px solid #e5e7eb;padding-bottom:6px;margin-bottom:12px}.ts-section h3{font-size:13px;font-weight:700;color:#374151;margin:14px 0 6px 0}.ts-body{font-size:13px;color:#374151;line-height:1.7}.ts-body li{margin:4px 0}.sig-block{margin-top:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px}.sig-line{border-top:1.5px solid #9ca3af;padding-top:6px;font-size:12px;color:#6b7280;margin-top:32px}.sig-party{font-weight:700;font-size:13px;color:#1e1b4b;margin-bottom:16px}hr.ts{border:none;border-top:1.5px solid #e5e7eb;margin:20px 0}</style></head><body><h1>${title}</h1><div class="meta">Matter: ${matterName} &nbsp;|&nbsp; Fox Rothschild LLP &nbsp;|&nbsp; Leron Rogers, Esq. &nbsp;|&nbsp; ID: ${hash}</div>${content}${qrSeal}</body></html>`;
   const blob = new Blob([html], {type:'text/html'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -40,8 +63,104 @@ function generatePDF(title: string, content: string, matterName: string, matterI
   a.click();
 }
 
+function buildTermSheet() {
+  return `
+  <div class="ts-section" style="text-align:center;border-bottom:3px double #4f46e5;padding-bottom:20px;margin-bottom:24px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#6b7280;text-transform:uppercase;margin-bottom:8px">Protocol Reference: SMPT-SX-PILOT-2026-001</div>
+    <div class="ts-title">TERM SHEET</div>
+    <div class="ts-sub">SMPT &times; Rights Administrator<br>Forensic Metadata Resolution Pilot Program</div>
+    <div style="font-size:11px;color:#9ca3af">Non-Binding &nbsp;&middot;&nbsp; Confidential &nbsp;&middot;&nbsp; For Discussion Purposes Only</div>
+  </div>
+
+  <div class="ts-section">
+    <h2>1. Purpose</h2>
+    <p class="ts-body">This Pilot Program is designed to evaluate SMPT's forensic identity-resolution capabilities on a controlled dataset of unresolved ISRCs from the Rights Administrator "Black Box." The objective is to measure accuracy, administrative efficiency, fraud-mitigation performance, and operational ROI relative to the Rights Administrator's current manual ingestion processes.</p>
+  </div>
+
+  <div class="ts-section">
+    <h2>2. Pilot Scope &amp; Deliverables</h2>
+    <h3>2.1 Source Material</h3>
+    <p class="ts-body">The Rights Administrator will provide SMPT with the following:</p>
+    <ul class="ts-body"><li>Fifty (50) high-velocity ISRCs containing missing, incomplete, or unverified contributor metadata</li><li>Delivery format: CSV</li><li>Delivery timeline: Within five (5) business days following execution of required agreements</li></ul>
+    <h3>2.2 Resolution Methodology</h3>
+    <p class="ts-body">SMPT will process the ISRCs using Stockholm-tier nodes to perform:</p>
+    <ul class="ts-body"><li>Cross-referencing against global IPI and rights-holder registries</li><li>Cryptographic identity anchoring</li><li>Fraud-risk analysis and anomaly detection</li></ul>
+    <p class="ts-body" style="margin-top:8px">No personally identifiable information (PII) will be stored; only hashed identity artifacts will be retained.</p>
+    <h3>2.3 Deliverables</h3>
+    <p class="ts-body">For each resolved ISRC, SMPT will deliver a <strong>Certified Forensic Audit Package</strong> containing:</p>
+    <ul class="ts-body"><li>SHA-256 anchored identity proof</li><li>Verified contributor attribution</li><li>Digital Letter of Direction (LOD)</li><li>Resolution notes and immutable audit trail</li></ul>
+    <p class="ts-body" style="margin-top:8px">A consolidated <strong>Administrative ROI Summary</strong> will be delivered at the conclusion of the pilot.</p>
+  </div>
+
+  <div class="ts-section">
+    <h2>3. Timeline</h2>
+    <table><tr><th>Milestone</th><th>Target</th><th>Deliverable</th></tr>
+    <tr><td>Execution</td><td>Day 0</td><td>Signed Vendor Agreement + DPA</td></tr>
+    <tr><td>Source Data Receipt</td><td>Day 5</td><td>50 ISRCs delivered by Rights Administrator</td></tr>
+    <tr><td>Interim Report</td><td>Day 10</td><td>First 25 resolutions + preliminary ROI data</td></tr>
+    <tr><td>Final Delivery</td><td>Day 30</td><td>All 50 Audit Packages + full ROI Summary</td></tr></table>
+  </div>
+
+  <div class="ts-section">
+    <h2>4. Economic Framework (Post-Pilot)</h2>
+    <table><tr><th>Parameter</th><th>Value</th><th>Notes</th></tr>
+    <tr><td><strong>Black Box Capital Resolved</strong></td><td style="font-weight:800;font-size:15px;color:#15803d">$342,500.00</td><td>50-claim pilot catalog</td></tr>
+    <tr><td>Internal Labor Savings</td><td class="highlight">$10,500.00</td><td>50 claims &times; $210 standard cost</td></tr>
+    <tr><td><strong>Net Savings (Pilot)</strong></td><td class="highlight" style="font-weight:800;color:#15803d">$6,750.00</td><td>Labor Savings &minus; SMPT Cost</td></tr>
+    <tr><td>Cost Efficiency</td><td class="highlight">62% reduction</td><td>vs. $210/claim manual ingestion</td></tr>
+    <tr><td>Fraud-Risk Profile</td><td class="highlight">0%</td><td>Biometric + cryptographic anchoring</td></tr>
+    <tr><td>Verification Fee</td><td>$75.00 per resolved claim</td><td>Fixed per-claim rate</td></tr></table>
+    <p style="font-size:10px;color:#6b7280;margin-top:10px;padding:8px 12px;background:#f9fafb;border-left:3px solid #d1d5db;border-radius:0 4px 4px 0;line-height:1.6"><em>Basis: Based on 3-year historical accrual averages for Tier-2 Urban Performance Assets ($6,850/ISRC average). Capital resolution figures reflect aggregate Black Box suspense balances across the 50-ISRC pilot cohort. Labor savings calculated at $210/claim reflecting standard manual ingestion overhead inclusive of legal review, registry reconciliation, and administrative processing.</em></p>
+  </div>
+
+  <div class="ts-section">
+    <h2>5. Data-Sharing &amp; Vendor Compliance Framework</h2>
+    <h3>5.1 Vendor Agreement (Master Services Agreement)</h3>
+    <ul class="ts-body"><li>Scope limited to the 50-ISRC pilot</li><li>Confidentiality and non-disclosure obligations</li><li>Roles, responsibilities, and authority boundaries</li><li>Liability, indemnification, and termination terms</li></ul>
+    <h3>5.2 Data-Processing Addendum (DPA)</h3>
+    <ul class="ts-body"><li>Data categories shared &mdash; exclusively rights-holder metadata</li><li>Processing purpose: metadata resolution only</li><li>Retention and deletion requirements</li><li>Cryptographic and operational safeguards</li></ul>
+    <h3>5.3 Purpose-Limitation Requirements</h3>
+    <p class="ts-body">All data shared under the pilot is contractually restricted to: <strong>metadata resolution</strong>, <strong>identity anchoring</strong>, and <strong>fraud-mitigation analysis</strong>. No secondary use, redistribution, or model-training is permitted.</p>
+    <h3>5.4 Security &amp; Cryptographic Controls</h3>
+    <ul class="ts-body"><li>SHA-256 anchored identity proofs</li><li>No storage of PII (only hashed identity artifacts)</li><li>Immutable audit-trail generation</li><li>Encrypted data transfer and controlled access</li></ul>
+    <h3>5.5 Audit Rights</h3>
+    <p class="ts-body">The Rights Administrator retains the right to audit SMPT's handling of pilot data, review cryptographic logs, and verify compliance with the DPA and security requirements at any time during the pilot.</p>
+  </div>
+
+  <div class="ts-section">
+    <h2>6. Governance &amp; Reporting</h2>
+    <ul class="ts-body"><li>All processing adheres to strict cryptographic standards</li><li>No PII is stored; only identity hashes are retained</li><li>SMPT maintains permanent, immutable registry integrity for all resolved ISRCs</li><li>The Rights Administrator may request clarification or workflow visibility at any time</li></ul>
+  </div>
+
+  <div class="ts-section">
+    <h2>7. Non-Binding Nature</h2>
+    <p class="ts-body">This Term Sheet is <strong>non-binding</strong> and intended solely to outline the structure of the proposed pilot. Binding obligations will arise only upon execution of the Vendor Agreement and Data-Processing Addendum.</p>
+  </div>
+
+  <div class="ts-section">
+    <h2>8. Signatures</h2>
+    <div class="sig-block">
+      <div>
+        <div class="sig-party">Rights Administrator</div>
+        <div class="sig-line">Name: ___________________________</div>
+        <div class="sig-line" style="margin-top:20px">Title: ___________________________</div>
+        <div class="sig-line" style="margin-top:20px">Date: ___________________________</div>
+      </div>
+      <div>
+        <div class="sig-party">SMPT</div>
+        <div class="sig-line">Name: ___________________________</div>
+        <div class="sig-line" style="margin-top:20px">Title: ___________________________</div>
+        <div class="sig-line" style="margin-top:20px">Date: ___________________________</div>
+      </div>
+    </div>
+  </div>`;
+}
+
 export default function AttorneyPortal() {
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [showBatchModal, setShowBatchModal] = useState(false);
+  const [batchDragOver, setBatchDragOver] = useState(false);
+  const [batchFileName, setBatchFileName] = useState<string | null>(null);
   const [selectedMatter, setSelectedMatter] = useState(1);
   const [scanRunning, setScanRunning] = useState(false);
   const [scanComplete, setScanComplete] = useState(false);
@@ -61,6 +180,9 @@ export default function AttorneyPortal() {
   const [handshakeRightsType, setHandshakeRightsType] = useState('all-in');
   const [handshakeRevenueBasis, setHandshakeRevenueBasis] = useState('net');
   const [handshakeJurisdiction, setHandshakeJurisdiction] = useState('georgia');
+  const [handshakeResult, setHandshakeResult] = useState<{signingLink: string; verificationId: string} | null>(null);
+  const [handshakeSending, setHandshakeSending] = useState(false);
+  const [smptModal, setSmptModal] = useState<{name: string; amount: string; leakage: string} | null>(null);
 
   const matter = MATTERS.find(m => m.id === selectedMatter) || MATTERS[0];
 
@@ -92,6 +214,7 @@ export default function AttorneyPortal() {
     { label: "Audit & Due Diligence", items: [
       { id: 'run-due-diligence', label: 'Run Catalog Due Diligence', icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" },
       { id: 'pre-release-verify', label: 'Pre-Release Split Verification', icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+      { id: 'pilot-dashboard', label: 'Pilot Dashboard', icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
     ]},
     { label: "Reports & Documents", items: [
       { id: 'view-audit-report', label: 'View Audit Report', icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0zM2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" },
@@ -110,6 +233,8 @@ export default function AttorneyPortal() {
 
   const handleHandshakeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setHandshakeSending(true);
+    setHandshakeResult(null);
     try {
       const response = await fetch('/api/create-handshake', {
         method: 'POST',
@@ -127,10 +252,11 @@ export default function AttorneyPortal() {
       });
       const data = await response.json();
       if (data.success) {
-        alert('Digital Handshake sent to ' + handshakeEmail);
+        setHandshakeResult({ signingLink: data.signingLink, verificationId: data.verificationId });
         setHandshakeTrack(''); setHandshakeEmail(''); setHandshakePercentage(''); setHandshakeName('');
       } else { alert('Error: ' + (data.error || 'Unknown error')); }
     } catch (err) { alert('Error connecting to server'); }
+    finally { setHandshakeSending(false); }
   };
 
   const PERFECT_SPLIT = [
@@ -185,6 +311,7 @@ export default function AttorneyPortal() {
   const resetSplitWorkflow = () => { setSplitStep(0); setSplitData([]); setSplitErrors([]); setSplitVerifyId(''); setSplitPayAmount(50000); };
 
   return (
+    <>
     <div className="min-h-screen bg-[#0f172a] text-white">
       <div className="bg-gradient-to-r from-indigo-700 to-purple-900 text-white py-2 px-6 text-center text-sm font-medium">
         Attorney Portal - Secure Session - Verified &amp; Documented
@@ -210,14 +337,24 @@ export default function AttorneyPortal() {
                 <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider mb-4">{group.label}</p>
                 <div className="space-y-2">
                   {group.items.map((item) => (
-                    <button key={item.id} onClick={() => setActiveSection(item.id)}
-                      className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeSection === item.id ? 'bg-indigo-600/20 text-indigo-300 font-semibold border border-indigo-500/30' : 'text-gray-500 hover:text-white hover:bg-white/10'}`}>
-                      <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-                      </svg>
-                      <span className="text-left text-sm flex-1">{item.label}</span>
-                      {(item as any).badge && <span className="ml-auto bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded-full">{(item as any).badge}</span>}
-                    </button>
+                    item.id === 'pre-release-verify' ? (
+                      <Link key={item.id} href="/split-verification"
+                        className="w-full flex items-center space-x-3 p-3 rounded-lg transition text-gray-500 hover:text-white hover:bg-white/10">
+                        <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                        </svg>
+                        <span className="text-left text-sm flex-1">{item.label}</span>
+                      </Link>
+                    ) : (
+                      <button key={item.id} onClick={() => setActiveSection(item.id)}
+                        className={`w-full flex items-center space-x-3 p-3 rounded-lg transition ${activeSection === item.id ? 'bg-indigo-600/20 text-indigo-300 font-semibold border border-indigo-500/30' : 'text-gray-500 hover:text-white hover:bg-white/10'}`}>
+                        <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                        </svg>
+                        <span className="text-left text-sm flex-1">{item.label}</span>
+                        {(item as any).badge && <span className="ml-auto bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded-full">{(item as any).badge}</span>}
+                      </button>
+                    )
                   ))}
                 </div>
               </div>
@@ -249,7 +386,7 @@ export default function AttorneyPortal() {
                   <form onSubmit={handleHandshakeSubmit} className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-300 mb-1">Track / Project Name</label>
-                      <input type="text" value={handshakeTrack} onChange={e => setHandshakeTrack(e.target.value)} placeholder="e.g. Neon Dreams (Rough Mix v3)" className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                      <input type="text" value={handshakeTrack} onChange={e => setHandshakeTrack(e.target.value)} placeholder="e.g. Neon Dreams (Rough Mix v3)" className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-slate-300 mb-1">ISRC / ISWC (optional)</label>
@@ -285,11 +422,11 @@ export default function AttorneyPortal() {
                     <div className="border-t pt-4">
                       <label className="block text-sm font-semibold text-slate-300 mb-3">Collaborator Details</label>
                       <div className="grid grid-cols-3 gap-2 mb-2">
-                        <input type="text" placeholder="Name" value={handshakeName} onChange={e => setHandshakeName(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                        <input type="email" placeholder="Email" value={handshakeEmail} onChange={e => setHandshakeEmail(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
-                        <input type="number" placeholder="%" value={handshakePercentage} onChange={e => setHandshakePercentage(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-white placeholder-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                        <input type="text" placeholder="Name" value={handshakeName} onChange={e => setHandshakeName(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <input type="email" placeholder="Email" value={handshakeEmail} onChange={e => setHandshakeEmail(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                        <input type="number" placeholder="%" value={handshakePercentage} onChange={e => setHandshakePercentage(e.target.value)} className="px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
                       </div>
-                      <select value={handshakeRole} onChange={e => setHandshakeRole(e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                      <select value={handshakeRole} onChange={e => setHandshakeRole(e.target.value)} className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         <option value="artist">Artist</option>
                         <option value="producer">Producer</option>
                         <option value="co-writer">Co-Writer</option>
@@ -298,8 +435,20 @@ export default function AttorneyPortal() {
                         <option value="sample-clearance">Sample Clearance</option>
                       </select>
                     </div>
-                    <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-500 transition">Send Digital Handshake</button>
+                    <button type="submit" disabled={handshakeSending} className="w-full py-4 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-500 transition disabled:opacity-60">
+                      {handshakeSending ? 'Sending...' : 'Send Digital Handshake'}
+                    </button>
                   </form>
+                  {handshakeResult && (
+                    <div className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl space-y-2">
+                      <p className="text-green-400 font-semibold text-sm">✓ Handshake created — share this signing link:</p>
+                      <div className="flex items-center gap-2">
+                        <input readOnly value={handshakeResult.signingLink} className="flex-1 px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-xs text-slate-300 font-mono focus:outline-none" />
+                        <button onClick={() => navigator.clipboard.writeText(handshakeResult!.signingLink)} className="px-3 py-2 bg-indigo-600 text-white text-xs rounded-lg hover:bg-indigo-500">Copy</button>
+                      </div>
+                      <p className="text-xs text-slate-500">ID: {handshakeResult.verificationId}</p>
+                    </div>
+                  )}
                 </div>
                 <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
                   <h3 className="text-lg font-bold mb-4 text-white">Agreement Preview</h3>
@@ -415,6 +564,19 @@ export default function AttorneyPortal() {
                           m.status === 'In Progress' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                           'bg-green-500/20 text-green-300 border border-green-500/30'
                         }`}>{m.status}</span>
+                        <button
+                          onClick={e => { e.stopPropagation(); setSmptModal({ name: m.name, amount: m.amount, leakage: m.leakage }); }}
+                          className="flex items-center gap-2 bg-[#1e1b4b] border border-indigo-500 hover:border-violet-400 hover:shadow-[0_0_14px_rgba(139,92,246,0.35)] rounded-lg px-3 py-1.5 transition-all"
+                        >
+                          <span className="relative flex items-center justify-center w-6 h-6 border-2 border-indigo-500 rounded-[5px] rotate-[15deg]">
+                            <span className="text-green-400 text-xs -rotate-[15deg]">🔒</span>
+                            <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-[#1e1b4b] animate-pulse"></span>
+                          </span>
+                          <span className="flex flex-col leading-tight">
+                            <span className="text-white font-black text-[11px] tracking-wide">SMPT</span>
+                            <span className="text-gray-400 font-light text-[9px] uppercase tracking-widest">SECURED</span>
+                          </span>
+                        </button>
                         <span className="text-slate-600 group-hover:text-purple-400 transition font-black text-lg">→</span>
                       </div>
                     </div>
@@ -425,7 +587,7 @@ export default function AttorneyPortal() {
               {/* Quick actions */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                  { id:'run-due-diligence', icon:"🔬", l:"Forensic Audit", d:"Full catalog scan — ASCAP, BMI, SoundExchange" },
+                  { id:'run-due-diligence', icon:"🔬", l:"Forensic Audit", d:"Full catalog scan — ASCAP, BMI, Rights Administrator" },
                   { id:'generate-court-report', icon:"📋", l:"Court-Ready Report", d:"Hash-sealed, QR-verified PDF evidence package" },
                   { id:'digital-handshake', icon:"🤝", l:"Digital Handshake", d:"Verified and documented split agreement" },
                 ].map(a => (
@@ -477,7 +639,7 @@ export default function AttorneyPortal() {
                       {[
                         { check:"ASCAP Registration", finding:"Missing publisher registration", sev:"critical" },
                         { check:"BMI PRO Status",     finding:"IPI mismatch on co-writer",     sev:"warning" },
-                        { check:"SoundExchange",      finding:"No neighboring rights claim",    sev:"critical" },
+                        { check:"Rights Administrator",      finding:"No neighboring rights claim",    sev:"critical" },
                         { check:"PRS / SOCAN",        finding:"International registrations current", sev:"ok" },
                         { check:"Split Verification", finding:"Over-allocation detected (108%)", sev:"critical" },
                         { check:"ISRC Verification",  finding:"2 tracks missing ISRC",          sev:"warning" },
@@ -511,7 +673,7 @@ export default function AttorneyPortal() {
                       <div className="text-center py-8">
                         <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-500 border-t-transparent mb-4" />
                         <p className="font-bold text-indigo-300">Running forensic scan...</p>
-                        <p className="text-xs text-gray-500 mt-1 wr-mono">Querying ASCAP · BMI · PRS · SOCAN · SoundExchange</p>
+                        <p className="text-xs text-gray-500 mt-1 wr-mono">Querying ASCAP · BMI · PRS · SOCAN · Rights Administrator</p>
                       </div>
                     )}
                     {scanComplete && (
@@ -617,7 +779,7 @@ export default function AttorneyPortal() {
                       <div className="p-4 bg-indigo-500/10 rounded-xl border border-indigo-500/30 text-center"><p className="text-3xl font-bold text-orange-600">{matter.issues}</p><p className="text-sm text-gray-500 mt-1">Issues Flagged</p></div>
                     </div>
                     <div className="space-y-3 mb-6">
-                      {[{l:"ASCAP Registration",s:"Missing publisher registration",c:"red"},{l:"BMI PRO Status",s:"IPI mismatch on co-writer",c:"yellow"},{l:"SoundExchange",s:"No neighboring rights claim",c:"red"},{l:"PRS/SOCAN",s:"International registrations current",c:"green"},{l:"Split Verification",s:"Over-allocation detected (108%)",c:"red"}].map((item,i) => (
+                      {[{l:"ASCAP Registration",s:"Missing publisher registration",c:"red"},{l:"BMI PRO Status",s:"IPI mismatch on co-writer",c:"yellow"},{l:"Rights Administrator",s:"No neighboring rights claim",c:"red"},{l:"PRS/SOCAN",s:"International registrations current",c:"green"},{l:"Split Verification",s:"Over-allocation detected (108%)",c:"red"}].map((item,i) => (
                         <div key={i} className={`flex justify-between p-3 rounded-lg ${item.c==='red'?'bg-red-500/10':item.c==='yellow'?'bg-yellow-500/10':'bg-green-500/10'}`}>
                           <span className="font-medium">{item.l}</span>
                           <span className={`font-bold ${item.c==='red'?'text-red-600':item.c==='yellow'?'text-yellow-600':'text-green-400'}`}>{item.s}</span>
@@ -795,12 +957,12 @@ export default function AttorneyPortal() {
                     </button>
                   </div>
                 </div>
-                <table className="w-full">
-                  <thead className="bg-slate-800/50"><tr><th className="p-3 text-left">Party</th><th className="p-3 text-left">Claimed</th><th className="p-3 text-left">Verified</th><th className="p-3 text-left">Status</th></tr></thead>
+                <table className="w-full text-sm">
+                  <thead className="bg-slate-800/50"><tr><th className="p-3 text-left">Role</th><th className="p-3 text-left">Entity / Legal Name</th><th className="p-3 text-left">IPI Number</th><th className="p-3 text-left">Claimed</th><th className="p-3 text-left">Verified</th><th className="p-3 text-left">Status</th></tr></thead>
                   <tbody className="divide-y divide-white/10">
-                    <tr><td className="p-3">Artist (Primary)</td><td className="p-3">50%</td><td className="p-3 text-green-400">50%</td><td className="p-3 text-green-400">Verified</td></tr>
-                    <tr><td className="p-3">Producer</td><td className="p-3">30%</td><td className="p-3 text-yellow-600">25%</td><td className="p-3 text-yellow-600">Under-claimed</td></tr>
-                    <tr><td className="p-3">Co-Writer</td><td className="p-3">20%</td><td className="p-3 text-red-600">15%</td><td className="p-3 text-red-600">Disputed</td></tr>
+                    <tr><td className="p-3">Artist</td><td className="p-3">Leland Tyler Wayne</td><td className="p-3 font-mono text-slate-300">0064010xxxx</td><td className="p-3">50%</td><td className="p-3 text-green-400">50%</td><td className="p-3 text-green-400">Verified</td></tr>
+                    <tr><td className="p-3">Producer</td><td className="p-3 text-slate-400">[Leland Tyler Wayne]</td><td className="p-3 font-mono text-slate-300">0064010xxxx</td><td className="p-3">30%</td><td className="p-3 text-yellow-500">25%</td><td className="p-3 text-yellow-500">Under-claimed</td></tr>
+                    <tr><td className="p-3">Co-Writer</td><td className="p-3 text-slate-400">[Government Name]</td><td className="p-3 font-mono text-slate-400">[IPI Number]</td><td className="p-3">20%</td><td className="p-3 text-red-500">15%</td><td className="p-3 text-red-500">Disputed</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -825,6 +987,312 @@ export default function AttorneyPortal() {
               </div>
             </div>
           )}
+
+          {activeSection === 'pilot-dashboard' && (() => {
+            const PILOT_DATA = [
+              { isrc: 'US-ATL-23-001', alias: '"Zay"',           legal: 'Xavier Dotson',          ipi: '005842109',   status: 'verified',  note: '' },
+              { isrc: 'US-SJW-24-042', alias: '"Metro Boomin"',  legal: 'Leland Wayne',            ipi: '006923142',   status: 'verified',  note: 'Unresolved Featured Artist (vocalist match)' },
+              { isrc: 'US-UG-22-901',  alias: '"Wheezy"',        legal: 'Wesley Glass',            ipi: '007214589',   status: 'pending',   note: 'Missing Producer IPI (beat-signature match)' },
+              { isrc: 'US-CAS-23-115', alias: '"Southside"',     legal: 'Joshua Luellen',          ipi: '005632144',   status: 'verified',  note: '' },
+              { isrc: 'US-NYC-24-882', alias: '"Ghost Writer X"', legal: 'Identity Resolution...', ipi: 'Searching...', status: 'high_risk', note: 'Distributor Conflict (LOD required)' },
+            ];
+            const verified  = PILOT_DATA.filter(r => r.status === 'verified').length;
+            const pending   = PILOT_DATA.filter(r => r.status === 'pending').length;
+            const high_risk = PILOT_DATA.filter(r => r.status === 'high_risk').length;
+            return (
+              <div>
+                {/* Registry Health Widget */}
+                {(() => {
+                  const totalISRCs          = 50;
+                  const resolvedCapital     = 342500;
+                  const laborSavings        = 10500;
+                  const smptCost            = 3750;
+                  const netSavings          = laborSavings - smptCost; // $6,750
+                  const fmt = (n: number) => `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                  return (
+                    <div className="bg-[#0f172a] border border-indigo-500/30 rounded-2xl p-5 mb-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Registry Health</span>
+                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-500/15 text-green-400 border border-green-500/30 font-bold">{totalISRCs}-Claim Pilot</span>
+                      </div>
+                      <div className="grid grid-cols-4 gap-4 mb-4">
+                        <div className="rounded-xl border p-4 bg-green-500/10 border-green-500/20">
+                          <p className="text-2xl font-black mb-1 text-green-400">{fmt(resolvedCapital)}</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Black Box Capital Resolved</p>
+                          <p className="text-[9px] text-slate-600 mt-0.5">{totalISRCs} ISRCs · Full Pilot Catalog</p>
+                        </div>
+                        <div className="rounded-xl border p-4 bg-indigo-500/10 border-indigo-500/20">
+                          <p className="text-2xl font-black mb-1 text-indigo-300">{fmt(laborSavings)}</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Internal Labor Savings</p>
+                          <p className="text-[9px] text-slate-600 mt-0.5">{totalISRCs} claims × $210</p>
+                        </div>
+                        <div className="rounded-xl border p-4 bg-violet-500/10 border-violet-500/20">
+                          <p className="text-2xl font-black mb-1 text-violet-400">{fmt(smptCost)}</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">SMPT Verification Cost</p>
+                          <p className="text-[9px] text-slate-600 mt-0.5">{totalISRCs} claims × $75</p>
+                        </div>
+                        <div className="rounded-xl border p-4 bg-emerald-500/10 border-emerald-500/20">
+                          <p className="text-2xl font-black mb-1" style={{ color: '#00FF00' }}>{fmt(netSavings)}</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Net Savings</p>
+                          <p className="text-[9px] text-slate-600 mt-0.5">Labor Savings − Verification Cost</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between border-t border-white/5 pt-3">
+                        <p className="text-[10px] text-slate-500">
+                          <span className="text-indigo-300 font-bold">SMPT delivers a 62% reduction</span> in per-claim ingestion costs vs. traditional rights administration workflows.
+                        </p>
+                        <a href="https://usesmpt.com/apiv1/report.html" target="_blank" rel="noreferrer"
+                          className="text-[10px] text-indigo-400 hover:text-indigo-300 underline underline-offset-2 transition flex-shrink-0 ml-4">
+                          View Administrative Savings Report for Accounting
+                        </a>
+                      </div>
+                      <p className="text-[10px] text-slate-600 italic border-t border-white/5 pt-2 mt-2 leading-relaxed">
+                        Basis: Based on 3-year historical accrual averages for Tier-2 Urban Performance Assets ($6,850/ISRC average).
+                      </p>
+                    </div>
+                  );
+                })()}
+
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h1 className="text-3xl font-bold text-white mb-1">Pilot Dashboard</h1>
+                    <p className="text-slate-500 text-sm">Identity resolution status across active ISRC nodes — SMPT Biometric Protocol v1</p>
+                  </div>
+                  <div className="flex items-center gap-2 bg-[#1e1b4b] border border-indigo-500/40 rounded-lg px-4 py-2">
+                    <span className="relative flex items-center justify-center w-5 h-5 border-2 border-indigo-500 rounded-[4px] rotate-[15deg] bg-indigo-900/40">
+                      <span className="text-green-400 text-[10px] -rotate-[15deg]">🔒</span>
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-[#1e1b4b] animate-pulse"></span>
+                    </span>
+                    <span className="text-white font-black text-xs tracking-wide">SMPT SECURED</span>
+                  </div>
+                </div>
+
+                {/* Stats strip */}
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  {[
+                    { label: 'Verified', value: verified,  color: 'text-green-400',  bg: 'bg-green-500/10 border-green-500/30',  dot: 'bg-green-400' },
+                    { label: 'KYC Pending', value: pending, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/30', dot: 'bg-yellow-400' },
+                    { label: 'High Risk',  value: high_risk, color: 'text-red-400',   bg: 'bg-red-500/10 border-red-500/30',       dot: 'bg-red-400'   },
+                  ].map(s => (
+                    <div key={s.label} className={`rounded-xl border p-4 flex items-center gap-3 ${s.bg}`}>
+                      <span className={`w-3 h-3 rounded-full flex-shrink-0 ${s.dot}`}></span>
+                      <div>
+                        <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
+                        <p className="text-slate-500 text-[10px] uppercase font-bold tracking-widest">{s.label}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pilot Status Table */}
+                <div className="bg-[#0f172a] border border-white/10 rounded-2xl overflow-hidden">
+                  <div className="px-5 py-3 border-b border-white/5 bg-slate-900/50">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Pilot Status — {PILOT_DATA.length} Registered Signals</p>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-white/5 text-slate-500 uppercase tracking-widest text-[9px] font-black">
+                          <th className="px-5 py-3 text-left">ISRC</th>
+                          <th className="px-5 py-3 text-left">Detected Signal (Alias)</th>
+                          <th className="px-5 py-3 text-left">Resolved Legal Name</th>
+                          <th className="px-5 py-3 text-left">IPI Number</th>
+                          <th className="px-5 py-3 text-left">Biometric Status</th>
+                          <th className="px-5 py-3 text-right">Action</th>
+                          <th className="px-5 py-3 text-left">Settlement Status</th>
+                          <th className="px-5 py-3 text-left">Metadata Note</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/5">
+                        {PILOT_DATA.map((row, i) => {
+                          const isVerified = row.status === 'verified';
+                          const isPending  = row.status === 'pending';
+                          const isRisk     = row.status === 'high_risk';
+                          return (
+                            <tr key={i} className="hover:bg-white/3 transition">
+                              <td className="px-5 py-4 font-mono text-indigo-300 font-semibold">{row.isrc}</td>
+                              <td className="px-5 py-4 text-slate-300 italic">{row.alias}</td>
+                              <td className="px-5 py-4">
+                                {isVerified
+                                  ? <span className="text-white font-semibold">{row.legal}</span>
+                                  : isRisk
+                                    ? <span className="text-red-400 font-semibold animate-pulse">{row.legal}</span>
+                                    : <span className="text-yellow-300">{row.legal}</span>}
+                              </td>
+                              <td className="px-5 py-4 font-mono">
+                                {row.ipi === 'Searching...'
+                                  ? <span className="text-slate-500 flex items-center gap-1.5"><span className="inline-block w-2.5 h-2.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>{row.ipi}</span>
+                                  : <span className="text-indigo-300">{row.ipi}</span>}
+                              </td>
+                              <td className="px-5 py-4">
+                                {isVerified && (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-green-500/15 text-green-400 border border-green-500/30">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400"></span>VERIFIED
+                                  </span>
+                                )}
+                                {isPending && (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>PENDING KYC
+                                  </span>
+                                )}
+                                {isRisk && (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black bg-red-500/15 text-red-400 border border-red-500/30">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse"></span>HIGH RISK
+                                  </span>
+                                )}
+                              </td>
+                              <td className="px-5 py-4 text-right">
+                                {isVerified && (
+                                  <button className="px-3 py-1 text-[10px] font-bold rounded-lg bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-600/50 transition">View Report</button>
+                                )}
+                                {isPending && (
+                                  <button className="px-3 py-1 text-[10px] font-bold rounded-lg bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition">Resume KYC</button>
+                                )}
+                                {isRisk && (
+                                  <button className="px-3 py-1 text-[10px] font-bold rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition">Escalate</button>
+                                )}
+                              </td>
+                              <td className="px-5 py-4">
+                                {isVerified && (
+                                  <div className="relative group inline-block">
+                                    <span
+                                      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-black border whitespace-nowrap cursor-default"
+                                      style={{
+                                        background: 'rgba(0,255,0,0.07)',
+                                        color: '#00FF00',
+                                        borderColor: 'rgba(0,255,0,0.25)',
+                                        boxShadow: '0 0 8px rgba(0,255,0,0.25), 0 0 2px rgba(0,255,0,0.15)',
+                                      }}
+                                    >
+                                      <span style={{ color: '#00FF00' }}>$</span>Verification Fee Accrued: $75.00
+                                    </span>
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 px-3 py-2 rounded-lg text-[10px] text-slate-200 leading-relaxed pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50"
+                                      style={{ background: '#1e1b4b', border: '1px solid rgba(99,102,241,0.4)', boxShadow: '0 4px 16px rgba(0,0,0,0.5)' }}>
+                                      <p className="font-black text-indigo-300 mb-1 text-[9px] uppercase tracking-widest">Administrative Savings</p>
+                                      <p className="text-white font-semibold">Administrative Savings Share: $135.00 generated for Rights Administrator</p>
+                                      <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0" style={{ borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(99,102,241,0.4)' }}></div>
+                                    </div>
+                                  </div>
+                                )}
+                              </td>
+                              <td className="px-5 py-4">
+                                {row.note ? (
+                                  <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-semibold border whitespace-nowrap ${
+                                    isRisk    ? 'bg-red-500/10 text-red-300 border-red-500/25' :
+                                    isPending ? 'bg-yellow-500/10 text-yellow-300 border-yellow-500/25' :
+                                                'bg-slate-700/40 text-slate-400 border-slate-600/30'
+                                  }`}>
+                                    {isRisk ? '⚠ ' : isPending ? '◎ ' : '· '}{row.note}
+                                  </span>
+                                ) : (
+                                  <span className="text-slate-700 text-[9px]">—</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Footer note */}
+                  <div className="px-5 py-3 border-t border-white/5 bg-slate-900/30 flex items-center justify-between">
+                    <p className="text-[9px] text-slate-600 uppercase tracking-widest">Powered by usesmpt.com · SMPT Biometric Protocol v1</p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setShowBatchModal(true)}
+                        className="text-[10px] font-black text-violet-400 hover:text-violet-300 transition flex items-center gap-1.5"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                        Secure Batch Ingestion
+                      </button>
+                      <button
+                        onClick={() => generatePDF('SMPT Pilot Program — Term Sheet', buildTermSheet(), 'SMPT × Rights Administrator Pilot', 0)}
+                        className="text-[10px] font-black text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1.5 border border-emerald-500/30 px-3 py-1.5 rounded-lg hover:bg-emerald-500/10"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        Download Term Sheet PDF
+                      </button>
+                      <a href="https://usesmpt.com/apiv1/report.html" target="_blank" rel="noreferrer"
+                        className="text-[10px] font-black text-indigo-400 hover:text-indigo-300 transition">
+                        Generate Full Forensic Report →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Secure Batch Ingestion Modal */}
+                {showBatchModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setShowBatchModal(false)}>
+                    <div className="bg-[#0d1117] border border-violet-500/30 rounded-2xl p-6 max-w-md w-full mx-4 shadow-[0_0_40px_rgba(139,92,246,0.2)]" onClick={e => e.stopPropagation()}>
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-5">
+                        <div>
+                          <p className="text-white font-black text-base">Secure Batch Ingestion</p>
+                          <p className="text-violet-400 text-[10px] uppercase tracking-widest mt-0.5">SMPT Encrypted Pipeline · v1</p>
+                        </div>
+                        <button onClick={() => setShowBatchModal(false)} className="text-slate-500 hover:text-white text-xl leading-none">×</button>
+                      </div>
+
+                      {/* Drop zone */}
+                      <div
+                        onDragOver={e => { e.preventDefault(); setBatchDragOver(true); }}
+                        onDragLeave={() => setBatchDragOver(false)}
+                        onDrop={e => {
+                          e.preventDefault();
+                          setBatchDragOver(false);
+                          const file = e.dataTransfer.files[0];
+                          if (file) setBatchFileName(file.name);
+                        }}
+                        className={`rounded-xl border-2 border-dashed p-8 text-center transition-all cursor-pointer ${batchDragOver ? 'border-violet-400 bg-violet-500/10' : 'border-slate-700 bg-white/3 hover:border-violet-500/50 hover:bg-violet-500/5'}`}
+                        onClick={() => document.getElementById('batch-file-input')?.click()}
+                      >
+                        <input
+                          id="batch-file-input"
+                          type="file"
+                          accept=".csv,.xlsx,.xls"
+                          className="hidden"
+                          onChange={e => { if (e.target.files?.[0]) setBatchFileName(e.target.files[0].name); }}
+                        />
+                        <svg className={`w-10 h-10 mx-auto mb-3 transition-colors ${batchDragOver ? 'text-violet-400' : 'text-slate-600'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        {batchFileName ? (
+                          <p className="text-green-400 font-bold text-sm">{batchFileName}</p>
+                        ) : (
+                          <>
+                            <p className="text-slate-300 font-bold text-sm">Drop Rights Administrator ISRC Batch</p>
+                            <p className="text-slate-500 text-[10px] mt-1">CSV / XLSX · Click to browse</p>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Security note */}
+                      <div className="mt-4 flex items-start gap-2.5 bg-slate-900/60 border border-slate-700/50 rounded-lg px-3 py-2.5">
+                        <svg className="w-3.5 h-3.5 text-green-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-green-400 mb-0.5">Security Note</p>
+                          <p className="text-[10px] text-slate-400 leading-relaxed">Files are processed via end-to-end encryption. No PII is extracted during ingestion.</p>
+                        </div>
+                      </div>
+
+                      {/* Action */}
+                      <button
+                        onClick={() => { if (batchFileName) { setShowBatchModal(false); setBatchFileName(null); } }}
+                        disabled={!batchFileName}
+                        className={`mt-4 w-full py-3 rounded-xl font-black text-sm tracking-widest uppercase transition ${batchFileName ? 'bg-violet-600 hover:bg-violet-500 text-white' : 'bg-slate-800 text-slate-600 cursor-not-allowed'}`}
+                      >
+                        {batchFileName ? 'Begin Encrypted Ingestion →' : 'Select a File to Continue'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {activeSection === 'pre-release-verify' && (
             <div>
@@ -1011,5 +1479,67 @@ export default function AttorneyPortal() {
         </div>
       </div>
     </div>
+
+    {/* ── SMPT Forensic Modal ── */}
+    {smptModal && (
+      <div className="fixed inset-0 bg-[#030712]/90 backdrop-blur-md flex items-center justify-center z-[1000]" onClick={() => setSmptModal(null)}>
+        <div className="bg-[#111827] border border-[#2d3a5e] border-t-4 border-t-indigo-500 rounded-3xl p-10 max-w-lg w-[90%] shadow-2xl font-mono" onClick={e => e.stopPropagation()}>
+          {/* Header */}
+          <div className="flex justify-between items-start border-b border-[#2d3a5e] pb-5 mb-5">
+            <div>
+              <p className="text-xl font-bold text-white">SMPT Forensic Protocol</p>
+              <p className="text-xs text-gray-400 mt-1">Node: US-ATL-2300001 (Active) · Stockholm Arch v4.2</p>
+              <p className="text-xs text-slate-500 mt-0.5 truncate max-w-xs">{smptModal.name}</p>
+            </div>
+            <div className="flex items-center gap-2 bg-[#1e1b4b] border border-green-500 text-green-400 px-3 py-1 rounded-full text-[10px] font-bold flex-shrink-0">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              Live Registry
+            </div>
+          </div>
+
+          {/* Pass items */}
+          {[
+            { label: 'Identity Verified', desc: 'Biometric KYC Hash Match · Facial recognition anchored' },
+            { label: 'Market Signal', desc: `Revenue Leakage Confirmed · ${smptModal.leakage} Across 3 Global Nodes` },
+            { label: 'SHA-256 Anchor', desc: 'f3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-start gap-4 py-4 border-b border-[#1f2937]">
+              <span className="bg-[#065f46] text-green-400 text-[10px] font-bold px-3 py-1 rounded-full tracking-wide flex-shrink-0">PASS</span>
+              <div>
+                <p className="text-white font-semibold text-sm">{item.label}</p>
+                <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
+              </div>
+            </div>
+          ))}
+
+          {/* Tech grid */}
+          <div className="mt-4 p-4 bg-gray-900/50 rounded-xl border border-gray-800 grid grid-cols-2 gap-2 text-xs">
+            <div><span className="text-gray-500">Encryption: </span><span className="text-slate-300">SHA-256 / AES-256</span></div>
+            <div><span className="text-gray-500">GDPR: </span><span className="text-slate-300">EU Compliant</span></div>
+            <div><span className="text-gray-500">Biometric: </span><span className="text-slate-300">Liveness verified</span></div>
+            <div><span className="text-gray-500">Nodes: </span><span className="text-slate-300">14 consensus</span></div>
+          </div>
+
+          {/* Hash */}
+          <div className="mt-4 bg-[#030712] border border-[#2d3a5e] rounded-lg p-3 text-xs text-green-400 font-mono break-all">
+            <span className="text-gray-500">Anchor: </span>{Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('')}
+          </div>
+
+          {/* Revenue */}
+          <div className="mt-3 flex items-center justify-between text-sm">
+            <span className="text-gray-400">Revenue Leakage Flagged:</span>
+            <span className="text-red-400 font-black">{smptModal.amount}</span>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-between items-center mt-6">
+            <a href="https://usesmpt.com" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:text-purple-300 text-sm flex items-center gap-2 transition">View on Ledger →</a>
+            <button onClick={() => setSmptModal(null)} className="border border-gray-600 hover:border-purple-500 text-gray-400 hover:text-white text-xs px-4 py-2 rounded-full transition">Close</button>
+          </div>
+          <p className="text-center text-[9px] text-gray-700 mt-4">Stockholm Engineering Standard · ISO 27001 · GDPR v2.1</p>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

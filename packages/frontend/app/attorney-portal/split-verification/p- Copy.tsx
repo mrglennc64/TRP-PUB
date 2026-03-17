@@ -451,6 +451,46 @@ export default function VerifySplitsPage() {
             <h2 className="text-xl font-semibold text-indigo-900 mb-6 flex items-center gap-2">
               <i className="fas fa-cloud-upload-alt text-indigo-900"></i>
               Step 1: Upload split data
+          {/* Lookup from Global Sources (top section only) */}
+          <div className="mt-4 rounded-2xl border border-[#9AE6B4] bg-[#F0FFF4] p-4">
+            <h3 className="mb-3 text-base font-semibold text-[#1A202C]">
+              Lookup from Global Sources
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+              <input
+                type="text"
+                placeholder="Track title..."
+                className="w-full rounded-lg border border-[#CBD5E0] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2B6F4B]/30"
+              />
+              <input
+                type="text"
+                placeholder="Artist..."
+                className="w-full rounded-lg border border-[#CBD5E0] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2B6F4B]/30"
+              />
+            </div>
+
+            <input
+              type="text"
+              placeholder="ISRC (e.g. USRC17607839) — or leave blank to search by title"
+              className="w-full rounded-lg border border-[#CBD5E0] px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-[#2B6F4B]/30"
+            />
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2 py-1 text-xs rounded bg-white border border-[#E2E8F0]">MusicBrainz</span>
+              <span className="px-2 py-1 text-xs rounded bg-white border border-[#E2E8F0]">Discogs</span>
+              <span className="px-2 py-1 text-xs rounded bg-white border border-[#E2E8F0]">ASCAP/BMI</span>
+              <span className="px-2 py-1 text-xs rounded bg-white border border-[#E2E8F0]">Split Handshake</span>
+
+              <button
+                type="button"
+                className="ml-auto rounded-full px-4 py-2 text-sm font-semibold text-white"
+                style={{ background: "#6366F1" }}
+              >
+                Lookup
+              </button>
+            </div>
+          </div>
             </h2>
 
             {/* Upload Area */}

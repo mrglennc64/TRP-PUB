@@ -39,7 +39,7 @@ const TRACKS: Track[] = [
 
 function scanLeaks(t: Track): Leak[] {
   const leaks: Leak[] = [];
-  if (!t.isrc)          leaks.push({ severity: 'critical', msg: 'Missing ISRC — cannot register with PROs or SoundExchange', fix: 'Use ISRC Search or register at usisrc.org' });
+  if (!t.isrc)          leaks.push({ severity: 'critical', msg: 'Missing ISRC — cannot register with PROs or Rights Administrator', fix: 'Use ISRC Search or register at usisrc.org' });
   if (!t.upc)           leaks.push({ severity: 'warning',  msg: 'Missing UPC — distribution may reject this release', fix: 'Get UPC from your distributor' });
   if (!t.releaseDate)   leaks.push({ severity: 'warning',  msg: 'No release date — DDEX package will be incomplete', fix: 'Enter release date' });
   if (!t.songwriters)   leaks.push({ severity: 'critical', msg: 'No songwriters — mechanical royalties uncollected', fix: 'Add songwriter credits' });

@@ -54,7 +54,7 @@ const LOD_TYPE_META: Record<LODType, { label: string; description: string; recip
   pro_mechanical:   { label: "PRO Mechanical Royalties",   description: "Directs MLC, DistroKid, or a mechanical rights organization to route mechanical royalties.", recipient_hint: "The MLC / Harry Fox Agency" },
   distribution:     { label: "Distribution Royalties",     description: "Instructs a distributor (TuneCore, DistroKid, CD Baby) to redirect streaming/download revenue.", recipient_hint: "TuneCore / DistroKid / CD Baby" },
   sync:             { label: "Sync Licensing Revenue",     description: "Directs sync licensing income from film, TV, and ad placements to a named administrator.", recipient_hint: "Music Supervisor / Licensing Co." },
-  master:           { label: "Master Recording Royalties", description: "Routes master recording income (SoundExchange, neighboring rights) to a specified label or administrator.", recipient_hint: "SoundExchange / Label" },
+  master:           { label: "Master Recording Royalties", description: "Routes master recording income (Rights Administrator, neighboring rights) to a specified label or administrator.", recipient_hint: "Rights Administrator / Label" },
   blanket:          { label: "Blanket Direction (All Revenue)", description: "Comprehensive direction covering all royalty streams — performance, mechanical, master, and sync.", recipient_hint: "All sources / Admin company" },
 };
 

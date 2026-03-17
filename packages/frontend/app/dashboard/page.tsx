@@ -56,7 +56,7 @@ function uid() { return Math.random().toString(36).slice(2, 10); }
 interface Leak { severity: "critical" | "warning" | "info"; msg: string; fix: string; }
 function scanLeaks(t: Track, store: Store): Leak[] {
   const leaks: Leak[] = [];
-  if (!t.isrc)                    leaks.push({ severity: "critical", msg: "Missing ISRC — cannot register with PROs or SoundExchange", fix: "Use ISRC Search to find or register" });
+  if (!t.isrc)                    leaks.push({ severity: "critical", msg: "Missing ISRC — cannot register with PROs or Rights Administrator", fix: "Use ISRC Search to find or register" });
   if (!t.upc)                     leaks.push({ severity: "warning",  msg: "Missing UPC — distribution may fail on some DSPs", fix: "Get UPC from distributor" });
   if (!t.releaseDate)             leaks.push({ severity: "warning",  msg: "No release date — DDEX package incomplete", fix: "Enter release date" });
   if (!t.songwriters)             leaks.push({ severity: "critical", msg: "No songwriters — mechanical royalties going uncollected", fix: "Add songwriter credits" });
@@ -1100,7 +1100,7 @@ function ArtistsSection({ store, save, flash }: { store: Store; save:(s:Store)=>
           <div className="grid grid-cols-2 gap-3">
             <F label="PRO">
               <select className={S.inp} value={form.pro} onChange={f("pro")}>
-                {["ASCAP","BMI","SESAC","GMR","SoundExchange","None"].map(p=><option key={p}>{p}</option>)}
+                {["ASCAP","BMI","SESAC","GMR","Rights Administrator","None"].map(p=><option key={p}>{p}</option>)}
               </select>
             </F>
             <F label="Split %"><input className={S.inp} type="number" min="0" max="100" value={form.splitPct||""} onChange={f("splitPct")} placeholder="20" /></F>

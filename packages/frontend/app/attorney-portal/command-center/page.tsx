@@ -55,7 +55,7 @@ const LABELS: Label[] = [
     pipeline: 487200,
     opportunities: [
       { track: "Mask Off", artist: "Future", issue: "Sony/ATV ownership conflict — parallel claim filed", amount: 42100, severity: "critical", action: "Open War Room" },
-      { track: "Right Now", artist: "DJ Esco", issue: "Missing ISRC — SoundExchange holding $18k", amount: 18400, severity: "critical", action: "File ISRC Claim" },
+      { track: "Right Now", artist: "DJ Esco", issue: "Missing ISRC — Rights Administrator holding $18k", amount: 18400, severity: "critical", action: "File ISRC Claim" },
       { track: "Stick Talk", artist: "Future", issue: "Producer credit omitted — split mismatch", amount: 9800, severity: "warning", action: "Amend Split Sheet" },
       { track: "Zoom", artist: "Future ft. Stylo G", issue: "International distrib. not registered with PRS", amount: 7200, severity: "warning", action: "Register PRS" },
     ],

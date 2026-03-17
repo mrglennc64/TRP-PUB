@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 
 /* ─── Types ──────────────────────────────────────────────────── */
@@ -76,7 +76,7 @@ const MOCK_RECORDS: CatalogRecord[] = [
   {
     id: "r5", title: "Drip Too Hard", artist: "Lil Baby & Gunna", isrc: "USSM11804672",
     splits: "50/50", distributor: "Quality Control / Capitol",
-    source: "SoundExchange Q4",
+    source: "Rights Administrator Q4",
     changeType: "modified", status: "pending",
     liveValue: { splits: "60/40", digital_performance: "unclaimed" },
     shadowValue: { splits: "50/50", digital_performance: "$12,400 pending" },
@@ -122,6 +122,85 @@ function fmtMoney(n: number) {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 }
 
+/* ─── CSV Parser ─────────────────────────────────────────────── */
+function parseCSVToRecords(text: string): CatalogRecord[] {
+  const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) return [];
+
+  const delim = (lines[0].match(/\t/g) || []).length > (lines[0].match(/,/g) || []).length ? '\t' : lines[0].includes(';') ? ';' : ',';
+
+  function splitRow(line: string): string[] {
+    const cells: string[] = [];
+    let cur = '', inQ = false;
+    for (const ch of line + delim) {
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === delim && !inQ) { cells.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    return cells;
+  }
+
+  const headers = splitRow(lines[0]).map(h => h.toLowerCase().replace(/[^a-z0-9]/g, '_'));
+  const find = (...terms: string[]) => {
+    for (const t of terms) {
+      const i = headers.findIndex(h => h.includes(t));
+      if (i >= 0) return i;
+    }
+    return -1;
+  };
+
+  const cols = {
+    title:       find('title', 'track', 'song', 'name'),
+    artist:      find('artist', 'performer', 'creator'),
+    isrc:        find('isrc'),
+    iswc:        find('iswc'),
+    ipi:         find('ipi'),
+    splits:      find('split', 'percentage', 'share', 'percent', 'writer'),
+    distributor: find('distributor', 'label', 'publisher', 'distrib'),
+  };
+
+  const get = (cells: string[], idx: number) => idx >= 0 ? (cells[idx] || '').trim() : '';
+
+  return lines.slice(1).flatMap((line, i) => {
+    if (!line.trim()) return [];
+    const cells = splitRow(line);
+    const title = get(cells, cols.title) || `Track ${i + 1}`;
+    const artist = get(cells, cols.artist) || '—';
+    const isrc = get(cells, cols.isrc).toUpperCase().replace(/[-\s]/g, '');
+    const iswc = get(cells, cols.iswc);
+    const ipi = get(cells, cols.ipi);
+    const splits = get(cells, cols.splits);
+    const distributor = get(cells, cols.distributor);
+
+    let risk = 5;
+    const diff: string[] = [];
+    if (!isrc) { risk += 40; diff.push('⚠ ISRC missing — not trackable at DSPs'); }
+    else diff.push(`ISRC: ${isrc}`);
+    if (!iswc) { risk += 20; diff.push('⚠ ISWC not linked — publishing unroutable at PROs'); }
+    else diff.push(`ISWC: ${iswc}`);
+    if (!ipi) { risk += 20; diff.push('⚠ IPI missing — writer share unclaimed'); }
+    else diff.push(`IPI: ${ipi}`);
+    if (splits) diff.push(`Splits: ${splits}`);
+
+    return [{
+      id: `csv_${i}_${Date.now()}`,
+      title,
+      artist,
+      isrc: isrc || '—',
+      iswc: iswc || undefined,
+      ipi: ipi || undefined,
+      splits: splits || '—',
+      distributor: distributor || '—',
+      source: 'CSV Upload',
+      changeType: 'new' as ChangeType,
+      status: 'pending' as Status,
+      shadowValue: { title, artist, isrc: isrc || '—', splits: splits || '—', distributor: distributor || '—' },
+      diff,
+      riskScore: Math.min(risk, 100),
+    }];
+  });
+}
+
 function RiskBar({ score }: { score: number }) {
   const color = score >= 70 ? "bg-rose-500" : score >= 40 ? "bg-yellow-500" : "bg-green-500";
   return (
@@ -139,6 +218,7 @@ function RiskBar({ score }: { score: number }) {
 /* ─── Main ──────────────────────────────────────────────────── */
 export default function CatalogStagingPage() {
   const [records, setRecords] = useState<CatalogRecord[]>(MOCK_RECORDS);
+  const [csvLoaded, setCsvLoaded] = useState(false);
   const [filter, setFilter] = useState<"all" | ChangeType | "pending" | "approved" | "rejected">("all");
   const [expanded, setExpanded] = useState<string | null>(null);
   const [swapPhase, setSwapPhase] = useState<"idle" | "confirming" | "swapping" | "done">("idle");
@@ -147,6 +227,24 @@ export default function CatalogStagingPage() {
   const [rollbackAvail, setRollbackAvail] = useState(false);
   const [rolledBack, setRolledBack] = useState(false);
   const [searchQ, setSearchQ] = useState("");
+  const csvInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCSVUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target?.result as string;
+      const parsed = parseCSVToRecords(text);
+      if (parsed.length > 0) {
+        setRecords(parsed);
+        setCsvLoaded(true);
+        setSwapPhase("idle");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }, []);
 
   const setStatus = useCallback((id: string, s: Status) => {
     setRecords((prev) => prev.map((r) => (r.id === id ? { ...r, status: s } : r)));
@@ -236,6 +334,27 @@ export default function CatalogStagingPage() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <input
+              ref={csvInputRef}
+              type="file"
+              accept=".csv,.tsv,.txt"
+              className="hidden"
+              onChange={handleCSVUpload}
+            />
+            <button
+              onClick={() => csvInputRef.current?.click()}
+              className="px-3 py-1.5 text-xs font-semibold text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg border border-indigo-500/30 transition"
+            >
+              📁 Upload CSV
+            </button>
+            {csvLoaded && (
+              <button
+                onClick={() => { setRecords(MOCK_RECORDS); setCsvLoaded(false); setSwapPhase("idle"); }}
+                className="px-3 py-1.5 text-xs font-semibold text-slate-400 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition"
+              >
+                Reset Demo
+              </button>
+            )}
             <Link href="/ingest" className="px-3 py-1.5 text-xs font-semibold text-slate-300 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition">
               ← Bulk Ingest
             </Link>
@@ -296,6 +415,14 @@ export default function CatalogStagingPage() {
             </button>
           </div>
         </div>
+
+        {/* Demo data notice */}
+        {!csvLoaded && (
+          <div className="flex items-center gap-3 px-4 py-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-xs text-yellow-300">
+            <span className="text-base">⚠️</span>
+            <span>Showing <strong>demo data</strong> — click <strong>📁 Upload CSV</strong> in the header to load your real catalog records.</span>
+          </div>
+        )}
 
         {/* Record table */}
         <div className="bg-[#0f172a] border border-white/10 rounded-2xl overflow-hidden">

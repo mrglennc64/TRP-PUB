@@ -28,7 +28,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'How is TrapRoyaltiesPro different from other music platforms?',
-      a: 'Most music platforms focus on distribution or streaming analytics. We focus on rights protection and revenue recovery. Our audit engine cross-references 15+ databases including MusicBrainz, SoundExchange, and PRO registries. Every report is designed to meet Federal Rules of Evidence standards (FRE 901), making them usable in actual legal proceedings. We also provide real-time conflict detection, automated dispute letters, and T+0 settlement rails — features no standard distributor offers.',
+      a: 'Most music platforms focus on distribution or streaming analytics. We focus on rights protection and revenue recovery. Our audit engine cross-references 15+ databases including MusicBrainz, Rights Administrator, and PRO registries. Every report is designed to meet Federal Rules of Evidence standards (FRE 901), making them usable in actual legal proceedings. We also provide real-time conflict detection, automated dispute letters, and T+0 settlement rails — features no standard distributor offers.',
     },
     {
       q: 'Do I need technical knowledge to use the platform?',
@@ -98,7 +98,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
   audit: [
     {
       q: 'What databases does the audit engine check against?',
-      a: 'Our audit engine cross-references 15+ authoritative databases including: MusicBrainz (open music encyclopedia), SoundExchange (digital performance royalties), ASCAP, BMI, and SESAC (performing rights), the MLC (mechanical licensing), iTunes/Apple Music metadata, Spotify Web API, YouTube Content ID, AcoustID (audio fingerprinting), ISRC Registry, ISWC database, AllMusic, Discogs, and proprietary industry metadata from our partner network.',
+      a: 'Our audit engine cross-references 15+ authoritative databases including: MusicBrainz (open music encyclopedia), Rights Administrator (digital performance royalties), ASCAP, BMI, and SESAC (performing rights), the MLC (mechanical licensing), iTunes/Apple Music metadata, Spotify Web API, YouTube Content ID, AcoustID (audio fingerprinting), ISRC Registry, ISWC database, AllMusic, Discogs, and proprietary industry metadata from our partner network.',
     },
     {
       q: 'What does the audit actually check for?',

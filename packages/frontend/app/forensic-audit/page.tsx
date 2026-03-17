@@ -66,7 +66,7 @@ const LEAKAGE_ITEMS: LeakageItem[] = [
   { category: "Missing IPI — Uncontrolled Writers", description: "14 co-writers have no IPI number. PRO cannot route their share; royalties go uncollected.", affected_tracks: 31,  estimated_loss: 14700,  priority: "high",     recoverable: true  },
   { category: "Artist Name Drift",          description: "3 variants of primary artist name across distributors causing algorithmic deduplication failures and reduced discoverability.", affected_tracks: 47,  estimated_loss: 6200,   priority: "medium",   recoverable: false },
   { category: "Missing UPC",               description: "7 releases missing UPC. Distribution gaps on Amazon Music and Tidal causing lost plays.", affected_tracks: 7,   estimated_loss: 2800,   priority: "medium",   recoverable: true  },
-  { category: "Digital Performance — Unregistered SoundExchange", description: "Master recording rights not registered with SoundExchange for 12 tracks. Non-interactive streaming not collected.", affected_tracks: 12,  estimated_loss: 2000,   priority: "low",     recoverable: true  },
+  { category: "Digital Performance — Unregistered Rights Administrator", description: "Master recording rights not registered with Rights Administrator for 12 tracks. Non-interactive streaming not collected.", affected_tracks: 12,  estimated_loss: 2000,   priority: "low",     recoverable: true  },
 ];
 
 const METADATA_METRICS: MetricCard[] = [
@@ -91,7 +91,7 @@ const TERRITORY_GAPS: TerritoryGap[] = [
 const SPLIT_CONFLICTS: SplitConflict[] = [
   { track: "Sicko Mode",    isrc: "USUG11801862", source_a: "ASCAP Statement", split_a: "33/33/34", source_b: "Epic Records CSV",  split_b: "40/30/30", resolution: "Pending — attorney hold" },
   { track: "Goosebumps",   isrc: "USUG11501163", source_a: "BMI Statement",   split_a: "60/40",    source_b: "TuneCore Export",   split_b: "55/45",    resolution: "Pending — writer confirmation" },
-  { track: "Drip Too Hard",isrc: "USSM11804672", source_a: "SoundExchange",   split_a: "50/50",    source_b: "Quality Control CSV",split_b: "60/40",   resolution: "Disputed — legal review" },
+  { track: "Drip Too Hard",isrc: "USSM11804672", source_a: "Rights Administrator",   split_a: "50/50",    source_b: "Quality Control CSV",split_b: "60/40",   resolution: "Disputed — legal review" },
 ];
 
 const RECOMMENDATIONS = [
@@ -102,7 +102,7 @@ const RECOMMENDATIONS = [
   { priority: "high",     action: "Obtain IPI numbers for 14 unregistered co-writers. File as 'Unknown' works with PRO pending IPI resolution." },
   { priority: "medium",   action: "Standardize artist name to single canonical form across all distributor APIs and PRO registrations." },
   { priority: "medium",   action: "Generate UPC batch for 7 missing releases. Deliver to all DSPs via distributor dashboard." },
-  { priority: "low",      action: "Register master recording rights with SoundExchange for 12 remaining tracks." },
+  { priority: "low",      action: "Register master recording rights with Rights Administrator for 12 remaining tracks." },
 ];
 
 /* ─── Helpers ────────────────────────────────────────────────── */
@@ -350,7 +350,7 @@ export default function ForensicAuditPage() {
                       {[
                         { horizon: "30 Days",  action: "ISWC registration + territory filings", amount: 72400 + 48200, color: "text-green-400", border: "border-green-500/20" },
                         { horizon: "60–90 Days", action: "Split conflict resolution + IPI registration", amount: 31800 + 14700, color: "text-yellow-400", border: "border-yellow-500/20" },
-                        { horizon: "90–180 Days", action: "ISRC reassignment + SoundExchange filing", amount: 9100 + 2800 + 2000, color: "text-sky-400", border: "border-sky-500/20" },
+                        { horizon: "90–180 Days", action: "ISRC reassignment + Rights Administrator filing", amount: 9100 + 2800 + 2000, color: "text-sky-400", border: "border-sky-500/20" },
                       ].map(r => (
                         <div key={r.horizon} className={`bg-white/5 border ${r.border} rounded-xl p-4`}>
                           <div className="text-xs text-slate-500 mb-1">{r.horizon}</div>

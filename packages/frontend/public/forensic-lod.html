@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forensic Letter of Direction — SMPT Protocol</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      color: #1a1a1a;
+      background: #f0ece4;
+      min-height: 100vh;
+    }
+
+    /* ── Watermark ────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 120px,
+        rgba(0,140,60,0.04) 120px,
+        rgba(0,140,60,0.04) 121px
+      );
+    }
+
+    .watermark-text {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-35deg);
+      font-size: 64pt;
+      font-weight: 700;
+      color: rgba(0, 140, 60, 0.055);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 0;
+      letter-spacing: 6px;
+      font-family: 'Times New Roman', serif;
+      user-select: none;
+    }
+
+    /* ── Toolbar ──────────────────────────────────────────── */
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #1a2e1a;
+      border-bottom: 2px solid #2d5a2d;
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toolbar-brand svg { width: 20px; height: 20px; }
+    .toolbar-label {
+      color: #7fff7f;
+      font-family: 'Courier New', monospace;
+      font-size: 10pt;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #1a5c1a, #2d7d2d);
+      color: #fff;
+      border: 1px solid #3d9f3d;
+      padding: 9px 20px;
+      font-family: 'Times New Roman', serif;
+      font-size: 10.5pt;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+      box-shadow: 0 0 12px rgba(0,200,80,0.18);
+    }
+    .btn-download:hover {
+      background: linear-gradient(135deg, #205c20, #38983a);
+      box-shadow: 0 0 20px rgba(0,200,80,0.3);
+    }
+
+    /* ── Page ─────────────────────────────────────────────── */
+    .page-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 820px;
+      margin: 36px auto 60px;
+      background: #ffffff;
+      border: 1px solid #c8c0b0;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+      padding: 56px 64px 60px;
+    }
+
+    /* ── Document Header ──────────────────────────────────── */
+    .doc-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 2.5px double #1a1a1a;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+    .doc-header-left { flex: 1; }
+    .doc-title {
+      font-size: 14pt;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.4;
+      color: #0a0a0a;
+    }
+    .doc-protocol {
+      font-size: 9pt;
+      color: #444;
+      margin-top: 6px;
+      font-style: italic;
+      font-family: 'Courier New', monospace;
+    }
+    .doc-date {
+      font-size: 9pt;
+      color: #555;
+      margin-top: 4px;
+    }
+
+    /* ── Biometric Seal ───────────────────────────────────── */
+    .biometric-seal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      margin-left: 24px;
+    }
+    .seal-shield {
+      width: 72px;
+      height: 82px;
+      position: relative;
+    }
+    .seal-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .seal-check { font-size: 22px; line-height: 1; }
+    .seal-text-inner {
+      font-family: 'Courier New', monospace;
+      font-size: 5.5pt;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
+    }
+    .seal-label {
+      font-family: 'Courier New', monospace;
+      font-size: 6.5pt;
+      text-align: center;
+      color: #1a6b1a;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 1.4;
+      max-width: 80px;
+    }
+    .seal-pulse {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 6px rgba(34,197,94,0.6);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    /* ── Sections ─────────────────────────────────────────── */
+    .section { margin-bottom: 26px; }
+    .section-heading {
+      font-size: 10pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+      border-bottom: 1px solid #999;
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+    }
+    .section-number {
+      color: #1a5c1a;
+      margin-right: 4px;
+    }
+
+    /* ── Data rows ────────────────────────────────────────── */
+    .data-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 6px;
+      font-size: 11pt;
+      line-height: 1.5;
+    }
+    .data-label {
+      font-weight: 700;
+      min-width: 190px;
+      flex-shrink: 0;
+      color: #2a2a2a;
+    }
+    .data-value { color: #111; }
+    .hash-value {
+      font-family: 'Courier New', monospace;
+      font-size: 9.5pt;
+      background: #f4f4f0;
+      border: 1px solid #d4d0c8;
+      padding: 3px 8px;
+      letter-spacing: 0.5px;
+      color: #1a3a1a;
+      display: inline-block;
+      border-radius: 2px;
+    }
+    .hash-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .hash-anchored {
+      font-family: 'Courier New', monospace;
+      font-size: 8pt;
+      color: #1a6b1a;
+      font-weight: 700;
+      border: 1px solid #b0d4b0;
+      background: #e8f5e8;
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    /* ── Directive Block ──────────────────────────────────── */
+    .directive-block {
+      background: #f8f6f0;
+      border: 1px solid #c8c0a8;
+      border-left: 4px solid #1a5c1a;
+      padding: 16px 20px;
+      font-size: 11pt;
+      line-height: 1.75;
+      color: #111;
+      font-style: italic;
+      text-align: justify;
+    }
+
+    /* ── Auth Grid ────────────────────────────────────────── */
+    .auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .auth-item {
+      border: 1px solid #d0ccc0;
+      padding: 10px 14px;
+      background: #fafaf6;
+    }
+    .auth-item-label {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #555;
+      margin-bottom: 4px;
+    }
+    .auth-item-value {
+      font-size: 10.5pt;
+      color: #111;
+      font-weight: 600;
+    }
+    .auth-pass {
+      color: #1a6b1a;
+    }
+    .auth-verified {
+      color: #1a4da8;
+    }
+    .auth-signatory {
+      font-size: 10pt;
+      color: #111;
+    }
+
+    /* ── Node Seal Block ──────────────────────────────────── */
+    .node-seal-block {
+      border: 1px solid #b0d4b0;
+      background: linear-gradient(135deg, #f0faf0, #e8f5e8);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 4px;
+    }
+    .node-seal-text { flex: 1; }
+    .node-seal-title {
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #1a5c1a;
+      margin-bottom: 4px;
+    }
+    .node-seal-detail {
+      font-family: 'Courier New', monospace;
+      font-size: 8.5pt;
+      color: #333;
+      line-height: 1.6;
+    }
+    .node-seal-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .node-status-dot {
+      width: 12px;
+      height: 12px;
+      background: #22c55e;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(34,197,94,0.7);
+      animation: pulse 2s infinite;
+    }
+    .node-status-label {
+      font-family: 'Courier New', monospace;
+      font-size: 7pt;
+      color: #1a6b1a;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    .doc-footer {
+      border-top: 2.5px double #1a1a1a;
+      padding-top: 14px;
+      margin-top: 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .footer-left {
+      font-size: 8pt;
+      color: #555;
+      line-height: 1.7;
+    }
+    .footer-right {
+      text-align: right;
+      font-family: 'Courier New', monospace;
+      font-size: 7.5pt;
+      color: #888;
+      line-height: 1.7;
+    }
+    .footer-logo {
+      font-family: 'Courier New', monospace;
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: #1a5c1a;
+    }
+
+    /* ── Signature Line ───────────────────────────────────── */
+    .sig-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+    .sig-line {
+      border-top: 1px solid #333;
+      padding-top: 6px;
+    }
+    .sig-line-label {
+      font-size: 8.5pt;
+      color: #444;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* ── Print styles ─────────────────────────────────────── */
+    @media print {
+      body { background: #fff; }
+      body::before { display: none; }
+      .watermark-text { color: rgba(0,140,60,0.04); }
+      .toolbar { display: none; }
+      .page-wrap { box-shadow: none; margin: 0; border: none; }
+      .seal-pulse, .node-status-dot { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Watermark -->
+  <div class="watermark-text" aria-hidden="true">VERIFIED · SMPT</div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#7fff7f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+      <span class="toolbar-label">SMPT Secured Document · Protocol v1</span>
+    </div>
+    <button class="btn-download" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="8 17 12 21 16 17"/>
+        <line x1="12" y1="12" x2="12" y2="21"/>
+        <path d="M20.88 18.09A5 5 0 0018 9h-1.26A8 8 0 103 16.29"/>
+      </svg>
+      Download PDF for SoundExchange Ingestion
+    </button>
+  </div>
+
+  <!-- Document -->
+  <div class="page-wrap">
+
+    <!-- Document Header -->
+    <div class="doc-header">
+      <div class="doc-header-left">
+        <div class="doc-title">
+          Irrevocable Letter of Direction<br/>&amp; Identity Attestation
+        </div>
+        <div class="doc-protocol">Protocol Reference: SMPT-SX-PILOT-2026-001</div>
+        <div class="doc-date">Date of Execution: March 16, 2026 &nbsp;|&nbsp; Jurisdiction: United States</div>
+      </div>
+
+      <!-- Biometric Seal -->
+      <div class="biometric-seal">
+        <div class="seal-shield">
+          <svg viewBox="0 0 72 82" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:72px;height:82px;position:absolute;top:0;left:0;">
+            <path d="M36 2L6 14v22c0 20 13 37 30 44 17-7 30-24 30-44V14L36 2z" fill="#1a5c1a" stroke="#2d8a2d" stroke-width="2"/>
+            <path d="M36 6L10 17v19c0 17 11 32 26 38 15-6 26-21 26-38V17L36 6z" fill="#1e6b1e" opacity="0.5"/>
+          </svg>
+          <div class="seal-inner">
+            <div class="seal-check">✓</div>
+            <div class="seal-text-inner">BIOMETRIC<br/>ANCHORED</div>
+          </div>
+        </div>
+        <div class="seal-label">SMPT<br/>Biometric<br/>Security Seal</div>
+        <div class="seal-pulse"></div>
+      </div>
+    </div>
+
+    <!-- Section 1: Rights Holder -->
+    <div class="section">
+      <div class="section-heading"><span class="section-number">1.</span> Rights Holder Identification</div>
+      <div class="data-row">
+        <span class="data-label">Legal Name:</span>
+        <span class="data-value">Xavier Dotson</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">IPI Number:</span>
+        <span class="data-value"><span class="hash-value">005842109</span></span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Professional Alias:</span>
+        <span class="data-value">Zaytoven</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Verification Hash:</span>
+        <div>
+          <div class="hash-badge">
+            <span class="hash-value">SHA256: 0x71C4a9...e3d1a4f2</span>
+            <span class="hash-anchored">⚓ Biometrically Anchored</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Asset Metadata -->
+    <div class="section">
+      <div class="section-heading"><span class="section-number">2.</span> Asset Metadata</div>
+      <div class="data-row">
+        <span class="data-label">ISRC:</span>
+        <span class="data-value"><span class="hash-value">US-S1Z-24-00101</span></span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Record Title:</span>
+        <span class="data-value">Zone 6 Forever</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Claim Share:</span>
+        <span class="data-value"><strong>25%</strong> of Contributor Royalties</span>
+      </div>
+    </div>
+
+    <!-- Section 3: Directive -->
+    <div class="section">
+      <div class="section-heading"><span class="section-number">3.</span> Direct Payment Instruction</div>
+      <div class="directive-block">
+        "I, the undersigned Rights Holder, hereby irrevocably authorize and direct SoundExchange, Inc. to adjust the metadata for the above-referenced ISRC to reflect my legal ownership. Furthermore, I direct that all past, present, and future royalties held in suspense or 'Black Box' accounts associated with this ISRC be released for payment to my designated legal representative or account of record, as verified via the SMPT Protocol."
+      </div>
+    </div>
+
+    <!-- Section 4: Forensic Authentication -->
+    <div class="section">
+      <div class="section-heading"><span class="section-number">4.</span> Forensic Authentication</div>
+      <div class="auth-grid">
+        <div class="auth-item">
+          <div class="auth-item-label">Biometric Liveness Check</div>
+          <div class="auth-item-value auth-pass">
+            PASSED
+            <span style="font-size:9pt;font-weight:400;color:#444;font-style:italic;"> — Timestamp: March 16, 2026</span>
+          </div>
+        </div>
+        <div class="auth-item">
+          <div class="auth-item-label">ID Document Verification</div>
+          <div class="auth-item-value auth-verified">
+            VERIFIED
+            <span style="font-size:9pt;font-weight:400;color:#666;"> / PII SCRUBBED</span>
+          </div>
+        </div>
+        <div class="auth-item">
+          <div class="auth-item-label">Legal Signatory</div>
+          <div class="auth-item-value auth-signatory">Leron Rogers<span style="font-size:9pt;color:#666;"> (Fox Rothschild LLP)</span></div>
+        </div>
+        <div class="auth-item">
+          <div class="auth-item-label">SMPT Attestation ID</div>
+          <div class="auth-item-value">
+            <span class="hash-value" style="font-size:8pt;">SMPT-2026-ATT-00119</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Node Seal -->
+      <div class="node-seal-block" style="margin-top:14px;">
+        <svg width="44" height="50" viewBox="0 0 72 82" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M36 2L6 14v22c0 20 13 37 30 44 17-7 30-24 30-44V14L36 2z" fill="#1a5c1a" stroke="#3d9f3d" stroke-width="2"/>
+          <text x="36" y="46" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="bold" font-family="monospace">✓</text>
+        </svg>
+        <div class="node-seal-text">
+          <div class="node-seal-title">SMPT Node Security Seal · Digital Attestation Anchor</div>
+          <div class="node-seal-detail">
+            Node: Stockholm-1 · MusicBrainz IPI Registry<br/>
+            Chain Anchor: <span style="color:#1a5c1a;font-weight:700;">0x71C4a9b3...e3d1a4f2</span><br/>
+            Protocol: SMPT-SX-PILOT-2026-001 · Issued via usesmpt.com
+          </div>
+        </div>
+        <div class="node-status">
+          <div class="node-status-dot"></div>
+          <div class="node-status-label" style="font-family:'Courier New',monospace;font-size:7pt;color:#1a6b1a;font-weight:700;letter-spacing:1px;">LIVE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signature Lines -->
+    <div class="sig-area">
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-line-label">Rights Holder Signature &amp; Date</div>
+      </div>
+      <div>
+        <div class="sig-line"></div>
+        <div class="sig-line-label">Legal Representative Signature &amp; Date</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="doc-footer">
+      <div class="footer-left">
+        <span class="footer-logo">TrapRoyaltiesPro · usesmpt.com</span><br/>
+        This document constitutes a legally binding direction under applicable U.S. copyright and<br/>
+        neighboring rights law. Unauthorized alteration of this document is prohibited.<br/>
+        <em>Generated via SMPT Biometric Protocol — Attorney-Grade Forensic Export</em>
+      </div>
+      <div class="footer-right">
+        Doc ID: <span style="font-weight:700;">TRP-LOD-2026-001</span><br/>
+        Verified via SMPT Protocol<br/>
+        Page 1 of 1
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+</body>
+</html>
