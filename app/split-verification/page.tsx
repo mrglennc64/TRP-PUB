@@ -3,6 +3,21 @@
 import { useState, useRef } from 'react';
 import Link from 'next/link';
 
+interface LookupContributor {
+  name: string;
+  role: string;
+  source: string;
+}
+
+interface LookupResult {
+  title: string;
+  artist: string;
+  isrc?: string;
+  label?: string;
+  contributors: LookupContributor[];
+  sources: string[];
+}
+
 type Step = 1 | 2 | 3 | 4;
 
 interface SplitRow {
@@ -33,6 +48,92 @@ export default function SplitVerificationPage() {
   const [amount, setAmount] = useState('');
   const [verified, setVerified] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Lookup state
+  const [lookupTitle, setLookupTitle] = useState('');
+  const [lookupArtist, setLookupArtist] = useState('');
+  const [lookupISRC, setLookupISRC] = useState('');
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
+  const [lookupError, setLookupError] = useState('');
+  const [activeSources, setActiveSources] = useState<string[]>([]);
+
+  const runLookup = async () => {
+    if (!lookupTitle && !lookupISRC) { setLookupError('Enter a title or ISRC to search.'); return; }
+    setLookupLoading(true); setLookupError(''); setLookupResult(null); setActiveSources([]);
+    const result: LookupResult = { title: lookupTitle || '', artist: lookupArtist || '', contributors: [], sources: [] };
+    try {
+      let mbData: Record<string, unknown> | null = null;
+      if (lookupISRC) {
+        const r = await fetch(`https://musicbrainz.org/ws/2/recording?query=isrc:${encodeURIComponent(lookupISRC)}&fmt=json`);
+        const d = await r.json() as { recordings?: unknown[] };
+        if (d.recordings?.length) { mbData = (d.recordings as Record<string, unknown>[])[0]; result.sources.push('MusicBrainz'); }
+      }
+      if (!mbData && lookupTitle) {
+        const q = lookupArtist ? `${lookupTitle} ${lookupArtist}` : lookupTitle;
+        const r = await fetch(`https://musicbrainz.org/ws/2/recording?query=${encodeURIComponent(q)}&fmt=json`);
+        const d = await r.json() as { recordings?: unknown[] };
+        if (d.recordings?.length) { mbData = (d.recordings as Record<string, unknown>[])[0]; result.sources.push('MusicBrainz'); }
+      }
+      if (mbData) {
+        if (!result.title && mbData.title) result.title = mbData.title as string;
+        const ac = mbData['artist-credit'] as Array<{ artist?: { name?: string } }> | undefined;
+        if (ac?.length && !result.artist) result.artist = ac[0]?.artist?.name || '';
+        const rels = mbData.relations as Array<{ type?: string; artist?: { name?: string } }> | undefined;
+        if (rels?.length) {
+          rels.forEach(rel => {
+            if (rel.artist?.name) {
+              const role = rel.type === 'composer' ? 'Composer' : rel.type === 'lyricist' ? 'Lyricist' : rel.type === 'producer' ? 'Producer' : rel.type || 'Contributor';
+              result.contributors.push({ name: rel.artist.name, role, source: 'MusicBrainz' });
+            }
+          });
+        }
+        // Try to get work relations for composer/lyricist
+        const workRels = mbData.relations as Array<{ type?: string; work?: { id?: string } }> | undefined;
+        const workRel = workRels?.find(r => r.type === 'performance' && r.work?.id);
+        if (workRel?.work?.id) {
+          try {
+            const wr = await fetch(`https://musicbrainz.org/ws/2/work/${workRel.work.id}?inc=artist-rels&fmt=json`);
+            const wd = await wr.json() as { relations?: Array<{ type?: string; artist?: { name?: string } }> };
+            (wd.relations || []).forEach(rel => {
+              if (rel.artist?.name) {
+                const role = rel.type === 'composer' ? 'Composer' : rel.type === 'lyricist' ? 'Lyricist' : rel.type || 'Writer';
+                if (!result.contributors.find(c => c.name === rel.artist!.name)) {
+                  result.contributors.push({ name: rel.artist.name, role, source: 'MusicBrainz' });
+                }
+              }
+            });
+          } catch { /* work lookup optional */ }
+        }
+      }
+      // Discogs supplementary
+      try {
+        const q = lookupArtist ? `${lookupTitle} ${lookupArtist}` : lookupTitle;
+        const dr = await fetch(`https://api.discogs.com/database/search?q=${encodeURIComponent(q)}&type=release`);
+        const dd = await dr.json() as { results?: Array<{ title?: string; label?: string[] }> };
+        if (dd.results?.length) {
+          const top = dd.results[0];
+          if (top.label?.length && !result.label) { result.label = top.label[0]; result.sources.push('Discogs'); }
+        }
+      } catch { /* discogs optional */ }
+      if (!result.sources.length) { setLookupError('No results found. Try a different title or ISRC.'); }
+      else { setLookupResult(result); setActiveSources(result.sources); }
+    } catch { setLookupError('Lookup failed — check your connection and try again.'); }
+    setLookupLoading(false);
+  };
+
+  const useLookupCredits = () => {
+    if (!lookupResult?.contributors.length) return;
+    const writers = lookupResult.contributors.filter(c => c.role !== 'Performer');
+    const use = writers.length ? writers : lookupResult.contributors;
+    const n = use.length; const eq = Math.round(1000 / n) / 10;
+    const newSplits: SplitRow[] = use.map((c, i) => ({
+      name: c.name, role: c.role,
+      split: i === n - 1 ? Math.round((100 - eq * (n - 1)) * 10) / 10 : eq,
+      status: 'ok' as const,
+    }));
+    setSplits(newSplits); setStep(2);
+  };
 
   const total = splits ? splits.reduce((s, r) => s + r.split, 0) : 0;
   const hasErrors = splits ? splits.some(r => r.status !== 'ok') : false;
@@ -131,23 +232,97 @@ export default function SplitVerificationPage() {
 
         {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
-          {/* Step 1: Upload */}
+          {/* Step 1: Import Split Data */}
           <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
-            <h2 className="text-xl font-semibold text-indigo-900 mb-6 flex items-center gap-2">
-              ☁️ Step 1: Upload split data
+            <h2 className="text-xl font-semibold text-indigo-900 mb-2 flex items-center gap-2">
+              🌐 Step 1: Import Split Data
             </h2>
+            <p className="text-gray-500 text-sm mb-5">Lookup from Global Sources</p>
+
+            {/* Lookup section */}
+            <div className="border border-indigo-100 bg-indigo-50/40 rounded-xl p-5 mb-5">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {['MusicBrainz', 'Discogs', 'ASCAP/BMI', 'Split Handshake'].map(src => (
+                  <span key={src} className={`text-xs px-3 py-1 rounded-full border font-medium transition-all ${
+                    activeSources.includes(src)
+                      ? 'bg-indigo-900 text-white border-indigo-900'
+                      : 'bg-white text-indigo-500 border-indigo-200'
+                  }`}>{src}</span>
+                ))}
+              </div>
+              <div className="grid grid-cols-1 gap-3 mb-3">
+                <input
+                  type="text" placeholder="Track title" value={lookupTitle}
+                  onChange={e => setLookupTitle(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && runLookup()}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="text" placeholder="Artist name" value={lookupArtist}
+                    onChange={e => setLookupArtist(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && runLookup()}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  />
+                  <input
+                    type="text" placeholder="ISRC (optional)" value={lookupISRC}
+                    onChange={e => setLookupISRC(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && runLookup()}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none"
+                  />
+                </div>
+              </div>
+              <button
+                onClick={runLookup} disabled={lookupLoading}
+                className="w-full py-2 bg-indigo-900 text-white rounded-lg text-sm font-semibold hover:bg-indigo-800 disabled:opacity-50 transition flex items-center justify-center gap-2"
+              >
+                {lookupLoading ? (
+                  <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Looking up…</>
+                ) : '🔍 Lookup from Global Sources'}
+              </button>
+              {lookupError && <p className="text-red-500 text-xs mt-2">{lookupError}</p>}
+              {lookupResult && (
+                <div className="mt-3 bg-white border border-indigo-100 rounded-lg p-4">
+                  <p className="font-semibold text-indigo-900 text-sm">{lookupResult.title} {lookupResult.artist && `— ${lookupResult.artist}`}</p>
+                  {lookupResult.label && <p className="text-xs text-gray-500 mb-2">Label: {lookupResult.label}</p>}
+                  {lookupResult.contributors.length > 0 ? (
+                    <div className="space-y-1 mb-3">
+                      {lookupResult.contributors.map((c, i) => (
+                        <div key={i} className="flex justify-between text-xs text-gray-700 py-1 border-b border-gray-50 last:border-0">
+                          <span>{c.name} <span className="text-gray-400">({c.role})</span></span>
+                          <span className="text-indigo-500 text-[10px]">{c.source}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : <p className="text-xs text-gray-400 mb-3">No contributor credits found in global sources.</p>}
+                  {lookupResult.contributors.length > 0 && (
+                    <button
+                      onClick={useLookupCredits}
+                      className="w-full py-2 bg-green-600 text-white rounded-lg text-sm font-semibold hover:bg-green-500 transition"
+                    >✓ Use these credits</button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-5 text-xs text-gray-400">
+              <div className="flex-1 h-px bg-gray-200"></div>or upload your split sheet<div className="flex-1 h-px bg-gray-200"></div>
+            </div>
+
+            {/* Upload */}
             <div
               onClick={() => fileRef.current?.click()}
-              className="bg-gray-50 border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all border-gray-200 hover:border-indigo-900 hover:bg-indigo-50"
+              className="bg-gray-50 border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all border-gray-200 hover:border-indigo-900 hover:bg-indigo-50"
             >
-              <div className="text-5xl text-indigo-900 mb-4">📄</div>
-              <h3 className="text-lg font-medium mb-2">Drop your split sheet here</h3>
-              <p className="text-gray-500 text-sm mb-4">CSV, Excel, or PDF</p>
+              <div className="text-4xl text-indigo-900 mb-3">📄</div>
+              <h3 className="text-base font-medium mb-1">Drop your split sheet here</h3>
+              <p className="text-gray-500 text-sm">CSV, Excel, or PDF</p>
               <input ref={fileRef} type="file" className="hidden" accept=".csv,.xlsx,.xls,.pdf" onChange={() => loadSample(false)} />
             </div>
-            <div className="text-center my-4">
-              <button onClick={() => loadSample(false)} className="text-indigo-900 text-sm mx-2 font-medium hover:underline">Load perfect sample</button>
-              <button onClick={() => loadSample(true)} className="text-red-600 text-sm mx-2 font-medium hover:underline">Load test with errors</button>
+            <div className="text-center mt-4 flex items-center justify-center gap-1">
+              <button onClick={() => loadSample(false)} className="bg-green-50 border border-green-200 text-green-700 text-sm px-4 py-2 rounded-lg font-medium hover:bg-green-100 transition">✅ Load Perfect Sample</button>
+              <button onClick={() => loadSample(true)} className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded-lg font-medium hover:bg-red-100 transition ml-2">⚠️ Load Test with Errors</button>
             </div>
           </div>
 
