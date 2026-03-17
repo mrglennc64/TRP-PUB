@@ -528,7 +528,30 @@ export default function VerifySplitsPage() {
                 </div>
                 <div className="text-red-600 text-sm mb-3">
                   {errors.map((error, i) => (
-                    <div key={i}>• {error.message}</div>
+                    <div key={i} className="mb-2">
+                      • {error.message}
+                      {error.message.includes('missing name') && (
+                        <span className="ml-2">
+                          — <span className="text-gray-400">Assign a Legal Identity Hold — required to route royalties to unidentified contributor</span>
+                          {' '}<a
+                            href={`https://musicbrainz.org/search?query=&type=artist`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 underline hover:text-cyan-300 ml-1"
+                          >Search MusicBrainz</a>
+                        </span>
+                      )}
+                      {error.message.includes('missing IPI') && (
+                        <span className="ml-2">
+                          — <a
+                            href="https://musicbrainz.org/search?query=&type=artist"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-cyan-400 underline hover:text-cyan-300"
+                          >Search MusicBrainz IPI registry</a>
+                        </span>
+                      )}
+                    </div>
                   ))}
                 </div>
                 <button 
