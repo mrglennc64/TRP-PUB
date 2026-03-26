@@ -501,7 +501,6 @@ function BiometricModal({ lead, onClose }: { lead: typeof ALL_LEADS[0], onClose:
           <ul className="text-xs text-slate-400 space-y-1 list-disc list-inside">
             <li>Full legal name + stage name</li>
             <li>SSN or EIN (for W-9 filing)</li>
-            <li>Bank account for direct deposit</li>
             <li>Electronic authorization signature</li>
           </ul>
         </div>

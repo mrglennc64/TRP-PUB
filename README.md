@@ -1,81 +1,68 @@
 # TrapRoyaltiesPro — Production Server
 
 ## Server Info
-- **Host**: srv1406833.hstgr.cloud (Hostinger VPS)
-- **App Root**: /traproyalties-new
-- **OS**: Ubuntu 22.04
+- Hostname: srv1406833.hstgr.cloud
+- OS: Ubuntu (Hostinger VPS)
+- App root: /traproyalties-new
 
 ## Stack
-- **Frontend**: Next.js 14 App Router — port 4000 (PM2: traproyalties-next, id 3)
-- **Backend**: FastAPI + uvicorn — port 8000 (PM2: fastapi, id 42)
-- **DB**: SQLite isrc_mappings.db (primary), PostgreSQL optional
-- **Storage**: IDrive e2 S3-compatible (eu-central-2)
+- Frontend: Next.js 14 (PM2 id 3, traproyalties-next, port 4000)
+- Backend: FastAPI + uvicorn (PM2 fastapi, port 8000)
+- DB: SQLite (isrc_mappings.db)
 
-## Nginx Configuration
-Nginx reverse proxies both services:
+## PM2 Commands
+```
+pm2 list
+pm2 restart 3          # restart Next.js
+pm2 restart fastapi    # restart FastAPI
+```
 
+## Deploy Process
+1. Transfer files via base64 pipe over SSH (SCP blocked)
+2. cd /traproyalties-new/packages/frontend && npm run build
+3. pm2 restart 3
+
+## Nginx Config Summary
+- Config: /etc/nginx/nginx.conf, /etc/nginx/sites-enabled/
+- traproyaltiespro.com → port 4000 (Next.js), SSL via Let's Encrypt
+- /graph-api/ → port 5001
+- heyroya.se → separate site, same VPS
+- ollama → port 8080 (basic auth) → port 11434
+
+### traproyaltiespro.com nginx block:
 ```nginx
 server {
-    listen 80;
     listen 443 ssl;
-    server_name traproyaltiespro.com www.traproyaltiespro.com srv1406833.hstgr.cloud;
+    server_name traproyaltiespro.com www.traproyaltiespro.com;
+    ssl_certificate /etc/letsencrypt/live/traproyaltiespro.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/traproyaltiespro.com/privkey.pem;
 
-    # Frontend (Next.js on port 4000)
     location / {
-        proxy_pass http://127.0.0.1:4000;
+        proxy_pass http://localhost:4000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # Backend API (FastAPI on port 8000)
-    location /api/ {
-        proxy_pass http://127.0.0.1:8000/;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+    location /graph-api/ {
+        proxy_pass http://localhost:5001/;
     }
+}
+
+server {
+    listen 80;
+    server_name traproyaltiespro.com www.traproyaltiespro.com;
+    return 301 https://$host$request_uri;
 }
 ```
 
-## PM2 Process Management
-```bash
-pm2 list                    # show all processes
-pm2 restart 3               # restart frontend
-pm2 logs 3 --lines 50       # frontend logs
-pm2 restart fastapi         # restart backend
-```
+## Key Files
+- ecosystem.config.js — PM2 config (IDrive e2 keys hardcoded — move to .env)
+- packages/frontend/.env.local — ACRCloud, YouTube, Discogs, Stripe, OpenAI keys
+- /tmp/start_fastapi.sh — FastAPI startup script
+- /backups/ — timestamped site backups
 
-## Deploy Workflow
-```bash
-# After file changes:
-cd /traproyalties-new/packages/frontend
-npm run build
-pm2 restart 3
-
-# Backend restart:
-pm2 restart fastapi
-```
-
-## Key Directories
-- Frontend: /traproyalties-new/packages/frontend
-- Backend API: /traproyalties-new/api
-- PM2 config: /traproyalties-new/ecosystem.config.js
-- Nginx config: /etc/nginx/sites-enabled/traproyalties
-- SSL certs: /etc/letsencrypt/live/traproyaltiespro.com/
-
-## Backups
-Timestamped backups at: /backups/traproyalties-new-YYYYMMDD-HHMMSS/
-Full site tarballs at: /backups/traproyalties-full-YYYYMMDD-HHMMSS.tar.gz
-
-## Environment Variables
-Stored in /traproyalties-new/packages/frontend/.env.local
-Keys: OPENAI_API_KEY, YOUTUBE_API_KEY, DISCOGS_TOKEN, STRIPE_SECRET_KEY, ACRCLOUD_TOKEN
-IDrive e2 keys: in ecosystem.config.js (move to .env)
+## Backup Location
+Backups stored at: /backups/traproyalties-full-YYYYMMDD-HHMMSS.tar.gz
