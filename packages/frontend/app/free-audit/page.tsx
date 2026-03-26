@@ -10,6 +10,64 @@ const DEMO_AUDIT_BY_ISRC: Record<string, any> = {
   SEMSM2300002: DEMO_AUDIT_STOCKHOLM,
 };
 
+
+// ─── Recovery Intake Form (shown after scan results) ─────────────────────────
+
+function RecoveryIntakeForm({ artistName }: { artistName: string }) {
+  const [open, setOpen] = React.useState(false);
+  const link = '/artist-intake?artist=' + encodeURIComponent(artistName || '');
+
+  if (!open) {
+    return (
+      <div className="mt-10 bg-gradient-to-br from-indigo-900/30 to-[#1e293b]/60 border border-indigo-700/40 rounded-2xl p-7">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 bg-emerald-500/20 border border-emerald-500/30 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white">Ready to Recover Your Money?</h3>
+            <p className="text-sm text-slate-400">We found unclaimed royalties in your catalog.</p>
+          </div>
+        </div>
+        <p className="text-slate-400 text-sm mb-5 leading-relaxed">
+          To move forward with recovery we need a few details. This is 100% secure and only
+          used for filing with SoundExchange and your attorney. You only pay if money is recovered.
+        </p>
+        <div className="flex gap-3">
+          <button onClick={() => setOpen(true)}
+            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition">
+            Start Recovery Process
+          </button>
+          <a href={link} target="_blank" rel="noopener noreferrer"
+            className="px-6 py-3 bg-[#0f172a] border border-white/10 text-slate-400 hover:text-white rounded-xl text-sm font-medium transition">
+            Open Full Form
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10 bg-[#1e293b]/60 border border-white/10 rounded-2xl p-7">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-bold text-white">Recovery Intake</h3>
+        <button onClick={() => setOpen(false)} className="text-slate-500 hover:text-white transition text-sm">Collapse</button>
+      </div>
+      <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+        This information is 100% secure and only used for filing with SoundExchange and your attorney.
+        You only pay if money is recovered.
+      </p>
+      <a href={link} target="_blank" rel="noopener noreferrer"
+        className="block w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-center font-semibold rounded-xl transition">
+        Complete Secure Intake Form &rarr;
+      </a>
+      <p className="text-center text-xs text-slate-600 mt-3">Opens a new tab &mdash; 256-bit SSL encrypted</p>
+    </div>
+  );
+}
+
 export default function FreeAuditPage() {
   return (
     <Suspense>
@@ -1206,6 +1264,12 @@ function FreeAuditContent() {
               </div>
             )}
           </div>
+        )}
+
+
+        {/* ─── Recovery Intake Form ─────────────────────────────────────── */}
+        {result && (
+          <RecoveryIntakeForm artistName={query} />
         )}
 
         {/* Artist search results */}

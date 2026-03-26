@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATL Identity Graph — TrapRoyaltiesPro Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #06060f; font-family: 'Inter', system-ui, sans-serif; color: #f1f5f9; min-height: 100vh; }
+
+  /* Sidebar */
+  #sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 224px; background: #0d0d1a; border-right: 1px solid #1e1e3a; z-index: 40; display: flex; flex-direction: column; overflow-y: auto; transition: transform 0.3s; }
+  #main-content { margin-left: 224px; min-height: 100vh; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 8px; font-size: 13px; font-weight: 500; color: #6b7280; cursor: pointer; transition: all 0.15s; }
+  .nav-item:hover { background: #1a1a2e; color: #e2e8f0; }
+  .nav-item.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
+
+  /* Cards */
+  .card { background: #0f0f1f; border: 1px solid #1e1e3a; border-radius: 14px; padding: 20px; }
+  .stat-card { background: #0f0f1f; border: 1px solid #1e1e3a; border-radius: 12px; padding: 16px 18px; }
+  .subcard { background: #0a0a18; border: 1px solid #1a1a2e; border-radius: 10px; padding: 12px; }
+
+  /* Buttons */
+  .btn-primary { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; padding: 9px 18px; border-radius: 9px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em; }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,70,229,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-ghost { background: #1a1a2e; color: #94a3b8; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 1px solid #2d2d4a; cursor: pointer; transition: all 0.15s; }
+  .btn-ghost:hover { background: #232340; color: #e2e8f0; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+  /* Form */
+  .input { background: #1a1a2e; border: 1px solid #2d2d4a; color: #f1f5f9; padding: 10px 14px; border-radius: 9px; font-size: 13px; outline: none; transition: all 0.2s; width: 100%; }
+  .input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+  .input::placeholder { color: #4b5563; }
+
+  /* Tags / badges */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge-verified { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+  .badge-pending { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+  .badge-highrisk { background: rgba(239,68,68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+  .badge-demo { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25); }
+
+  /* Graph */
+  #cy { width: 100%; height: 520px; border-radius: 10px; background: radial-gradient(ellipse at center, #0d0d2e 0%, #06060f 100%); }
+
+  /* Upload */
+  .upload-area { border: 2px dashed #2d2d4a; border-radius: 12px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; animation: gentlePulse 3s ease-in-out infinite; }
+  .upload-area:hover { border-color: #4f46e5; background: rgba(79,70,229,0.05); animation: none; }
+  @keyframes gentlePulse { 0%,100%{ border-color: #2d2d4a; } 50%{ border-color: #4f46e5; } }
+
+  /* Timeline slider */
+  .timeline-slider { width: 100%; -webkit-appearance: none; height: 4px; background: #2d2d4a; border-radius: 99px; outline: none; cursor: pointer; }
+  .timeline-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 50%; cursor: pointer; border: 2px solid #06060f; box-shadow: 0 0 8px rgba(79,70,229,0.5); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: #06060f; }
+  ::-webkit-scrollbar-thumb { background: #2d2d4a; border-radius: 3px; }
+
+  /* Modals */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 60; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #0f0f1f; border: 1px solid #2d2d4a; border-radius: 18px; padding: 28px; max-width: 480px; width: calc(100% - 48px); box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
+
+  /* Tooltip */
+  #cy-tooltip { position: fixed; background: #0f0f1f; border: 1px solid #2d2d4a; color: #f1f5f9; padding: 10px 14px; border-radius: 10px; font-size: 12px; pointer-events: none; z-index: 999; display: none; min-width: 180px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+
+  /* Progress bar */
+  .progress-track { background: #1e1e3a; border-radius: 99px; height: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4f46e5, #7c3aed); border-radius: 99px; transition: width 0.3s; }
+
+  /* Activity dot */
+  .live-dot { width: 7px; height: 7px; background: #10b981; border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{ opacity: 1; } 50%{ opacity: 0.3; } }
+
+  /* Grain overlay */
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E"); opacity: 0.025; pointer-events: none; z-index: 100; }
+
+  /* Keyboard shortcut hint */
+  .kbd { display: inline-flex; align-items: center; gap: 2px; background: #1a1a2e; border: 1px solid #2d2d4a; padding: 1px 5px; border-radius: 4px; font-size: 10px; color: #6b7280; font-family: monospace; }
+
+  /* Conflict bar */
+  .conflict-bar { height: 8px; border-radius: 99px; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: translateX(0); box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); }
+    #main-content { margin-left: 0; }
+    .hide-mobile { display: none !important; }
+  }
+
+  /* Biometric animation */
+  @keyframes scanLine { 0%{ top: 0; } 100%{ top: 100%; } }
+  @keyframes fadeIn { from{ opacity:0; transform: scale(0.95); } to{ opacity:1; transform: scale(1); } }
+  .animate-fadein { animation: fadeIn 0.25s ease-out; }
+
+  /* Hover interactions */
+  .interactive { transition: all 0.15s; }
+  .interactive:hover { transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- TOOLTIP -->
+<div id="cy-tooltip"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div style="padding: 18px 16px; border-bottom: 1px solid #1e1e3a;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;box-shadow:0 4px 12px rgba(79,70,229,0.4);">TR</div>
+      <div>
+        <div style="font-weight:700;font-size:13px;color:#f1f5f9;">TrapRoyaltiesPro</div>
+        <div style="font-size:11px;color:#6366f1;display:flex;align-items:center;gap:5px;margin-top:1px;">
+          <span style="width:6px;height:6px;background:#10b981;border-radius:50%;display:inline-block;"></span> Enterprise Plan
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav style="padding:10px 8px;flex:1;">
+    <div class="nav-item" onclick="alert('Dashboard coming soon')">📊 <span>Dashboard</span></div>
+    <div class="nav-item active">🕸️ <span>Identity Graph</span></div>
+    <div class="nav-item" onclick="alert('3 open claims')">⚖️ <span>Claims</span>
+      <span style="margin-left:auto;background:rgba(239,68,68,0.2);color:#ef4444;font-size:10px;padding:1px 6px;border-radius:99px;">3</span>
+    </div>
+    <div class="nav-item" onclick="openExportModal('pdf')">📄 <span>Reports</span></div>
+    <div class="nav-item" onclick="alert('Settings')">⚙️ <span>Settings</span></div>
+    <div class="nav-item" onclick="alert('API Access — Beta')">🔌 <span>API Access</span>
+      <span style="margin-left:auto;background:rgba(245,158,11,0.15);color:#f59e0b;font-size:10px;padding:1px 6px;border-radius:99px;">Beta</span>
+    </div>
+  </nav>
+
+  <div style="padding:12px 8px;border-top:1px solid #1e1e3a;">
+    <div style="font-size:10px;font-weight:600;color:#4b5563;text-transform:uppercase;letter-spacing:0.08em;padding:0 4px;margin-bottom:6px;">Quick Actions</div>
+    <div class="nav-item" onclick="loadMockDataset()">🔍 <span>New Audit</span></div>
+    <div class="nav-item" onclick="document.getElementById('fileInput').click()">📁 <span>Upload Catalog</span></div>
+    <div class="nav-item" onclick="openExportModal('pdf')">📋 <span>Generate Report</span></div>
+    <div class="nav-item" onclick="openExportModal('evidence')">🔐 <span>Export Evidence</span></div>
+  </div>
+
+  <div style="padding:12px 16px;border-top:1px solid #1e1e3a;">
+    <div style="font-size:11px;color:#4b5563;margin-bottom:6px;">Audits Used</div>
+    <div class="progress-track"><div class="progress-fill" style="width:47%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-top:4px;">
+      <span>2,347 used</span><span>5,000 total</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main-content">
+
+  <!-- TOP NAVBAR -->
+  <header style="position:sticky;top:0;z-index:30;background:rgba(6,6,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid #1e1e3a;padding:10px 24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- Hamburger -->
+        <button onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none;background:none;border:none;color:#6b7280;cursor:pointer;padding:4px;" id="hamburgerBtn">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div>
+          <div style="font-weight:700;font-size:14px;color:#f1f5f9;">ATL Identity Graph</div>
+          <div style="font-size:11px;color:#4b5563;">Last updated: <span id="lastUpdated" style="color:#6366f1;">Just now</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;">
+        <!-- Collaborators -->
+        <div class="hide-mobile" style="display:flex;align-items:center;">
+          <div style="display:flex;align-items:center;margin-right:4px;">
+            <div title="Glenn Carter (you)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#7c3aed);border:2px solid #06060f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;z-index:3;">G</div>
+            <div title="Jerome (viewing)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#059669,#10b981);border:2px solid #06060f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-left:-8px;z-index:2;">J</div>
+            <div title="John Kim — SoundExchange (viewing)" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#d97706,#f59e0b);border:2px solid #06060f;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-left:-8px;z-index:1;color:#000;">JK</div>
+          </div>
+          <span style="font-size:11px;color:#4b5563;">3 viewing</span>
+        </div>
+
+        <div class="hide-mobile" style="width:1px;height:20px;background:#1e1e3a;"></div>
+
+        <!-- Notification bell -->
+        <div style="position:relative;">
+          <button onclick="toggleNotif()" style="background:none;border:none;cursor:pointer;color:#6b7280;padding:6px;border-radius:8px;transition:all 0.15s;" onmouseover="this.style.background='#1a1a2e';this.style.color='#f1f5f9'" onmouseout="this.style.background='none';this.style.color='#6b7280'">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <span style="position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:2px solid #06060f;"></span>
+          </button>
+          <div id="notifPanel" style="display:none;position:absolute;right:0;top:40px;width:300px;background:#0f0f1f;border:1px solid #2d2d4a;border-radius:14px;padding:16px;z-index:50;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;"><span>Notifications</span><span style="font-size:11px;color:#4f46e5;cursor:pointer;">Mark all read</span></div>
+            <div style="space-y:8px;">
+              <div style="display:flex;gap:10px;padding:10px;background:rgba(239,68,68,0.08);border-radius:8px;margin-bottom:8px;">
+                <span style="font-size:16px;">⚠️</span>
+                <div style="font-size:12px;"><div style="color:#ef4444;font-weight:600;">3 conflicts detected</div><div style="color:#4b5563;margin-top:2px;">"10AM/Save The World" — 2 mins ago</div></div>
+              </div>
+              <div style="display:flex;gap:10px;padding:10px;background:rgba(245,158,11,0.08);border-radius:8px;margin-bottom:8px;">
+                <span style="font-size:16px;">⏳</span>
+                <div style="font-size:12px;"><div style="color:#f59e0b;font-weight:600;">2 identities pending</div><div style="color:#4b5563;margin-top:2px;">Gunna, Turbo — awaiting review</div></div>
+              </div>
+              <div style="display:flex;gap:10px;padding:10px;background:rgba(16,185,129,0.08);border-radius:8px;">
+                <span style="font-size:16px;">💰</span>
+                <div style="font-size:12px;"><div style="color:#10b981;font-weight:600;">Claim #TRAP-4321 ready</div><div style="color:#4b5563;margin-top:2px;">$8,200 recoverable — 1 hour ago</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="openExportModal()" class="btn-primary hide-mobile" style="padding:8px 16px;font-size:12px;">↗ Export</button>
+
+        <!-- User -->
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 10px;border-radius:10px;transition:all 0.15s;" onmouseover="this.style.background='#1a1a2e'" onmouseout="this.style.background='none'">
+          <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;">G</div>
+          <div class="hide-mobile">
+            <div style="font-size:12px;font-weight:600;color:#f1f5f9;">Glenn Carter</div>
+            <div style="font-size:10px;color:#6b7280;">Founder</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <main style="padding:24px;max-width:1600px;margin:0 auto;">
+
+    <!-- HERO -->
+    <div style="position:relative;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#12103a 0%,#1e1b4b 45%,#2e1065 100%);margin-bottom:20px;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 25% 50%,rgba(99,102,241,0.25) 0%,transparent 55%),radial-gradient(ellipse at 75% 50%,rgba(124,58,237,0.2) 0%,transparent 55%);"></div>
+      <div style="position:relative;padding:32px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span class="badge badge-demo">🔴 DEMO MODE</span>
+            <span class="badge" style="background:rgba(16,185,129,0.15);color:#10b981;border-color:rgba(16,185,129,0.25);">● LIVE</span>
+            <span class="badge" style="background:rgba(99,102,241,0.15);color:#818cf8;border-color:rgba(99,102,241,0.25);">March 18, 2026</span>
+          </div>
+          <h1 style="font-size:28px;font-weight:900;color:#fff;margin-bottom:6px;letter-spacing:-0.02em;">ATL Identity Graph Engine</h1>
+          <p style="font-size:13px;color:#a5b4fc;max-width:480px;">Graph-based identity resolution + biometric anchoring for the Atlanta music ecosystem. Connecting aliases, ISRCs, PRO IDs, and studio credits into one verifiable identity.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button onclick="loadMockDataset()" id="loadMockBtn" class="btn-primary">⚡ Load Mock Dataset</button>
+          <button onclick="openBiometricModal()" class="btn-ghost" style="border-color:rgba(99,102,241,0.4);color:#a5b4fc;">🔐 Biometric Anchor</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS BAR -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;" class="stats-grid">
+      <div class="stat-card interactive">
+        <div style="font-size:24px;font-weight:900;color:#f1f5f9;" id="statNodes">1,247</div>
+        <div style="font-size:11px;color:#4b5563;margin-top:2px;">Total Nodes</div>
+        <div style="font-size:11px;color:#6366f1;margin-top:4px;">↑ 12% this week</div>
+      </div>
+      <div class="stat-card interactive">
+        <div style="font-size:24px;font-weight:900;color:#10b981;" id="statVerified">832</div>
+        <div style="font-size:11px;color:#4b5563;margin-top:2px;">Verified</div>
+        <div style="font-size:11px;color:#10b981;margin-top:4px;">67% of total</div>
+      </div>
+      <div class="stat-card interactive">
+        <div style="font-size:24px;font-weight:900;color:#f59e0b;" id="statPending">312</div>
+        <div style="font-size:11px;color:#4b5563;margin-top:2px;">Pending KYC</div>
+        <div style="font-size:11px;color:#f59e0b;margin-top:4px;">25% of total</div>
+      </div>
+      <div class="stat-card interactive">
+        <div style="font-size:24px;font-weight:900;color:#ef4444;" id="statRisk">103</div>
+        <div style="font-size:11px;color:#4b5563;margin-top:2px;">High Risk</div>
+        <div style="font-size:11px;color:#ef4444;margin-top:4px;">8% flagged</div>
+      </div>
+      <div class="stat-card interactive" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(6,6,15,1));border-color:rgba(16,185,129,0.2);">
+        <div style="font-size:24px;font-weight:900;color:#10b981;">$2.4M</div>
+        <div style="font-size:11px;color:#4b5563;margin-top:2px;">Recoverable</div>
+        <div style="font-size:11px;color:#10b981;margin-top:4px;">↑ $340K this month</div>
+      </div>
+    </div>
+
+    <!-- API STATUS BAR -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-size:13px;font-weight:600;color:#94a3b8;">API Connections</span>
+        <span style="font-size:11px;color:#4b5563;">Sync: 2 mins ago</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;font-size:12px;">
+          <span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>
+          <span style="color:#10b981;font-weight:600;">MusicBrainz</span><span style="color:#4b5563;">Connected ✓</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);border-radius:8px;font-size:12px;">
+          <span style="width:6px;height:6px;background:#f59e0b;border-radius:50%;animation:blink 1.5s infinite;"></span>
+          <span style="color:#f59e0b;font-weight:600;">SoundExchange</span><span style="color:#4b5563;">API Pending — John Kim</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.15);border-radius:8px;font-size:12px;">
+          <span style="width:6px;height:6px;background:#f59e0b;border-radius:50%;animation:blink 1.5s infinite;"></span>
+          <span style="color:#f59e0b;font-weight:600;">MLC</span><span style="color:#4b5563;">Beta Access Requested</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;font-size:12px;">
+          <span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>
+          <span style="color:#10b981;font-weight:600;">ASCAP</span><span style="color:#4b5563;">Connected ✓</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.15);border-radius:8px;font-size:12px;">
+          <span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>
+          <span style="color:#10b981;font-weight:600;">BMI</span><span style="color:#4b5563;">Connected ✓</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.15);border-radius:8px;font-size:12px;">
+          <span style="width:6px;height:6px;background:#6366f1;border-radius:50%;animation:blink 1.5s infinite;"></span>
+          <span style="color:#6366f1;font-weight:600;">Batch Processing</span><span style="color:#4b5563;">1,247 / 2,500 tracks (47%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH + UPLOAD -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;" class="two-col">
+      <!-- Search -->
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span style="width:28px;height:28px;background:rgba(99,102,241,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;">🔎</span>
+          Search Identity
+          <span class="kbd" style="margin-left:auto;">⌘K</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <input type="text" id="searchInput" class="input" placeholder="e.g. Wheezy, Metro Boomin, USUMV2301374" style="flex:1;" onkeydown="if(event.key==='Enter')doSearch()">
+          <button onclick="doSearch()" class="btn-primary" style="padding:9px 16px;white-space:nowrap;">Search</button>
+        </div>
+        <div>
+          <div style="font-size:11px;color:#4b5563;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Quick Filters</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button onclick="filterNodes('VERIFIED')" class="badge badge-verified" style="cursor:pointer;padding:5px 10px;transition:all 0.15s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">✅ Verified</button>
+            <button onclick="filterNodes('PENDING')" class="badge badge-pending" style="cursor:pointer;padding:5px 10px;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⏳ Pending</button>
+            <button onclick="filterNodes('HIGH_RISK')" class="badge badge-highrisk" style="cursor:pointer;padding:5px 10px;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⚠️ High Risk</button>
+            <button onclick="filterNodes('MONEY')" class="badge" style="cursor:pointer;padding:5px 10px;background:rgba(249,115,22,0.12);color:#fb923c;border:1px solid rgba(249,115,22,0.2);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">💸 Money Leak</button>
+            <button onclick="filterNodes('ALL')" class="badge" style="cursor:pointer;padding:5px 10px;background:#1a1a2e;color:#6b7280;border:1px solid #2d2d4a;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">✕ Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload -->
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+          <span style="width:28px;height:28px;background:rgba(124,58,237,0.15);border-radius:8px;display:flex;align-items:center;justify-content:center;">📁</span>
+          Upload Catalog Data
+        </div>
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+          <div style="font-size:28px;margin-bottom:6px;">📤</div>
+          <div style="font-size:13px;font-weight:500;color:#94a3b8;">Drop your file here or click to browse</div>
+          <div style="font-size:11px;color:#4b5563;margin-top:4px;">CSV, Excel, PDF split sheets</div>
+          <input type="file" id="fileInput" style="display:none;" accept=".csv,.xlsx,.pdf" onchange="handleFileUpload(this.files[0])">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;">
+          <button onclick="mockConnect('csv')" style="font-size:11px;padding:8px;background:#1a1a2e;border:1px solid #2d2d4a;border-radius:8px;color:#6b7280;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.color='#f1f5f9';this.style.background='#232340'" onmouseout="this.style.color='#6b7280';this.style.background='#1a1a2e'">📊 CSV Export</button>
+          <button onclick="mockConnect('spotify')" style="font-size:11px;padding:8px;background:#1a1a2e;border:1px solid #2d2d4a;border-radius:8px;color:#6b7280;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.color='#f1f5f9';this.style.background='#232340'" onmouseout="this.style.color='#6b7280';this.style.background='#1a1a2e'">🎵 Spotify URL</button>
+          <button onclick="mockConnect('pro')" style="font-size:11px;padding:8px;background:#1a1a2e;border:1px solid #2d2d4a;border-radius:8px;color:#6b7280;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.color='#f1f5f9';this.style.background='#232340'" onmouseout="this.style.color='#6b7280';this.style.background='#1a1a2e'">⚖️ PRO Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAPH -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:14px;font-weight:600;">🕸️ Identity Graph</span>
+          <span id="resultCount" style="font-size:12px;color:#4b5563;"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <!-- Legend -->
+          <div class="hide-mobile" style="display:flex;align-items:center;gap:10px;margin-right:8px;">
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;"><span style="width:9px;height:9px;border-radius:50%;background:#6366f1;display:inline-block;"></span>Person</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;"><span style="width:9px;height:9px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>Alias</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;"><span style="width:9px;height:9px;border-radius:50%;background:#10b981;display:inline-block;"></span>Work</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;"><span style="width:9px;height:9px;border-radius:50%;background:#06b6d4;display:inline-block;"></span>Studio</span>
+            <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;"><span style="width:9px;height:9px;border-radius:50%;background:#ec4899;display:inline-block;"></span>Label</span>
+          </div>
+          <button onclick="cy.zoom(cy.zoom()*1.25)" class="btn-ghost btn-sm">+</button>
+          <button onclick="cy.zoom(cy.zoom()*0.8)" class="btn-ghost btn-sm">−</button>
+          <button onclick="cy.fit();cy.layout({name:'cose',animate:true,randomize:false,nodeRepulsion:12000}).run()" class="btn-ghost btn-sm">Reset</button>
+        </div>
+      </div>
+
+      <div id="cy"></div>
+
+    </div>
+
+    <!-- NODE DETAIL PANEL -->
+    <div id="nodeDetails" style="display:none;margin-bottom:16px;" class="card animate-fadein">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="nodeTypeIcon" style="font-size:20px;">👤</span>
+          <div>
+            <div style="font-size:16px;font-weight:700;" id="nodeName">Node Details</div>
+            <div style="font-size:11px;color:#4b5563;" id="nodeType">Person</div>
+          </div>
+        </div>
+        <button onclick="document.getElementById('nodeDetails').style.display='none'" style="background:none;border:none;color:#4b5563;cursor:pointer;font-size:20px;line-height:1;">×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;" class="node-grid">
+        <div class="subcard"><div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;">Status</div><div id="nodeStatus" style="font-size:13px;font-weight:700;margin-top:4px;"></div></div>
+        <div class="subcard"><div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;">Confidence</div><div id="nodeConfidence" style="font-size:13px;font-weight:700;margin-top:4px;color:#10b981;"></div></div>
+        <div class="subcard"><div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;">Connections</div><div id="nodeConnections" style="font-size:13px;font-weight:700;margin-top:4px;color:#6366f1;"></div></div>
+        <div class="subcard"><div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;">SHA-256</div><div id="nodeHash" style="font-size:10px;font-family:monospace;color:#4b5563;margin-top:4px;word-break:break-all;"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;" class="node-detail-grid">
+        <div><div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Aliases</div><div id="nodeAliases" style="font-size:12px;"></div></div>
+        <div><div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Recent Works</div><div id="nodeWorks" style="font-size:12px;"></div></div>
+        <div>
+          <div style="font-size:10px;color:#4b5563;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Actions</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <button onclick="openBiometricModal()" class="btn-primary" style="font-size:12px;padding:8px;">🔐 Biometric Verify</button>
+            <button onclick="openExportModal('evidence')" class="btn-ghost" style="font-size:12px;padding:8px;">📋 Generate Evidence</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOT NODES + ACTIVITY + VERIFICATION QUEUE -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;" class="three-col">
+
+      <!-- Hot Nodes -->
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span>🔥 Hot Nodes</span>
+          <span style="font-size:11px;color:#4b5563;">by connections</span>
+        </div>
+        <div id="hotNodesList"></div>
+      </div>
+
+      <!-- Verification Queue -->
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">⏳ Verification Queue</div>
+        <div id="verificationQueue"></div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;" class="three-col">
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">Identity Breakdown</div>
+        <canvas id="donutChart" height="190"></canvas>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">Top Recoverable by Artist</div>
+        <canvas id="barChart" height="190"></canvas>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">Monthly Recoveries</div>
+        <canvas id="lineChart" height="190"></canvas>
+      </div>
+    </div>
+
+    <!-- STUDIO CONFLICTS + WEBHOOK SIMULATOR -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;" class="two-col">
+
+      <!-- Studio Conflict Density -->
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">🏢 Studio Conflict Density</div>
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:#f1f5f9;font-weight:500;">PatchWerk Recording Studios</span><span class="badge badge-highrisk">12 conflicts</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:80%;background:linear-gradient(90deg,#ef4444,#dc2626);"></div></div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:#f1f5f9;font-weight:500;">Means Street Studios</span><span class="badge badge-pending">5 conflicts</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:34%;background:linear-gradient(90deg,#f59e0b,#d97706);"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:#f1f5f9;font-weight:500;">Tree Sound Studios</span><span class="badge badge-verified">2 conflicts</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:13%;background:linear-gradient(90deg,#10b981,#059669);"></div></div>
+        </div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e1e3a;">
+          <div style="font-size:11px;color:#4b5563;margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;">Identity Resolution Progress</div>
+          <div style="display:flex;gap:6px;align-items:flex-end;height:50px;">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+              <div style="flex:1;width:100%;display:flex;align-items:flex-end;"><div style="width:100%;background:rgba(99,102,241,0.4);border-radius:3px 3px 0 0;" style="height:10%"></div></div>
+              <div style="font-size:9px;color:#4b5563;">Wk1</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+              <div style="flex:1;width:100%;display:flex;align-items:flex-end;"><div style="width:100%;background:rgba(99,102,241,0.5);border-radius:3px 3px 0 0;height:28%"></div></div>
+              <div style="font-size:9px;color:#4b5563;">Wk2</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+              <div style="flex:1;width:100%;display:flex;align-items:flex-end;"><div style="width:100%;background:rgba(99,102,241,0.7);border-radius:3px 3px 0 0;height:72%"></div></div>
+              <div style="font-size:9px;color:#4b5563;">Wk3</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+              <div style="flex:1;width:100%;display:flex;align-items:flex-end;"><div style="width:100%;background:#6366f1;border-radius:3px 3px 0 0;height:100%"></div></div>
+              <div style="font-size:9px;color:#4b5563;">Wk4</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#4b5563;margin-top:4px;">
+            <span>127</span><span>347</span><span>892</span><span>1,247</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matrix System Log -->
+      <div class="card" style="background:#020617;border:1px solid #0f2a1a;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="color:#00ff41;text-shadow:0 0 8px #00ff41;">⬛ System Log</span>
+          <span style="font-size:10px;color:#00ff41;opacity:0.6;font-family:monospace;">LIVE</span>
+        </div>
+        <div id="matrixLog" style="font-family:monospace;font-size:11px;max-height:160px;overflow-y:auto;line-height:1.6;"></div>
+      </div>
+
+      <!-- Webhook Simulator -->
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+          <span>📡 Webhook Simulator</span>
+          <button onclick="addWebhookEvent()" class="btn-ghost btn-sm">+ Trigger</button>
+        </div>
+        <div id="webhookLog" style="font-family:monospace;font-size:11px;max-height:180px;overflow-y:auto;"></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #1e1e3a;">
+          <div style="font-size:11px;color:#4b5563;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">Data Sources</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div class="subcard" style="font-size:11px;"><div style="color:#4b5563;">DSPs Processed</div><div style="font-weight:700;color:#6366f1;margin-top:2px;">47M streams</div></div>
+            <div class="subcard" style="font-size:11px;"><div style="color:#4b5563;">PRO Matches</div><div style="font-weight:700;color:#6366f1;margin-top:2px;">1,247 regs</div></div>
+            <div class="subcard" style="font-size:11px;"><div style="color:#4b5563;">Studio Links</div><div style="font-weight:700;color:#6366f1;margin-top:2px;">23 sessions</div></div>
+            <div class="subcard" style="font-size:11px;"><div style="color:#4b5563;">Split Sheets</div><div style="font-weight:700;color:#6366f1;margin-top:2px;">89 parsed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="padding:16px;text-align:center;border-top:1px solid #1e1e3a;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <div style="font-size:11px;color:#4b5563;">Last backup: March 18, 2026 · 11:47 PM</div>
+      <div style="display:flex;align-items:center;gap:16px;font-size:11px;color:#4b5563;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>All systems operational</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span>Blockchain sync: Current</span>
+        <span>TrapRoyaltiesPro v2.4.1</span>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /main-content -->
+
+<!-- EXPORT MODAL -->
+<div id="exportModal" class="modal-overlay">
+  <div class="modal-box animate-fadein" style="max-width:440px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:16px;font-weight:700;">↗ Export</div>
+      <button onclick="closeModal('exportModal')" style="background:none;border:none;color:#4b5563;cursor:pointer;font-size:20px;">×</button>
+    </div>
+    <div id="exportStep1">
+      <div style="font-size:13px;color:#6b7280;margin-bottom:16px;">Choose your export format:</div>
+      <div style="display:grid;gap:8px;">
+        <button onclick="startExport('PNG')" class="btn-ghost" style="text-align:left;padding:12px 14px;font-size:13px;">🖼️ Export Graph as PNG</button>
+        <button onclick="startExport('CSV')" class="btn-ghost" style="text-align:left;padding:12px 14px;font-size:13px;">📊 Export Data as CSV</button>
+        <button onclick="startExport('PDF')" class="btn-ghost" style="text-align:left;padding:12px 14px;font-size:13px;">📄 Export Report as PDF</button>
+        <button onclick="startExport('ZIP')" class="btn-ghost" style="text-align:left;padding:12px 14px;font-size:13px;" style="border-color:rgba(99,102,241,0.4);">🔐 Export Evidence Package (ZIP)<br><span style="font-size:11px;color:#4b5563;">Includes SHA-256 hash, QR code, blockchain proof</span></button>
+      </div>
+    </div>
+    <div id="exportStep2" style="display:none;text-align:center;padding:10px 0;">
+      <div style="font-size:32px;margin-bottom:12px;">⚙️</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;">Generating your <span id="exportTypeName"></span>...</div>
+      <div style="font-size:12px;color:#4b5563;margin-bottom:16px;">Applying SHA-256 hash + blockchain timestamp</div>
+      <div class="progress-track" style="margin-bottom:8px;"><div class="progress-fill" id="exportProgressBar" style="width:0%;"></div></div>
+      <div style="font-size:11px;color:#4b5563;" id="exportProgressLabel">0%</div>
+    </div>
+    <div id="exportStep3" style="display:none;text-align:center;padding:10px 0;">
+      <div style="font-size:40px;margin-bottom:12px;">✅</div>
+      <div style="font-size:15px;font-weight:700;color:#10b981;margin-bottom:6px;">Export Ready</div>
+      <div style="font-size:12px;color:#4b5563;margin-bottom:4px;">File size: 2.4 MB · <span id="exportFileName">report.pdf</span></div>
+      <div style="font-family:monospace;font-size:10px;color:#374151;background:#0a0a18;padding:8px;border-radius:6px;margin:12px 0;word-break:break-all;">SHA-256: a3f8d29e71c4b6082f1e5d3a9c7b4e18f2d6a0c3b5e7f9d2a4c6e8b0f1d3e5a7</div>
+      <button onclick="closeModal('exportModal')" class="btn-primary" style="width:100%;">⬇️ Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- BIOMETRIC MODAL -->
+<div id="biometricModal" class="modal-overlay">
+  <div class="modal-box animate-fadein" style="max-width:420px;text-align:center;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:16px;font-weight:700;">🔐 Biometric Anchor</div>
+      <button onclick="closeModal('biometricModal')" style="background:none;border:none;color:#4b5563;cursor:pointer;font-size:20px;">×</button>
+    </div>
+
+    <div id="bioStep1">
+      <div style="width:120px;height:120px;margin:0 auto 16px;border-radius:50%;background:#1a1a2e;border:3px solid #2d2d4a;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:48px;">👤</span>
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#6366f1,transparent);animation:scanLine 1.5s linear infinite;"></div>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;">Position face in frame</div>
+      <div style="font-size:12px;color:#4b5563;margin-bottom:20px;">Biometric data is never stored — only a SHA-256 hash is retained</div>
+      <button onclick="startBiometric()" class="btn-primary" style="width:100%;">📸 Capture Biometric</button>
+    </div>
+
+    <div id="bioStep2" style="display:none;">
+      <div style="width:120px;height:120px;margin:0 auto 16px;border-radius:50%;background:#1a1a2e;border:3px solid #4f46e5;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(99,102,241,0.3);">
+        <span style="font-size:48px;">👤</span>
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#6366f1,transparent);animation:scanLine 0.8s linear infinite;"></div>
+      </div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px;color:#6366f1;">Analyzing biometrics...</div>
+      <div style="font-size:12px;color:#4b5563;margin-bottom:16px;" id="bioStatusText">Detecting facial landmarks...</div>
+      <div class="progress-track"><div class="progress-fill" id="bioProgressBar" style="width:0%;"></div></div>
+    </div>
+
+    <div id="bioStep3" style="display:none;">
+      <div style="width:120px;height:120px;margin:0 auto 16px;border-radius:50%;background:rgba(16,185,129,0.1);border:3px solid #10b981;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(16,185,129,0.3);">
+        <span style="font-size:48px;">✅</span>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:#10b981;margin-bottom:6px;">BIOMETRIC ANCHOR LOCKED</div>
+      <div style="font-size:12px;color:#4b5563;margin-bottom:12px;">Identity verified and cryptographically sealed</div>
+      <div style="font-family:monospace;font-size:10px;color:#374151;background:#0a0a18;padding:10px;border-radius:8px;text-align:left;margin-bottom:16px;">
+        <div style="color:#10b981;margin-bottom:4px;">✓ BIOMETRIC_HASH: e5f3a9b2c7d4...</div>
+        <div style="color:#10b981;margin-bottom:4px;">✓ BLOCKCHAIN_TS: 1710800842</div>
+        <div style="color:#10b981;">✓ STATUS: VERIFIED · IMMUTABLE</div>
+      </div>
+      <button onclick="closeModal('biometricModal')" class="btn-primary" style="width:100%;background:linear-gradient(135deg,#059669,#10b981);">Done — Identity Sealed</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes scanLine { 0%{ top:0%; } 100%{ top:100%; } }
+  .stats-grid { grid-template-columns: repeat(5,1fr); }
+  @media(max-width:900px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
+  @media(max-width:600px) { .stats-grid { grid-template-columns: repeat(2,1fr); } .three-col,.two-col { grid-template-columns:1fr!important; } .node-grid,.node-detail-grid { grid-template-columns:1fr 1fr!important; } #hamburgerBtn { display:block!important; } }
+</style>
+
+<script>
+// ─── API CONFIG ───────────────────────────────────────────────────────────────
+// Change this to your VPS URL once the graph-api server is running
+const API_BASE = 'https://traproyaltiespro.com/graph-api';
+let   IS_LIVE  = false;   // flips to true when API responds
+
+// ─── MOCK DATA (fallback) ─────────────────────────────────────────────────────
+const ARTISTS = {
+  metro:   { name:'Metro Boomin', real:'Leland Tyler Wayne',            ipi:'00690060591', status:'VERIFIED',  works:412, streams:'2.1B', pro:'BMI #24782',  aliases:['Young Metro','Metro Boomin Always Doin Too Much'], label:'Republic Records',  confidence:98, recoverable:127000 },
+  future:  { name:'Future',       real:'Nayvadius DeMun Wilburn',       ipi:'00712834920', status:'VERIFIED',  works:387, streams:'3.4B', pro:'ASCAP #78234', aliases:['Future Hendrix','Freebandz','Pluto'],            label:'300 Ent / Epic',    confidence:97, recoverable:98000  },
+  wheezy:  { name:'Wheezy',       real:'Wesley Glass',                  ipi:'00658428135', status:'PENDING',   works:247, streams:'890M', pro:'BMI #12345',  aliases:['Wheezy Outta Here','WheezyBeats'],                label:'Internet Money',    confidence:88, recoverable:8750   },
+  southside:{ name:'Southside',   real:'Joshua Luellen',                ipi:'00609325985', status:'VERIFIED',  works:312, streams:'1.2B', pro:'ASCAP #45621', aliases:['808 Mafia','Sosa 808'],                          label:'808 Mafia / Epic',  confidence:96, recoverable:19200  },
+  zaytoven:{ name:'Xavier Dotson',real:'Xavier James Dotson (Zaytoven)',ipi:'00451554668', status:'VERIFIED',  works:178, streams:'450M', pro:'ASCAP #24623', aliases:['Zaytoven','ZaytheGroatKing'],                     label:'Imperial Cuts',     confidence:91, recoverable:24500  },
+  chainz:  { name:'2 Chainz',     real:'Tauheed Epps',                  ipi:'00488661706', status:'HIGH_RISK', works:145, streams:'820M', pro:'BMI #48866',  aliases:['Tity Boi','Dolla Boy'],                           label:'T.R.U. / Def Jam',  confidence:62, recoverable:12800  },
+  baby:    { name:'Lil Baby',     real:'Dominique Armani Jones',        ipi:'00723819054', status:'VERIFIED',  works:203, streams:'2.8B', pro:'BMI #98371',  aliases:['4PF','The Voice'],                               label:'QC / Capitol',      confidence:99, recoverable:43200  },
+  gunna:   { name:'Gunna',        real:'Sergio Giavanni Kitchens',      ipi:'00634712890', status:'PENDING',   works:98,  streams:'1.1B', pro:'ASCAP #31247', aliases:['Wunna','DS4Ever'],                               label:'YSL Records',       confidence:72, recoverable:31000  },
+  thug:    { name:'Young Thug',   real:'Jeffery Lamar Williams',        ipi:'00598234710', status:'VERIFIED',  works:247, streams:'2.3B', pro:'BMI #66234',  aliases:['YSL','Thugger','SEX','Barter 6'],               label:'YSL / Atlantic',    confidence:94, recoverable:28500  },
+  travis:  { name:'Travis Scott', real:'Jacques Berman Webster II',     ipi:'00612893047', status:'VERIFIED',  works:189, streams:'3.1B', pro:'ASCAP #22891', aliases:['La Flame','Cactus Jack','Flame'],                label:'Cactus Jack / Epic',confidence:97, recoverable:19800  },
+  savage:  { name:'21 Savage',    real:'Shéyaa Bin Abraham-Joseph',     ipi:'00548923176', status:'VERIFIED',  works:156, streams:'1.9B', pro:'BMI #55432',  aliases:['Saint Laurent Don','Issa'],                      label:'Slaughter Gang',    confidence:96, recoverable:43000  },
+  turbo:   { name:'Turbo',        real:'Dominique Jones',               ipi:'00712345678', status:'PENDING',   works:89,  streams:'340M', pro:'BMI #71234',  aliases:['TurboFire','DJ Turbo'],                          label:'Independent',       confidence:68, recoverable:12000  },
+};
+
+const graphElements = { nodes: [], edges: [] };
+
+// Person nodes
+const personColors = { VERIFIED:'#6366f1', PENDING:'#a78bfa', HIGH_RISK:'#ef4444' };
+Object.entries(ARTISTS).forEach(([id,a]) => {
+  const size = Math.min(70, Math.max(40, 35 + a.works/12));
+  // Make Metro Boomin the clear center hub — boost size
+  const nodeSize = id === 'metro' ? 75 : size;
+  const ipiLabel = a.ipi ? `\n${a.ipi}` : '';
+  graphElements.nodes.push({ data:{ id, label:a.name + ipiLabel, type:'person', size:nodeSize, color: personColors[a.status]||'#6366f1', status:a.status, real:a.real, streams:a.streams, works:a.works, confidence:a.confidence, aliases:a.aliases, pro:a.pro, ipi:a.ipi } });
+});
+
+// Alias nodes (key ones)
+const aliases = [
+  { id:'alias_metro1',    label:'Young Metro',     parent:'metro'    },
+  { id:'alias_wheezy1',  label:'WheezyOuttaHere', parent:'wheezy'   },
+  { id:'alias_future1',  label:'Future Hendrix',  parent:'future'   },
+  { id:'alias_thug1',    label:'Thugger',         parent:'thug'     },
+  { id:'alias_thug2',    label:'YSL Barter',      parent:'thug'     },
+  { id:'alias_travis1',  label:'La Flame',        parent:'travis'   },
+  { id:'alias_travis2',  label:'Cactus Jack',     parent:'travis'   },
+  { id:'alias_zay1',     label:'Zaytoven',        parent:'zaytoven' },
+  { id:'alias_chainz1',  label:'Tity Boi',        parent:'chainz'   },
+];
+aliases.forEach(a => {
+  graphElements.nodes.push({ data:{ id:a.id, label:a.label, type:'alias', size:28, color:'#f59e0b', status:'VERIFIED' } });
+  graphElements.edges.push({ data:{ source:a.parent, target:a.id, type:'ALIAS_OF' } });
+});
+
+// Work nodes
+const works = [
+  { id:'w1', label:'10AM/Save World\n95M', credits:['wheezy','metro','future'], status:'HIGH_RISK' },
+  { id:'w2', label:'Too Fast\n43M',        credits:['wheezy','future'],          status:'VERIFIED' },
+  { id:'w3', label:'Rich As The Lord\n127M',credits:['metro','future','travis'],  status:'VERIFIED' },
+  { id:'w4', label:'Drip Too Hard\n340M',  credits:['baby','gunna'],             status:'VERIFIED' },
+  { id:'w5', label:'Franchise\n420M',      credits:['travis','thug','savage'],   status:'VERIFIED' },
+  { id:'w6', label:'Take It 2 Trial\n78M', credits:['thug','gunna'],            status:'PENDING'  },
+];
+works.forEach(w => {
+  graphElements.nodes.push({ data:{ id:w.id, label:w.label, type:'work', size:38, color: w.status==='HIGH_RISK'?'#ef4444': w.status==='PENDING'?'#f59e0b':'#10b981', status:w.status } });
+  w.credits.forEach(c => graphElements.edges.push({ data:{ source:c, target:w.id, type:'CREDITED_ON' } }));
+});
+
+// Rights nodes
+const rights = [
+  { id:'r1', label:'BMI #12345', person:'wheezy' },
+  { id:'r2', label:'BMI #24782', person:'metro' },
+  { id:'r3', label:'ASCAP #45621', person:'southside' },
+];
+rights.forEach(r => {
+  graphElements.nodes.push({ data:{ id:r.id, label:r.label, type:'rights', size:24, color:'#8b5cf6', status:'VERIFIED' } });
+  graphElements.edges.push({ data:{ source:r.person, target:r.id, type:'REGISTERED_WITH' } });
+});
+
+// Studio nodes
+const studios = [
+  { id:'studio_patch', label:'PatchWerk\nStudios', links:['metro','future','thug','travis'] },
+  { id:'studio_means', label:'Means Street\nStudios', links:['baby','gunna'] },
+  { id:'studio_tree',  label:'Tree Sound\nStudios',   links:['southside','wheezy'] },
+];
+studios.forEach(s => {
+  graphElements.nodes.push({ data:{ id:s.id, label:s.label, type:'studio', size:36, color:'#06b6d4', status:'VERIFIED' } });
+  s.links.forEach(l => graphElements.edges.push({ data:{ source:l, target:s.id, type:'RECORDED_AT' } }));
+});
+
+// Label nodes
+const labels = [
+  { id:'label_qc',  label:'Quality Control', links:['baby'] },
+  { id:'label_ysl', label:'YSL Records',      links:['thug','gunna'] },
+  { id:'label_300', label:'300 Ent',          links:['future'] },
+  { id:'label_epic',label:'Epic Records',     links:['travis','savage','southside'] },
+];
+labels.forEach(l => {
+  graphElements.nodes.push({ data:{ id:l.id, label:l.label, type:'label', size:32, color:'#ec4899', status:'VERIFIED' } });
+  l.links.forEach(a => graphElements.edges.push({ data:{ source:a, target:l.id, type:'SIGNED_TO' } }));
+});
+
+// Strong connection: Metro Boomin (center hub) ↔ Wheezy
+graphElements.edges.push({ data:{ source:'metro', target:'wheezy', type:'STRONG_CONNECTION' } });
+
+// Identity conflict: Tity Boi alias ↔ Tauheed Epps (2 Chainz) — dashed red bridge
+graphElements.edges.push({ data:{ source:'alias_chainz1', target:'chainz', type:'IDENTITY_CONFLICT' } });
+
+// High risk ghost nodes
+graphElements.nodes.push({ data:{ id:'ghost1', label:'Unverified\nProd #47', type:'person', size:32, color:'#dc2626', status:'HIGH_RISK' } });
+graphElements.nodes.push({ data:{ id:'ghost2', label:'Unknown\nProd #12', type:'person', size:28, color:'#dc2626', status:'HIGH_RISK' } });
+graphElements.edges.push({ data:{ source:'ghost1', target:'w1', type:'CREDITED_ON' } });
+graphElements.edges.push({ data:{ source:'ghost2', target:'w6', type:'CREDITED_ON' } });
+
+// ─── CYTOSCAPE STYLE (shared) ─────────────────────────────────────────────────
+const CY_STYLE = [
+  { selector: 'node', style: {
+    'label': 'data(label)', 'width': 'data(size)', 'height': 'data(size)',
+    'background-color': 'data(color)', 'border-width': 2, 'border-color': 'data(color)',
+    'border-opacity': 0.4,
+    'color': '#ffffff', 'font-size': '9px', 'font-weight': '600',
+    'text-valign': 'center', 'text-halign': 'center',
+    'text-wrap': 'wrap', 'text-max-width': '60px',
+    'text-outline-width': 2, 'text-outline-color': '#06060f'
+  }},
+  { selector: 'node[status="VERIFIED"]', style: { 'border-color': '#10b981', 'border-width': 2.5 } },
+  { selector: 'node[status="PENDING"]',  style: { 'border-color': '#f59e0b', 'border-width': 2.5 } },
+  { selector: 'node[status="HIGH_RISK"]',style: { 'border-color': '#ef4444', 'border-width': 3, 'border-style': 'dashed' } },
+  { selector: 'edge', style: {
+    'width': 1.2, 'line-color': '#2d2d4a', 'target-arrow-color': '#2d2d4a',
+    'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'opacity': 0.7
+  }},
+  { selector: 'edge[type="ALIAS_OF"]',       style: { 'line-color':'#f59e0b','line-style':'dashed','target-arrow-color':'#f59e0b','opacity':0.6 } },
+  { selector: 'edge[type="CREDITED_ON"]',    style: { 'line-color':'#4f46e5','target-arrow-color':'#4f46e5','opacity':0.5 } },
+  { selector: 'edge[type="REGISTERED_WITH"]',style: { 'line-color':'#8b5cf6','line-style':'dotted','target-arrow-color':'#8b5cf6','opacity':0.5 } },
+  { selector: 'edge[type="RECORDED_AT"]',    style: { 'line-color':'#06b6d4','target-arrow-color':'#06b6d4','opacity':0.4 } },
+  { selector: 'edge[type="SIGNED_TO"]',          style: { 'line-color':'#ec4899','target-arrow-color':'#ec4899','opacity':0.4 } },
+  { selector: 'edge[type="STRONG_CONNECTION"]',  style: { 'line-color':'#6366f1','width':4,'target-arrow-color':'#6366f1','opacity':0.9,'line-style':'solid' } },
+  { selector: 'edge[type="IDENTITY_CONFLICT"]',  style: { 'line-color':'#ef4444','line-style':'dashed','target-arrow-color':'#ef4444','opacity':1,'width':3,'target-arrow-shape':'none' } },
+  { selector: 'node:selected', style: { 'border-width': 4, 'border-color': '#f1f5f9', 'border-opacity': 1 } },
+  { selector: '.faded',       style: { 'opacity': 0.15 } },
+  { selector: '.highlighted', style: { 'opacity': 1 } },
+];
+
+const LAYOUT_CONFIG = {
+  name: 'cose', animate: true, animationDuration: 800, randomize: true,
+  nodeRepulsion: 12000, idealEdgeLength: 90, edgeElasticity: 0.45,
+  gravity: 80, numIter: 1000, fit: true, padding: 30
+};
+
+// ─── CYTOSCAPE INIT ──────────────────────────────────────────────────────────
+var cy = cytoscape({
+  container: document.getElementById('cy'),
+  layout: LAYOUT_CONFIG,
+  style: CY_STYLE,
+  elements: graphElements   // start with mock data
+});
+
+// ─── API FETCH — try live data, fall back silently ────────────────────────────
+function setDataSourceBadge(live) {
+  const heroTags = document.querySelector('.badge-demo').closest('div');
+  const existing = document.getElementById('dataSourceBadge');
+  if(existing) existing.remove();
+  const badge = document.createElement('span');
+  badge.id = 'dataSourceBadge';
+  badge.className = 'badge';
+  badge.style.cssText = live
+    ? 'background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.25);cursor:default;'
+    : 'background:rgba(107,114,128,0.15);color:#6b7280;border:1px solid rgba(107,114,128,0.2);cursor:default;';
+  badge.textContent = live ? '🗄️ LIVE DATA' : '📦 MOCK DATA';
+  heroTags.appendChild(badge);
+}
+
+async function fetchLiveGraph() {
+  try {
+    const [graphRes, statsRes] = await Promise.all([
+      fetch(`${API_BASE}/graph`, { signal: AbortSignal.timeout(5000) }),
+      fetch(`${API_BASE}/stats`,  { signal: AbortSignal.timeout(5000) }),
+    ]);
+    if (!graphRes.ok) throw new Error('API not ready');
+
+    const { nodes, edges, meta } = await graphRes.json();
+    const stats = await statsRes.json();
+
+    // Swap graph data
+    cy.elements().remove();
+    cy.add([...nodes, ...edges]);
+    cy.layout(LAYOUT_CONFIG).run();
+
+    // Update stats bar
+    document.getElementById('statNodes').textContent    = stats.totalNodes.toLocaleString();
+    document.getElementById('statVerified').textContent = stats.verified.toLocaleString();
+    document.getElementById('statPending').textContent  = stats.pending.toLocaleString();
+    document.getElementById('statRisk').textContent     = stats.highRisk.toLocaleString();
+    document.getElementById('resultCount').textContent  = `— ${meta.nodeCount} nodes, ${meta.edgeCount} edges from Neo4j`;
+
+    IS_LIVE = true;
+    setDataSourceBadge(true);
+    addActivity(`Neo4j connected — ${meta.nodeCount} nodes loaded`, 'green', 'Just now');
+    console.log('✅ Live graph data loaded from Neo4j');
+
+  } catch (err) {
+    // API not up yet — silently stay on mock data
+    setDataSourceBadge(false);
+    console.log('ℹ️ API not available, using mock data:', err.message);
+  }
+}
+
+// Try live data on load, retry every 30s
+fetchLiveGraph();
+setInterval(fetchLiveGraph, 30000);
+
+// ─── NODE CLICK ───────────────────────────────────────────────────────────────
+cy.on('tap', 'node', function(evt) {
+  const n = evt.target;
+  const d = n.data();
+  const panel = document.getElementById('nodeDetails');
+  panel.style.display = 'block';
+
+  const typeIcons = { person:'👤', alias:'🏷️', work:'🎵', rights:'⚖️', studio:'🏢', label:'🏷️' };
+  document.getElementById('nodeTypeIcon').textContent = typeIcons[d.type] || '●';
+  document.getElementById('nodeName').textContent = d.label.replace('\n',' ');
+  const typeLine = (d.type || 'Node').charAt(0).toUpperCase() + (d.type||'').slice(1);
+  const realLine = d.real ? ` · Legal name: ${d.real}` : '';
+  document.getElementById('nodeType').textContent = typeLine + realLine;
+
+  const statusHtml = {
+    VERIFIED: '<span class="badge badge-verified">✅ Verified</span>',
+    PENDING:  '<span class="badge badge-pending">⏳ Pending KYC</span>',
+    HIGH_RISK:'<span class="badge badge-highrisk">⚠️ High Risk</span>'
+  };
+  document.getElementById('nodeStatus').innerHTML = statusHtml[d.status] || d.status || '—';
+  document.getElementById('nodeConfidence').textContent = (d.confidence || Math.floor(Math.random()*20+75)) + '%';
+  document.getElementById('nodeConnections').textContent = n.connectedEdges().length + ' links';
+  document.getElementById('nodeHash').textContent = 'sha256:' + Array.from({length:8},()=>Math.floor(Math.random()*65536).toString(16).padStart(4,'0')).join('');
+
+  const a = ARTISTS[d.id];
+  if(a) {
+    document.getElementById('nodeAliases').innerHTML = a.aliases.map(x=>`<div style="padding:3px 0;color:#94a3b8;">• ${x}</div>`).join('');
+    document.getElementById('nodeWorks').innerHTML = `<div style="padding:3px 0;color:#94a3b8;">• ${a.works} registered works</div><div style="padding:3px 0;color:#94a3b8;">• ${a.streams} total streams</div><div style="padding:3px 0;color:#10b981;">• $${(a.recoverable/1000).toFixed(0)}K recoverable</div>`;
+  } else {
+    document.getElementById('nodeAliases').innerHTML = `<div style="color:#4b5563;">No aliases</div>`;
+    document.getElementById('nodeWorks').innerHTML = `<div style="color:#4b5563;">No works linked</div>`;
+  }
+
+  panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+});
+
+// ─── TOOLTIP ─────────────────────────────────────────────────────────────────
+const tooltip = document.getElementById('cy-tooltip');
+cy.on('mouseover', 'node', function(evt) {
+  const d = evt.target.data();
+  const a = ARTISTS[d.id];
+  let html = `<div style="font-weight:700;margin-bottom:4px;">${d.label.replace('\n',' ')}</div>`;
+  html += `<div style="color:#4b5563;margin-bottom:2px;">Type: ${d.type}</div>`;
+  if(a) { html += `<div style="color:#10b981;">$${(a.recoverable/1000).toFixed(0)}K recoverable</div>`; }
+  html += `<div style="margin-top:4px;">${{VERIFIED:'✅ Verified',PENDING:'⏳ Pending',HIGH_RISK:'⚠️ High Risk'}[d.status]||''}</div>`;
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+});
+cy.on('mousemove', function(evt) {
+  tooltip.style.left = (evt.originalEvent.clientX + 14) + 'px';
+  tooltip.style.top  = (evt.originalEvent.clientY - 10) + 'px';
+});
+cy.on('mouseout', 'node', function() { tooltip.style.display = 'none'; });
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
+function doSearch() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  if(!q) { filterNodes('ALL'); return; }
+  let count = 0;
+  cy.nodes().forEach(n => {
+    const match = n.data('label').toLowerCase().includes(q);
+    match ? n.removeClass('faded').show() : n.addClass('faded');
+    if(match) count++;
+  });
+  cy.edges().forEach(e => {
+    const vis = e.source().visible() && !e.source().hasClass('faded') && !e.target().hasClass('faded');
+    vis ? e.removeClass('faded') : e.addClass('faded');
+  });
+  document.getElementById('resultCount').textContent = `— ${count} match${count!==1?'es':''}`;
+}
+
+// ─── FILTER ───────────────────────────────────────────────────────────────────
+function filterNodes(filter) {
+  document.getElementById('searchInput').value = '';
+  cy.nodes().removeClass('faded highlighted');
+  cy.edges().removeClass('faded');
+  if(filter === 'ALL') { document.getElementById('resultCount').textContent = ''; return; }
+
+  if(filter === 'MONEY') {
+    const moneyLeakIds = ['ghost1','ghost2','w1','gunna','turbo'];
+    cy.nodes().forEach(n => moneyLeakIds.includes(n.id()) ? n.addClass('highlighted') : n.addClass('faded'));
+    cy.edges().forEach(e => {
+      const vis = !e.source().hasClass('faded') || !e.target().hasClass('faded');
+      if(!vis) e.addClass('faded');
+    });
+    document.getElementById('resultCount').textContent = '— 5 money leak nodes';
+    return;
+  }
+
+  let count = 0;
+  cy.nodes().forEach(n => {
+    if(n.data('status') === filter) { n.addClass('highlighted'); count++; } else { n.addClass('faded'); }
+  });
+  cy.edges().forEach(e => {
+    const vis = !e.source().hasClass('faded') && !e.target().hasClass('faded');
+    if(!vis) e.addClass('faded');
+  });
+  document.getElementById('resultCount').textContent = `— ${count} ${filter.toLowerCase()} nodes`;
+}
+
+// ─── LOAD MOCK DATASET ────────────────────────────────────────────────────────
+function loadMockDataset() {
+  const btn = document.getElementById('loadMockBtn');
+  btn.textContent = '⏳ Loading...';
+  btn.disabled = true;
+  filterNodes('ALL');
+  setTimeout(() => {
+    cy.layout({ name:'cose', animate:true, randomize:true, nodeRepulsion:14000, idealEdgeLength:100, animationDuration:1000 }).run();
+    addActivity('Dataset reloaded — 1,247 nodes', 'green');
+    btn.textContent = '✅ Loaded!';
+    setTimeout(() => { btn.textContent = '⚡ Load Mock Dataset'; btn.disabled = false; }, 2000);
+  }, 1200);
+}
+
+// ─── TIME TRAVEL ─────────────────────────────────────────────────────────────
+const timelineData = [
+  { year:2023, nodes:127, label:'2023 — 127 nodes' },
+  { year:2024, nodes:347, label:'2024 — 347 nodes' },
+  { year:2025, nodes:892, label:'2025 — 892 nodes' },
+  { year:2026, nodes:1247,label:'2026 — 1,247 nodes' },
+];
+function handleTimeline(val) {
+  const t = timelineData[val];
+  document.getElementById('timelineLabel').textContent = t.label;
+  document.getElementById('statNodes').textContent = t.nodes.toLocaleString();
+  const pct = Math.round((t.nodes/1247)*100);
+  document.getElementById('statVerified').textContent = Math.round(t.nodes * 0.67).toLocaleString();
+  document.getElementById('statPending').textContent  = Math.round(t.nodes * 0.25).toLocaleString();
+  document.getElementById('statRisk').textContent     = Math.round(t.nodes * 0.08).toLocaleString();
+  // Show/hide nodes proportionally
+  const allNodes = cy.nodes().toArray();
+  const showCount = Math.round(allNodes.length * (t.nodes/1247));
+  allNodes.forEach((n,i) => i < showCount ? n.show() : n.hide());
+  cy.edges().forEach(e => (e.source().visible() && e.target().visible()) ? e.show() : e.hide());
+}
+
+// ─── HOT NODES ───────────────────────────────────────────────────────────────
+const hotNodes = [
+  { name:'Metro Boomin', connections:47, streams:'2.1B', color:'#6366f1' },
+  { name:'Future', connections:42, streams:'3.4B', color:'#6366f1' },
+  { name:'Wheezy', connections:38, streams:'890M', color:'#6366f1' },
+  { name:'Young Thug', connections:35, streams:'2.3B', color:'#6366f1' },
+  { name:'Lil Baby', connections:31, streams:'2.8B', color:'#6366f1' },
+  { name:'Southside', connections:28, streams:'1.2B', color:'#6366f1' },
+];
+const hotList = document.getElementById('hotNodesList');
+hotNodes.forEach((n,i) => {
+  const pct = Math.round((n.connections/47)*100);
+  hotList.innerHTML += `
+    <div style="margin-bottom:10px;cursor:pointer;" onclick="document.getElementById('searchInput').value='${n.name}';doSearch()">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+        <span style="font-weight:500;color:#e2e8f0;">${i+1}. ${n.name}</span>
+        <span style="color:#6b7280;">${n.connections} links</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
+    </div>`;
+});
+
+// ─── ACTIVITY FEED ────────────────────────────────────────────────────────────
+const activities = [
+  { msg:'New split sheet uploaded — Wheezy × Future', time:'10 mins ago', color:'#6366f1', icon:'📋' },
+  { msg:'Biometric verified: Southside ✅',             time:'1 hour ago',  color:'#10b981', icon:'🔐' },
+  { msg:'Conflict detected: "10AM/Save The World"',    time:'3 hours ago', color:'#ef4444', icon:'⚠️' },
+  { msg:'Claim #TRAP-4321 generated — $8,200',         time:'Yesterday',   color:'#10b981', icon:'💰' },
+  { msg:'New ISRC matched: USUMV2301374',               time:'2 days ago',  color:'#6366f1', icon:'🔍' },
+];
+function addActivity(msg, color='indigo', time='Just now') {
+  const colorMap = { green:'#10b981', red:'#ef4444', indigo:'#6366f1', amber:'#f59e0b' };
+  const feed = document.getElementById('activityFeed');
+  const c = colorMap[color] || '#6366f1';
+  feed.insertAdjacentHTML('afterbegin', `
+    <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #1e1e3a;">
+      <div style="width:24px;height:24px;border-radius:50%;background:${c}22;border:1px solid ${c}44;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">●</div>
+      <div style="font-size:11px;"><div style="color:#e2e8f0;margin-bottom:2px;">${msg}</div><div style="color:#4b5563;">${time}</div></div>
+    </div>`);
+}
+activities.forEach(a => {
+  const feed = document.getElementById('activityFeed');
+  feed.innerHTML += `
+    <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #1e1e3a;">
+      <div style="width:24px;height:24px;border-radius:50%;background:${a.color}22;border:1px solid ${a.color}44;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;">${a.icon}</div>
+      <div style="font-size:11px;"><div style="color:#e2e8f0;margin-bottom:2px;">${a.msg}</div><div style="color:#4b5563;">${a.time}</div></div>
+    </div>`;
+});
+
+// ─── VERIFICATION QUEUE ───────────────────────────────────────────────────────
+const queue = [
+  { name:'Gunna', waiting:'2 days', priority:'Normal', status:'PENDING' },
+  { name:'Turbo', waiting:'5 days', priority:'Normal', status:'PENDING' },
+  { name:'Unverified Prod #47', waiting:'Overdue', priority:'HIGH', status:'HIGH_RISK' },
+  { name:'Unknown Prod #12', waiting:'1 day', priority:'Normal', status:'PENDING' },
+];
+const queueEl = document.getElementById('verificationQueue');
+queue.forEach(q => {
+  const isHigh = q.priority === 'HIGH';
+  queueEl.innerHTML += `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:${isHigh?'rgba(239,68,68,0.06)':'#0a0a18'};border:1px solid ${isHigh?'rgba(239,68,68,0.15)':'#1e1e3a'};margin-bottom:8px;">
+      <div>
+        <div style="font-size:12px;font-weight:500;color:#e2e8f0;">${q.name}</div>
+        <div style="font-size:10px;color:#4b5563;">Waiting: ${q.waiting}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        ${isHigh ? '<span class="badge badge-highrisk" style="font-size:9px;">HIGH</span>' : ''}
+        <button onclick="openBiometricModal()" class="btn-ghost" style="font-size:10px;padding:4px 8px;">Verify</button>
+      </div>
+    </div>`;
+});
+
+// ─── CHARTS ───────────────────────────────────────────────────────────────────
+Chart.defaults.color = '#4b5563';
+Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+Chart.defaults.font.size = 11;
+
+// Donut
+new Chart(document.getElementById('donutChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Verified (67%)', 'Pending KYC (25%)', 'High Risk (8%)'],
+    datasets:[{ data:[67,25,8], backgroundColor:['#10b981','#f59e0b','#ef4444'], borderColor:'#0f0f1f', borderWidth:3, hoverOffset:4 }]
+  },
+  options: { plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:12, color:'#6b7280', font:{size:11} } } }, cutout:'72%', responsive:true }
+});
+
+// Bar
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Metro', 'Future', 'Wheezy', 'Southside', '21 Savage'],
+    datasets:[{
+      label:'Recoverable ($K)',
+      data:[127,98,76,54,43],
+      backgroundColor:['rgba(99,102,241,0.8)','rgba(99,102,241,0.7)','rgba(99,102,241,0.6)','rgba(99,102,241,0.5)','rgba(99,102,241,0.4)'],
+      borderRadius:6, borderSkipped:false
+    }]
+  },
+  options: {
+    plugins:{ legend:{ display:false } },
+    scales:{
+      y:{ grid:{ color:'#1e1e3a' }, ticks:{ color:'#4b5563', callback:v=>'$'+v+'K' } },
+      x:{ grid:{ display:false }, ticks:{ color:'#4b5563' } }
+    },
+    responsive:true
+  }
+});
+
+// Line
+new Chart(document.getElementById('lineChart'), {
+  type: 'line',
+  data: {
+    labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+    datasets:[{
+      label:'Monthly Recovery ($K)',
+      data:[12,24,45,67,89,124],
+      borderColor:'#6366f1',
+      backgroundColor:'rgba(99,102,241,0.08)',
+      fill:true, tension:0.4, pointBackgroundColor:'#6366f1', pointRadius:4
+    }]
+  },
+  options: {
+    plugins:{ legend:{ display:false } },
+    scales:{
+      y:{ grid:{ color:'#1e1e3a' }, ticks:{ color:'#4b5563', callback:v=>'$'+v+'K' } },
+      x:{ grid:{ display:false }, ticks:{ color:'#4b5563' } }
+    },
+    responsive:true
+  }
+});
+
+// ─── WEBHOOK SIMULATOR ────────────────────────────────────────────────────────
+const webhookEvents = [
+  { msg:'→ POST /webhook/biometric_anchor_verified: Nayvadius_Wilburn', detail:'STATUS: 200 OK | HASH SEALED', color:'#10b981' },
+  { msg:'→ POST /webhook: stream_data_received', detail:'Spotify · 47M streams processed', color:'#10b981' },
+  { msg:'→ POST /webhook: pro_update',            detail:'BMI · Wheezy registration synced', color:'#6366f1' },
+  { msg:'→ POST /webhook: conflict_detected',     detail:'Duplicate ISRC: USUMV2301374',    color:'#ef4444' },
+  { msg:'→ POST /webhook: identity_resolved',     detail:'Metro Boomin · 98% confidence',   color:'#10b981' },
+  { msg:'→ POST /webhook: split_sheet_parsed',    detail:'89 entries · 2 conflicts flagged', color:'#f59e0b' },
+];
+let webhookIdx = 0;
+function addWebhookEvent() {
+  const e = webhookEvents[webhookIdx % webhookEvents.length];
+  webhookIdx++;
+  const log = document.getElementById('webhookLog');
+  const ts = new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  log.innerHTML = `<div style="margin-bottom:8px;padding:8px;background:#0a0a18;border-radius:6px;border-left:3px solid ${e.color};">
+    <div style="color:${e.color};margin-bottom:2px;">${e.msg}</div>
+    <div style="color:#374151;">${e.detail}</div>
+    <div style="color:#1f2937;margin-top:2px;">[${ts}]</div>
+  </div>` + log.innerHTML;
+  if(log.children.length > 6) log.removeChild(log.lastChild);
+}
+// Auto-trigger webhooks
+setInterval(addWebhookEvent, 4500);
+addWebhookEvent();
+
+// ─── MATRIX SYSTEM LOG ────────────────────────────────────────────────────────
+const matrixLogs = [
+  { prefix:'[SYSTEM]', msg:'Ingesting 470M stream events... COMPLETE',                     color:'#10b981' },
+  { prefix:'[NODE-04]', msg:'Identity Bridge established: Tity Boi → 2 Chainz',            color:'#6366f1' },
+  { prefix:'[SECURE]',  msg:'Biometric Hash received for Future (IPI-00712834920)',         color:'#10b981' },
+  { prefix:'[AUDIT]',   msg:'Forensic Report PDF generated for Batch #ATL-01',             color:'#f59e0b' },
+];
+let matrixIdx = 0;
+function addMatrixLog() {
+  const e = matrixLogs[matrixIdx % matrixLogs.length];
+  matrixIdx++;
+  const log = document.getElementById('matrixLog');
+  if (!log) return;
+  const ts = new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const div = document.createElement('div');
+  div.style.cssText = 'margin-bottom:5px;display:flex;gap:8px;align-items:flex-start;';
+  div.innerHTML = `<span style="color:#00ff41;font-size:10px;white-space:nowrap;font-family:monospace;">${ts}</span><span style="color:${e.color};font-size:11px;font-family:monospace;">${e.prefix}</span><span style="color:#64748b;font-size:11px;font-family:monospace;">${e.msg}</span>`;
+  log.insertBefore(div, log.firstChild);
+  if(log.children.length > 8) log.removeChild(log.lastChild);
+}
+addMatrixLog(); addMatrixLog(); addMatrixLog(); addMatrixLog();
+setInterval(addMatrixLog, 10000);
+
+// ─── EXPORT MODAL ─────────────────────────────────────────────────────────────
+function openExportModal(type) {
+  document.getElementById('exportModal').classList.add('open');
+  document.getElementById('exportStep1').style.display = 'block';
+  document.getElementById('exportStep2').style.display = 'none';
+  document.getElementById('exportStep3').style.display = 'none';
+}
+function startExport(type) {
+  const names = { PNG:'Graph PNG', CSV:'CSV Data', PDF:'PDF Report', ZIP:'Evidence Package' };
+  const files  = { PNG:'graph-export.png', CSV:'identity-data.csv', PDF:'traproyalties-report.pdf', ZIP:'evidence-package.zip' };
+  document.getElementById('exportTypeName').textContent = names[type];
+  document.getElementById('exportFileName').textContent = files[type];
+  document.getElementById('exportStep1').style.display = 'none';
+  document.getElementById('exportStep2').style.display = 'block';
+  let pct = 0;
+  const bar = document.getElementById('exportProgressBar');
+  const lbl = document.getElementById('exportProgressLabel');
+  const iv = setInterval(() => {
+    pct = Math.min(100, pct + Math.random()*18 + 5);
+    bar.style.width = pct + '%';
+    lbl.textContent = Math.round(pct) + '%';
+    if(pct >= 100) {
+      clearInterval(iv);
+      setTimeout(() => {
+        document.getElementById('exportStep2').style.display = 'none';
+        document.getElementById('exportStep3').style.display = 'block';
+      }, 300);
+    }
+  }, 200);
+}
+
+// ─── BIOMETRIC MODAL ──────────────────────────────────────────────────────────
+function openBiometricModal() {
+  document.getElementById('biometricModal').classList.add('open');
+  document.getElementById('bioStep1').style.display = 'block';
+  document.getElementById('bioStep2').style.display = 'none';
+  document.getElementById('bioStep3').style.display = 'none';
+}
+function startBiometric() {
+  document.getElementById('bioStep1').style.display = 'none';
+  document.getElementById('bioStep2').style.display = 'block';
+  const steps = ['Detecting facial landmarks...','Analyzing biometric markers...','Generating SHA-256 hash...','Anchoring to blockchain...'];
+  let pct = 0, step = 0;
+  const bar = document.getElementById('bioProgressBar');
+  const txt = document.getElementById('bioStatusText');
+  const iv = setInterval(() => {
+    pct = Math.min(100, pct + Math.random()*15 + 8);
+    bar.style.width = pct + '%';
+    const newStep = Math.floor(pct / 26);
+    if(newStep !== step && steps[newStep]) { step = newStep; txt.textContent = steps[newStep]; }
+    if(pct >= 100) {
+      clearInterval(iv);
+      setTimeout(() => {
+        document.getElementById('bioStep2').style.display = 'none';
+        document.getElementById('bioStep3').style.display = 'block';
+        addActivity('Biometric anchor locked ✅', 'green', 'Just now');
+      }, 400);
+    }
+  }, 200);
+}
+
+// ─── MODAL CLOSE ─────────────────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target === m) m.classList.remove('open'); });
+});
+
+// ─── FILE UPLOAD ──────────────────────────────────────────────────────────────
+function handleDragOver(e) { e.preventDefault(); document.getElementById('uploadArea').style.borderColor='#4f46e5'; }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').style.borderColor='';
+  handleFileUpload(e.dataTransfer.files[0]);
+}
+function handleFileUpload(file) {
+  if(!file) return;
+  document.getElementById('resultCount').textContent = `Processing ${file.name}...`;
+  setTimeout(() => {
+    document.getElementById('resultCount').textContent = `✅ Imported ${file.name} — 127 new signals added`;
+    addActivity(`File imported: ${file.name} · 127 signals`, 'green', 'Just now');
+    cy.add({ data:{ id:'upload_'+Date.now(), label:'New\nSignal', type:'person', size:30, color:'#f59e0b', status:'PENDING' } });
+    cy.layout({ name:'cose', animate:true, randomize:false, fit:false }).run();
+  }, 1500);
+}
+function mockConnect(src) {
+  const msgs = { csv:'📊 Connecting to CSV source...', spotify:'🎵 Fetching Spotify catalog...', pro:'⚖️ Querying PRO database...' };
+  document.getElementById('resultCount').textContent = msgs[src];
+  setTimeout(() => { document.getElementById('resultCount').textContent = `✅ ${src.toUpperCase()} connected — data synced`; }, 2000);
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+function toggleNotif() {
+  const p = document.getElementById('notifPanel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('#notifPanel') && !e.target.closest('button[onclick="toggleNotif()"]')) {
+    const p = document.getElementById('notifPanel');
+    if(p) p.style.display = 'none';
+  }
+});
+
+// ─── KEYBOARD SHORTCUTS ───────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+    document.getElementById('searchInput').select();
+  }
+  if(e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    document.getElementById('sidebar').classList.remove('open');
+  }
+});
+
+// ─── MOBILE ───────────────────────────────────────────────────────────────────
+function checkMobile() {
+  const btn = document.getElementById('hamburgerBtn');
+  if(window.innerWidth < 600) { btn.style.display='block'; }
+  else { btn.style.display='none'; document.getElementById('sidebar').classList.remove('open'); }
+}
+window.addEventListener('resize', checkMobile);
+checkMobile();
+
+// Live "last updated" ticker
+setInterval(() => {
+  const mins = Math.floor(Math.random()*3)+1;
+  document.getElementById('lastUpdated').textContent = `${mins} min${mins>1?'s':''} ago`;
+}, 60000);
+
+
+</script>
+</body>
+</html>

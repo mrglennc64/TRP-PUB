@@ -6,7 +6,6 @@ import Link from 'next/link';
 const CATEGORIES = [
   { id: 'general',   label: 'General',           icon: '💡' },
   { id: 'attorneys', label: 'For Attorneys',      icon: '⚖️' },
-  { id: 'labels',    label: 'For Labels',         icon: '🏢' },
   { id: 'audit',     label: 'Audit Engine',       icon: '🔍' },
   { id: 'technical', label: 'Technical',          icon: '⚙️' },
   { id: 'legal',     label: 'Legal & Security',   icon: '🔐' },
@@ -14,7 +13,7 @@ const CATEGORIES = [
   { id: 'ddex',      label: 'DDEX Distribution',  icon: '🌐' },
 ];
 
-type CategoryId = 'general' | 'attorneys' | 'labels' | 'audit' | 'technical' | 'legal' | 'pricing' | 'ddex';
+type CategoryId = 'general' | 'attorneys' | 'audit' | 'technical' | 'legal' | 'pricing' | 'ddex';
 
 const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
   general: [
@@ -28,7 +27,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
     },
     {
       q: 'How is TrapRoyaltiesPro different from other music platforms?',
-      a: 'Most music platforms focus on distribution or streaming analytics. We focus on rights protection and revenue recovery. Our audit engine cross-references 15+ databases including MusicBrainz, Rights Administrator, and PRO registries. Every report is designed to meet Federal Rules of Evidence standards (FRE 901), making them usable in actual legal proceedings. We also provide real-time conflict detection, automated dispute letters, and T+0 settlement rails — features no standard distributor offers.',
+      a: 'Most music platforms focus on distribution or streaming analytics. We focus on rights protection and revenue recovery. Our audit engine cross-references 15+ databases including MusicBrainz, SoundExchange, and PRO registries. Every report is designed to meet Federal Rules of Evidence standards (FRE 901), making them usable in actual legal proceedings. We also provide real-time conflict detection, automated dispute letters, and T+0 settlement rails — features no standard distributor offers.',
     },
     {
       q: 'Do I need technical knowledge to use the platform?',
@@ -69,36 +68,10 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
       a: 'The War Room is a split-screen litigation workspace triggered when a dispute reaches critical priority. It shows: left panel — your client\'s ownership evidence (registration dates, metadata, blockchain timestamps), right panel — the adverse claim with identified weaknesses and Double Attribution Gap analysis. You get a dispute timeline, evidence bundle download, and a one-click "Dispatch Formal Cease & Desist" button that pre-fills all relevant case data.',
     },
   ],
-  labels: [
-    {
-      q: 'What does the Label Command Center include?',
-      a: 'The Label Command Center is a Bloomberg Terminal-style dashboard with: (1) KPI cards showing total artists, catalog value, pending royalties, and active disputes, (2) a world heatmap visualizing streaming revenue by geography, (3) a Conflict Priority Panel for rights disputes, (4) an Immutable Ledger for all royalty transactions, (5) Settlement Rails for sub-24-hour payout distribution, and (6) a Legal Vault with automated dispute generation.',
-    },
-    {
-      q: 'How do Settlement Rails work?',
-      a: 'Settlement Rails is our T+0 payment infrastructure that bypasses traditional distributor payment timelines (which are typically 60-90 days). Funds flow through four stages: Streaming Revenue → Rights Verification → Split Calculation → Artist Payout. Each stage is tracked in real time. Artists can request early withdrawal with a 5% bridge fee, and funds are delivered via ACH or wire within 24 hours of approval.',
-    },
-    {
-      q: 'Can I manage royalty splits for multiple artists from one dashboard?',
-      a: 'Yes. The Label Command Center supports unlimited artists. Each artist has a profile with their IPI/ISNI identifiers, split percentages per track, PRO registration, and payment info. You can view all pending royalties across your roster, approve or flag distributions, and export full payment reports for accounting. Split changes require digital re-signatures from all affected parties.',
-    },
-    {
-      q: 'How does the Conflict Center help resolve disputes?',
-      a: 'The Conflict Center shows all active ownership disputes across your catalog as a geographic heatmap and card list. Each conflict card includes: track name, competing claimant, revenue at stake, evidence strength score, and dispute age. Clicking a card opens a Forensic Comparison showing your metadata vs. the adverse claim, with color-coded discrepancies. You can escalate to the Attorney Portal\'s War Room or dispatch a dispute letter directly.',
-    },
-    {
-      q: 'Can the platform handle complex multi-party splits?',
-      a: 'Yes. Our split engine supports unlimited stakeholders per track — primary artists, featured artists, producers, songwriters, co-writers, publishers, and labels. It handles hierarchical splits (e.g., label takes 20% of gross, remainder splits between artist and producer), controlled composition clauses, and statutory rate calculations. All splits are locked by digital signatures and stored with a full version history.',
-    },
-    {
-      q: 'What happens when there is a disputed track in my catalog?',
-      a: 'Disputed tracks are flagged immediately when a competing registration is detected. Revenue from flagged tracks is held in escrow within the platform until the dispute is resolved. You receive a notification with the evidence summary, and can choose to: (1) submit counter-evidence, (2) open a War Room session with an attorney, (3) initiate a settlement offer, or (4) dispatch a formal dispute notice. All actions are logged and timestamped.',
-    },
-  ],
   audit: [
     {
       q: 'What databases does the audit engine check against?',
-      a: 'Our audit engine cross-references 15+ authoritative databases including: MusicBrainz (open music encyclopedia), Rights Administrator (digital performance royalties), ASCAP, BMI, and SESAC (performing rights), the MLC (mechanical licensing), iTunes/Apple Music metadata, Spotify Web API, YouTube Content ID, AcoustID (audio fingerprinting), ISRC Registry, ISWC database, AllMusic, Discogs, and proprietary industry metadata from our partner network.',
+      a: 'Our audit engine cross-references 15+ authoritative databases including: MusicBrainz (open music encyclopedia), SoundExchange (digital performance royalties), ASCAP, BMI, and SESAC (performing rights), the MLC (mechanical licensing), iTunes/Apple Music metadata, Spotify Web API, YouTube Content ID, AcoustID (audio fingerprinting), ISRC Registry, ISWC database, AllMusic, Discogs, and proprietary industry metadata from our partner network.',
     },
     {
       q: 'What does the audit actually check for?',
@@ -173,32 +146,7 @@ const FAQ_DATA: Record<CategoryId, { q: string; a: string }[]> = {
       a: 'Yes. Our audit reports include only data you have provided or that is already public record (e.g., ISRC registrations, PRO databases). We do not include personal data of third parties in reports without consent. For European users, we process data under the legitimate interest legal basis for rights protection activities, and we maintain a Data Processing Agreement (DPA) available on request.',
     },
   ],
-  pricing: [
-    {
-      q: 'What plans are available?',
-      a: 'We offer four tiers: Free (25-track audit, 1 digital handshake, read-only demo), Starter ($49/month — 500 tracks, 10 contracts/month, CSV export), Professional ($149/month — unlimited tracks, unlimited contracts, API access, court-ready PDFs, priority support), and Enterprise (custom pricing — dedicated instance, SLA, white-label option, custom integrations, unlimited API, legal team onboarding). Annual billing saves 20% on Starter and Professional.',
-    },
-    {
-      q: 'Is there a setup fee?',
-      a: 'No setup fee for Starter and Professional plans. Enterprise plans include an onboarding fee that covers data migration, catalog import assistance, custom integration setup, and a 90-minute training session for your team. The onboarding fee is quoted based on catalog size and integration complexity.',
-    },
-    {
-      q: 'What is the 5/500 Partnership Model?',
-      a: 'The 5/500 model is our label and law firm partnership program: a one-time onboarding fee of $5,000 (covers full catalog migration, custom integration, and legal team training), $500/month platform access (unlimited users, unlimited catalog, full API, white-label option), plus a 5% success fee on royalties recovered through dispute resolution that would not have been collected without our platform. This model aligns our incentives with your outcomes.',
-    },
-    {
-      q: 'Can I cancel anytime?',
-      a: 'Yes. Monthly plans can be cancelled at any time. You retain access until the end of your current billing period. Annual plans can be cancelled with a 30-day notice; unused months are refunded on a pro-rated basis. Enterprise contracts have a minimum term (typically 12 months) specified in the MSA.',
-    },
-    {
-      q: 'Do you offer discounts for non-profits or independent artists?',
-      a: 'Yes. We offer a 50% discount for registered non-profit music organizations (501(c)(3)). Independent artists with fewer than 50 tracks who are not affiliated with a label can apply for our Artist Access program, which provides Professional plan features at Starter pricing. Contact us at support@traproyaltiespro.com with proof of non-profit status or an explanation of your situation.',
-    },
-    {
-      q: 'What payment methods do you accept?',
-      a: 'We accept all major credit and debit cards (Visa, Mastercard, Amex, Discover), ACH bank transfer (US only, 2-3 business days), and wire transfer for Enterprise plans. Invoicing with Net-30 terms is available for Enterprise and verified law firm clients. We do not currently accept cryptocurrency, though this is on our roadmap.',
-    },
-  ],
+  pricing: [],
   ddex: [
     {
       q: 'What is DDEX and why does it matter?',
@@ -397,6 +345,38 @@ export default function FAQPage() {
                 {items.every((_, i) => openItems.has(`${activeCategory}-${i}`)) ? 'Collapse all' : 'Expand all'}
               </button>
             </div>
+
+            {/* Pricing table — special render */}
+            {activeCategory === 'pricing' && (
+              <div className="overflow-x-auto rounded-2xl border border-white/10 shadow-xl mb-8">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-[#0f172a] border-b border-white/10">
+                      <th className="py-4 px-6 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Feature</th>
+                      <th className="py-4 px-6 text-center text-xs font-bold uppercase tracking-widest text-slate-400">Free Tier</th>
+                      <th className="py-4 px-6 text-center text-xs font-bold uppercase tracking-widest text-indigo-400">Professional Tier</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {[
+                      ['Monthly Price',   '$0',                      '$499'],
+                      ['Search Credits',  '3 Total Searches',        'Unlimited Access'],
+                      ['Metadata Audits', '3 Full Audits',           'Unlimited Audits'],
+                      ['LOD Generation',  'Read-Only Preview',       'Court-Ready PDF & CSV'],
+                      ['Client Intake',   '1 Digital Handshake',     'Unlimited Biometric Links'],
+                      ['Data Export',     'Disabled',                'Full API & CSV Export'],
+                      ['Best For',        'Initial Firm Evaluation', 'Professional Litigators'],
+                    ].map(([feature, free, pro], i) => (
+                      <tr key={i} className="bg-[#1e293b]/60 hover:bg-[#1e293b] transition">
+                        <td className="py-4 px-6 font-semibold text-white">{feature}</td>
+                        <td className="py-4 px-6 text-center text-slate-400">{free}</td>
+                        <td className="py-4 px-6 text-center text-indigo-300 font-medium">{pro}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             {/* Accordion */}
             <div className="space-y-4">
