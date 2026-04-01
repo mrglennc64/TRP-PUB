@@ -156,6 +156,16 @@ const CASES = [
 
 const VALID_KEYS = ['TRP-ATT-2026', 'Lerae'];
 
+async function logEvent(type: string, key: string, detail?: string) {
+  try {
+    await fetch('/api/cases-events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, key, detail }),
+    });
+  } catch {}
+}
+
 function ShieldIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -192,6 +202,7 @@ export default function CasesPage() {
     if (VALID_KEYS.includes(keyInput.trim())) {
       setUnlocked(true);
       setError(false);
+      logEvent('login', keyInput.trim());
     } else {
       setError(true);
     }
@@ -218,6 +229,7 @@ export default function CasesPage() {
       a.download = `${c.ref}_${c.artist.replace(/[^a-zA-Z0-9]/g, '-')}_Package_PDFs.zip`;
       a.click();
       URL.revokeObjectURL(url);
+      logEvent('download', keyInput.trim() || 'unknown', `${c.ref} — ${c.artist} — ${c.recording}`);
     } finally {
       setDownloading(null);
     }
