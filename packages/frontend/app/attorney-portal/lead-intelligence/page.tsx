@@ -117,12 +117,30 @@ function BiometricModal({ lead, onClose }: { lead: typeof ALL_LEADS[0]; onClose:
   );
 }
 
+const ACCESS_KEY = 'TRP-ATT-2026';
+
+function ShieldIcon() {
+  return (
+    <svg width={26} height={26} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+    </svg>
+  );
+}
+
 export default function LeadIntelligencePage() {
+  const [unlocked, setUnlocked] = useState(false);
+  const [keyInput, setKeyInput] = useState('');
+  const [keyError, setKeyError] = useState(false);
   const [filter, setFilter] = useState('all');
   const [claimed, setClaimed] = useState<Record<number, boolean>>({});
   const [showAll, setShowAll] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [bioModal, setBioModal] = useState<typeof ALL_LEADS[0] | null>(null);
+
+  function handleUnlock() {
+    if (keyInput.trim() === ACCESS_KEY) { setUnlocked(true); setKeyError(false); }
+    else setKeyError(true);
+  }
 
   useEffect(() => {
     const timer = setInterval(() => setLastRefresh(new Date()), 300000);
@@ -147,7 +165,70 @@ export default function LeadIntelligencePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200">
+    <div className="min-h-screen bg-[#020617] text-slate-200" style={{ position: 'relative' }}>
+
+      {/* PASSWORD GATE */}
+      {!unlocked && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 200,
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          background: 'rgba(2,6,23,0.75)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            background: '#0f172a',
+            border: '1px solid rgba(79,70,229,0.35)',
+            borderRadius: '14px',
+            padding: '44px 48px',
+            width: '420px',
+            textAlign: 'center',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg,#4f46e5,#7c3aed)',
+              borderRadius: '50%', width: '56px', height: '56px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 20px', color: '#fff',
+              boxShadow: '0 0 24px rgba(79,70,229,0.4)',
+            }}>
+              <ShieldIcon />
+            </div>
+            <div style={{ fontSize: '10px', letterSpacing: '3px', color: '#6366f1', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600, fontFamily: 'sans-serif' }}>TrapRoyalties Pro</div>
+            <div style={{ fontSize: '18px', color: '#e2e8f0', fontWeight: 700, marginBottom: '6px', fontFamily: 'sans-serif' }}>Lead Intelligence Dashboard</div>
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '32px', fontFamily: 'sans-serif' }}>Enter your access key to view leads</div>
+            <input
+              type="password"
+              value={keyInput}
+              onChange={e => { setKeyInput(e.target.value); setKeyError(false); }}
+              onKeyDown={e => e.key === 'Enter' && handleUnlock()}
+              placeholder="Access key"
+              style={{
+                width: '100%', background: '#0a0f1e',
+                border: `1px solid ${keyError ? '#ef4444' : 'rgba(79,70,229,0.3)'}`,
+                color: '#e2e8f0', padding: '12px 16px',
+                fontFamily: 'sans-serif', fontSize: '13px',
+                marginBottom: '10px', outline: 'none', borderRadius: '6px',
+              }}
+            />
+            {keyError && <div style={{ color: '#ef4444', fontSize: '11px', marginBottom: '10px', fontFamily: 'sans-serif' }}>Incorrect key. Contact glenn@traproyaltiespro.com</div>}
+            <button
+              onClick={handleUnlock}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg,#4f46e5,#7c3aed)',
+                border: 'none', color: '#fff', padding: '12px',
+                fontFamily: 'sans-serif', fontSize: '13px', fontWeight: 600,
+                cursor: 'pointer', borderRadius: '6px',
+                boxShadow: '0 4px 16px rgba(79,70,229,0.35)',
+              }}
+            >
+              Unlock
+            </button>
+          </div>
+        </div>
+      )}
+
       {bioModal && <BiometricModal lead={bioModal} onClose={() => setBioModal(null)} />}
 
       {/* Page header */}
