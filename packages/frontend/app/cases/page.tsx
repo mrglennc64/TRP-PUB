@@ -154,7 +154,7 @@ const CASES = [
   },
 ];
 
-const ACCESS_KEY = 'TRP-ATT-2026';
+const VALID_KEYS = ['TRP-ATT-2026', 'Lerae'];
 
 function ShieldIcon({ size = 14 }: { size?: number }) {
   return (
@@ -189,7 +189,7 @@ export default function CasesPage() {
   const [jszipReady, setJszipReady] = useState(false);
 
   function handleUnlock() {
-    if (keyInput.trim() === ACCESS_KEY) {
+    if (VALID_KEYS.includes(keyInput.trim())) {
       setUnlocked(true);
       setError(false);
     } else {
