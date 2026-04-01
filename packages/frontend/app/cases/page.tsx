@@ -226,26 +226,61 @@ export default function CasesPage() {
     return (
       <>
         <Script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" onLoad={() => setJszipReady(true)} />
-        <div style={{ minHeight: '100vh', background: '#0f1a0f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Courier New', monospace" }}>
-          <div style={{ background: '#0a1a0a', border: '1px solid #1a3a1a', padding: '44px 48px', width: '400px', textAlign: 'center' }}>
-            <div style={{ background: '#1a3a1a', borderRadius: '50%', width: '52px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px', color: '#7fff7f' }}>
-              <ShieldIcon size={24} />
+        <div style={{ minHeight: '100vh', background: '#0a0f1e', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+          <div style={{ background: '#0f172a', border: '1px solid rgba(79,70,229,0.3)', padding: '44px 48px', width: '420px', textAlign: 'center', borderRadius: '12px', boxShadow: '0 25px 50px rgba(0,0,0,0.5)' }}>
+            <div style={{
+              background: 'linear-gradient(135deg,#4f46e5,#7c3aed)',
+              borderRadius: '50%',
+              width: '56px',
+              height: '56px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 20px',
+              color: '#fff',
+              boxShadow: '0 0 24px rgba(79,70,229,0.4)',
+            }}>
+              <ShieldIcon size={26} />
             </div>
-            <div style={{ fontSize: '9px', letterSpacing: '3px', color: '#4a7a4a', textTransform: 'uppercase', marginBottom: '6px' }}>TrapRoyalties Pro</div>
-            <div style={{ fontSize: '16px', color: '#f0f0f0', fontWeight: 'bold', marginBottom: '4px' }}>Attorney Case Review</div>
-            <div style={{ fontSize: '10px', color: '#4a7a4a', marginBottom: '28px' }}>Enter your access key to view cases</div>
+            <div style={{ fontSize: '10px', letterSpacing: '3px', color: '#6366f1', textTransform: 'uppercase', marginBottom: '8px', fontWeight: 600 }}>TrapRoyalties Pro</div>
+            <div style={{ fontSize: '18px', color: '#e2e8f0', fontWeight: 700, marginBottom: '6px' }}>Attorney Case Review</div>
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '32px' }}>Enter your access key to view cases</div>
             <input
               type="password"
               value={keyInput}
               onChange={e => { setKeyInput(e.target.value); setError(false); }}
               onKeyDown={e => e.key === 'Enter' && handleUnlock()}
               placeholder="Access key"
-              style={{ width: '100%', background: '#111f11', border: `1px solid ${error ? '#dc2626' : '#1a3a1a'}`, color: '#d4d4d4', padding: '10px 14px', fontFamily: "'Courier New', monospace", fontSize: '11px', marginBottom: '8px', outline: 'none' }}
+              style={{
+                width: '100%',
+                background: '#0a0f1e',
+                border: `1px solid ${error ? '#ef4444' : 'rgba(79,70,229,0.3)'}`,
+                color: '#e2e8f0',
+                padding: '12px 16px',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '13px',
+                marginBottom: '10px',
+                outline: 'none',
+                borderRadius: '6px',
+              }}
             />
-            {error && <div style={{ color: '#dc2626', fontSize: '10px', marginBottom: '8px' }}>Incorrect key. Contact glenn@traproyaltiespro.com</div>}
+            {error && <div style={{ color: '#ef4444', fontSize: '11px', marginBottom: '10px' }}>Incorrect key. Contact glenn@traproyaltiespro.com</div>}
             <button
               onClick={handleUnlock}
-              style={{ width: '100%', background: '#1a3a1a', border: '1px solid #7fff7f', color: '#7fff7f', padding: '10px', fontFamily: "'Courier New', monospace", fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase', cursor: 'pointer' }}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg,#4f46e5,#7c3aed)',
+                border: 'none',
+                color: '#fff',
+                padding: '12px',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: '13px',
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                cursor: 'pointer',
+                borderRadius: '6px',
+                boxShadow: '0 4px 16px rgba(79,70,229,0.35)',
+              }}
             >
               Unlock
             </button>
@@ -258,79 +293,178 @@ export default function CasesPage() {
   return (
     <>
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" onLoad={() => setJszipReady(true)} />
-      <div style={{ minHeight: '100vh', background: '#0f1a0f', fontFamily: "'Courier New', monospace", color: '#d4d4d4' }}>
+      <div style={{ minHeight: '100vh', background: '#0a0f1e', fontFamily: "'Inter', 'Segoe UI', sans-serif", color: '#e2e8f0' }}>
 
         {/* TOPBAR */}
-        <div style={{ background: '#0a120a', borderBottom: '1px solid #1a3a1a', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ color: '#7fff7f' }}><ShieldIcon size={16} /></div>
+        <div style={{
+          background: '#070b17',
+          borderBottom: '1px solid rgba(79,70,229,0.25)',
+          padding: '14px 32px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              background: 'linear-gradient(135deg,#4f46e5,#7c3aed)',
+              borderRadius: '8px',
+              width: '34px',
+              height: '34px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+            }}>
+              <ShieldIcon size={16} />
+            </div>
             <div>
-              <div style={{ fontSize: '12px', letterSpacing: '3px', color: '#7fff7f', textTransform: 'uppercase', fontWeight: 'bold' }}>TrapRoyalties</div>
-              <div style={{ fontSize: '9px', letterSpacing: '2px', color: '#4a7a4a' }}>SMPT · Statutory Recovery Division</div>
+              <div style={{ fontSize: '14px', color: '#e2e8f0', fontWeight: 700, letterSpacing: '0.3px' }}>
+                TrapRoyalties<span style={{ color: '#818cf8' }}>Pro</span>
+              </div>
+              <div style={{ fontSize: '10px', color: '#475569', letterSpacing: '1px' }}>SMPT · Statutory Recovery Division</div>
             </div>
           </div>
-          <div style={{ textAlign: 'right', fontSize: '9px', color: '#4a7a4a', lineHeight: 1.8 }}>
-            <div>Prepared: <span style={{ color: '#7fff7f' }}>April 1, 2026</span></div>
-            <div>Classification: <span style={{ color: '#7fff7f' }}>ATTORNEY REVIEW — CONFIDENTIAL</span></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ textAlign: 'right', fontSize: '10px', color: '#475569', lineHeight: 1.8 }}>
+              <div>Prepared: <span style={{ color: '#818cf8' }}>April 1, 2026</span></div>
+              <div>Protocol: <span style={{ color: '#818cf8' }}>TR-V1.2</span></div>
+            </div>
+            <div style={{
+              background: 'rgba(74,222,128,0.1)',
+              border: '1px solid rgba(74,222,128,0.3)',
+              borderRadius: '4px',
+              padding: '4px 10px',
+              fontSize: '9px',
+              letterSpacing: '1.5px',
+              color: '#4ade80',
+              textTransform: 'uppercase',
+              fontWeight: 600,
+            }}>
+              Confidential
+            </div>
           </div>
         </div>
 
         {/* HERO */}
-        <div style={{ padding: '36px 32px 24px', borderBottom: '1px solid #1a3a1a' }}>
-          <div style={{ fontSize: '9px', letterSpacing: '3px', color: '#4a7a4a', textTransform: 'uppercase', marginBottom: '8px' }}>SoundExchange LOD Submission Package</div>
-          <div style={{ fontSize: '22px', color: '#f0f0f0', fontWeight: 'bold', letterSpacing: '0.5px', marginBottom: '6px' }}>Featured Performer Recovery — Master Index</div>
-          <div style={{ fontSize: '11px', color: '#6a9a6a', marginBottom: '24px', lineHeight: 1.7 }}>
-            All cases involve unregistered featured performer royalties accruing in SoundExchange Suspense under 17 U.S.C. §114.<br />
-            Each case includes the 5 required LOD submission documents. Click any document to open it, or use <strong style={{ color: '#7fff7f' }}>Download Package</strong> to get a zip for that case.
+        <div style={{ padding: '40px 32px 28px', borderBottom: '1px solid rgba(79,70,229,0.15)' }}>
+          <div style={{
+            display: 'inline-block',
+            background: 'rgba(79,70,229,0.15)',
+            border: '1px solid rgba(79,70,229,0.3)',
+            borderRadius: '20px',
+            padding: '4px 14px',
+            fontSize: '10px',
+            color: '#818cf8',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            marginBottom: '14px',
+            fontWeight: 600,
+          }}>
+            SoundExchange LOD Submission Package
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', maxWidth: '820px' }}>
+          <div style={{
+            fontSize: '26px',
+            fontWeight: 800,
+            background: 'linear-gradient(135deg,#e2e8f0,#818cf8)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            marginBottom: '10px',
+            letterSpacing: '-0.3px',
+          }}>
+            Featured Performer Recovery — Master Index
+          </div>
+          <div style={{ fontSize: '13px', color: '#64748b', marginBottom: '28px', lineHeight: 1.7, maxWidth: '680px' }}>
+            All cases involve unregistered featured performer royalties accruing in SoundExchange Suspense under 17 U.S.C. §114.
+            Each case includes the 5 required LOD submission documents. Click any document to open it, or use{' '}
+            <span style={{ color: '#818cf8', fontWeight: 600 }}>Download Package</span> to get a zip for that case.
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '14px', maxWidth: '860px' }}>
             {[
               { label: 'Total Cases', val: '7', sub: 'Active recovery claims' },
               { label: 'Total Documents', val: '37', sub: 'Across all packages' },
               { label: 'Conservative Floor', val: '$1.27M', sub: 'At $0.0015 / stream' },
               { label: 'Optimized Ceiling', val: '$2.63M', sub: 'At $0.0031 / stream' },
             ].map(s => (
-              <div key={s.label} style={{ background: '#0a1a0a', border: '1px solid #1a3a1a', padding: '14px 16px' }}>
-                <div style={{ fontSize: '8px', letterSpacing: '2px', color: '#4a7a4a', textTransform: 'uppercase', marginBottom: '5px' }}>{s.label}</div>
-                <div style={{ fontSize: '20px', color: '#7fff7f', fontWeight: 'bold' }}>{s.val}</div>
-                <div style={{ fontSize: '8px', color: '#4a7a4a', marginTop: '3px' }}>{s.sub}</div>
+              <div key={s.label} style={{
+                background: '#0f172a',
+                border: '1px solid rgba(79,70,229,0.2)',
+                padding: '16px 18px',
+                borderRadius: '8px',
+              }}>
+                <div style={{ fontSize: '9px', letterSpacing: '1.5px', color: '#475569', textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600 }}>{s.label}</div>
+                <div style={{ fontSize: '22px', color: '#4ade80', fontWeight: 800 }}>{s.val}</div>
+                <div style={{ fontSize: '10px', color: '#334155', marginTop: '4px' }}>{s.sub}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* CASES */}
-        <div style={{ padding: '16px 32px 48px' }}>
+        <div style={{ padding: '20px 32px 56px' }}>
           {CASES.map(c => (
-            <div key={c.ref} style={{ background: '#0a1a0a', border: '1px solid #1a3a1a', marginBottom: '14px' }}>
+            <div key={c.ref} style={{
+              background: '#0f172a',
+              border: '1px solid rgba(79,70,229,0.2)',
+              marginBottom: '16px',
+              borderRadius: '10px',
+              overflow: 'hidden',
+            }}>
               {/* Case header */}
-              <div style={{ background: '#1a3a1a', padding: '12px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{
+                background: 'linear-gradient(135deg,rgba(79,70,229,0.2),rgba(124,58,237,0.12))',
+                borderBottom: '1px solid rgba(79,70,229,0.25)',
+                padding: '14px 20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
                 <div>
-                  <div style={{ fontSize: '9px', letterSpacing: '2px', color: '#4aaa4a' }}>{c.ref} · ISRC: {c.isrc}</div>
-                  <div style={{ fontSize: '13px', color: '#f0f0f0', fontWeight: 'bold', margin: '2px 0' }}>{c.artist} — {c.recording}</div>
-                  <div style={{ fontSize: '10px', color: '#6aaa6a', fontStyle: 'italic' }}>{c.credit} · Featured Performer {c.share}</div>
+                  <div style={{ fontSize: '9px', letterSpacing: '1.5px', color: '#6366f1', textTransform: 'uppercase', marginBottom: '3px', fontWeight: 600 }}>
+                    {c.ref} · ISRC: {c.isrc}
+                  </div>
+                  <div style={{ fontSize: '15px', color: '#e2e8f0', fontWeight: 700, margin: '2px 0' }}>
+                    {c.artist} — {c.recording}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#64748b', fontStyle: 'italic' }}>
+                    {c.credit} · Featured Performer {c.share}
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '8px', color: '#4a7a4a', letterSpacing: '1px' }}>Recovery Range</div>
-                    <div style={{ fontSize: '13px', color: '#7fff7f', fontWeight: 'bold' }}>{c.conservative} – {c.optimized}</div>
+                    <div style={{ fontSize: '9px', color: '#475569', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '3px' }}>Recovery Range</div>
+                    <div style={{
+                      fontSize: '15px',
+                      fontWeight: 800,
+                      background: 'linear-gradient(135deg,#4ade80,#22d3ee)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}>
+                      {c.conservative} – {c.optimized}
+                    </div>
                   </div>
                   <button
                     onClick={() => downloadCase(c)}
                     disabled={!jszipReady || downloading === c.ref}
                     style={{
-                      background: downloading === c.ref ? '#0a1a0a' : 'transparent',
-                      border: '1px solid #7fff7f',
-                      color: '#7fff7f',
-                      padding: '7px 14px',
-                      fontFamily: "'Courier New', monospace",
-                      fontSize: '9px',
-                      letterSpacing: '1px',
+                      background: downloading === c.ref ? 'rgba(79,70,229,0.1)' : 'linear-gradient(135deg,#4f46e5,#7c3aed)',
+                      border: downloading === c.ref ? '1px solid rgba(79,70,229,0.3)' : 'none',
+                      color: '#fff',
+                      padding: '8px 16px',
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: '11px',
+                      fontWeight: 600,
                       cursor: jszipReady ? 'pointer' : 'not-allowed',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
+                      gap: '7px',
                       whiteSpace: 'nowrap',
+                      borderRadius: '6px',
+                      boxShadow: downloading === c.ref ? 'none' : '0 4px 12px rgba(79,70,229,0.3)',
                     }}
                   >
                     <DownloadIcon />
@@ -339,12 +473,12 @@ export default function CasesPage() {
                 </div>
               </div>
               {/* Case body */}
-              <div style={{ padding: '12px 18px' }}>
-                <div style={{ display: 'flex', gap: '18px', marginBottom: '10px', fontSize: '9px', color: '#4a7a4a' }}>
-                  <span><strong style={{ color: '#6aaa6a' }}>Legal Name:</strong> {c.legalName}</span>
-                  <span><strong style={{ color: '#6aaa6a' }}>Label:</strong> {c.label}</span>
-                  <span><strong style={{ color: '#6aaa6a' }}>Release:</strong> {c.year}</span>
-                  <span><strong style={{ color: '#6aaa6a' }}>Streams:</strong> {c.streams}</span>
+              <div style={{ padding: '14px 20px' }}>
+                <div style={{ display: 'flex', gap: '24px', marginBottom: '12px', fontSize: '10px', color: '#475569', flexWrap: 'wrap' }}>
+                  <span><strong style={{ color: '#64748b' }}>Legal Name:</strong> {c.legalName}</span>
+                  <span><strong style={{ color: '#64748b' }}>Label:</strong> {c.label}</span>
+                  <span><strong style={{ color: '#64748b' }}>Release:</strong> {c.year}</span>
+                  <span><strong style={{ color: '#64748b' }}>Streams:</strong> {c.streams}</span>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: '6px' }}>
                   {c.files.map(f => (
@@ -353,16 +487,37 @@ export default function CasesPage() {
                       href={`/cases/${f.name}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#111f11', border: '1px solid #1a3a1a', padding: '8px 12px', textDecoration: 'none', color: '#d4d4d4', transition: 'border-color 0.15s' }}
-                      onMouseEnter={e => (e.currentTarget.style.borderColor = '#7fff7f')}
-                      onMouseLeave={e => (e.currentTarget.style.borderColor = '#1a3a1a')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        background: 'rgba(15,23,42,0.8)',
+                        border: '1px solid rgba(79,70,229,0.15)',
+                        padding: '9px 12px',
+                        textDecoration: 'none',
+                        color: '#cbd5e1',
+                        borderRadius: '6px',
+                        transition: 'border-color 0.15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(99,102,241,0.5)')}
+                      onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(79,70,229,0.15)')}
                     >
-                      <div style={{ width: '22px', height: '22px', background: '#1a3a1a', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#7fff7f', flexShrink: 0 }}>
+                      <div style={{
+                        width: '24px',
+                        height: '24px',
+                        background: 'rgba(79,70,229,0.2)',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#818cf8',
+                        flexShrink: 0,
+                      }}>
                         <DocIcon />
                       </div>
                       <div>
-                        <div style={{ fontSize: '8px', letterSpacing: '1px', color: '#4a7a4a', textTransform: 'uppercase' }}>{f.key}</div>
-                        <div style={{ fontSize: '10px', color: '#c0c0c0' }}>{f.label}</div>
+                        <div style={{ fontSize: '8px', letterSpacing: '1px', color: '#475569', textTransform: 'uppercase', fontWeight: 600 }}>{f.key}</div>
+                        <div style={{ fontSize: '11px', color: '#94a3b8' }}>{f.label}</div>
                       </div>
                     </a>
                   ))}
@@ -373,8 +528,15 @@ export default function CasesPage() {
         </div>
 
         {/* FOOTER */}
-        <div style={{ borderTop: '1px solid #1a3a1a', padding: '14px 32px', display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: '#2a4a2a' }}>
-          <div>TrapRoyalties · SMPT — Secured Music Protocol Technology · Attorney Review Package</div>
+        <div style={{
+          borderTop: '1px solid rgba(79,70,229,0.15)',
+          padding: '16px 32px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '10px',
+          color: '#334155',
+        }}>
+          <div>TrapRoyalties Pro · SMPT — Secured Music Protocol Technology · Attorney Review Package</div>
           <div>Prepared April 1, 2026 · Protocol TR-V1.2 · 7 Cases · 37 Documents · CONFIDENTIAL</div>
         </div>
       </div>
