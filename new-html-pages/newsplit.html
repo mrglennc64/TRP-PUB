@@ -16,6 +16,16 @@
     .gradient-bg { background: linear-gradient(135deg, #1e0033, #000033, #000); }
     .upload-zone { border: 2px dashed #a855f7; background: rgba(168, 85, 247, 0.05); }
     .upload-zone:hover { border-color: #c084fc; background: rgba(168, 85, 247, 0.1); }
+    .lookup-zone { border: 1px solid rgba(168,85,247,0.4); background: rgba(168,85,247,0.06); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+    .lookup-input-dark { width:100%; padding:9px 14px; background:rgba(0,0,0,0.4); border:1px solid rgba(168,85,247,0.35); border-radius:8px; color:#e0e0e0; font-size:13px; font-family:'Inter',sans-serif; outline:none; transition:border-color 0.2s; box-sizing:border-box; }
+    .lookup-input-dark:focus { border-color:#a855f7; }
+    .lookup-input-dark::placeholder { color:#6b7280; }
+    .source-badge-dark { display:inline-flex; align-items:center; gap:4px; background:rgba(168,85,247,0.12); border:1px solid rgba(168,85,247,0.3); border-radius:20px; padding:3px 10px; font-size:11px; color:#c084fc; transition:all 0.2s; }
+    .source-badge-dark.active { background:rgba(168,85,247,0.3); color:#e9d5ff; border-color:#a855f7; }
+    .lookup-result-dark { background:rgba(0,0,0,0.35); border:1px solid rgba(168,85,247,0.3); border-radius:12px; padding:14px; margin-top:12px; }
+    .source-tag-dark { font-size:10px; background:rgba(168,85,247,0.2); color:#c084fc; border-radius:4px; padding:1px 6px; white-space:nowrap; }
+    .or-divider-dark { display:flex; align-items:center; gap:10px; color:#4b5563; font-size:12px; margin:16px 0; }
+    .or-divider-dark::before, .or-divider-dark::after { content:''; flex:1; height:1px; background:rgba(168,85,247,0.2); }
   </style>
 </head>
 <body class="antialiased gradient-bg min-h-screen">
@@ -111,8 +121,39 @@
       <div class="bg-gray-900/60 backdrop-blur-md rounded-3xl border border-purple-900/50 p-8">
         <h2 class="text-3xl font-bold neon-purple mb-6 flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-          Upload Your Split Sheet
+          Step 1: Import Split Data
         </h2>
+
+        <!-- Lookup from Global Sources -->
+        <div class="lookup-zone" id="tp-lookupZone">
+          <div style="font-size:13px;font-weight:600;color:#c084fc;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Lookup from Global Sources
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="lookup-input-dark" id="tp-lookupTitle" placeholder="Track title…">
+              <input type="text" class="lookup-input-dark" id="tp-lookupArtist" placeholder="Artist…">
+            </div>
+            <input type="text" class="lookup-input-dark" id="tp-lookupISRC" placeholder="ISRC (e.g. USRC17607839) — or leave blank to search by title">
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;gap:5px;flex-wrap:wrap;" id="tp-sourceBadges">
+              <span class="source-badge-dark">MusicBrainz</span>
+              <span class="source-badge-dark">Discogs</span>
+              <span class="source-badge-dark">ASCAP/BMI</span>
+              <span class="source-badge-dark">Split Handshake</span>
+            </div>
+            <button id="tp-lookupBtn" onclick="tpLookup()"
+              style="padding:8px 18px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Lookup
+            </button>
+          </div>
+          <div id="tp-lookupResult" style="display:none;margin-top:12px;"></div>
+        </div>
+
+        <div class="or-divider-dark">or upload a file</div>
+
         <div class="upload-zone rounded-2xl p-12 text-center transition-all cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
           <h3 class="text-2xl font-bold neon-purple mb-3">Drop Split Sheet Here</h3>
@@ -178,5 +219,157 @@
     </div>
   </footer>
 
+<script>
+// ── TrapRoyalties Lookup from Global Sources ──
+async function tpLookup() {
+  const title  = (document.getElementById('tp-lookupTitle').value  || '').trim();
+  const artist = (document.getElementById('tp-lookupArtist').value || '').trim();
+  const isrc   = (document.getElementById('tp-lookupISRC').value   || '').trim().replace(/\s/g,'').toUpperCase();
+  if (!title && !isrc) { alert('Enter a track title or ISRC'); return; }
+
+  const btn = document.getElementById('tp-lookupBtn');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Looking up…';
+  document.querySelectorAll('#tp-sourceBadges .source-badge-dark').forEach(b => b.classList.remove('active'));
+
+  try {
+    let result = isrc ? await tpMbISRC(isrc) : await tpMbSearch(title, artist);
+    if (result) {
+      const dg = await tpDiscogs(result.title, result.artist);
+      if (dg) { result.sources.push('Discogs'); result.label = dg.label; result.year = dg.year; }
+      window._tpLookup = result;
+      tpShowResult(result);
+    } else {
+      document.getElementById('tp-lookupResult').style.display = 'block';
+      document.getElementById('tp-lookupResult').innerHTML = '<p style="color:#6b7280;font-size:13px;text-align:center;padding:10px;">No results found. Try uploading a file instead.</p>';
+    }
+  } catch(e) {
+    document.getElementById('tp-lookupResult').style.display = 'block';
+    document.getElementById('tp-lookupResult').innerHTML = `<p style="color:#f87171;font-size:13px;">Lookup error: ${e.message}</p>`;
+  } finally {
+    btn.disabled = false; btn.innerHTML = orig;
+    const labels = ['MusicBrainz','Discogs','ASCAP/BMI','Split Handshake'];
+    document.querySelectorAll('#tp-sourceBadges .source-badge-dark').forEach((b,i) => {
+      if (window._tpLookup && window._tpLookup.sources && window._tpLookup.sources.includes(labels[i])) b.classList.add('active');
+    });
+  }
+}
+
+async function tpMbSearch(title, artist) {
+  let q = `recording:"${title}"`;
+  if (artist) q += ` AND artist:"${artist}"`;
+  const res = await fetch(`https://musicbrainz.org/ws/2/recording?query=${encodeURIComponent(q)}&limit=3&fmt=json`);
+  if (!res.ok) throw new Error('MusicBrainz search failed');
+  const data = await res.json();
+  if (!data.recordings || !data.recordings.length) return null;
+  return await tpMbEnrich(data.recordings[0]);
+}
+
+async function tpMbISRC(isrc) {
+  const res = await fetch(`https://musicbrainz.org/ws/2/recording?query=isrc:${isrc}&fmt=json`);
+  if (!res.ok) throw new Error('ISRC lookup failed');
+  const data = await res.json();
+  if (!data.recordings || !data.recordings.length) return null;
+  return await tpMbEnrich(data.recordings[0]);
+}
+
+async function tpMbEnrich(rec) {
+  const res = await fetch(`https://musicbrainz.org/ws/2/recording/${rec.id}?inc=artist-credits+work-rels+isrcs&fmt=json`);
+  const contributors = []; let isrc = null, iswc = null;
+  if (res.ok) {
+    const d = await res.json();
+    if (d.isrcs && d.isrcs.length) isrc = d.isrcs[0];
+    if (d['artist-credit']) {
+      for (const ac of d['artist-credit']) {
+        if (ac.artist) contributors.push({ name: ac.artist.name, role: 'Performer', source: 'MusicBrainz' });
+      }
+    }
+    if (d.relations) {
+      for (const rel of d.relations) {
+        if (rel['target-type'] === 'work' && rel.work) {
+          const w = await tpMbWork(rel.work.id);
+          if (w) { for (const c of w.contributors) { if (!contributors.some(x=>x.name.toLowerCase()===c.name.toLowerCase())) contributors.push(c); } if (w.iswc) iswc=w.iswc; }
+          break;
+        }
+      }
+    }
+  }
+  const artistStr = (rec['artist-credit']||[]).map(ac=>ac.name||ac.artist?.name||'').join('');
+  return { title: rec.title, artist: artistStr, isrc, iswc, contributors, sources: ['MusicBrainz'] };
+}
+
+async function tpMbWork(id) {
+  const res = await fetch(`https://musicbrainz.org/ws/2/work/${id}?inc=artist-rels&fmt=json`);
+  if (!res.ok) return null;
+  const w = await res.json();
+  const contributors = [];
+  if (w.relations) for (const r of w.relations) if (r['target-type']==='artist'&&r.artist) { const t=r.type||'contributor'; contributors.push({ name:r.artist.name, role:t.charAt(0).toUpperCase()+t.slice(1), source:'MusicBrainz' }); }
+  return { contributors, iswc: w.iswcs?w.iswcs[0]:null };
+}
+
+async function tpDiscogs(title, artist) {
+  try {
+    const q = artist ? `${title} ${artist}` : title;
+    const res = await fetch(`https://api.discogs.com/database/search?q=${encodeURIComponent(q)}&type=release&per_page=3`, { headers:{'User-Agent':'TrapRoyaltiesPro/1.0'} });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.results||!data.results.length) return null;
+    const r = data.results[0];
+    return { label: r.label?r.label[0]:null, year: r.year||null };
+  } catch(e) { return null; }
+}
+
+function tpShowResult(result) {
+  const el = document.getElementById('tp-lookupResult');
+  const badges = result.sources.map(s=>`<span class="source-badge-dark active">${s}</span>`).join(' ');
+  let ids = '';
+  if (result.isrc) ids += `<span style="font-family:monospace;font-size:11px;background:rgba(168,85,247,0.15);color:#c084fc;padding:2px 7px;border-radius:4px;margin-right:5px;">ISRC: ${result.isrc}</span>`;
+  if (result.iswc) ids += `<span style="font-family:monospace;font-size:11px;background:rgba(168,85,247,0.15);color:#c084fc;padding:2px 7px;border-radius:4px;">ISWC: ${result.iswc}</span>`;
+
+  const creditsHtml = result.contributors.length
+    ? result.contributors.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(168,85,247,0.1);font-size:13px;">
+        <span style="color:#e0e0e0;font-weight:500;">${c.name} <span style="color:#6b7280;font-weight:400;">· ${c.role}</span></span>
+        <span class="source-tag-dark">${c.source}</span>
+      </div>`).join('')
+    : '<p style="color:#6b7280;font-size:12px;padding:8px 0;">No writer credits found in MusicBrainz.</p>';
+
+  const aq = encodeURIComponent(result.artist||result.title);
+  const useBtn = result.contributors.length
+    ? `<button onclick="tpUseCredits()" style="width:100%;margin-top:12px;padding:10px;background:linear-gradient(135deg,#7c3aed,#a855f7);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">✓ Use these credits</button>` : '';
+
+  el.innerHTML = `<div class="lookup-result-dark">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+      <div><div style="font-weight:600;font-size:15px;color:#e9d5ff;">${result.title}</div>${result.artist?`<div style="color:#9ca3af;font-size:13px;">${result.artist}</div>`:''}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;">${badges}</div>
+    </div>
+    ${ids?`<div style="margin-bottom:10px;">${ids}</div>`:''}
+    <div style="font-size:12px;font-weight:600;color:#a855f7;margin-bottom:6px;">Credits found:</div>
+    ${creditsHtml}
+    <div style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap;">
+      <a href="https://www.ascap.com/repertory#ace/search/writer/${aq}" target="_blank" rel="noopener" style="font-size:11px;color:#a5b4ff;border:1px solid rgba(165,180,255,0.3);border-radius:6px;padding:2px 8px;text-decoration:none;">ASCAP →</a>
+      <a href="https://repertoire.bmi.com/StartPage?fromLink=true&type=Writer&search=${aq}" target="_blank" rel="noopener" style="font-size:11px;color:#a5b4ff;border:1px solid rgba(165,180,255,0.3);border-radius:6px;padding:2px 8px;text-decoration:none;">BMI →</a>
+      <a href="https://www.discogs.com/search/?q=${encodeURIComponent(result.title)}&type=release" target="_blank" rel="noopener" style="font-size:11px;color:#a5b4ff;border:1px solid rgba(165,180,255,0.3);border-radius:6px;padding:2px 8px;text-decoration:none;">Discogs →</a>
+      <a href="https://open.spotify.com/search/${encodeURIComponent(result.title+' '+result.artist)}" target="_blank" rel="noopener" style="font-size:11px;color:#1DB954;border:1px solid #1DB954;border-radius:6px;padding:2px 8px;text-decoration:none;">Spotify →</a>
+    </div>
+    ${useBtn}
+  </div>`;
+  el.style.display = 'block';
+}
+
+function tpUseCredits() {
+  if (!window._tpLookup || !window._tpLookup.contributors.length) return;
+  const writers = window._tpLookup.contributors.filter(c=>c.role!=='Performer');
+  const use = writers.length ? writers : window._tpLookup.contributors;
+  const n = use.length; const eq = Math.round(1000/n)/10;
+  const data = use.map((c,i)=>({ name:c.name, role:c.role, percentage: i===n-1 ? Math.round((100-eq*(n-1))*10)/10 : eq, ipi:'' }));
+  // Display imported credits summary
+  const el = document.getElementById('tp-lookupResult');
+  el.insertAdjacentHTML('beforeend',`<div style="margin-top:10px;padding:10px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;font-size:13px;color:#86efac;">
+    ✓ ${data.length} credits imported from ${window._tpLookup.sources.join(', ')} — upload your split sheet above to cross-reference
+  </div>`);
+  window._tpImportedData = data;
+}
+</script>
 </body>
 </html>
