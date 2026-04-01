@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LOD Part 1 — TR-JC-002 — Travis Scott</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#e8e6e0;font-family:'Times New Roman',serif;font-size:11.5px;color:#1a1a1a;}
+#topbar{background:#1a3a1a;color:#7fff7f;font-family:'Courier New',monospace;font-size:10px;letter-spacing:2px;padding:8px 18px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:100;}
+#topbar .left{display:flex;align-items:center;gap:8px;}
+#topbar .left svg{width:13px;height:13px;fill:#7fff7f;}
+#dlbtn{background:transparent;border:1px solid #7fff7f;color:#7fff7f;padding:5px 14px;font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+#dlbtn:hover{background:#7fff7f;color:#1a3a1a;}
+.page{width:740px;margin:56px auto 40px;background:#f5f2ec;padding:44px 52px;box-shadow:0 4px 20px rgba(0,0,0,0.15);}
+.doc-header{margin-bottom:18px;border-bottom:2px solid #1a3a1a;padding-bottom:12px;}
+.doc-header h1{font-size:17px;font-weight:bold;color:#1a1a1a;margin-bottom:4px;}
+.doc-header .subtitle{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;color:#666;text-transform:uppercase;margin-bottom:8px;}
+.doc-header .meta{font-size:10px;color:#444;line-height:1.9;}
+.section{margin-bottom:18px;}
+.sec-title{font-family:'Courier New',monospace;font-size:9.5px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:#1a3a1a;border-bottom:1px solid #1a3a1a;padding-bottom:3px;margin-bottom:10px;}
+.fields{display:grid;grid-template-columns:230px 1fr;gap:3px 8px;}
+.fl{font-size:10px;color:#555;padding:4px 0;border-bottom:1px solid #f0ede8;}
+.fv{font-size:10px;color:#1a1a1a;padding:4px 0;border-bottom:1px solid #f0ede8;}
+.pill{display:inline-block;background:#1a3a1a;color:#7fff7f;font-family:'Courier New',monospace;font-size:9px;padding:2px 8px;border-radius:2px;}
+.hash{font-family:'Courier New',monospace;font-size:9px;background:#e5e7eb;border:1px solid #d1d5db;padding:2px 8px;border-radius:2px;color:#374151;display:inline-block;}
+.dir-box{background:#fff;border:1px solid #d1d5db;border-left:3px solid #1a3a1a;padding:14px 18px;font-size:10.5px;line-height:1.85;color:#1a1a1a;}
+.dir-box p{margin-bottom:8px;}
+.dir-box ol{margin-left:18px;}
+.dir-box ol li{margin-bottom:6px;}
+.dir-basis{margin-top:10px;font-size:10px;color:#555;font-style:italic;}
+.sig-area{margin-top:28px;border-top:2px solid #1a3a1a;padding-top:14px;}
+.sig-block{margin-bottom:24px;}
+.sig-block-label{font-family:'Courier New',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#1a3a1a;font-weight:bold;margin-bottom:14px;}
+.sig-field{display:flex;align-items:flex-end;margin-bottom:14px;gap:6px;}
+.sig-label{font-size:10px;color:#333;white-space:nowrap;}
+.sig-line{flex:1;border-bottom:1px solid #1a1a1a;height:18px;}
+@media print{body{background:#fff;}#topbar,#dlbtn{display:none!important;}.page{margin:0;box-shadow:none;width:100%;}}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div class="left"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>SMPT SECURED DOCUMENT &nbsp;·&nbsp; PROTOCOL V1</div>
+  <button id="dlbtn" onclick="window.print()"><svg style="width:11px;height:11px;fill:currentColor" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7 7-7z"/></svg>Download PDF for SoundExchange Ingestion</button>
+</div>
+<div class="page">
+  <div class="doc-header">
+    <h1>LETTER OF DIRECTION — PART 1</h1>
+    <div class="subtitle">Featured Performer Royalty Claim — SoundExchange</div>
+    <div class="meta">
+      Case Ref: TR-JC-002 | Claimant: Travis Scott<br>
+      Date of Execution: April 1, 2026<br>
+      Jurisdiction: United States
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">1. Rights Holder Identification</div>
+    <div class="fields">
+      <div class="fl">Legal Name</div>
+      <div class="fv">Jacques Bermon Webster II</div>
+      <div class="fl">Stage Name</div>
+      <div class="fv">Travis Scott</div>
+      <div class="fl">Role</div>
+      <div class="fv">Featured Performer — "The London"</div>
+      <div class="fl">Claim Share</div>
+      <div class="fv">45% Featured Performer Share (Split) (17 U.S.C. §114(g)(2))</div>
+      <div class="fl">Verification Hash</div>
+      <div class="fv"><span class="hash">SHA-256: 0xB8712E45…3D94C821</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">2. Asset Metadata</div>
+    <div class="fields">
+      <div class="fl">ISRC</div>
+      <div class="fv"><span class="pill">USAT21903320</span></div>
+      <div class="fl">Record Title</div>
+      <div class="fv">The London</div>
+      <div class="fl">Primary Artist</div>
+      <div class="fv">Young Thug ft. J. Cole &amp; Travis Scott</div>
+      <div class="fl">Featured Performer (Claimant)</div>
+      <div class="fv">Travis Scott</div>
+      <div class="fl">Case Reference</div>
+      <div class="fv">TR-JC-002</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="sec-title">3. Direct Payment Instruction</div>
+    <div class="dir-box">
+      <p>I, the undersigned Featured Performer, hereby irrevocably authorize and direct SoundExchange, Inc. to:</p>
+      <ol>
+        <li>Recognize <strong>Travis Scott</strong> as the rightful Featured Performer for <em>"The London."</em></li>
+        <li>Apply all historical and future digital performance royalties associated with ISRC <strong>USAT21903320</strong> to my SoundExchange account.</li>
+        <li>Release all accrued royalties to my Attorney's IOLTA trust account.</li>
+        <li>Accept the attached Schedule 1, Forensic Audit Report, Identity Verification Certificate, and Chain-of-Custody Hash as supporting documentation.</li>
+      </ol>
+      <p class="dir-basis">Issued pursuant to 17 U.S.C. §114.</p>
+    </div>
+  </div>
+
+  <div class="sig-area">
+    <div class="sec-title">4. Signatures</div>
+    <div class="sig-block">
+      <div class="sig-block-label">Performer / Authorized Representative</div>
+      <div class="sig-field"><span class="sig-label">Name:</span><span class="sig-line"></span></div>
+      <div class="sig-field"><span class="sig-label">Signature:</span><span class="sig-line"></span></div>
+      <div class="sig-field"><span class="sig-label">Date:</span><span class="sig-line"></span></div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-block-label">Attorney of Record</div>
+      <div class="sig-field"><span class="sig-label">Firm:</span><span class="sig-line"></span></div>
+      <div class="sig-field"><span class="sig-label">Attorney Name:</span><span class="sig-line"></span></div>
+      <div class="sig-field"><span class="sig-label">Bar #:</span><span class="sig-line"></span></div>
+      <div class="sig-field"><span class="sig-label">Signature:</span><span class="sig-line"></span></div>
+      <div class="sig-field"><span class="sig-label">Date:</span><span class="sig-line"></span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Identity Verification Certificate — TR-KF-003 — Kirk Franklin</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#e8e6e0;font-family:'Times New Roman',serif;font-size:11.5px;color:#1a1a1a;}
+  #topbar{background:#1a3a1a;color:#7fff7f;font-family:'Courier New',monospace;font-size:10px;letter-spacing:2px;padding:8px 18px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:100;}
+  #topbar .left{display:flex;align-items:center;gap:8px;}#topbar .left svg{width:13px;height:13px;fill:#7fff7f;}
+  #dlbtn{background:transparent;border:1px solid #7fff7f;color:#7fff7f;padding:5px 14px;font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  #dlbtn:hover{background:#7fff7f;color:#1a3a1a;}
+  .page{width:740px;margin:56px auto 40px;background:#f5f2ec;padding:44px 52px;box-shadow:0 4px 20px rgba(0,0,0,0.15);position:relative;}
+  .smpt-badge{position:absolute;top:22px;right:26px;width:68px;text-align:center;}
+  .smpt-badge .shield{background:#1a3a1a;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;margin:0 auto 3px;}
+  .smpt-badge .shield svg{width:26px;height:26px;fill:#7fff7f;}
+  .smpt-badge p{font-family:'Courier New',monospace;font-size:7px;letter-spacing:1px;color:#1a3a1a;text-transform:uppercase;line-height:1.4;}
+  .smpt-badge .dot{width:7px;height:7px;background:#22c55e;border-radius:50%;margin:3px auto 0;}
+  .doc-header{padding-right:80px;margin-bottom:18px;border-bottom:2px solid #1a3a1a;padding-bottom:12px;}
+  .kicker{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:5px;}
+  .doc-header h1{font-size:17px;font-weight:bold;color:#1a1a1a;margin-bottom:8px;}
+  .doc-header .meta{font-size:10px;color:#444;line-height:1.9;}
+  .section{margin-bottom:18px;}
+  .sec-title{font-family:'Courier New',monospace;font-size:9.5px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:#1a3a1a;border-bottom:1px solid #1a3a1a;padding-bottom:3px;margin-bottom:10px;}
+  table.rt{width:100%;border-collapse:collapse;}
+  table.rt tr{border-bottom:1px solid #e5e7eb;}table.rt tr:last-child{border-bottom:none;}
+  table.rt td{padding:8px 12px;font-size:10.5px;vertical-align:top;}
+  table.rt td:first-child{width:230px;font-family:'Courier New',monospace;font-size:9.5px;letter-spacing:0.5px;text-transform:uppercase;color:#6b7280;background:#f9fafb;border-right:1px solid #e5e7eb;font-weight:bold;}
+  .status-verified{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:3px 10px;font-family:'Courier New',monospace;font-size:9.5px;color:#166534;font-weight:bold;}
+  .status-verified::before{content:'';width:7px;height:7px;background:#22c55e;border-radius:50%;display:inline-block;}
+  .hash{font-family:'Courier New',monospace;font-size:9px;background:#e5e7eb;border:1px solid #d1d5db;padding:2px 8px;border-radius:2px;color:#374151;display:inline-block;}
+  .attest-box{background:#fff;border:1px solid #d1d5db;border-left:3px solid #1a3a1a;padding:12px 16px;margin-top:8px;}
+  .at-row{display:flex;justify-content:space-between;font-size:10px;padding:4px 0;border-bottom:1px solid #f3f4f6;}
+  .at-row:last-child{border-bottom:none;}
+  .at-label{color:#6b7280;font-family:'Courier New',monospace;font-size:9px;text-transform:uppercase;}
+  .at-val{font-weight:bold;color:#1a1a1a;}
+  .seal{background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:9px 13px;display:flex;align-items:flex-start;gap:10px;margin-top:18px;}
+  .seal .sm-shield{background:#1a3a1a;border-radius:50%;width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .seal .sm-shield svg{width:14px;height:14px;fill:#7fff7f;}
+  .seal .seal-text{font-family:'Courier New',monospace;font-size:9px;color:#166534;line-height:1.7;}
+  .seal .sdot{width:7px;height:7px;background:#22c55e;border-radius:50%;margin-top:3px;flex-shrink:0;}
+  .footer{margin-top:20px;border-top:1px solid #ccc;padding-top:9px;display:flex;justify-content:space-between;font-size:9px;color:#888;line-height:1.7;}
+  @media print{body{background:#fff;}#topbar,#dlbtn{display:none!important;}.page{margin:0;box-shadow:none;width:100%;}}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div class="left"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>SMPT SECURED DOCUMENT &nbsp;·&nbsp; PROTOCOL V1</div>
+  <button id="dlbtn" onclick="window.print()"><svg style="width:11px;height:11px;fill:currentColor" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7 7-7z"/></svg>Download PDF for SoundExchange Ingestion</button>
+</div>
+<div class="page">
+  <div class="smpt-badge">
+    <div class="shield"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+    <p>SMPT<br>BIOMETRIC<br>SECURITY<br>SEAL</p><div class="dot"></div>
+  </div>
+  <div class="doc-header">
+    <div class="kicker">Identity Verification Certificate &nbsp;·&nbsp; SMPT — Secured Music Protocol Technology</div>
+    <h1>IDENTITY VERIFICATION CERTIFICATE</h1>
+    <div class="meta">Case Ref: <strong>TR-KF-003</strong></div>
+  </div>
+  <div class="section">
+    <div class="sec-title">Verification Record</div>
+    <table class="rt">
+      <tr><td>Performer</td><td><strong>Kirk Franklin</strong></td></tr>
+      <tr><td>Verification Method</td><td>Biometric Face Scan + Digital Signature</td></tr>
+      <tr><td>Liveness Check</td><td><strong>PASSED</strong></td></tr>
+      <tr><td>Timestamp</td><td>April 1, 2026</td></tr>
+      <tr><td>Digital Anchor</td><td><span class="hash">SHA-256: 0xC9827FA1…44D1A9EE</span></td></tr>
+      <tr><td>Node</td><td>TrapRoyaltiesPro-1</td></tr>
+      <tr><td>Certificate Status</td><td><span class="status-verified">VERIFIED — BIOMETRIC MATCH</span></td></tr>
+    </table>
+  </div>
+  <div class="section">
+    <div class="sec-title">Attestation Details</div>
+    <div class="attest-box">
+      <div class="at-row"><span class="at-label">SMPT Attestation ID</span><span class="at-val">SMPT-2026-ATT-KF003</span></div>
+      <div class="at-row"><span class="at-label">Protocol</span><span class="at-val">SMPT Biometric Protocol v1</span></div>
+      <div class="at-row"><span class="at-label">Case Reference</span><span class="at-val">TR-KF-003 — Love Theory / USRC11900001</span></div>
+      <div class="at-row"><span class="at-label">Issued By</span><span class="at-val">TrapRoyaltiesPro.com</span></div>
+    </div>
+  </div>
+  <div class="seal">
+    <div class="sm-shield"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+    <div class="seal-text">SMPT Node Security Seal · Chain Anchor: 0xC9827FA144D1A9EE · Node: STOCKHOLM-PRIMARY-1<br>Protocol: TR-KF-003-IVC-2026 · Issued via TrapRoyaltiesPro.com</div>
+    <div class="sdot"></div>
+  </div>
+  <div class="footer">
+    <div>TrapRoyaltiesPro · SMPT — Secured Music Protocol Technology · Identity Verification Certificate</div>
+    <div style="text-align:right;">Doc ID: TR-KF-003-2026-IVC<br>Case Ref: TR-KF-003 · Page 1 of 1</div>
+  </div>
+</div>
+</body>
+</html>

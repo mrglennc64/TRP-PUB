@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Chain-of-Custody Hash — TR-LW-004 — Lil Wayne</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#e8e6e0;font-family:'Times New Roman',serif;font-size:11.5px;color:#1a1a1a;}
+  #topbar{background:#1a3a1a;color:#7fff7f;font-family:'Courier New',monospace;font-size:10px;letter-spacing:2px;padding:8px 18px;display:flex;justify-content:space-between;align-items:center;position:fixed;top:0;left:0;right:0;z-index:100;}
+  #topbar .left{display:flex;align-items:center;gap:8px;}#topbar .left svg{width:13px;height:13px;fill:#7fff7f;}
+  #dlbtn{background:transparent;border:1px solid #7fff7f;color:#7fff7f;padding:5px 14px;font-family:'Courier New',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  #dlbtn:hover{background:#7fff7f;color:#1a3a1a;}
+  .page{width:740px;margin:56px auto 40px;background:#f5f2ec;padding:44px 52px;box-shadow:0 4px 20px rgba(0,0,0,0.15);position:relative;}
+  .smpt-badge{position:absolute;top:22px;right:26px;width:68px;text-align:center;}
+  .smpt-badge .shield{background:#1a3a1a;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;margin:0 auto 3px;}
+  .smpt-badge .shield svg{width:26px;height:26px;fill:#7fff7f;}
+  .smpt-badge p{font-family:'Courier New',monospace;font-size:7px;letter-spacing:1px;color:#1a3a1a;text-transform:uppercase;line-height:1.4;}
+  .smpt-badge .dot{width:7px;height:7px;background:#22c55e;border-radius:50%;margin:3px auto 0;}
+  .doc-header{padding-right:80px;margin-bottom:18px;border-bottom:2px solid #1a3a1a;padding-bottom:12px;}
+  .kicker{font-family:'Courier New',monospace;font-size:9px;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:5px;}
+  .doc-header h1{font-size:17px;font-weight:bold;color:#1a1a1a;margin-bottom:8px;}
+  .doc-header .meta{font-size:10px;color:#444;line-height:1.9;}
+  .section{margin-bottom:18px;}
+  .sec-title{font-family:'Courier New',monospace;font-size:9.5px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;color:#1a3a1a;border-bottom:1px solid #1a3a1a;padding-bottom:3px;margin-bottom:10px;}
+  .hash-display{font-family:'Courier New',monospace;font-size:13px;background:#1a1a2e;color:#7fff7f;padding:14px 20px;border-radius:4px;letter-spacing:1.5px;display:block;margin:12px 0;text-align:center;}
+  .status-verified{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:5px 14px;font-family:'Courier New',monospace;font-size:10px;color:#166534;font-weight:bold;margin-top:4px;}
+  .status-verified::before{content:'';width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block;}
+  table.rt{width:100%;border-collapse:collapse;}
+  table.rt tr{border-bottom:1px solid #e5e7eb;}table.rt tr:last-child{border-bottom:none;}
+  table.rt td{padding:8px 12px;font-size:10.5px;vertical-align:top;}
+  table.rt td:first-child{width:230px;font-family:'Courier New',monospace;font-size:9.5px;letter-spacing:0.5px;text-transform:uppercase;color:#6b7280;background:#f9fafb;border-right:1px solid #e5e7eb;font-weight:bold;}
+  .seal{background:#f0fdf4;border:1px solid #86efac;border-radius:3px;padding:9px 13px;display:flex;align-items:flex-start;gap:10px;margin-top:18px;}
+  .seal .sm-shield{background:#1a3a1a;border-radius:50%;width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .seal .sm-shield svg{width:14px;height:14px;fill:#7fff7f;}
+  .seal .seal-text{font-family:'Courier New',monospace;font-size:9px;color:#166534;line-height:1.7;}
+  .seal .sdot{width:7px;height:7px;background:#22c55e;border-radius:50%;margin-top:3px;flex-shrink:0;}
+  .footer{margin-top:20px;border-top:1px solid #ccc;padding-top:9px;display:flex;justify-content:space-between;font-size:9px;color:#888;line-height:1.7;}
+  @media print{body{background:#fff;}#topbar,#dlbtn{display:none!important;}.page{margin:0;box-shadow:none;width:100%;}}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <div class="left"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>SMPT SECURED DOCUMENT &nbsp;·&nbsp; PROTOCOL V1</div>
+  <button id="dlbtn" onclick="window.print()"><svg style="width:11px;height:11px;fill:currentColor" viewBox="0 0 24 24"><path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7 7-7z"/></svg>Download PDF for SoundExchange Ingestion</button>
+</div>
+<div class="page">
+  <div class="smpt-badge">
+    <div class="shield"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+    <p>SMPT<br>BIOMETRIC<br>SECURITY<br>SEAL</p><div class="dot"></div>
+  </div>
+  <div class="doc-header">
+    <div class="kicker">Chain-of-Custody Hash Record &nbsp;·&nbsp; SMPT — Secured Music Protocol Technology</div>
+    <h1>CHAIN-OF-CUSTODY HASH RECORD</h1>
+    <div class="meta">Case Ref: <strong>TR-LW-004</strong></div>
+  </div>
+  <div class="section">
+    <div class="sec-title">Digital Anchor</div>
+    <code class="hash-display">SHA-256 &nbsp;·&nbsp; 0xD1935G78…7F14D253</code>
+    <span class="status-verified">VERIFIED — TAMPER-PROOF</span>
+  </div>
+  <div class="section">
+    <div class="sec-title">Hash Record</div>
+    <table class="rt">
+      <tr><td>Digital Anchor ID</td><td><strong>0xD1935G78…7F14D253</strong></td></tr>
+      <tr><td>Timestamp</td><td>2026-03-31T00:00:00Z</td></tr>
+      <tr><td>Node Verified</td><td>STOCKHOLM-PRIMARY-1</td></tr>
+      <tr><td>Audit ID</td><td>TR-LW-004</td></tr>
+      <tr><td>Protocol</td><td>TR-V1.2 / MONAD-ANCHORED</td></tr>
+      <tr><td>Integrity Status</td><td style="color:#16a34a;font-weight:bold;">VERIFIED — TAMPER-PROOF</td></tr>
+    </table>
+  </div>
+  <div class="seal">
+    <div class="sm-shield"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+    <div class="seal-text">SMPT Node Security Seal · Chain Anchor: 0xD1935G787F14D253 · Node: STOCKHOLM-PRIMARY-1<br>Protocol: TR-V1.2 / MONAD-ANCHORED · Issued via TrapRoyaltiesPro.com</div>
+    <div class="sdot"></div>
+  </div>
+  <div class="footer">
+    <div>TrapRoyaltiesPro · SMPT — Secured Music Protocol Technology · Chain-of-Custody Hash Record</div>
+    <div style="text-align:right;">Doc ID: TR-LW-004-2026-COC<br>Case Ref: TR-LW-004 · Page 1 of 1</div>
+  </div>
+</div>
+</body>
+</html>
