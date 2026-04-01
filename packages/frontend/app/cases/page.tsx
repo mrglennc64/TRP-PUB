@@ -205,16 +205,17 @@ export default function CasesPage() {
       const zip = new JSZip();
       await Promise.all(
         c.files.map(async (f) => {
-          const res = await fetch(`/cases/${f.name}`);
-          const text = await res.text();
-          zip.file(f.name, text);
+          const pdfName = f.name.replace('.html', '.pdf');
+          const res = await fetch(`/cases/${pdfName}`);
+          const blob = await res.blob();
+          zip.file(pdfName, blob);
         })
       );
       const blob = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${c.ref}_${c.artist.replace(/[^a-zA-Z0-9]/g, '-')}_Package.zip`;
+      a.download = `${c.ref}_${c.artist.replace(/[^a-zA-Z0-9]/g, '-')}_Package_PDFs.zip`;
       a.click();
       URL.revokeObjectURL(url);
     } finally {
