@@ -5,15 +5,14 @@ import { useEffect, useState } from "react";
 const SPLASH_KEY = "trp_splash_seen";
 
 /*
-  Sequence
-  --------
-  0.00s  shield begins off-screen top-left, opacity 0
-  0.00–0.90s  arc motion (convex curve) to center, opacity 0 → 1
-  0.90–1.05s  lock-in: scale 1.00 → 0.982 → 1.00
-  1.10–1.55s  wordmark fades in, no movement
-  1.55s  stable hold
-  2.10s  overlay fades out
-  2.70s  removed from DOM, sessionStorage flag set
+  Sequence (all centered, no movement)
+  ──────────────────────────────────────
+  0.00 – 0.55s   shield fades in, opacity 0 → 1
+  0.55 – 0.80s   lock-in: scale 1.00 → 0.982 → 1.00
+  0.90 – 1.35s   wordmark fades in, opacity 0 → 1, no movement
+  1.35 – 1.80s   hold
+  1.80 – 2.35s   overlay fades out
+  2.35s          removed from DOM
 */
 
 export default function SplashAnimation() {
@@ -25,13 +24,13 @@ export default function SplashAnimation() {
       setPhase("done");
       return;
     }
-    const t0 = setTimeout(() => setPhase("animate"), 40);
-    const t1 = setTimeout(() => setTextVisible(true), 1100);
-    const t2 = setTimeout(() => setPhase("exit"), 2100);
+    const t0 = setTimeout(() => setPhase("animate"), 30);
+    const t1 = setTimeout(() => setTextVisible(true), 900);
+    const t2 = setTimeout(() => setPhase("exit"), 1800);
     const t3 = setTimeout(() => {
       sessionStorage.setItem(SPLASH_KEY, "1");
       setPhase("done");
-    }, 2700);
+    }, 2400);
     return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
@@ -40,34 +39,12 @@ export default function SplashAnimation() {
   return (
     <>
       <style>{`
-        @keyframes trpShieldArc {
-          0% {
-            transform: translate(-52vw, -38vh) scale(0.88);
-            opacity: 0;
-          }
-          14% {
-            opacity: 0.55;
-          }
-          56% {
-            transform: translate(-13vw, 5vh) scale(1.00);
-            opacity: 1;
-          }
-          80% {
-            transform: translate(0, 0) scale(1.00);
-            opacity: 1;
-          }
-          89% {
-            transform: translate(0, 0) scale(0.982);
-            opacity: 1;
-          }
-          97% {
-            transform: translate(0, 0) scale(1.001);
-            opacity: 1;
-          }
-          100% {
-            transform: translate(0, 0) scale(1.00);
-            opacity: 1;
-          }
+        @keyframes trpShieldReveal {
+          0%   { opacity: 0;   transform: scale(1.000); }
+          55%  { opacity: 1;   transform: scale(1.000); }
+          68%  { opacity: 1;   transform: scale(0.982); }
+          84%  { opacity: 1;   transform: scale(1.002); }
+          100% { opacity: 1;   transform: scale(1.000); }
         }
       `}</style>
 
@@ -82,39 +59,44 @@ export default function SplashAnimation() {
           alignItems: "center",
           justifyContent: "center",
           opacity: phase === "exit" ? 0 : 1,
-          transition: phase === "exit" ? "opacity 0.55s cubic-bezier(0.4, 0, 1, 1)" : "none",
+          transition: phase === "exit" ? "opacity 0.52s ease-in" : "none",
           pointerEvents: phase === "exit" ? "none" : "all",
         }}
       >
-        {/* Shield — arc motion from top-left */}
+        {/* Shield — fade in + lock-in, no position change */}
         {phase === "animate" && (
           <img
             src="/images/trp-shield.png"
             alt=""
             style={{
-              height: 148,
+              height: 152,
               width: "auto",
               display: "block",
-              animation: "trpShieldArc 1.0s cubic-bezier(0.42, 0, 0.30, 1.0) forwards",
-              filter: "grayscale(18%) brightness(1.05) contrast(1.08)",
+              animation: "trpShieldReveal 0.82s cubic-bezier(0.25, 0.1, 0.25, 1) forwards",
+              filter: "grayscale(15%) brightness(1.04) contrast(1.06)",
             }}
           />
         )}
 
-        {/* Wordmark — opacity fade only, no movement */}
-        <img
-          src="/images/trp-wordmark.png"
-          alt="TrapRoyalties PRO"
+        {/* Wordmark — fade in only, centered, no movement */}
+        <div
           style={{
-            height: 46,
-            width: "auto",
-            display: "block",
-            marginTop: 22,
+            marginTop: 20,
             opacity: textVisible ? 1 : 0,
-            transition: textVisible ? "opacity 0.42s ease-in" : "none",
-            filter: "grayscale(10%) brightness(1.15)",
+            transition: "opacity 0.42s ease-in",
           }}
-        />
+        >
+          <img
+            src="/images/trp-wordmark.png"
+            alt="TrapRoyalties PRO"
+            style={{
+              height: 44,
+              width: "auto",
+              display: "block",
+              filter: "grayscale(10%) brightness(1.15)",
+            }}
+          />
+        </div>
       </div>
     </>
   );
