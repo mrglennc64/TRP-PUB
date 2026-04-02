@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDemoMode } from "../lib/DemoModeProvider";
-import TRPLogo from "./Logo/TRPLogo";
 
 const LEGAL_TOOLS_ITEMS = [
   { href: "/attorney-portal",                label: "Attorney Portal",      group: "portal" },
@@ -62,8 +61,82 @@ export default function SiteNav() {
         <div className="px-4 flex items-center h-12 gap-2 overflow-visible">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center flex-shrink-0 mr-4">
-            <TRPLogo variant="nav" animate={true} />
+          <Link href="/" className="flex items-center gap-3 flex-shrink-0" style={{textDecoration:"none"}}>
+            <svg width="36" height="36" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+              <path d="M223.0,49.8 A152,152 0 0,1 290.0,77.5" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M322.5,110.0 A152,152 0 0,1 350.2,177.0" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M350.2,223.0 A152,152 0 0,1 322.5,290.0" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M290.0,322.5 A152,152 0 0,1 223.0,350.2" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M177.0,350.2 A152,152 0 0,1 110.0,322.5" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M77.5,290.0 A152,152 0 0,1 49.8,223.0" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M49.8,177.0 A152,152 0 0,1 77.5,110.0" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M110.0,77.5 A152,152 0 0,1 177.0,49.8" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <line x1="200.0" y1="102.0" x2="200.0" y2="73.0" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="269.3" y1="130.7" x2="289.8" y2="110.2" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="298.0" y1="200.0" x2="327.0" y2="200.0" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="269.3" y1="269.3" x2="289.8" y2="289.8" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="200.0" y1="298.0" x2="200.0" y2="327.0" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="130.7" y1="269.3" x2="110.2" y2="289.8" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="102.0" y1="200.0" x2="73.0" y2="200.0" stroke="#FFFFFF" strokeWidth="4"/>
+              <line x1="130.7" y1="130.7" x2="110.2" y2="110.2" stroke="#FFFFFF" strokeWidth="4"/>
+              <circle cx="200" cy="200" r="98" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <circle cx="200.0" cy="102.0" r="3.5" fill="#FFFFFF"/>
+              <circle cx="269.3" cy="130.7" r="3.5" fill="#FFFFFF"/>
+              <circle cx="298.0" cy="200.0" r="3.5" fill="#FFFFFF"/>
+              <circle cx="269.3" cy="269.3" r="3.5" fill="#FFFFFF"/>
+              <circle cx="200.0" cy="298.0" r="3.5" fill="#FFFFFF"/>
+              <circle cx="130.7" cy="269.3" r="3.5" fill="#FFFFFF"/>
+              <circle cx="102.0" cy="200.0" r="3.5" fill="#FFFFFF"/>
+              <circle cx="130.7" cy="130.7" r="3.5" fill="#FFFFFF"/>
+              <circle cx="200.0" cy="48.0" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <ellipse cx="200.0" cy="42.0" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <ellipse cx="200.0" cy="54.0" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <line x1="191.0" y1="42.0" x2="191.0" y2="54.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="209.0" y1="42.0" x2="209.0" y2="54.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <circle cx="307.5" cy="92.5" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <circle cx="307.5" cy="92.5" r="9" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <circle cx="307.5" cy="92.5" r="4" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <circle cx="352.0" cy="200.0" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <ellipse cx="352.0" cy="194.0" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <ellipse cx="352.0" cy="206.0" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <line x1="343.0" y1="194.0" x2="343.0" y2="206.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="361.0" y1="194.0" x2="361.0" y2="206.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <circle cx="307.5" cy="307.5" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <ellipse cx="307.5" cy="301.5" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <ellipse cx="307.5" cy="313.5" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <line x1="298.5" y1="301.5" x2="298.5" y2="313.5" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="316.5" y1="301.5" x2="316.5" y2="313.5" stroke="#FFFFFF" strokeWidth="3"/>
+              <circle cx="200.0" cy="352.0" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M194.0,344.0 L201.0,344.0 L206.0,349.0 L206.0,360.0 L194.0,360.0 Z" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <path d="M201.0,344.0 L201.0,349.0 L206.0,349.0" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <line x1="197.0" y1="350.0" x2="201.0" y2="350.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="197.0" y1="354.0" x2="201.0" y2="354.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="197.0" y1="358.0" x2="201.0" y2="358.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <circle cx="92.5" cy="307.5" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <ellipse cx="92.5" cy="301.5" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <ellipse cx="92.5" cy="313.5" rx="9" ry="3.5" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <line x1="83.5" y1="301.5" x2="83.5" y2="313.5" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="101.5" y1="301.5" x2="101.5" y2="313.5" stroke="#FFFFFF" strokeWidth="3"/>
+              <circle cx="48.0" cy="200.0" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <path d="M42.0,192.0 L49.0,192.0 L54.0,197.0 L54.0,208.0 L42.0,208.0 Z" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <path d="M49.0,192.0 L49.0,197.0 L54.0,197.0" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <line x1="45.0" y1="198.0" x2="49.0" y2="198.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="45.0" y1="202.0" x2="49.0" y2="202.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <line x1="45.0" y1="206.0" x2="49.0" y2="206.0" stroke="#FFFFFF" strokeWidth="3"/>
+              <circle cx="92.5" cy="92.5" r="23" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <circle cx="92.5" cy="92.5" r="9" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <circle cx="92.5" cy="92.5" r="4" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <polygon points="200.0,142.0 250.2,171.0 250.2,229.0 200.0,258.0 149.8,229.0 149.8,171.0" stroke="#FFFFFF" strokeWidth="3" fill="none"/>
+              <circle cx="252.0" cy="246.8" r="26" stroke="#FFFFFF" strokeWidth="5" fill="none"/>
+              <polyline points="240.0,248.8 249.0,257.8 265.0,236.8" stroke="#FFFFFF" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            </svg>
+            <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
+              <div style={{display:"flex",flexDirection:"column",gap:"2px"}}>
+                <span style={{fontFamily:"Inter,-apple-system,sans-serif",fontWeight:800,fontSize:"16.5px",color:"#c7d2fe",letterSpacing:"-0.04em",whiteSpace:"nowrap",lineHeight:1}}>TrapRoyalties<span style={{fontWeight:900,color:"#818cf8",letterSpacing:"0.04em"}}>PRO</span></span>
+                <div style={{height:"1px",background:"linear-gradient(90deg,transparent,#6366f1 20%,#818cf8 55%,transparent)",width:"88%",alignSelf:"center"}} />
+              </div>
+              <span style={{fontFamily:"Inter,-apple-system,sans-serif",fontWeight:600,fontSize:"7px",color:"#4f5b8a",letterSpacing:"0.2em",whiteSpace:"nowrap",lineHeight:1,textTransform:"uppercase"}}>SMPT Verified System</span>
+            </div>
           </Link>
 
           {/* Desktop nav — Legal Tools only */}
