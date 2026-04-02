@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import SiteNav from './components/SiteNav'
 import { DemoModeProvider } from './lib/DemoModeProvider'
+import SecurityGuard from './components/SecurityGuard'
 
 export const metadata: Metadata = {
   title: 'TrapRoyaltiesPro — Music Rights Management',
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className="antialiased">
+        <SecurityGuard />
         <DemoModeProvider>
           <SiteNav />
           <div className="pt-12">{children}</div>

@@ -202,6 +202,8 @@ export default function CasesPage() {
     if (VALID_KEYS.includes(keyInput.trim())) {
       setUnlocked(true);
       setError(false);
+      // Set session cookie so server-side PDF route allows downloads
+      document.cookie = `trp_cases_session=${keyInput.trim()}; path=/; SameSite=Strict`;
       logEvent('login', keyInput.trim());
     } else {
       setError(true);
@@ -217,7 +219,8 @@ export default function CasesPage() {
       await Promise.all(
         c.files.map(async (f) => {
           const pdfName = f.name.replace('.html', '.pdf');
-          const res = await fetch(`/cases/${pdfName}`);
+          const res = await fetch(`/api/cases-file/${pdfName}`);
+          if (!res.ok) throw new Error(`Failed to fetch ${pdfName}`);
           const blob = await res.blob();
           zip.file(pdfName, blob);
         })
