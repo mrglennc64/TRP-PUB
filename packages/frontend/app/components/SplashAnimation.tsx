@@ -25,12 +25,12 @@ export default function SplashAnimation() {
       return;
     }
     const t0 = setTimeout(() => setPhase("animate"), 30);
-    const t1 = setTimeout(() => setTextVisible(true), 900);
-    const t2 = setTimeout(() => setPhase("exit"), 1800);
+    const t1 = setTimeout(() => setTextVisible(true), 1700);
+    const t2 = setTimeout(() => setPhase("exit"), 3200);
     const t3 = setTimeout(() => {
       sessionStorage.setItem(SPLASH_KEY, "1");
       setPhase("done");
-    }, 2400);
+    }, 3900);
     return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
@@ -69,10 +69,10 @@ export default function SplashAnimation() {
             src="/images/trp-shield.png"
             alt=""
             style={{
-              height: 152,
+              height: 304,
               width: "auto",
               display: "block",
-              animation: "trpShieldReveal 0.82s cubic-bezier(0.25, 0.1, 0.25, 1) forwards",
+              animation: "trpShieldReveal 1.6s cubic-bezier(0.25, 0.1, 0.25, 1) forwards",
               filter: "grayscale(15%) brightness(1.04) contrast(1.06)",
             }}
           />
@@ -83,14 +83,14 @@ export default function SplashAnimation() {
           style={{
             marginTop: 20,
             opacity: textVisible ? 1 : 0,
-            transition: "opacity 0.42s ease-in",
+            transition: "opacity 0.85s ease-in",
           }}
         >
           <img
             src="/images/trp-wordmark.png"
             alt="TrapRoyalties PRO"
             style={{
-              height: 44,
+              height: 88,
               width: "auto",
               display: "block",
               filter: "grayscale(10%) brightness(1.15)",
