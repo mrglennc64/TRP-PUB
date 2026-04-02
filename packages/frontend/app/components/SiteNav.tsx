@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDemoMode } from "../lib/DemoModeProvider";
+import TRPLogo from "./Logo/TRPLogo";
 
 const LEGAL_TOOLS_ITEMS = [
   { href: "/attorney-portal",                label: "Attorney Portal",      group: "portal" },
@@ -61,9 +62,8 @@ export default function SiteNav() {
         <div className="px-4 flex items-center h-12 gap-2 overflow-visible">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0 mr-4">
-            <span className="text-base font-black text-indigo-400 tracking-tight">TRP</span>
-            <span className="hidden lg:block text-xs text-slate-500 font-medium">TrapRoyaltiesPro</span>
+          <Link href="/" className="flex items-center flex-shrink-0 mr-4">
+            <TRPLogo variant="nav" animate={true} />
           </Link>
 
           {/* Desktop nav — Legal Tools only */}
