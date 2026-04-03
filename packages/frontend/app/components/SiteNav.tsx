@@ -169,7 +169,7 @@ export default function SiteNav() {
           <div className="bg-[#0f172a] border border-white/10 rounded-2xl p-8 w-full max-w-sm shadow-2xl">
             <p className="text-[10px] font-black uppercase tracking-widest text-green-400 mb-1">Live Data Access</p>
             <h2 className="text-xl font-black text-white mb-1">Enter Access Code</h2>
-            <p className="text-slate-500 text-xs mb-6">Enter your access key to activate live data probes. Trial key: <span className="font-mono text-slate-400">TRP-LIVE-2026</span> (5 probes / 14 days).</p>
+            <p className="text-slate-500 text-xs mb-6">Enter your access key to activate live data probes.</p>
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
               <input type="password" value={passwordInput}
                 onChange={e => { setPasswordInput(e.target.value); setPasswordError(false); }}
