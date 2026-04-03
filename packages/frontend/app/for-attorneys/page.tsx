@@ -21,11 +21,42 @@ const TERMINAL_LOGS = [
 const fmt = (n: number) => "$" + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 const CASES = [
-  { id: "TRP-2026-001", label: "Guest Performer — Unclaimed Share",    issue: "LOD NOT FILED",     value: "$214,300", score: 97 },
-  { id: "TRP-2026-002", label: "Featured Performer — Missing LOD",     issue: "AUTHORIZATION HOLD", value: "$198,750", score: 94 },
-  { id: "TRP-2026-003", label: "Principal Performer — Registry Gap",   issue: "LOD NOT FILED",     value: "$241,200", score: 98 },
-  { id: "TRP-2026-004", label: "Co-Performer — Statutory Suspense",    issue: "IDENTITY PENDING",  value: "$187,500", score: 91 },
-  { id: "TRP-2026-005", label: "Session Performer — Unclaimed",        issue: "LOD NOT FILED",     value: "$178,250", score: 96 },
+  {
+    id: "TRP-AX93-2026",
+    artist: "2 Chainz",
+    sublabel: "Featured Performer — Identity Verified",
+    role: "Featured Performer", share: "15.62% (Unallocated)",
+    isrc: "US-UM7-23-XXXXX", registries: "SoundExchange · MLC",
+    timeline: ["2023: Recording released", "2024: Label registered", "2025: Share unclaimed", "2026: Verified"],
+    value: "$27,400", score: 92, action: "Review for Filing",
+  },
+  {
+    id: "TRP-BX21-2026",
+    artist: "Travis Scott",
+    sublabel: "Session Contributor — Uncredited Share",
+    role: "Session Musician", share: "9.8% (Unclaimed)",
+    isrc: "US-EP7-22-XXXXX", registries: "SoundExchange",
+    timeline: ["2022: Recording released", "2023: Registration confirmed", "2025: Revenue unclaimed", "2026: Verified"],
+    value: "$41,800", score: 95, action: "Initiate Filing",
+  },
+  {
+    id: "TRP-CX44-2026",
+    artist: "Guest Performer",
+    sublabel: "Principal Performer — Registry Gap",
+    role: "Principal Performer", share: "22.1% (Unallocated)",
+    isrc: "US-UM7-21-XXXXX", registries: "SoundExchange · ASCAP",
+    timeline: ["2021: Recording released", "2022: ISRC registered", "2024: Share unmatched", "2026: Verified"],
+    value: "$241,200", score: 98, action: "Review for Filing",
+  },
+  {
+    id: "TRP-DX07-2026",
+    artist: "Co-Performer",
+    sublabel: "Co-Performer — Statutory Suspense",
+    role: "Co-Performer", share: "11.4% (Suspended)",
+    isrc: "US-RC5-22-XXXXX", registries: "SoundExchange · BMI",
+    timeline: ["2022: Recording released", "2023: LOD not submitted", "2025: Funds in suspense", "2026: Verified"],
+    value: "$187,500", score: 91, action: "Initiate Filing",
+  },
 ];
 
 export default function ForAttorneysPage() {
@@ -150,19 +181,28 @@ export default function ForAttorneysPage() {
       {/* Cases */}
       <section style={{ maxWidth: 960, margin: "0 auto", padding: "56px 32px" }}>
         <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 6, color: "#f9fafb" }}>Active Recovery Cases</h2>
-        <p style={{ fontSize: 12, color: "#4b5563", marginBottom: 28 }}>Artist identities protected pending counsel engagement · All amounts SoundExchange-sourced</p>
+        <p style={{ fontSize: 12, color: "#4b5563", marginBottom: 28 }}>Showing 4 of 50 verified recovery cases · All amounts SoundExchange-sourced</p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
           {CASES.map((c) => (
             <div key={c.id} style={{ border: "1px solid #1f2937", borderRadius: 12, padding: "24px", background: "#0d1117", transition: "border-color 0.2s" }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = "#374151")}
               onMouseLeave={e => (e.currentTarget.style.borderColor = "#1f2937")}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
                 <span style={{ fontSize: 10, fontFamily: "monospace", color: "#4b5563" }}>{c.id}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", letterSpacing: "0.1em" }}>● VERIFIED</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", letterSpacing: "0.1em" }}>● VERIFIED — READY FOR FILING</span>
               </div>
-              <div style={{ fontSize: 14, fontWeight: 500, color: "#e5e7eb", marginBottom: 8 }}>{c.label}</div>
-              <div style={{ fontSize: 11, color: "#ef4444", letterSpacing: "0.08em", fontWeight: 600, marginBottom: 16 }}>{c.issue}</div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "#f9fafb", marginBottom: 2 }}>{c.artist}</div>
+              <div style={{ fontSize: 12, color: "#4b5563", marginBottom: 12 }}>{c.sublabel}</div>
+              <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>Role: {c.role}</div>
+              <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 8 }}>Share: {c.share}</div>
+              <div style={{ fontSize: 10, color: "#374151", marginBottom: 2 }}>ISRC: {c.isrc}</div>
+              <div style={{ fontSize: 10, color: "#374151", marginBottom: 12 }}>Registry Match: {c.registries}</div>
+              <div style={{ marginBottom: 12 }}>
+                {c.timeline.map((t, i) => (
+                  <div key={i} style={{ fontSize: 10, color: "#374151", marginBottom: 2 }}>• {t}</div>
+                ))}
+              </div>
 
               {/* Verification score */}
               <div style={{ marginBottom: 16 }}>
@@ -175,11 +215,13 @@ export default function ForAttorneysPage() {
                 </div>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <span style={{ fontSize: 20, fontWeight: 700, color: "#f9fafb" }}>{c.value}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", letterSpacing: "0.08em", border: "1px solid #166534", padding: "3px 10px", borderRadius: 999 }}>READY FOR FILING</span>
+                <button style={{ border: "1px solid #374151", padding: "6px 14px", borderRadius: 8, fontSize: 11, color: "#e5e7eb", background: "transparent", cursor: "pointer" }}>{c.action}</button>
               </div>
-              <div style={{ fontSize: 10, color: "#374151", marginTop: 12 }}>Audit ID: {c.id}-AX{Math.floor(Math.random() * 90 + 10)}</div>
+              <div style={{ background: "#000", border: "1px solid #1f2937", borderRadius: 6, padding: "8px 12px", fontSize: 10, color: "#374151" }}>
+                Sensitive ownership data redacted — available upon authorization
+              </div>
             </div>
           ))}
         </div>
@@ -245,6 +287,7 @@ export default function ForAttorneysPage() {
             </a>
           </div>
           <p style={{ fontSize: 11, color: "#374151", marginTop: 20 }}>Access by invitation only · Verified attorneys</p>
+          <a href="https://traproyalties.com/evidence-chain.html" style={{ display: "block", marginTop: 12, fontSize: 11, color: "#4b5563", textDecoration: "underline" }}>View Verification & Audit Trail →</a>
         </div>
       </section>
 
