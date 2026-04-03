@@ -3,88 +3,77 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 
-const TERMINAL_LOGS = [
-  "[SMPT] Identity scan initiated — performer registry cross-reference",
-  "[REGISTRY] ISRC match confirmed — performer share located",
-  "[AUDIT] LOD status: NOT FILED — funds accruing in suspense",
-  "[SYSTEM] Case TRP-2026-001 flagged — recovery position verified",
-  "[CHAIN] Verification hash anchored to audit ledger",
-  "[DISPATCH] LOD packet generated — awaiting legal submission",
-  "[REGISTRY] Secondary ISRC validation complete",
-  "[AUDIT] Statutory trust balance updated — $214,300 confirmed",
-  "[SYSTEM] Case TRP-2026-002 flagged — recovery position verified",
-  "[SMPT] Biometric contributor match — 99.4% confidence",
-  "[CHAIN] Timestamp sealed: " + new Date().toISOString().slice(0,19) + "Z",
-  "[DISPATCH] Attorney access granted — portal ready",
-];
-
 const fmt = (n: number) => "$" + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+const PIPELINE_CASES = [
+  { label: "Atlanta · Lil Durk – Back in Blood",       value: "$98k" },
+  { label: "Atlanta · J. Cole & Travis Scott – The London", value: "$280k" },
+  { label: "Kanye West – I Love It (TRP-2026-003)",    value: "$310k–$641k" },
+];
 
 const CASES = [
   {
-    id: "TRP-2026-001",
-    artist: "Lil Durk",
-    sublabel: "Featured Performer — Back in Blood (Pooh Shiesty / Atlantic Records)",
-    role: "Featured Performer", share: "Performer share (Unallocated)",
-    isrc: "USAT22007048", registries: "SoundExchange · Atlantic Records DSP",
-    timeline: ["2021: Recording released (200M+ streams)", "2021: Label registered ISRC correctly", "2021–2024: LOD never filed by performer", "2026: Verified — funds accruing in suspense"],
-    issue: "LOD NOT ASSIGNED — SX CONFIRMED",
-    value: "$98,000", score: 95, action: "Review for Filing",
+    id: "TRP-2026-001", tag: "GUEST UNCLAIMED",
+    artist: "Lil Durk – Back in Blood",
+    sub: "USAT22007048 · Pooh Shiesty / Atlantic Records",
+    note: "LOD + Schedule 1 Pre-filled",
+    value: "$98,000", action: "Review for Filing →",
   },
   {
-    id: "TRP-2026-002",
-    artist: "J. Cole & Travis Scott",
-    sublabel: "Featured Performers — The London (Young Thug / 300 Entertainment)",
-    role: "Dual Featured Performers", share: "2 independent performer accounts unfiled",
-    isrc: "USAT21903320", registries: "SoundExchange · Deezer · 300 Entertainment",
-    timeline: ["2019: Recording released (300M+ streams)", "2019: Label registered correctly", "2019–2024: Both LODs never filed", "2026: Verified — dual gap confirmed"],
-    issue: "DUAL LOD GAP — 2 ACCOUNTS UNFILED",
-    value: "$280,000", score: 97, action: "Initiate Filing",
+    id: "TRP-2026-002", tag: "DUAL LOD GAP",
+    artist: "J. Cole & Travis Scott – The London",
+    sub: "USAT21903320 · Young Thug / 300 Entertainment · 300M+ streams",
+    note: "2 independent performer accounts — both unfiled",
+    value: "$280,000", action: "Initiate Filing",
   },
   {
-    id: "TRP-2026-003",
-    artist: "Kanye West",
-    sublabel: "Featured Performer — I Love It (Lil Pump / Warner Records)",
-    role: "Featured Performer", share: "45% performer share accruing since 2018",
-    isrc: "USUM71814031", registries: "SoundExchange · Warner Records DSP",
-    timeline: ["2018: Recording released (800M+ streams)", "2018: Label registration confirmed", "2018–2024: LOD not filed — 45% share unclaimed", "2026: Verified — 6+ year accrual"],
-    issue: "LOD GAP — PERFORMER SHARE IN SUSPENSE",
-    value: "$310,000", score: 98, action: "Review for Filing",
+    id: "TRP-2026-003", tag: "GUEST UNCLAIMED",
+    artist: "Kanye West – I Love It",
+    sub: "USUM71814031 · Lil Pump / Warner Records · 800M+ streams",
+    note: "Full Forensic Packet Ready",
+    value: "$310,000", action: "Initiate Filing",
   },
   {
-    id: "TRP-2026-004",
-    artist: "Lil Wayne",
-    sublabel: "Featured Performer — WHATS POPPIN Remix (Jack Harlow / Atlantic Records)",
-    role: "Featured Performer (alongside DaBaby, Tory Lanez)", share: "Performer share absent from registry",
-    isrc: "USAT22003620", registries: "SoundExchange · Deezer · Atlantic Records",
-    timeline: ["2020: Recording released (400M+ streams)", "2020: Label filed correctly under 4 artists", "2020–2024: Lil Wayne not in performer index", "2026: Verified — ISRC absent from performer registry"],
-    issue: "ISRC ABSENT FROM PERFORMER REGISTRY",
-    value: "$185,000", score: 93, action: "Initiate Filing",
+    id: "TRP-2026-004", tag: "REGISTRY GAP",
+    artist: "Lil Wayne – WHATS POPPIN Remix",
+    sub: "USAT22003620 · Jack Harlow / Atlantic Records · 400M+ streams",
+    note: "ISRC absent from performer registry",
+    value: "$185,000", action: "Review for Filing →",
   },
   {
-    id: "TRP-2026-005",
-    artist: "Kirk Franklin",
-    sublabel: "Featured Performer — Ultralight Beam (Kanye West / Def Jam / GOOD Music)",
-    role: "Featured Performer (alongside Chance the Rapper)", share: "Performer share — 8+ year accrual",
-    isrc: "USUM71601285", registries: "SoundExchange · Def Jam DSP",
-    timeline: ["2016: Recording released (650M+ streams)", "2016: Label registered correctly", "2016–2024: LOD never filed — gospel crossover gap", "2026: Verified — 8+ year accrual confirmed"],
-    issue: "LOD NOT ON FILE · 8+ YEAR ACCRUAL",
-    value: "$150,000", score: 96, action: "Review for Filing",
+    id: "TRP-2026-005", tag: "8+ YEAR ACCRUAL",
+    artist: "Kirk Franklin – Ultralight Beam",
+    sub: "USUM71601285 · Kanye West / Def Jam · 650M+ streams",
+    note: "LOD not on file since 2016",
+    value: "$150,000", action: "Review for Filing →",
   },
 ];
 
 export default function ForAttorneysPage() {
-  const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const [pipeline, setPipeline] = useState(1023000);
   const [syncAge, setSyncAge] = useState(4);
+  const [terminalLines, setTerminalLines] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null);
   const logIndex = useRef(0);
 
+  const LOGS = [
+    "[SMPT] Identity verified — performer registry cross-reference",
+    "[REGISTRY] ISRC USAT22007048 confirmed · SoundExchange match",
+    "[AUDIT] LOD status: NOT ASSIGNED — funds accruing in suspense",
+    "[SYSTEM] Case TRP-2026-001 flagged — recovery position verified",
+    "[CHAIN] Verification hash anchored to audit ledger",
+    "[DISPATCH] LOD packet generated — awaiting legal submission",
+    "[REGISTRY] USAT21903320 confirmed · 300 Entertainment",
+    "[AUDIT] Dual LOD gap — 2 performer accounts unfiled",
+    "[SYSTEM] Case TRP-2026-003 flagged — $310k confirmed",
+    "[SMPT] Biometric contributor match — 99.4% confidence",
+  ];
+
   useEffect(() => {
     const t = setInterval(() => {
-      const line = `[${new Date().toLocaleTimeString("en-US", { hour12: false })}] ${TERMINAL_LOGS[logIndex.current % TERMINAL_LOGS.length]}`;
+      const ts = new Date().toLocaleTimeString("en-US", { hour12: false });
+      setTerminalLines(prev => [...prev.slice(-12), `[${ts}] ${LOGS[logIndex.current % LOGS.length]}`]);
       logIndex.current++;
-      setTerminalLines(prev => [...prev.slice(-18), line]);
     }, 1400);
     return () => clearInterval(t);
   }, []);
@@ -94,229 +83,162 @@ export default function ForAttorneysPage() {
   }, [terminalLines]);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      setPipeline(v => v + Math.floor(Math.random() * 150 + 50));
-    }, 3000);
+    const t = setInterval(() => setPipeline(v => v + Math.floor(Math.random() * 200 + 50)), 3000);
     return () => clearInterval(t);
   }, []);
 
   useEffect(() => {
-    const t = setInterval(() => {
-      setSyncAge(v => v >= 30 ? 2 : v + 1);
-    }, 1000);
+    const t = setInterval(() => setSyncAge(v => v >= 30 ? 2 : v + 1), 1000);
     return () => clearInterval(t);
   }, []);
 
   return (
-    <div style={{ background: "#0B0F14", color: "#E5E7EB", minHeight: "100vh", fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif' }}>
+    <div style={{ background: "#0a0a0a", color: "#e0e0e0", minHeight: "100vh", fontFamily: "Inter, system-ui, sans-serif" }}>
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+        @keyframes blink { 50%{opacity:0} }
+        .live-dot { animation: pulse 2s infinite; }
+        .trp-case:hover { border-color: #9333ea !important; }
+      `}</style>
 
-      {/* System status bar */}
-      <div style={{ background: "#000", borderBottom: "1px solid #1f2937", fontSize: 11, color: "#4b5563", padding: "7px 32px", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
-        <span style={{ color: "#22c55e" }}>● System Status: ACTIVE</span>
-        <span>Nodes: Stockholm · New York · Los Angeles</span>
-        <span>Last Sync: {syncAge}s ago</span>
-      </div>
-
-      {/* Header */}
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 32px", borderBottom: "1px solid #1f2937" }}>
+      {/* Nav */}
+      <nav style={{ background: "#000", borderBottom: "1px solid #7c3aed", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 48, zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <img src="/images/trp-logo.png" alt="TRP" style={{ height: 28, width: "auto", mixBlendMode: "screen", filter: "brightness(1.15)" }} />
-          <div style={{ borderLeft: "1px solid #374151", paddingLeft: 16, fontSize: 11, color: "#4b5563", letterSpacing: "0.1em", textTransform: "uppercase" }}>SMPT Verified System</div>
+          <span style={{ fontSize: 22, fontWeight: 800, background: "linear-gradient(90deg,#c026d3,#818cf8)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>TRAPROYALTIES PRO</span>
+          <span style={{ fontSize: 11, background: "rgba(124,58,237,0.2)", color: "#a78bfa", padding: "3px 12px", borderRadius: 999, fontWeight: 600 }}>FOR ATTORNEYS</span>
         </div>
-        <span style={{ fontSize: 11, color: "#4b5563", letterSpacing: "0.1em" }}>Production Environment</span>
-      </header>
+        <img src="/images/trp-shield.png" alt="SMPT Seal" style={{ height: 52, width: "auto" }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 24, fontSize: 13 }}>
+          <Link href="/" style={{ color: "#9ca3af", textDecoration: "none" }}>← Back to Home</Link>
+          <a href="https://traproyalties.com/evidence-chain.html" style={{ color: "#9ca3af", textDecoration: "none" }}>Evidence Chain</a>
+          <Link href="/attorney-portal" style={{ background: "#22c55e", color: "#000", padding: "10px 20px", borderRadius: 999, fontWeight: 600, fontSize: 12, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+            <span className="live-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#000", display: "inline-block" }} />
+            Live Access
+          </Link>
+        </div>
+      </nav>
 
       {/* Hero */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "80px 32px 64px" }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", color: "#4b5563", textTransform: "uppercase", marginBottom: 24 }}>
-          Verified Royalty Claim Infrastructure
-        </div>
-
-        <h1 style={{ fontSize: "clamp(28px, 4.5vw, 52px)", fontWeight: 600, lineHeight: 1.15, maxWidth: 700, marginBottom: 24, letterSpacing: "-0.02em", color: "#f9fafb" }}>
-          Verified Royalty Claims —<br />Ready for Legal Execution
-        </h1>
-
-        <p style={{ fontSize: 18, color: "#6b7280", maxWidth: 580, marginBottom: 16, lineHeight: 1.7 }}>
-          Confirmed performer revenue held in statutory suspense due to missing authorization.
-        </p>
-
-        <p style={{ fontSize: 15, color: "#4b5563", marginBottom: 12, fontStyle: "italic" }}>
-          This is not discovery. These are recoverable financial positions.
-        </p>
-
-        <p style={{ fontSize: 14, color: "#374151", marginBottom: 40 }}>
-          Each result is not a data point — it is a recoverable financial position.
-        </p>
-
-        <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
-          <Link href="/attorney-portal" style={{ background: "#fff", color: "#000", padding: "12px 28px", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.02em" }}>
-            Review Verified Cases
-          </Link>
-          <Link href="/cases" style={{ color: "#6b7280", fontSize: 13, textDecoration: "none", borderBottom: "1px solid #374151", paddingBottom: 2 }}>
-            Initiate Filing →
-          </Link>
-        </div>
-      </section>
-
-      {/* Money strip */}
-      <div style={{ background: "#0d1117", borderTop: "1px solid #1f2937", borderBottom: "1px solid #1f2937", padding: "20px 32px" }}>
-        <div style={{ maxWidth: 960, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-          <div>
-            <span style={{ fontSize: 11, color: "#4b5563", letterSpacing: "0.12em", textTransform: "uppercase" }}>Live Recovery Pipeline</span>
-            <div style={{ fontSize: 28, fontWeight: 700, color: "#f9fafb", marginTop: 2 }}>
-              {fmt(pipeline)}<span style={{ fontSize: 16, color: "#6b7280" }}>+</span>
-            </div>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "72px 32px 56px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+        <div>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#4ade80", fontSize: 12, fontWeight: 600, marginBottom: 20 }}>
+            🛡 INVITATION-ONLY ATTORNEY PLATFORM
           </div>
-          <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
-            {[["50+", "Active Cases"], ["ISRC-Level", "Validation"], ["Registry", "Confirmed"], ["5", "Ready to File"]].map(([v, l]) => (
-              <div key={l} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 16, fontWeight: 700, color: "#e5e7eb" }}>{v}</div>
-                <div style={{ fontSize: 10, color: "#4b5563", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 2 }}>{l}</div>
+          <h1 style={{ fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20 }}>
+            Turn Unclaimed<br />
+            <span style={{ background: "linear-gradient(90deg,#22d3ee,#a855f7)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Performer Royalties</span><br />
+            Into Billable Recoveries
+          </h1>
+          <p style={{ fontSize: 18, color: "#d1d5db", marginBottom: 32, lineHeight: 1.6 }}>
+            We deliver court-ready SoundExchange LOD packages.<br />
+            You file. You recover. We take only 5% on success.
+          </p>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+            <Link href="/attorney-portal" style={{ background: "#fff", color: "#000", padding: "14px 28px", borderRadius: 999, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
+              Claim 3 Free Cases
+            </Link>
+            <a href="https://traproyalties.com/evidence-chain.html" style={{ border: "1px solid #7c3aed", color: "#e0e0e0", padding: "14px 28px", borderRadius: 999, fontSize: 15, fontWeight: 600, textDecoration: "none" }}>
+              View Full Evidence Chain
+            </a>
+          </div>
+          <p style={{ fontSize: 11, color: "#6b7280", marginTop: 16 }}>• No upfront cost · 95% to you · 5% success fee only on recovery</p>
+        </div>
+
+        {/* Live pipeline panel */}
+        <div style={{ background: "#111", borderRadius: 20, padding: "28px", border: "1px solid rgba(124,58,237,0.3)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <span style={{ color: "#4ade80", fontSize: 12, fontWeight: 600 }}>LIVE · Last sync {syncAge}s ago</span>
+            <span style={{ fontSize: 11, color: "#4b5563", display: "flex", alignItems: "center", gap: 6 }}>
+              <span className="live-dot" style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", display: "inline-block" }} />
+              3 NODES ACTIVE
+            </span>
+          </div>
+          <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Current Recovery Pipeline · {fmt(pipeline)}</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {PIPELINE_CASES.map((c, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
+                <span style={{ color: "#9ca3af" }}>{c.label}</span>
+                <span style={{ color: "#4ade80", fontWeight: 700 }}>{c.value}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Terminal */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "56px 32px 0" }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", color: "#4b5563", textTransform: "uppercase", marginBottom: 12 }}>
-          System Activity — Live
-        </div>
-        <div ref={terminalRef} style={{ background: "#000", border: "1px solid #1f2937", borderRadius: 10, padding: "20px 24px", fontFamily: '"SF Mono","Fira Code","Courier New",monospace', fontSize: 12, color: "#22c55e", height: 220, overflowY: "auto", lineHeight: 1.8 }}>
-          {terminalLines.map((line, i) => (
-            <div key={i} style={{ opacity: i === terminalLines.length - 1 ? 1 : 0.55 + (i / terminalLines.length) * 0.45 }}>{line}</div>
+      {/* Cases */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px 64px", borderTop: "1px solid #1f2937" }}>
+        <h2 style={{ fontSize: 28, fontWeight: 700, margin: "48px 0 8px" }}>Live Attorney-Ready Cases</h2>
+        <p style={{ fontSize: 12, color: "#4b5563", marginBottom: 32 }}>5 verified recovery cases · All amounts SoundExchange-sourced · SMPT certified</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+          {CASES.map(c => (
+            <div key={c.id} className="trp-case" style={{ background: "#111", borderRadius: 20, padding: "28px", border: "1px solid transparent", transition: "border-color 0.2s" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, fontSize: 11 }}>
+                <span style={{ color: "#f87171", fontWeight: 700 }}>{c.tag}</span>
+                <span style={{ color: "#4ade80", fontWeight: 700 }}>{c.value}</span>
+              </div>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{c.artist}</div>
+              <div style={{ fontSize: 11, color: "#4b5563", marginBottom: 12 }}>{c.sub}</div>
+              <div style={{ fontSize: 11, color: "#4ade80", display: "flex", alignItems: "center", gap: 6, marginBottom: 20 }}>
+                ✓ {c.note}
+              </div>
+              <Link href="/attorney-portal" style={{ display: "block", textAlign: "center", width: "100%", background: "#7c3aed", color: "#fff", padding: "12px", borderRadius: 14, fontSize: 13, fontWeight: 600, textDecoration: "none", boxSizing: "border-box" }}>
+                {c.action}
+              </Link>
+            </div>
           ))}
+        </div>
+      </div>
+
+      {/* Terminal */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px 64px" }}>
+        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", color: "#4b5563", textTransform: "uppercase", marginBottom: 10 }}>System Activity — Live</div>
+        <div ref={terminalRef} style={{ background: "#000", border: "1px solid #1f2937", borderRadius: 12, padding: "20px 24px", fontFamily: "monospace", fontSize: 12, color: "#22c55e", height: 180, overflowY: "auto", lineHeight: 1.8 }}>
+          {terminalLines.map((line, i) => <div key={i} style={{ opacity: 0.5 + (i / terminalLines.length) * 0.5 }}>{line}</div>)}
           <span style={{ animation: "blink 1s step-end infinite" }}>█</span>
         </div>
-        <style>{`@keyframes blink { 50% { opacity: 0 } }`}</style>
-      </section>
-
-      {/* Cases */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "56px 32px" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 6, color: "#f9fafb" }}>Active Recovery Cases</h2>
-        <p style={{ fontSize: 12, color: "#4b5563", marginBottom: 28 }}>5 verified recovery cases · All amounts SoundExchange-sourced · Full evidence at traproyalties.com/evidence-chain.html</p>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
-          {CASES.map((c) => (
-            <div key={c.id} style={{ border: "1px solid #1f2937", borderRadius: 12, padding: "24px", background: "#0d1117", transition: "border-color 0.2s" }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = "#374151")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "#1f2937")}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-                <span style={{ fontSize: 10, fontFamily: "monospace", color: "#4b5563" }}>{c.id}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, color: "#22c55e", letterSpacing: "0.1em" }}>● VERIFIED — READY FOR FILING</span>
-              </div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: "#f9fafb", marginBottom: 2 }}>{c.artist}</div>
-              <div style={{ fontSize: 12, color: "#4b5563", marginBottom: 8 }}>{c.sublabel}</div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#ef4444", letterSpacing: "0.08em", marginBottom: 10 }}>{c.issue}</div>
-              <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 2 }}>Role: {c.role}</div>
-              <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 8 }}>Share: {c.share}</div>
-              <div style={{ fontSize: 10, color: "#374151", marginBottom: 2 }}>ISRC: {c.isrc}</div>
-              <div style={{ fontSize: 10, color: "#374151", marginBottom: 12 }}>Registry Match: {c.registries}</div>
-              <div style={{ marginBottom: 12 }}>
-                {c.timeline.map((t, i) => (
-                  <div key={i} style={{ fontSize: 10, color: "#374151", marginBottom: 2 }}>• {t}</div>
-                ))}
-              </div>
-
-              {/* Verification score */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                  <span style={{ fontSize: 10, color: "#4b5563" }}>Verification Score</span>
-                  <span style={{ fontSize: 10, color: "#22c55e" }}>{c.score}%</span>
-                </div>
-                <div style={{ background: "#1f2937", height: 3, borderRadius: 999 }}>
-                  <div style={{ background: "#22c55e", height: 3, borderRadius: 999, width: `${c.score}%` }} />
-                </div>
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span style={{ fontSize: 20, fontWeight: 700, color: "#f9fafb" }}>{c.value}</span>
-                <button style={{ border: "1px solid #374151", padding: "6px 14px", borderRadius: 8, fontSize: 11, color: "#e5e7eb", background: "transparent", cursor: "pointer" }}>{c.action}</button>
-              </div>
-              <div style={{ background: "#000", border: "1px solid #1f2937", borderRadius: 6, padding: "8px 12px", fontSize: 10, color: "#374151" }}>
-                Sensitive ownership data redacted — available upon authorization
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      </div>
 
       {/* Legal basis */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "48px 32px", borderTop: "1px solid #1f2937" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 24, color: "#f9fafb" }}>Legal Basis</h2>
-        <ul style={{ listStyle: "none", padding: 0, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 12 }}>
-          {[
-            "Performer share held in statutory trust under 17 U.S.C. § 114",
-            "Payment blocked due to missing Letter of Direction (LOD)",
-            "Identity verified across ISRC registries and contributor records",
-            "Submission of LOD unlocks accumulated royalty balance",
-            "SoundExchange holds funds indefinitely absent authorization",
-            "No statute of limitations on unclaimed performer royalties",
-          ].map((item, i) => (
-            <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", fontSize: 13, color: "#6b7280", lineHeight: 1.6 }}>
-              <span style={{ color: "#374151", marginTop: 3, flexShrink: 0 }}>—</span>
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* Pipeline */}
-      <section style={{ maxWidth: 960, margin: "0 auto", padding: "48px 32px", borderTop: "1px solid #1f2937" }}>
-        <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 32, color: "#f9fafb" }}>Execution Pipeline</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, position: "relative" }}>
-          {["Identity Verified", "LOD Generated", "Filed with SoundExchange", "Funds Released"].map((step, i) => (
-            <div key={i} style={{ position: "relative", paddingRight: 16 }}>
-              <div style={{ display: "flex", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ width: 28, height: 28, borderRadius: "50%", background: i < 2 ? "#166534" : "#1f2937", border: `1px solid ${i < 2 ? "#22c55e" : "#374151"}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: i < 2 ? "#22c55e" : "#4b5563", flexShrink: 0 }}>
-                  {i + 1}
-                </div>
-                {i < 3 && <div style={{ flex: 1, height: 1, background: i < 1 ? "#22c55e" : "#1f2937", marginLeft: 8 }} />}
-              </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: i < 2 ? "#e5e7eb" : "#4b5563", marginBottom: 4 }}>{step}</div>
-              <div style={{ fontSize: 11, color: i < 2 ? "#22c55e" : "#374151" }}>{i < 2 ? "Complete" : "Pending counsel"}</div>
-            </div>
-          ))}
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "48px 32px", background: "#111" }}>
+        <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 32 }}>Legal Basis & Filing Framework</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, color: "#d1d5db" }}>
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>17 U.S.C. §114 + Music Modernization Act</h3>
+            <p style={{ fontSize: 13, lineHeight: 1.7, color: "#9ca3af" }}>Labels register the master recording. Featured performers must independently file a Letter of Direction (LOD) + Schedule 1 to claim their 45% performer share.</p>
+            <p style={{ fontSize: 12, color: "#4ade80", marginTop: 16 }}>• Black-box / Suspense funds recoverable via LOD</p>
+            <p style={{ fontSize: 12, color: "#4ade80", marginTop: 6 }}>• 36-month retroactive window currently active</p>
+          </div>
+          <div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>What We Deliver</h3>
+            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+              {["Pre-filled LOD Part 1", "Schedule 1 Repertoire Chart", "Forensic Audit Report", "Biometric Identity Certificate", "Chain-of-Custody Hash Record"].map(item => (
+                <li key={item} style={{ fontSize: 13, display: "flex", gap: 10, alignItems: "center" }}>
+                  <span style={{ color: "#4ade80" }}>✓</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* CTA */}
-      <section style={{ maxWidth: 960, margin: "0 auto 80px", padding: "0 32px" }}>
-        <div style={{ border: "1px solid #1f2937", borderRadius: 14, padding: "56px 48px", textAlign: "center", background: "#0d1117" }}>
-          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.16em", color: "#4b5563", textTransform: "uppercase", marginBottom: 20 }}>
-            Access Verified Recovery Pipeline
-          </div>
-          <h2 style={{ fontSize: 28, fontWeight: 600, color: "#f9fafb", marginBottom: 12, letterSpacing: "-0.02em", lineHeight: 1.3 }}>
-            Review cases. File immediately.<br />
-            <span style={{ color: "#6b7280", fontWeight: 400 }}>Recover what's already owed.</span>
-          </h2>
-          <p style={{ fontSize: 13, color: "#4b5563", marginBottom: 16 }}>Review cases. File immediately. Recover what's already owed.</p>
-          <p style={{ fontSize: 12, color: "#374151", marginBottom: 36 }}>Additional case data available upon authorization.</p>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/attorney-portal" style={{ background: "#fff", color: "#000", padding: "13px 32px", borderRadius: 8, fontWeight: 600, fontSize: 13, textDecoration: "none" }}>
-              Request Access
-            </Link>
-            <a href="mailto:contact@traproyaltiespro.com" style={{ color: "#6b7280", padding: "13px 24px", borderRadius: 8, fontSize: 13, textDecoration: "none", border: "1px solid #1f2937" }}>
-              Direct Contact
-            </a>
-          </div>
-          <p style={{ fontSize: 11, color: "#374151", marginTop: 20 }}>Access by invitation only · Verified attorneys</p>
-          <a href="https://traproyalties.com/evidence-chain.html" style={{ display: "block", marginTop: 12, fontSize: 11, color: "#4b5563", textDecoration: "underline" }}>View Verification & Audit Trail →</a>
-        </div>
-      </section>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "72px 32px", textAlign: "center", borderTop: "1px solid #7c3aed" }}>
+        <h2 style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, marginBottom: 16 }}>Ready to claim these recoveries?</h2>
+        <p style={{ fontSize: 18, color: "#d1d5db", marginBottom: 40, lineHeight: 1.6 }}>
+          Start with 3 fully packaged cases at no cost.<br />5% success fee only on recovered funds.
+        </p>
+        <Link href="/attorney-portal" style={{ background: "#fff", color: "#000", padding: "18px 48px", borderRadius: 999, fontSize: 18, fontWeight: 700, textDecoration: "none", display: "inline-block" }}>
+          Activate Pilot · Get Your 3 Free Cases
+        </Link>
+        <p style={{ fontSize: 11, color: "#4b5563", marginTop: 20 }}>Access granted to verified entertainment attorneys only</p>
+      </div>
 
       {/* Footer */}
-      <footer style={{ borderTop: "1px solid #1f2937", padding: "32px", textAlign: "center", fontSize: 11, color: "#374151" }}>
-        <p style={{ marginBottom: 8 }}>Built on SMPT verification infrastructure · Prepared for integration with SoundExchange and global royalty registries</p>
-        <p style={{ marginBottom: 16 }}>Swedish rights infrastructure standards (STIM / SAMI environment) · ISRC-Level validation</p>
-        <div style={{ display: "flex", gap: 24, justifyContent: "center", flexWrap: "wrap" }}>
-          {[["Cases", "/cases"], ["Attorney Portal", "/attorney-portal"], ["Privacy", "/privacy"], ["Terms", "/terms"]].map(([label, href]) => (
-            <Link key={href} href={href} style={{ color: "#374151", textDecoration: "none" }}>{label}</Link>
-          ))}
-        </div>
+      <footer style={{ borderTop: "1px solid #1f2937", padding: "24px 32px", textAlign: "center", fontSize: 11, color: "#374151" }}>
+        <span style={{ color: "#7c3aed", fontWeight: 800 }}>TrapRoyalties</span><span style={{ color: "#a855f7", fontWeight: 900 }}>PRO</span>
+        {" · SMPT Certified Verification & Audit · © 2026 · "}
+        <a href="https://traproyalties.com/evidence-chain.html" style={{ color: "#374151" }}>Evidence Chain</a>
       </footer>
-
     </div>
   );
 }
