@@ -18,6 +18,8 @@ const TERMINAL_LOGS = [
   "[DISPATCH] Attorney access granted — portal ready",
 ];
 
+const fmt = (n: number) => "$" + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
 const CASES = [
   { id: "TRP-2026-001", label: "Guest Performer — Unclaimed Share",    issue: "LOD NOT FILED",     value: "$214,300", score: 97 },
   { id: "TRP-2026-002", label: "Featured Performer — Missing LOD",     issue: "AUTHORIZATION HOLD", value: "$198,750", score: 94 },
@@ -117,7 +119,7 @@ export default function ForAttorneysPage() {
           <div>
             <span style={{ fontSize: 11, color: "#4b5563", letterSpacing: "0.12em", textTransform: "uppercase" }}>Live Recovery Pipeline</span>
             <div style={{ fontSize: 28, fontWeight: 700, color: "#f9fafb", marginTop: 2 }}>
-              ${pipeline.toLocaleString()}<span style={{ fontSize: 16, color: "#6b7280" }}>+</span>
+              {fmt(pipeline)}<span style={{ fontSize: 16, color: "#6b7280" }}>+</span>
             </div>
           </div>
           <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
