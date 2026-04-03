@@ -1,0 +1,17 @@
+BACKUP — Original network-diagram SVG logo block for SiteNav
+Restore by replacing the logo Link block in SiteNav.tsx with this content:
+
+<Link href="/" className="flex items-center gap-3 flex-shrink-0" style={{textDecoration:"none"}}>
+  <svg width="36" height="36" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+    [see git commit b0fa256 for full SVG code]
+  </svg>
+  <div style={{display:"flex",flexDirection:"column",gap:"3px"}}>
+    <div style={{display:"flex",flexDirection:"column",gap:"2px"}}>
+      <span style={{fontFamily:"Inter,-apple-system,sans-serif",fontWeight:800,fontSize:"16.5px",color:"#c7d2fe",letterSpacing:"-0.04em",whiteSpace:"nowrap",lineHeight:1}}>TrapRoyalties<span style={{fontWeight:900,color:"#818cf8",letterSpacing:"0.04em"}}>PRO</span></span>
+      <div style={{height:"1px",background:"linear-gradient(90deg,transparent,#6366f1 20%,#818cf8 55%,transparent)",width:"88%",alignSelf:"center"}} />
+    </div>
+    <span style={{fontFamily:"Inter,-apple-system,sans-serif",fontWeight:600,fontSize:"7px",color:"#4f5b8a",letterSpacing:"0.2em",whiteSpace:"nowrap",lineHeight:1,textTransform:"uppercase"}}>SMPT Verified System</span>
+  </div>
+</Link>
+
+Git commit to revert to: b0fa256
