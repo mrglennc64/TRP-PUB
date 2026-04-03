@@ -90,11 +90,15 @@ export default function ForAttorneysPage() {
         </h1>
 
         <p style={{ fontSize: 18, color: "#6b7280", maxWidth: 580, marginBottom: 16, lineHeight: 1.7 }}>
-          Each case represents confirmed performer revenue held in statutory suspense due to missing authorization.
+          Confirmed performer revenue held in statutory suspense due to missing authorization.
         </p>
 
-        <p style={{ fontSize: 15, color: "#4b5563", marginBottom: 40, fontStyle: "italic" }}>
-          This is not discovery. These are verified recovery positions.
+        <p style={{ fontSize: 15, color: "#4b5563", marginBottom: 12, fontStyle: "italic" }}>
+          This is not discovery. These are recoverable financial positions.
+        </p>
+
+        <p style={{ fontSize: 14, color: "#374151", marginBottom: 40 }}>
+          Each result is not a data point — it is a recoverable financial position.
         </p>
 
         <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
@@ -228,7 +232,8 @@ export default function ForAttorneysPage() {
             Review cases. File immediately.<br />
             <span style={{ color: "#6b7280", fontWeight: 400 }}>Recover what's already owed.</span>
           </h2>
-          <p style={{ fontSize: 13, color: "#4b5563", marginBottom: 36 }}>Additional case data available upon authorization.</p>
+          <p style={{ fontSize: 13, color: "#4b5563", marginBottom: 16 }}>Review cases. File immediately. Recover what's already owed.</p>
+          <p style={{ fontSize: 12, color: "#374151", marginBottom: 36 }}>Additional case data available upon authorization.</p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/attorney-portal" style={{ background: "#fff", color: "#000", padding: "13px 32px", borderRadius: 8, fontWeight: 600, fontSize: 13, textDecoration: "none" }}>
               Request Access
