@@ -1,0 +1,58 @@
+"use client";
+
+import Link from 'next/link';
+
+interface HeaderProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export default function Header({ title, subtitle }: HeaderProps) {
+  return (
+    <>
+      {/* Top Bar */}
+      <div style={{background:"linear-gradient(90deg,#4f46e5,#7c3aed)",color:"#fff",padding:"7px 24px",textAlign:"center",fontSize:"12px",fontWeight:600,letterSpacing:"0.06em"}}>
+        ATTORNEY PORTAL — SECURE SESSION — VERIFIED &amp; DOCUMENTED
+      </div>
+
+      {/* Main Header */}
+      <header style={{position:"sticky",top:0,zIndex:50,background:"rgba(5,8,20,0.45)",borderBottom:"1px solid rgba(99,102,241,0.15)",backdropFilter:"blur(28px) saturate(180%)",WebkitBackdropFilter:"blur(28px) saturate(180%)",boxShadow:"0 1px 0 0 rgba(99,102,241,0.12), inset 0 1px 0 rgba(255,255,255,0.04)"}}>
+        <div style={{maxWidth:"1280px",margin:"0 auto",padding:"0 24px",display:"flex",alignItems:"center",justifyContent:"space-between",height:"60px"}}>
+
+          {/* Left: logo + badge */}
+          <div style={{display:"flex",alignItems:"center",gap:"16px"}}>
+            <Link href="/attorney-portal" style={{display:"flex",alignItems:"center",gap:"10px",textDecoration:"none"}}>
+              <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+                <circle cx="17" cy="17" r="15" stroke="#818cf8" strokeWidth="1.6" fill="none"/>
+                <polygon points="17,7 24.5,11.25 24.5,19.75 17,24 9.5,19.75 9.5,11.25" stroke="#6366f1" strokeWidth="1.6" fill="none"/>
+                <polyline points="11.5,17 15,20.5 22.5,13" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span style={{fontFamily:"Inter,-apple-system,sans-serif",fontWeight:600,fontSize:"14px",color:"#c7d2fe",letterSpacing:"-0.01em",whiteSpace:"nowrap",lineHeight:1}}>TrapRoyalties<span style={{fontWeight:800,color:"#818cf8",letterSpacing:"0.08em"}}>PRO</span></span>
+            </Link>
+            <span style={{padding:"4px 14px",background:"rgba(99,102,241,0.15)",border:"1px solid rgba(99,102,241,0.35)",color:"#a5b4fc",borderRadius:"999px",fontSize:"11px",fontWeight:600,letterSpacing:"0.06em",whiteSpace:"nowrap"}}>
+              Attorney Portal
+            </span>
+          </div>
+
+          {/* Right: user + logout */}
+          <div style={{display:"flex",alignItems:"center",gap:"24px"}}>
+            <span style={{fontSize:"13px",color:"#c7d2fe",fontWeight:400,letterSpacing:"0.01em"}}>Glenn Carter-CCA &nbsp;·&nbsp; Carters Consultants Agency</span>
+            <button style={{padding:"6px 16px",background:"rgba(239,68,68,0.15)",border:"1px solid rgba(239,68,68,0.4)",color:"#fca5a5",borderRadius:"6px",fontSize:"13px",fontWeight:600,cursor:"pointer",letterSpacing:"0.04em"}}>
+              Logout
+            </button>
+          </div>
+
+        </div>
+      </header>
+
+      {title && (
+        <div style={{borderBottom:"1px solid rgba(255,255,255,0.06)",padding:"24px"}}>
+          <div style={{maxWidth:"1280px",margin:"0 auto"}}>
+            <h1 style={{fontSize:"24px",fontWeight:700,color:"#f1f5f9"}}>{title}</h1>
+            {subtitle && <p style={{color:"#94a3b8",marginTop:"6px",fontSize:"14px"}}>{subtitle}</p>}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}

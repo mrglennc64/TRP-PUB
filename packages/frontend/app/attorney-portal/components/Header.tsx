@@ -27,7 +27,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
             </span>
           </div>
           <div className="flex items-center space-x-6">
-            <span className="text-sm text-gray-600">Leron Rogers (Fox Rothschild)</span>
+            <span className="text-sm text-gray-600">Glenn Carter (Carter-CCA)</span>
             <button className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm transition">
               Logout
             </button>

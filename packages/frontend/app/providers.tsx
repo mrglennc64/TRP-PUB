@@ -6,7 +6,7 @@ import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { defineChain } from 'viem';
 import '@rainbow-me/rainbowkit/styles.css';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
 // AnalyticsProvider wraps children with analytics scripts

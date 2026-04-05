@@ -1,8 +1,7 @@
 "use client";
-import React from 'react';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Activity, FileSearch, Mic, ClipboardCheck } from 'lucide-react';
 
 function useCountUp(target: number, duration = 1800, active = false) {
@@ -396,11 +395,11 @@ function buildContent(type: string, name: string, amount: string, leakage: strin
   }
   if (type === 'demand') {
     const d = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    return `<div class="section"><p><b>Date:</b> ${d}</p><p>Republic Records, Attn: Legal Department</p></div><div class="section"><p><b>RE: DEMAND FOR UNPAID ROYALTIES</b></p><p>Matter: ${name}</p><p>Amount: ${amount}</p><br><p>Dear Sir or Madam:</p><br><p>This firm demands immediate payment of ${amount} in unpaid royalties. Failure to remit within 30 days will result in legal proceedings.</p><br><p>Respectfully,<br>Leron Rogers, Esq.<br>Carter Woodard, LLC. Attorney Advertising</p></div>`;
+    return `<div class="section"><p><b>Date:</b> ${d}</p><p>Republic Records, Attn: Legal Department</p></div><div class="section"><p><b>RE: DEMAND FOR UNPAID ROYALTIES</b></p><p>Matter: ${name}</p><p>Amount: ${amount}</p><br><p>Dear Sir or Madam:</p><br><p>This firm demands immediate payment of ${amount} in unpaid royalties. Failure to remit within 30 days will result in legal proceedings.</p><br><p>Respectfully,<br>Glenn Carter<br>Carter-CCA</p></div>`;
   }
   if (type === 'affidavit') {
     const d = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    return `<div class="section"><h2>AFFIDAVIT OF LERON ROGERS, ESQ.</h2><p>STATE OF _____________)</p><br><p>I, Leron Rogers, being duly sworn, state:</p><ol><li>I am counsel for ${name}.</li><li>Forensic audit confirms ${amount} in unpaid royalties.</li><li>${issues} material discrepancies identified. Leakage: ${leakage}.</li><li>All findings verified via the TrapRoyaltiesPro audit system.</li></ol><br><p>Executed: ${d}</p><br><p>___________________________<br>Leron Rogers, Esq.</p><br><p>___________________________<br>Notary Public</p></div>`;
+    return `<div class="section"><h2>AFFIDAVIT OF LERON ROGERS, ESQ.</h2><p>STATE OF _____________)</p><br><p>I, Glenn Carter, being duly sworn, state:</p><ol><li>I am counsel for ${name}.</li><li>Forensic audit confirms ${amount} in unpaid royalties.</li><li>${issues} material discrepancies identified. Leakage: ${leakage}.</li><li>All findings verified via the TrapRoyaltiesPro audit system.</li></ol><br><p>Executed: ${d}</p><br><p>___________________________<br>Glenn Carter</p><br><p>___________________________<br>Notary Public</p></div>`;
   }
   return `<div class="section"><h2>Custom Report</h2><p>Matter: ${name}</p><table><tr><th>Category</th><th>Finding</th><th>Impact</th></tr><tr><td>Streaming</td><td class="warning">Underreported Q3-Q4</td><td class="danger">-$45,200</td></tr><tr><td>Sync</td><td class="highlight">Verified</td><td>+$0</td></tr><tr><td>Performance</td><td class="danger">No ASCAP registration</td><td class="danger">${amount}</td></tr></table></div>`;
 }
@@ -409,7 +408,7 @@ function generatePDF(title: string, content: string, matterName: string, matterI
   const hash = 'TRP-' + matterId + '-' + Date.now().toString(36).toUpperCase();
   const url = 'https://traproyaltiespro.com/verify/' + hash;
   const sha = Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.qr{display:flex;align-items:center;gap:20px;padding:16px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac;margin-top:24px}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}.highlight{color:#16a34a;font-weight:bold}.warning{color:#d97706;font-weight:bold}.danger{color:#dc2626;font-weight:bold}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">${title}</h1><p style="color:#6b7280">Matter: ${matterName} | Carter Woodard, LLC. Attorney Advertising | Leron Rogers, Esq. | ID: ${hash}</p>${content}<div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(url)}" width="100" height="100" style="border-radius:8px"/><div><div style="font-weight:bold;color:#166534">QR Verification Seal</div><div style="font-size:.8rem;margin:4px 0">Scan to verify authenticity</div><div style="font-size:.7rem;color:#6b7280">${url}</div><div style="font-family:monospace;font-size:.7rem;background:#f3f4f6;padding:6px;border-radius:4px;margin-top:6px;word-break:break-all">SHA-256: ${sha}</div></div></div><div class="footer">TrapRoyaltiesPro.com | Confidential | Verify: ${url}</div></body></html>`;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.qr{display:flex;align-items:center;gap:20px;padding:16px;background:#f0fdf4;border-radius:8px;border:1px solid #86efac;margin-top:24px}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}.highlight{color:#16a34a;font-weight:bold}.warning{color:#d97706;font-weight:bold}.danger{color:#dc2626;font-weight:bold}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">${title}</h1><p style="color:#6b7280">Matter: ${matterName} | Carter-CCA | Glenn Carter | ID: ${hash}</p>${content}<div class="qr"><img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(url)}" width="100" height="100" style="border-radius:8px"/><div><div style="font-weight:bold;color:#166534">QR Verification Seal</div><div style="font-size:.8rem;margin:4px 0">Scan to verify authenticity</div><div style="font-size:.7rem;color:#6b7280">${url}</div><div style="font-family:monospace;font-size:.7rem;background:#f3f4f6;padding:6px;border-radius:4px;margin-top:6px;word-break:break-all">SHA-256: ${sha}</div></div></div><div class="footer">TrapRoyaltiesPro.com | Confidential | Verify: ${url}</div></body></html>`;
   const blob = new Blob([html], {type:'text/html'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -526,6 +525,9 @@ function BiometricModal({ lead, onClose }: { lead: typeof ALL_LEADS[0], onClose:
 }
 
 function LeadIntelligenceDashboard() {
+  const [liUnlocked, setLiUnlocked] = React.useState(false);
+  const [liKey, setLiKey] = React.useState('');
+  const [liErr, setLiErr] = React.useState(false);
   const [filter, setFilter] = React.useState<string>("all");
   const [claimed, setClaimed] = React.useState<Record<number, boolean>>({});
   const [showAll, setShowAll] = React.useState(false);
@@ -553,6 +555,27 @@ function LeadIntelligenceDashboard() {
     { key: "atl", label: "ATL Female" },
     { key: "gospel", label: "Gospel / Soul" },
   ];
+
+  if (!liUnlocked) return (
+    <div style={{position:'relative',minHeight:'100vh'}}>
+      <div style={{filter:'blur(8px)',pointerEvents:'none',userSelect:'none',opacity:0.4}}>
+        <div className="text-white p-8"><h1 className="text-3xl font-bold">Lead Intelligence Dashboard</h1><p className="text-slate-400 mt-2">35 new recovery opportunities</p></div>
+      </div>
+      <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(2,6,23,0.7)',backdropFilter:'blur(12px)'}}>
+        <div style={{background:'#0f172a',border:'1px solid rgba(79,70,229,0.35)',borderRadius:'14px',padding:'44px 48px',width:'420px',textAlign:'center',boxShadow:'0 25px 50px rgba(0,0,0,0.6)'}}>
+          <div style={{background:'linear-gradient(135deg,#4f46e5,#7c3aed)',borderRadius:'50%',width:'56px',height:'56px',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px',color:'#fff'}}>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          </div>
+          <div style={{fontSize:'10px',letterSpacing:'3px',color:'#6366f1',textTransform:'uppercase',marginBottom:'8px',fontWeight:600}}>TrapRoyalties Pro</div>
+          <div style={{fontSize:'18px',color:'#e2e8f0',fontWeight:700,marginBottom:'6px'}}>Lead Intelligence</div>
+          <div style={{fontSize:'12px',color:'#64748b',marginBottom:'32px'}}>Enter your access key</div>
+          <input type="password" value={liKey} onChange={e=>{setLiKey(e.target.value);setLiErr(false);}} onKeyDown={e=>e.key==='Enter'&&(liKey.trim()==='TRP-ATT-2026'?setLiUnlocked(true):setLiErr(true))} placeholder="Access key" style={{width:'100%',background:'#0a0f1e',border:liErr?"1px solid #ef4444":"1px solid rgba(79,70,229,0.3)",color:'#e2e8f0',padding:'12px 16px',fontSize:'13px',marginBottom:'10px',outline:'none',borderRadius:'6px'}}/>
+          {liErr && <div style={{color:'#ef4444',fontSize:'11px',marginBottom:'10px'}}>Incorrect key.</div>}
+          <button onClick={()=>liKey.trim()==='TRP-ATT-2026'?setLiUnlocked(true):setLiErr(true)} style={{width:'100%',background:'linear-gradient(135deg,#4f46e5,#7c3aed)',border:'none',color:'#fff',padding:'12px',fontSize:'13px',fontWeight:600,cursor:'pointer',borderRadius:'6px'}}>Unlock</button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div>
@@ -739,7 +762,7 @@ export default function AttorneyPortal() {
 <div class="cover">
   <div class="meta">
     <p><span class="label">To:</span> <strong>SoundExchange Claims / Legal Dept.</strong></p>
-    <p><span class="label">From:</span> Leron Rogers | Carter Woodard, LLC. Attorney Advertising</p>
+    <p><span class="label">From:</span> Glenn Carter | Carter-CCA</p>
     <p><span class="label">Subject:</span> <strong>PRIORITY: Biometrically Verified LOD | Claim #${modal.isrc} | Artist: ${modal.alias}</strong></p>
   </div>
   <p>To the SoundExchange Claims Team,</p><br/>
@@ -751,7 +774,7 @@ export default function AttorneyPortal() {
     <li><strong>Conflict Resolution:</strong> My office has reviewed the metadata matching and confirms this is the authoritative claimant.</li>
   </ul><br/>
   <p><span class="action">Action Required:</span> Please update the payment instructions in the <strong>${modal.alias}</strong> account to reflect the attached Banking Directive and clear the current "Black Box" status for these works.</p><br/>
-  <p>Best Regards,<br/><strong>Leron Rogers</strong><br/><span style="color:#6b7280;font-size:9px">Managing Partner · Carter Woodard, LLC. Attorney Advertising</span></p>
+  <p>Best Regards,<br/><strong>Glenn Carter</strong><br/><span style="color:#6b7280;font-size:9px">Managing Partner · Carter-CCA</span></p>
   ${tracking ? `<div class="tracking">Dispatch Tracking: <strong>${tracking}</strong> · Tethered to Blockchain · Chain: Polygon PoS</div>` : ''}
 </div>
 
@@ -787,7 +810,7 @@ export default function AttorneyPortal() {
 <div class="auth-grid">
   <div class="auth-cell"><div class="label">Biometric Liveness Check</div><div class="val green">PASSED — Timestamp: March 18, 2026</div></div>
   <div class="auth-cell"><div class="label">ID Document Verification</div><div class="val green">VERIFIED · PII SCRUBBED</div></div>
-  <div class="auth-cell"><div class="label">Legal Signatory</div><div class="val">Leron Rogers (Carter Woodard, LLC. Attorney Advertising)</div></div>
+  <div class="auth-cell"><div class="label">Legal Signatory</div><div class="val">Glenn Carter (Carter-CCA)</div></div>
   <div class="auth-cell"><div class="label">SMPT Attestation ID</div><div class="val mono">SMPT-2026-ATT-00119</div></div>
 </div>
 
@@ -904,7 +927,7 @@ export default function AttorneyPortal() {
           revenue_basis: handshakeRevenueBasis,
           jurisdiction: handshakeJurisdiction,
           created_by: 'leron.rogers@foxrothschild.com',
-          created_by_name: 'Leron Rogers',
+          created_by_name: 'Glenn Carter',
           participants: [{ name: handshakeName || 'Collaborator', email: handshakeEmail, percentage: parseInt(handshakePercentage), role: handshakeRole }]
         })
       });
@@ -1029,7 +1052,7 @@ export default function AttorneyPortal() {
                 </div>
                 <div>
                   <p className={`text-sm font-semibold transition-colors ${simComplete ? 'text-green-400' : 'text-slate-400'}`}>Awaiting Artist/Legal Handshake</p>
-                  <p className="text-xs text-slate-600 mt-0.5">Link sent to: Leron Rogers, Esq. (Carter Woodard, LLC. Attorney Advertising)</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Link sent to: Glenn Carter (Carter-CCA)</p>
                 </div>
               </div>
 
@@ -1086,7 +1109,7 @@ export default function AttorneyPortal() {
               </svg>
               <div>
                 <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-widest">Preparing Forensic Packet</p>
-                <p className="text-white font-black text-lg">For Leron Rogers, Esq. · Carter Woodard, LLC. Attorney Advertising</p>
+                <p className="text-white font-black text-lg">For Glenn Carter · Carter-CCA</p>
               </div>
               {!dispatchConfirmed && (
                 <button onClick={() => setDispatchModal(null)} className="ml-auto text-slate-600 hover:text-slate-300 transition text-xl">×</button>
@@ -1103,7 +1126,7 @@ export default function AttorneyPortal() {
                   <div className="bg-[#0f172a] border border-indigo-500/20 rounded-xl p-5 text-xs text-slate-300 space-y-3">
                     <div className="border-b border-white/8 pb-3 space-y-0.5">
                       <p><span className="text-slate-500">To:</span> <span className="font-semibold text-white">SoundExchange Claims / Legal Dept.</span></p>
-                      <p><span className="text-slate-500">From:</span> Leron Rogers | Carter Woodard, LLC. Attorney Advertising</p>
+                      <p><span className="text-slate-500">From:</span> Glenn Carter | Carter-CCA</p>
                       <p><span className="text-slate-500">Subject:</span> <span className="text-amber-300 font-semibold">PRIORITY: Biometrically Verified LOD | Claim #{dispatchModal.isrc} | Artist: {dispatchModal.alias}</span></p>
                     </div>
                     <p className="text-slate-400 leading-relaxed">To the SoundExchange Claims Team,</p>
@@ -1121,8 +1144,8 @@ export default function AttorneyPortal() {
                     </p>
                     <div className="border-t border-white/8 pt-3">
                       <p className="text-slate-400">Best Regards,</p>
-                      <p className="text-white font-bold mt-1">Leron Rogers</p>
-                      <p className="text-slate-500 text-[10px]">Managing Partner · Carter Woodard, LLC. Attorney Advertising</p>
+                      <p className="text-white font-bold mt-1">Glenn Carter</p>
+                      <p className="text-slate-500 text-[10px]">Managing Partner · Carter-CCA</p>
                     </div>
                   </div>
 
@@ -1167,7 +1190,7 @@ export default function AttorneyPortal() {
                       {[
                         { h: 'Biometric Liveness Check', v: 'PASSED — Timestamp: March 18, 2026', c: 'text-green-700 font-bold' },
                         { h: 'ID Document Verification', v: 'VERIFIED · PII SCRUBBED', c: 'text-green-700 font-bold' },
-                        { h: 'Legal Signatory', v: 'Leron Rogers (Carter Woodard, LLC. Attorney Advertising)', c: '' },
+                        { h: 'Legal Signatory', v: 'Glenn Carter (Carter-CCA)', c: '' },
                         { h: 'SMPT Attestation ID', v: 'SMPT-2026-ATT-00119', c: 'font-mono' },
                       ].map((r, i) => (
                         <div key={i} className="bg-gray-50 border border-gray-200 rounded p-2">
@@ -1364,7 +1387,7 @@ export default function AttorneyPortal() {
             <span className="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-sm rounded-full font-medium">Attorney Portal</span>
           </div>
           <div className="flex items-center space-x-6">
-            <span className="text-sm text-slate-400">Leron Rogers (Carter Woodard, LLC. Attorney Advertising)</span>
+            <span className="text-sm text-slate-400">Glenn Carter (Carter-CCA)</span>
             <Link href="/" className="px-4 py-2 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 text-red-300 rounded-lg text-sm transition">Logout</Link>
           </div>
         </div>
@@ -1521,7 +1544,7 @@ export default function AttorneyPortal() {
                   <h1 className="text-4xl font-black tracking-tight uppercase italic">
                     Attorney <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400">Mission Control</span>
                   </h1>
-                  <p className="text-slate-500 mc-mono text-xs mt-1">Leron Rogers, Esq. — Active Matters: 12 — Firm Recovery Pipeline: $1,482,900</p>
+                  <p className="text-slate-500 mc-mono text-xs mt-1">Glenn Carter — Active Matters: 12 — Firm Recovery Pipeline: $1,482,900</p>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] text-slate-600 mc-mono mb-1 uppercase">Total Black Box Value</div>
@@ -1855,7 +1878,7 @@ export default function AttorneyPortal() {
                     <h3 className="font-semibold mb-3">Preview</h3>
                     <p className="text-sm font-medium">RE: Unpaid Royalties - {matter.name}</p>
                     <p className="text-sm text-slate-400 mt-2">We demand payment of <strong>{matter.amount}</strong> within 30 days.</p>
-                    <p className="text-sm text-slate-400 mt-2">Leron Rogers, Esq. - Carter Woodard, LLC. Attorney Advertising</p>
+                    <p className="text-sm text-slate-400 mt-2">Glenn Carter - Carter-CCA</p>
                     <div className="flex items-center gap-3 p-3 bg-[#1e293b]/60 rounded-lg border border-white/10 mt-4">
                       <QRCode value={`https://traproyaltiespro.com/verify/TRP-DEMAND-${selectedMatter}`} size={80}/>
                       <div><p className="text-xs font-bold text-green-400">QR Verification Seal</p><p className="text-xs text-slate-500">Included on export</p></div>
