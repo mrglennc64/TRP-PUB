@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfecthold LLC — Metadata Integrity for Music Rights</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0A0A0F; --bg-secondary: #12121A; --bg-tertiary: #1A1A24;
+            --gold: #C9A962; --gold-light: #E8D5A3; --gold-glow: rgba(201, 169, 98, 0.15);
+            --text-primary: #F5F5F7; --text-secondary: #8A8A9A; --text-muted: #5A5A6A;
+            --border: #2A2A35; --border-light: #3A3A45; --success: #4ADE80;
+            --font-serif: 'Cormorant Garamond', Georgia, serif;
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: var(--font-sans); background: var(--bg-primary); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; }
+        ::selection { background: var(--gold); color: var(--bg-primary); }
+        .grid-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(201,169,98,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,98,0.03) 1px, transparent 1px); background-size: 80px 80px; pointer-events: none; z-index: 0; animation: gridMove 60s linear infinite; }
+        @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(80px, 80px); } }
+        header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s ease; background: transparent; }
+        header.scrolled { background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .logo { display: flex; align-items: baseline; gap: 8px; text-decoration: none; }
+        .logo-text { font-family: var(--font-serif); font-size: 28px; font-weight: 600; color: var(--text-primary); letter-spacing: 3px; }
+        .logo-accent { color: var(--gold); }
+        nav { display: flex; gap: 48px; }
+        nav a { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--text-secondary); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.3s ease; position: relative; }
+        nav a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: var(--gold); transition: width 0.3s ease; }
+        nav a:hover { color: var(--text-primary); }
+        nav a:hover::after { width: 100%; }
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 120px 24px; position: relative; z-index: 1; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
+        .hero-badge svg { width: 14px; height: 14px; }
+        .hero h1 { font-family: var(--font-serif); font-size: clamp(48px, 8vw, 96px); font-weight: 600; line-height: 1.1; margin-bottom: 24px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s; }
+        .hero h1 .gold { color: var(--gold); }
+        .hero-tagline { font-size: 18px; color: var(--text-secondary); max-width: 720px; margin-bottom: 48px; font-weight: 300; opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s; }
+        .hero-cta { display: inline-block; padding: 14px 36px; border: 1px solid var(--gold); color: var(--gold); font-family: var(--font-mono); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; transition: all 0.3s ease; opacity: 0; animation: fadeUp 0.8s ease forwards 0.7s; }
+        .hero-cta:hover { background: var(--gold); color: var(--bg-primary); }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .feature-card { background: var(--bg-secondary); border: 1px solid var(--border); padding: 36px; transition: all 0.3s ease; }
+        .feature-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+        .feature-card h4 { font-family: var(--font-serif); font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+        .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+        .feature-icon { font-size: 24px; margin-bottom: 16px; display: block; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1000px; margin: 0 auto; }
+        .info-block { background: var(--bg-secondary); border: 1px solid var(--border); padding: 48px; }
+        .info-block h3 { font-family: var(--font-serif); font-size: 28px; font-weight: 600; margin-bottom: 24px; }
+        .info-block ul { list-style: none; }
+        .info-block li { font-size: 14px; color: var(--text-muted); line-height: 1.7; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+        .info-block li::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+        .check-list li::before { content: ''; width: 8px; height: 8px; background: var(--success); border-radius: 50%; flex-shrink: 0; }
+        @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+        .hero-line { width: 80px; height: 2px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0; animation: fadeUp 0.8s ease forwards 0.8s; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-bar { background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 48px 24px; position: relative; z-index: 1; }
+        .stats-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; gap: 80px; flex-wrap: wrap; }
+        .stat-item { text-align: center; opacity: 0; animation: fadeUp 0.8s ease forwards; }
+        .stat-item:nth-child(1) { animation-delay: 0.2s; } .stat-item:nth-child(2) { animation-delay: 0.3s; } .stat-item:nth-child(3) { animation-delay: 0.4s; } .stat-item:nth-child(4) { animation-delay: 0.5s; }
+        .stat-number { font-family: var(--font-serif); font-size: 48px; font-weight: 600; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+        .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        section { padding: 120px 24px; position: relative; z-index: 1; }
+        .section-container { max-width: 1400px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 80px; }
+        .section-label { font-family: var(--font-mono); font-size: 11px; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; display: block; }
+        .section-title { font-family: var(--font-serif); font-size: clamp(36px, 5vw, 56px); font-weight: 600; margin-bottom: 16px; }
+        .section-underline { width: 60px; height: 2px; background: var(--gold); margin: 24px auto; }
+        .section-subtitle { font-size: 16px; color: var(--text-secondary); max-width: 700px; margin: 0 auto; font-weight: 300; }
+        .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; }
+        .portfolio-card { background: var(--bg-secondary); border: 1px solid var(--border); padding: 48px; position: relative; transition: all 0.4s ease; overflow: hidden; cursor: default; }
+        .portfolio-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+        .portfolio-card:hover { border-color: var(--gold); background: var(--bg-tertiary); transform: translateY(-4px); }
+        .portfolio-card:hover::before { transform: scaleX(1); }
+        .card-domain { font-family: var(--font-mono); font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .card-domain::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+        .card-title { font-family: var(--font-serif); font-size: 32px; font-weight: 600; margin-bottom: 12px; transition: color 0.3s ease; }
+        .portfolio-card:hover .card-title { color: var(--gold); }
+        .card-tagline { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; font-weight: 400; }
+        .card-description { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease; opacity: 0; }
+        .portfolio-card:hover .card-description { max-height: 200px; opacity: 1; }
+        .card-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; }
+        .portfolio-card:hover .card-link { opacity: 1; transform: translateX(0); }
+        .card-link svg { width: 14px; height: 14px; transition: transform 0.3s ease; }
+        .card-link:hover svg { transform: translateX(4px); }
+        .ecosystem { background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .ecosystem-visual { position: relative; max-width: 1000px; margin: 0 auto; padding: 80px 0; }
+        .ecosystem-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 2; }
+        .ecosystem-center-inner { background: var(--bg-primary); border: 2px solid var(--gold); padding: 32px 48px; border-radius: 4px; }
+        .ecosystem-center h3 { font-family: var(--font-serif); font-size: 24px; font-weight: 600; color: var(--gold); margin-bottom: 8px; }
+        .ecosystem-center p { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); letter-spacing: 1px; }
+        .ecosystem-node { background: var(--bg-primary); border: 1px solid var(--border); padding: 24px; text-align: center; transition: all 0.3s ease; }
+        .ecosystem-node:hover { border-color: var(--gold); }
+        .ecosystem-node-title { font-family: var(--font-serif); font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .ecosystem-node-desc { font-size: 12px; color: var(--text-muted); }
+        .ecosystem-row { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+        .ecosystem-row:last-child { margin-bottom: 0; }
+        .mission-content { max-width: 900px; margin: 0 auto; text-align: center; }
+        .mission-quote { font-family: var(--font-serif); font-size: clamp(24px, 3vw, 36px); font-weight: 400; font-style: italic; color: var(--text-primary); line-height: 1.5; margin-bottom: 48px; }
+        .mission-quote .gold { color: var(--gold); font-style: normal; }
+        .mission-text { font-size: 16px; color: var(--text-secondary); line-height: 1.8; font-weight: 300; }
+        .holdings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+        .holding-item { padding: 32px; border-left: 2px solid var(--border); transition: border-color 0.3s ease; }
+        .holding-item:hover { border-color: var(--gold); }
+        .holding-item h4 { font-family: var(--font-serif); font-size: 20px; font-weight: 600; margin-bottom: 12px; }
+        .holding-item p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+        footer { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 80px 24px 40px; position: relative; z-index: 1; }
+        .footer-container { max-width: 1400px; margin: 0 auto; }
+        .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px; margin-bottom: 64px; }
+        .footer-brand .logo-text { font-size: 24px; margin-bottom: 16px; display: block; }
+        .footer-brand p { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 300px; }
+        .footer-col h5 { font-family: var(--font-mono); font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 12px; }
+        .footer-col a { font-size: 14px; color: var(--text-secondary); text-decoration: none; transition: color 0.3s ease; }
+        .footer-col a:hover { color: var(--text-primary); }
+        .footer-bottom { padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .footer-copyright { font-size: 12px; color: var(--text-muted); }
+        .footer-legal { display: flex; gap: 24px; }
+        .footer-legal a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.3s ease; }
+        .footer-legal a:hover { color: var(--text-secondary); }
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        @media (max-width: 1024px) { header { padding: 20px 24px; } nav { gap: 32px; } .footer-top { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) { header { padding: 16px 20px; } nav { display: none; } .hero h1 { font-size: 40px; } .stats-container { gap: 40px; } .stat-number { font-size: 36px; } .portfolio-grid { grid-template-columns: 1fr; } .footer-top { grid-template-columns: 1fr; gap: 40px; } section { padding: 80px 20px; } }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <header id="header">
+        <a href="#" class="logo">
+            <span class="logo-text">PERFECT<span class="logo-accent"> HOLD</span></span>
+        </a>
+        <nav>
+            <a href="#what-we-do">What We Do</a>
+            <a href="#approach">Approach</a>
+            <a href="#tooling">Tooling</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Metadata Integrity
+        </div>
+        <h1>Improving <span class="gold">Metadata Integrity</span><br>Across the Music Rights Ecosystem</h1>
+        <p class="hero-tagline">Perfecthold LLC develops analytical workflows that identify and resolve metadata inconsistencies between public catalogs and rights registration systems &mdash; supporting more accurate royalty outcomes.</p>
+        <a href="mailto:info@perfecthold.online" class="hero-cta">Request Overview</a>
+    </section>
+
+    <section id="what-we-do">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-label">What We Do</span>
+                <h2 class="section-title">Metadata Analysis &amp; Resolution</h2>
+                <div class="section-underline"></div>
+                <p class="section-subtitle">We focus on identifying inconsistencies in music metadata that may impact rights recognition and royalty allocation.</p>
+            </div>
+            <div class="feature-grid reveal">
+                <div class="feature-card">
+                    <span class="feature-icon">&#x1F50D;</span>
+                    <h4>ISRC &amp; Catalog Inconsistencies</h4>
+                    <p>Detection of mismatched, missing, or duplicated ISRCs across public catalog listings and registration databases.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">&#x1F4CA;</span>
+                    <h4>DSP &times; Registry Cross-Reference</h4>
+                    <p>Cross-referencing public DSP metadata (e.g. Spotify) with registration datasets to surface discrepancies that may affect royalty routing.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">&#x26A0;</span>
+                    <h4>Registration Gap Identification</h4>
+                    <p>Identification of potential gaps in rights registration where works may be generating revenue without proper claimant records.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">&#x1F4C4;</span>
+                    <h4>Structured Reporting</h4>
+                    <p>Structured, evidence-based reporting for publishers and rights holders with clear documentation of findings and recommended actions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="approach" class="ecosystem">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-label">Methodology</span>
+                <h2 class="section-title">Our Approach</h2>
+                <div class="section-underline"></div>
+            </div>
+            <div class="two-col reveal">
+                <div class="info-block">
+                    <h3>Pilot Approach</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">We operate through controlled pilot studies with independent publishers.</p>
+                    <ul>
+                        <li>Small-scale engagement (30 days)</li>
+                        <li>Limited catalog scope</li>
+                        <li>Fully transparent methodology</li>
+                        <li>No dependency on external systems</li>
+                    </ul>
+                </div>
+                <div class="info-block">
+                    <h3>No-Risk Structure</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">Designed to operate with zero disruption to existing workflows.</p>
+                    <ul class="check-list">
+                        <li>No API integration required</li>
+                        <li>No ingestion of proprietary PRO data</li>
+                        <li>No operational dependency</li>
+                        <li>No impact on existing workflows</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tooling">
+        <div class="section-container">
+            <div class="section-header reveal">
+                <span class="section-label">Internal Tooling</span>
+                <h2 class="section-title">Our Platforms</h2>
+                <div class="section-underline"></div>
+                <p class="section-subtitle">Our internal platforms support analysis and workflow execution.</p>
+            </div>
+            <div class="feature-grid reveal">
+                <div class="feature-card">
+                    <h4>VerseIQ</h4>
+                    <p>Catalog comparison engine that cross-references public streaming metadata against known registration records.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>TrapRoyaltiesPro</h4>
+                    <p>Registration audit layer that identifies potential gaps in performer and rights holder registrations at collection societies.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>SMPT / Roya</h4>
+                    <p>Metadata structuring tools that normalize and verify data formats for consistency across international rights systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="logo-text">PERFECT<span class="logo-accent"> HOLD</span></span>
+                    <p>Perfecthold LLC develops analytical workflows that identify and resolve metadata inconsistencies &mdash; supporting more accurate royalty outcomes.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Internal Tools</h5>
+                    <ul>
+                        <li><a href="#tooling">VerseIQ</a></li>
+                        <li><a href="#tooling">TrapRoyaltiesPro</a></li>
+                        <li><a href="#tooling">SMPT / Roya</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="/about.html">About Us</a></li>
+                        <li><a href="#what-we-do">What We Do</a></li>
+                        <li><a href="#approach">Approach</a></li>
+                        <li><a href="#tooling">Tooling</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Connect</h5>
+                    <ul>
+                        <li><a href="mailto:info@perfecthold.online">info@perfecthold.online</a></li>
+                        <li><a href="https://perfecthold.online" target="_blank">perfecthold.online</a></li>
+                    </ul>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.7; margin-top: 16px;">
+                        444 North Capitol St NW Ste 612<br>
+                        Washington, DC 20001, USA
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2026 Perfecthold LLC. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="/about.html">About Us</a>
+                    <a href="/privacy-policy.html">Privacy Policy</a>
+                    <a href="/terms-of-service.html">Terms of Service</a>
+                    <a href="/legal.html">Legal &amp; Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+        const reveals = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            reveals.forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('active');
+            });
+        };
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
