@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roya • Publisher Scorecard (Sample)</title>
+<title>TrapRoyaltiesPro • Publisher Scorecard (Sample)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Inter',sans-serif; background:#F8FAFC; color:#1A202C; line-height:1.55; -webkit-font-smoothing:antialiased; }
+<style> * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#0f172a; color:#e2e8f0; line-height:1.55; -webkit-font-smoothing:antialiased; }
   a { color:#2B6F4B; text-decoration:none; }
   .wrap { max-width:1080px; margin:0 auto; padding:32px 24px 64px; }
   .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
   .brand { display:flex; align-items:center; gap:10px; }
-  .brand-icon { background:#2B6F4B; color:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .brand-icon { background:#2B6F4B; color:#e2e8f0; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
   .brand-text { font-weight:700; font-size:18px; }
-  .sample-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#2B6F4B; background:#E8F3ED; padding:4px 10px; border-radius:99px; }
+  .sample-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#2B6F4B; background:rgba(34,197,94,0.10); padding:4px 10px; border-radius:99px; }
   h1 { font-size:30px; font-weight:800; line-height:1.2; margin-bottom:4px; }
-  .subtitle { color:#64748B; font-size:14px; margin-bottom:6px; }
+  .subtitle { color:#94a3b8; font-size:14px; margin-bottom:6px; }
   .generated { color:#94A3B8; font-size:12px; font-family:'JetBrains Mono',monospace; margin-bottom:24px; }
 
   .grid-top { display:grid; grid-template-columns:1.2fr 1fr; gap:16px; margin-bottom:16px; }
-  .card { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:22px; box-shadow:0 1px 2px rgba(15,23,42,0.04); margin-bottom:16px; }
-  .card h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748B; margin-bottom:14px; }
+  .card { background:#0f172a; border:1px solid #E2E8F0; border-radius:14px; padding:22px; box-shadow:0 1px 2px rgba(15,23,42,0.04); margin-bottom:16px; }
+  .card h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:14px; }
 
   .hero { display:flex; align-items:center; gap:22px; }
   .ring { position:relative; width:160px; height:160px; flex-shrink:0; }
@@ -30,72 +29,72 @@
   .ring .fg { stroke:#22C55E; }
   .ring .num { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   .ring .num .v { font-size:44px; font-weight:800; color:#166534; }
-  .ring .num .o { font-size:12px; color:#64748B; }
+  .ring .num .o { font-size:12px; color:#94a3b8; }
   .hero .band { font-size:22px; font-weight:700; color:#166534; }
-  .hero .sub { color:#64748B; font-size:13px; margin-top:4px; max-width:420px; }
+  .hero .sub { color:#94a3b8; font-size:13px; margin-top:4px; max-width:420px; }
   .hero .trend { margin-top:10px; font-size:13px; color:#166534; font-weight:600; }
-  .hero .trend .arrow { background:#F0FDF4; border:1px solid #BBF7D0; border-radius:6px; padding:3px 8px; font-weight:800; font-size:12px; margin-right:6px; }
+  .hero .trend .arrow { background:rgba(34,197,94,0.10); border:1px solid #BBF7D0; border-radius:6px; padding:3px 8px; font-weight:800; font-size:12px; margin-right:6px; }
 
   .kpi-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-  .kpi { border:1px solid #E2E8F0; border-radius:10px; padding:14px; background:#F8FAFC; }
-  .kpi .l { font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:#64748B; font-weight:700; }
+  .kpi { border:1px solid #E2E8F0; border-radius:10px; padding:14px; background:#0f172a; }
+  .kpi .l { font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:#94a3b8; font-weight:700; }
   .kpi .v { font-size:24px; font-weight:800; margin-top:2px; }
-  .kpi .d { font-size:11px; color:#64748B; margin-top:2px; }
+  .kpi .d { font-size:11px; color:#94a3b8; margin-top:2px; }
   .kpi.ok .v { color:#15803D; }
   .kpi.warn .v { color:#B45309; }
   .kpi.info .v { color:#1E40AF; }
 
   .bars { display:flex; flex-direction:column; gap:12px; }
   .bar { display:grid; grid-template-columns:200px 1fr 60px; align-items:center; gap:12px; font-size:13px; }
-  .bar .lbl { color:#1A202C; font-weight:500; }
+  .bar .lbl { color:#e2e8f0; font-weight:500; }
   .bar .lbl .d { font-size:11px; color:#94A3B8; display:block; }
-  .bar .track { height:14px; background:#F1F5F9; border-radius:7px; overflow:hidden; position:relative; }
+  .bar .track { height:14px; background:#1e293b; border-radius:7px; overflow:hidden; position:relative; }
   .bar .fill { height:100%; border-radius:7px; transition:width 0.3s; }
   .bar .fill.grn { background:linear-gradient(90deg,#22C55E,#16A34A); }
   .bar .fill.yel { background:linear-gradient(90deg,#EAB308,#CA8A04); }
   .bar .fill.red { background:linear-gradient(90deg,#EF4444,#DC2626); }
-  .bar .n { font-weight:800; text-align:right; color:#1A202C; font-size:14px; }
+  .bar .n { font-weight:800; text-align:right; color:#e2e8f0; font-size:14px; }
 
   .funnel { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
-  .funnel .step { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:14px 10px; text-align:center; position:relative; }
-  .funnel .step .v { font-size:28px; font-weight:800; color:#1A202C; }
-  .funnel .step .l { font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:#64748B; font-weight:700; margin-top:2px; }
+  .funnel .step { background:#0f172a; border:1px solid #E2E8F0; border-radius:10px; padding:14px 10px; text-align:center; position:relative; }
+  .funnel .step .v { font-size:28px; font-weight:800; color:#e2e8f0; }
+  .funnel .step .l { font-size:11px; text-transform:uppercase; letter-spacing:0.4px; color:#94a3b8; font-weight:700; margin-top:2px; }
   .funnel .step .d { font-size:11px; color:#94A3B8; margin-top:2px; }
-  .funnel .step.start { background:#EFF6FF; border-color:#BFDBFE; } .funnel .step.start .v { color:#1E40AF; }
-  .funnel .step.good { background:#F0FDF4; border-color:#BBF7D0; } .funnel .step.good .v { color:#15803D; }
-  .funnel .step.bad  { background:#FEF2F2; border-color:#FECACA; } .funnel .step.bad .v { color:#B91C1C; }
+  .funnel .step.start { background:rgba(59,130,246,0.10); border-color:#BFDBFE; } .funnel .step.start .v { color:#1E40AF; }
+  .funnel .step.good { background:rgba(34,197,94,0.10); border-color:#BBF7D0; } .funnel .step.good .v { color:#15803D; }
+  .funnel .step.bad  { background:rgba(239,68,68,0.10); border-color:#FECACA; } .funnel .step.bad .v { color:#B91C1C; }
 
   .writer-table, .activity-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .writer-table th, .activity-table th { text-align:left; padding:10px 12px; font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:#64748B; background:#F8FAFC; border-top:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; font-weight:700; }
-  .writer-table td, .activity-table td { padding:12px; border-bottom:1px solid #F1F5F9; }
+  .writer-table th, .activity-table th { text-align:left; padding:10px 12px; font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:#94a3b8; background:#0f172a; border-top:1px solid #E2E8F0; border-bottom:1px solid #E2E8F0; font-weight:700; }
+  .writer-table td, .activity-table td { padding:12px; border-bottom:1px solid #1e293b; }
   .writer-table tr:last-child td, .activity-table tr:last-child td { border-bottom:0; }
-  .writer-table .ipi { font-family:'JetBrains Mono',monospace; font-size:12px; color:#475569; }
+  .writer-table .ipi { font-family:'JetBrains Mono',monospace; font-size:12px; color:#94a3b8; }
   .writer-table .royalty { font-weight:700; text-align:right; }
-  .activity-table .stamp { font-family:'JetBrains Mono',monospace; font-size:12px; color:#64748B; }
+  .activity-table .stamp { font-family:'JetBrains Mono',monospace; font-size:12px; color:#94a3b8; }
   .tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px; text-transform:uppercase; letter-spacing:0.4px; }
-  .tag.grn { background:#F0FDF4; color:#166534; border:1px solid #BBF7D0; }
-  .tag.yel { background:#FEFCE8; color:#854D0E; border:1px solid #FDE68A; }
-  .tag.red { background:#FEF2F2; color:#991B1B; border:1px solid #FECACA; }
-  .tag.blue { background:#EFF6FF; color:#1E3A8A; border:1px solid #BFDBFE; }
+  .tag.grn { background:rgba(34,197,94,0.10); color:#166534; border:1px solid #BBF7D0; }
+  .tag.yel { background:rgba(234,179,8,0.10); color:#854D0E; border:1px solid rgba(234,179,8,0.25); }
+  .tag.red { background:rgba(239,68,68,0.10); color:#991B1B; border:1px solid #FECACA; }
+  .tag.blue { background:rgba(59,130,246,0.10); color:#1E3A8A; border:1px solid #BFDBFE; }
 
-  .callout { background:linear-gradient(135deg,#F0FDF4 0%,#ECFDF5 100%); border:1px solid #86EFAC; border-radius:12px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:flex-start; gap:12px; }
-  .callout .ic { width:36px; height:36px; background:#22C55E; color:#fff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex:0 0 36px; }
+  .callout { background:linear-gradient(135deg,rgba(34,197,94,0.10) 0%,rgba(34,197,94,0.12) 100%); border:1px solid #86EFAC; border-radius:12px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:flex-start; gap:12px; }
+  .callout .ic { width:36px; height:36px; background:#22C55E; color:#e2e8f0; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex:0 0 36px; }
   .callout .t { font-weight:800; font-size:14px; color:#166534; }
   .callout .d { font-size:12px; color:#166534; margin-top:2px; }
 
-  .exec { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:22px 24px; margin-bottom:20px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
-  .exec .label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748B; margin-bottom:10px; }
-  .exec .narr { font-size:15px; line-height:1.65; color:#1A202C; }
+  .exec { background:#0f172a; border:1px solid #E2E8F0; border-radius:14px; padding:22px 24px; margin-bottom:20px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+  .exec .label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:10px; }
+  .exec .narr { font-size:15px; line-height:1.65; color:#e2e8f0; }
   .exec .narr b { color:#166534; font-weight:800; }
   .exec .narr .risk { color:#B45309; font-weight:700; }
   .exec .narr .money { color:#15803D; font-weight:800; }
   .exec .band-row { margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  .exec .band-row .conf { display:flex; align-items:center; gap:8px; background:#ECFDF5; border:1px solid #86EFAC; border-radius:99px; padding:6px 14px; font-size:13px; color:#166534; font-weight:700; }
+  .exec .band-row .conf { display:flex; align-items:center; gap:8px; background:rgba(34,197,94,0.12); border:1px solid #86EFAC; border-radius:99px; padding:6px 14px; font-size:13px; color:#166534; font-weight:700; }
   .exec .band-row .conf b { font-size:16px; font-weight:800; }
-  .exec .band-row .risk-pill { background:#FEFCE8; border:1px solid #FDE68A; border-radius:99px; padding:6px 14px; font-size:12px; color:#854D0E; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
+  .exec .band-row .risk-pill { background:rgba(234,179,8,0.10); border:1px solid rgba(234,179,8,0.25); border-radius:99px; padding:6px 14px; font-size:12px; color:#854D0E; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
 
   .page-nav { margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; }
-  .page-nav a { background:#fff; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#1A202C; }
+  .page-nav a { background:#0f172a; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#e2e8f0; }
   .page-nav a:hover { border-color:#2B6F4B; color:#2B6F4B; }
 
   @media (max-width:768px) {
@@ -109,223 +108,37 @@
     .risk-hdr h1 { font-size:22px !important; }
   }
 
-  .risk-hdr { background:linear-gradient(135deg,#FEFCE8 0%,#FDF6B2 100%); border:1px solid #FDE047; border-radius:20px; padding:26px 28px; margin-bottom:24px; }
-  .risk-hdr h1 { font-size:28px; font-weight:800; margin-bottom:6px; letter-spacing:-0.3px; color:#1A202C; }
+  .risk-hdr { background:linear-gradient(135deg,rgba(234,179,8,0.10) 0%,rgba(234,179,8,0.18) 100%); border:1px solid #FDE047; border-radius:20px; padding:26px 28px; margin-bottom:24px; }
+  .risk-hdr h1 { font-size:28px; font-weight:800; margin-bottom:6px; letter-spacing:-0.3px; color:#e2e8f0; }
   .risk-hdr .sub { font-size:15px; color:#854D0E; font-weight:500; margin-bottom:18px; }
   .risk-metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:4px; }
-  .risk-box { background:#fff; border-radius:14px; padding:16px 18px; border:1px solid #FDE68A; box-shadow:0 1px 2px rgba(0,0,0,0.04); }
-  .risk-box .label { font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; color:#64748B; margin-bottom:6px; }
+  .risk-box { background:#0f172a; border-radius:14px; padding:16px 18px; border:1px solid rgba(234,179,8,0.25); box-shadow:0 1px 2px rgba(0,0,0,0.04); }
+  .risk-box .label { font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; color:#94a3b8; margin-bottom:6px; }
   .risk-box .value { font-size:26px; font-weight:800; color:#B45309; line-height:1.2; }
   .risk-box .value span { font-size:13px; font-weight:600; color:#78350F; }
   .risk-box .note { font-size:11px; color:#92400E; margin-top:4px; line-height:1.4; }
-  .risk-box .progress-track { background:#F1F5F9; border-radius:12px; height:8px; overflow:hidden; margin-top:8px; }
+  .risk-box .progress-track { background:#1e293b; border-radius:12px; height:8px; overflow:hidden; margin-top:8px; }
   .risk-box .progress-fill { background:#EF4444; height:8px; border-radius:12px; }
-</style>
-</head>
+
+/* dark-theme hard overrides (auto) */
+html, body { background:#020617 !important; color:#cbd5e1 !important; }
+.card, .panel, .section-card, .summary, .summary-card, .banner, .notice, .callout,
+.stat, .stat-card, .tile, .tile-card, .kpi, .kpi-card, .metric, .metric-card,
+.score-card, .box, .box-card, .entry, .entry-card, .item, .item-card,
+.readiness, .readiness-banner, .submission-banner, .health-score, .health-card,
+.packet, .packet-row, .risk-card, .risk-row, .fix-card, .fix-row,
+.what-we-do, .what-we-dont, .signup-card, .form-card, .form-row,
+.row-card, .row-item, .row-block, .field, .field-row,
+table, thead, tbody, tr, td, th { background:#0f172a !important; background-image:none !important; color:#cbd5e1 !important; border-color:rgba(99,102,241,0.2) !important; }
+thead, thead th { background:#0b1222 !important; color:#94a3b8 !important; }
+body > *, main > * { color:#cbd5e1; }
+h1, h2, h3, h4, h5, h6 { color:#f1f5f9 !important; }
+strong, b { color:#f1f5f9 !important; }
+hr { border-color: rgba(15,23,42,0.8) !important; }
+</style> <link rel="stylesheet" href="/publisher-portal/css/theme.css"> </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <div class="brand">
-      <div class="brand-icon">R</div>
-      <div class="brand-text">Roya</div>
-    </div>
-    <span class="sample-tag">Publisher Scorecard</span>
-  </div>
-
-  <div class="risk-hdr">
-    <h1>👉 Catalog Risk & Revenue Exposure Overview</h1>
-    <div class="sub">Nordic Music AB · as of 21 April 2026</div>
-    <div class="risk-metrics">
-      <div class="risk-box">
-        <div class="label">⚠️ % of catalog at risk</div>
-        <div class="value">23% <span>(11 of 48 works)</span></div>
-        <div class="note">Missing ISWC, publishers, or broken shares</div>
-        <div class="progress-track"><div class="progress-fill" style="width:23%"></div></div>
-      </div>
-      <div class="risk-box">
-        <div class="label">💰 Estimated delayed royalties</div>
-        <div class="value">47,000 SEK <span>/ year</span></div>
-        <div class="note">Stuck in society black box · recoverable after fixes</div>
-      </div>
-      <div class="risk-box">
-        <div class="label">🌍 Cross-territory inconsistencies</div>
-        <div class="value">6 works <span>with issues</span></div>
-        <div class="note">Missing foreign sub-publishing declarations (E/SE/AM)</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="exec">
-    <div class="label">Executive summary · Q2-2026</div>
-    <div class="narr">
-      Nordic Music AB's catalog is in good shape: <b>37 of 48 works</b> are CWR-ready and <b>32 are already accepted</b> by PRO this quarter. The Wizard has protected roughly <span class="money">47,000 SEK/year</span> in previously-at-risk royalties and recovered <span class="money">28,000 – 42,000 SEK</span> of that. <b>11 works</b> remain in the fix queue (mostly <span class="risk">missing ISWCs and unverified writer IPIs</span>) — all resolvable in the next Wizard run.
-    </div>
-    <div class="band-row">
-      <div class="conf">Submission confidence <b>92%</b> · next packet</div>
-      <div class="risk-pill">Risk band: Low</div>
-    </div>
-  </div>
-
-  <div class="callout">
-    <div class="ic">📈</div>
-    <div>
-      <div class="t">Board-ready snapshot</div>
-      <div class="d">Every number is computed from the Master Catalog, not self-reported. The Cleaning Wizard feeds the score; the Submit worker feeds the funnel; PRO ACKs feed the acceptance rate.</div>
-    </div>
-  </div>
-
-  <div class="grid-top">
-    <div class="card">
-      <h2>Overall Catalog Health</h2>
-      <div class="hero">
-        <div class="ring">
-          <svg width="160" height="160" viewBox="0 0 160 160">
-            <circle class="bg" cx="80" cy="80" r="68" stroke-width="14" fill="none"/>
-            <circle class="fg" cx="80" cy="80" r="68" stroke-width="14" fill="none"
-                    stroke-dasharray="371.8 427" stroke-linecap="round"/>
-          </svg>
-          <div class="num"><div class="v">87</div><div class="o">of 100</div></div>
-        </div>
-        <div>
-          <div class="band">CWR-Ready</div>
-          <div class="sub">Catalog is healthy enough for bulk submission to PRO/ICE. 11 of 48 works still need minor fixes before they can clear pre-flight.</div>
-          <div class="trend"><span class="arrow">↑ +24</span>since first Wizard run on 2026-02-18</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Key numbers</h2>
-      <div class="kpi-grid">
-        <div class="kpi info"><div class="l">Works in catalog</div><div class="v">48</div><div class="d">across 3 recording entities</div></div>
-        <div class="kpi ok"><div class="l">CWR-Ready</div><div class="v">37</div><div class="d">77% of catalog</div></div>
-        <div class="kpi warn"><div class="l">Need minor fixes</div><div class="v">11</div><div class="d">mostly missing ISWC</div></div>
-        <div class="kpi info"><div class="l">Writers tracked</div><div class="v">50</div><div class="d">48 with verified IPI</div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Metadata Coverage</h2>
-    <div class="bars">
-      <div class="bar">
-        <div class="lbl">Writer IPI coverage<span class="d">48 of 50 writers</span></div>
-        <div class="track"><div class="fill grn" style="width:96%"></div></div>
-        <div class="n">96%</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Publisher share complete<span class="d">43 of 48 works</span></div>
-        <div class="track"><div class="fill grn" style="width:90%"></div></div>
-        <div class="n">90%</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Writer shares = 100%<span class="d">45 of 48 works</span></div>
-        <div class="track"><div class="fill grn" style="width:94%"></div></div>
-        <div class="n">94%</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Registered with PRO<span class="d">48 of 48 works</span></div>
-        <div class="track"><div class="fill grn" style="width:100%"></div></div>
-        <div class="n">100%</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">ISWC assigned<span class="d">41 of 48 works</span></div>
-        <div class="track"><div class="fill yel" style="width:85%"></div></div>
-        <div class="n">85%</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Foreign-writer agreements<span class="d">6 of 7 co-writes (E/SE/AM)</span></div>
-        <div class="track"><div class="fill yel" style="width:86%"></div></div>
-        <div class="n">86%</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Title case clean<span class="d">46 of 48 titles</span></div>
-        <div class="track"><div class="fill grn" style="width:96%"></div></div>
-        <div class="n">96%</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Submission Funnel · Q2-2026</h2>
-    <div class="funnel">
-      <div class="step start"><div class="v">48</div><div class="l">In catalog</div><div class="d">Nordic Music AB works</div></div>
-      <div class="step good"><div class="v">37</div><div class="l">Submittable</div><div class="d">readiness ≥ 70</div></div>
-      <div class="step good"><div class="v">34</div><div class="l">Submitted</div><div class="d">3 CWR packets sent</div></div>
-      <div class="step good"><div class="v">32</div><div class="l">Accepted</div><div class="d">PRO ACK received</div></div>
-      <div class="step bad"><div class="v">2</div><div class="l">Rejected</div><div class="d">missing IPI · fixable</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Top 5 Writers by Royalty Exposure</h2>
-    <table class="writer-table">
-      <thead>
-        <tr><th>Writer</th><th>IPI</th><th>Society</th><th>Works</th><th>Status</th><th style="text-align:right;">% of catalog value</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><b>Erik Andersson</b></td><td class="ipi">00712984310</td><td>PRO</td><td>18</td><td><span class="tag grn">Verified</span></td><td class="royalty">31.2%</td></tr>
-        <tr><td><b>Maria Svensson</b></td><td class="ipi">00123456789</td><td>PRO</td><td>14</td><td><span class="tag grn">Verified</span></td><td class="royalty">22.8%</td></tr>
-        <tr><td><b>Johan Berg</b></td><td class="ipi">00345678901</td><td>PRO</td><td>9</td><td><span class="tag grn">Verified</span></td><td class="royalty">14.6%</td></tr>
-        <tr><td><b>Karin Andersson</b></td><td class="ipi">00987654321</td><td>PRO</td><td>7</td><td><span class="tag grn">Verified</span></td><td class="royalty">9.8%</td></tr>
-        <tr><td><b>Lars Petersen</b></td><td class="ipi">00111222333</td><td>TONO (NO)</td><td>4</td><td><span class="tag blue">Foreign · E</span></td><td class="royalty">6.4%</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2>Recent Activity</h2>
-    <table class="activity-table">
-      <thead>
-        <tr><th>When</th><th>Event</th><th>Actor</th><th>Outcome</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="stamp">2026-04-20 14:30</td><td>CWR packet <b>ROYA-DEMO-01</b> generated</td><td>Ken (Nordic Music AB)</td><td><span class="tag grn">Ready to submit</span></td></tr>
-        <tr><td class="stamp">2026-04-19 11:12</td><td>Cleaning Wizard run · 14 works</td><td>Ken (Nordic Music AB)</td><td><span class="tag grn">13 clean · 1 needs IPI</span></td></tr>
-        <tr><td class="stamp">2026-04-15 09:48</td><td>PRO ACK received for packet <b>ROYA-Q2-03</b></td><td>PRO (auto)</td><td><span class="tag grn">14/14 accepted</span></td></tr>
-        <tr><td class="stamp">2026-04-12 16:20</td><td>Packet <b>ROYA-Q2-02</b> submitted</td><td>Ken (Nordic Music AB)</td><td><span class="tag blue">Queued at PRO</span></td></tr>
-        <tr><td class="stamp">2026-04-08 10:05</td><td>2 works rejected — missing writer IPI</td><td>PRO (auto)</td><td><span class="tag red">Fixable · in Wizard queue</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2>What Roya fixed this quarter</h2>
-    <div class="bars">
-      <div class="bar">
-        <div class="lbl">IPIs added via MusicBrainz<span class="d">writers that had no IPI before</span></div>
-        <div class="track"><div class="fill grn" style="width:78%"></div></div>
-        <div class="n">+39</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">ISWCs resolved<span class="d">matched to registered works</span></div>
-        <div class="track"><div class="fill grn" style="width:60%"></div></div>
-        <div class="n">+17</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Split-sum corrections<span class="d">catalog now sums to 100%</span></div>
-        <div class="track"><div class="fill grn" style="width:50%"></div></div>
-        <div class="n">+11</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Duplicate writers merged<span class="d">e.g. "Erik A." → "Erik Andersson"</span></div>
-        <div class="track"><div class="fill grn" style="width:36%"></div></div>
-        <div class="n">+6</div>
-      </div>
-      <div class="bar">
-        <div class="lbl">Foreign sub-publishing flags<span class="d">E/SE/AM declarations added</span></div>
-        <div class="track"><div class="fill grn" style="width:28%"></div></div>
-        <div class="n">+4</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="page-nav">
-    <a href="/pages/demo-hub.html">← All demos</a>
-    <a href="/pages/demo-health-dashboard.html">← Per-work dashboard</a>
-    <a href="/pages/demo-cwr-result.html">← CWR Packet Result</a>
-    <a href="/pages/demo-pilot-signup.html">→ Join the Pilot</a>
-  </div>
+<div class="wrap"> <div class="header"> <div class="brand"> <div class="brand-icon">R</div> <div class="brand-text">TrapRoyaltiesPro</div> </div> <span class="sample-tag">Publisher Scorecard</span> </div> <div class="risk-hdr"> <h1> Catalog Risk & Revenue Exposure Overview</h1> <div class="sub">Nordic Music AB · as of 21 April 2026</div> <div class="risk-metrics"> <div class="risk-box"> <div class="label"> % of catalog at risk</div> <div class="value">23% <span>(11 of 48 works)</span></div> <div class="note">Missing ISWC, publishers, or broken shares</div> <div class="progress-track"><div class="progress-fill" style="width:23%"></div></div> </div> <div class="risk-box"> <div class="label"> Estimated delayed royalties</div> <div class="value">$47,000 <span>/ year</span></div> <div class="note">Stuck in society black box · recoverable after fixes</div> </div> <div class="risk-box"> <div class="label"> Cross-territory inconsistencies</div> <div class="value">6 works <span>with issues</span></div> <div class="note">Missing foreign sub-publishing declarations (E/SE/AM)</div> </div> </div> </div> <div class="exec"> <div class="label">Executive summary · Q2-2026</div> <div class="narr"> Nordic Music AB's catalog is in good shape: <b>37 of 48 works</b> are CWR-ready and <b>32 are already accepted</b> by PRO this quarter. The Wizard has protected roughly <span class="money">$47,000/year</span> in previously-at-risk royalties and recovered <span class="money">$28,000–$42,000</span> of that. <b>11 works</b> remain in the fix queue (mostly <span class="risk">missing ISWCs and unverified writer IPIs</span>) — all resolvable in the next Wizard run.
+    </div> <div class="band-row"> <div class="conf">Submission confidence <b>92%</b> · next packet</div> <div class="risk-pill">Risk band: Low</div> </div> </div> <div class="callout"> <div class="ic"></div> <div> <div class="t">Board-ready snapshot</div> <div class="d">Every number is computed from the Master Catalog, not self-reported. The Cleaning Wizard feeds the score; the Submit worker feeds the funnel; PRO ACKs feed the acceptance rate.</div> </div> </div> <div class="grid-top"> <div class="card"> <h2>Overall Catalog Health</h2> <div class="hero"> <div class="ring"> <svg width="160" height="160" viewBox="0 0 160 160"> <circle class="bg" cx="80" cy="80" r="68" stroke-width="14" fill="none"/> <circle class="fg" cx="80" cy="80" r="68" stroke-width="14" fill="none" stroke-dasharray="371.8 427" stroke-linecap="round"/> </svg> <div class="num"><div class="v">87</div><div class="o">of 100</div></div> </div> <div> <div class="band">CWR-Ready</div> <div class="sub">Catalog is healthy enough for bulk submission to PRO/ICE. 11 of 48 works still need minor fixes before they can clear pre-flight.</div> <div class="trend"><span class="arrow">↑ +24</span>since first Wizard run on 2026-02-18</div> </div> </div> </div> <div class="card"> <h2>Key numbers</h2> <div class="kpi-grid"> <div class="kpi info"><div class="l">Works in catalog</div><div class="v">48</div><div class="d">across 3 recording entities</div></div> <div class="kpi ok"><div class="l">CWR-Ready</div><div class="v">37</div><div class="d">77% of catalog</div></div> <div class="kpi warn"><div class="l">Need minor fixes</div><div class="v">11</div><div class="d">mostly missing ISWC</div></div> <div class="kpi info"><div class="l">Writers tracked</div><div class="v">50</div><div class="d">48 with verified IPI</div></div> </div> </div> </div> <div class="card"> <h2>Metadata Coverage</h2> <div class="bars"> <div class="bar"> <div class="lbl">Writer IPI coverage<span class="d">48 of 50 writers</span></div> <div class="track"><div class="fill grn" style="width:96%"></div></div> <div class="n">96%</div> </div> <div class="bar"> <div class="lbl">Publisher share complete<span class="d">43 of 48 works</span></div> <div class="track"><div class="fill grn" style="width:90%"></div></div> <div class="n">90%</div> </div> <div class="bar"> <div class="lbl">Writer shares = 100%<span class="d">45 of 48 works</span></div> <div class="track"><div class="fill grn" style="width:94%"></div></div> <div class="n">94%</div> </div> <div class="bar"> <div class="lbl">Registered with PRO<span class="d">48 of 48 works</span></div> <div class="track"><div class="fill grn" style="width:100%"></div></div> <div class="n">100%</div> </div> <div class="bar"> <div class="lbl">ISWC assigned<span class="d">41 of 48 works</span></div> <div class="track"><div class="fill yel" style="width:85%"></div></div> <div class="n">85%</div> </div> <div class="bar"> <div class="lbl">Foreign-writer agreements<span class="d">6 of 7 co-writes (E/SE/AM)</span></div> <div class="track"><div class="fill yel" style="width:86%"></div></div> <div class="n">86%</div> </div> <div class="bar"> <div class="lbl">Title case clean<span class="d">46 of 48 titles</span></div> <div class="track"><div class="fill grn" style="width:96%"></div></div> <div class="n">96%</div> </div> </div> </div> <div class="card"> <h2>Submission Funnel · Q2-2026</h2> <div class="funnel"> <div class="step start"><div class="v">48</div><div class="l">In catalog</div><div class="d">Nordic Music AB works</div></div> <div class="step good"><div class="v">37</div><div class="l">Submittable</div><div class="d">readiness ≥ 70</div></div> <div class="step good"><div class="v">34</div><div class="l">Submitted</div><div class="d">3 CWR packets sent</div></div> <div class="step good"><div class="v">32</div><div class="l">Accepted</div><div class="d">PRO ACK received</div></div> <div class="step bad"><div class="v">2</div><div class="l">Rejected</div><div class="d">missing IPI · fixable</div></div> </div> </div> <div class="card"> <h2>Top 5 Writers by Royalty Exposure</h2> <table class="writer-table"> <thead> <tr><th>Writer</th><th>IPI</th><th>Society</th><th>Works</th><th>Status</th><th style="text-align:right;">% of catalog value</th></tr> </thead> <tbody> <tr><td><b>Erik Andersson</b></td><td class="ipi">00712984310</td><td>PRO</td><td>18</td><td><span class="tag grn">Verified</span></td><td class="royalty">31.2%</td></tr> <tr><td><b>Maria Svensson</b></td><td class="ipi">00123456789</td><td>PRO</td><td>14</td><td><span class="tag grn">Verified</span></td><td class="royalty">22.8%</td></tr> <tr><td><b>Johan Berg</b></td><td class="ipi">00345678901</td><td>PRO</td><td>9</td><td><span class="tag grn">Verified</span></td><td class="royalty">14.6%</td></tr> <tr><td><b>Karin Andersson</b></td><td class="ipi">00987654321</td><td>PRO</td><td>7</td><td><span class="tag grn">Verified</span></td><td class="royalty">9.8%</td></tr> <tr><td><b>Lars Petersen</b></td><td class="ipi">00111222333</td><td>TONO (NO)</td><td>4</td><td><span class="tag blue">Foreign · E</span></td><td class="royalty">6.4%</td></tr> </tbody> </table> </div> <div class="card"> <h2>Recent Activity</h2> <table class="activity-table"> <thead> <tr><th>When</th><th>Event</th><th>Actor</th><th>Outcome</th></tr> </thead> <tbody> <tr><td class="stamp">2026-04-20 14:30</td><td>CWR packet <b>TRP-DEMO-01</b> generated</td><td>Ken (Nordic Music AB)</td><td><span class="tag grn">Ready to submit</span></td></tr> <tr><td class="stamp">2026-04-19 11:12</td><td>Cleaning Wizard run · 14 works</td><td>Ken (Nordic Music AB)</td><td><span class="tag grn">13 clean · 1 needs IPI</span></td></tr> <tr><td class="stamp">2026-04-15 09:48</td><td>PRO ACK received for packet <b>TRP-Q2-03</b></td><td>PRO (auto)</td><td><span class="tag grn">14/14 accepted</span></td></tr> <tr><td class="stamp">2026-04-12 16:20</td><td>Packet <b>TRP-Q2-02</b> submitted</td><td>Ken (Nordic Music AB)</td><td><span class="tag blue">Queued at PRO</span></td></tr> <tr><td class="stamp">2026-04-08 10:05</td><td>2 works rejected — missing writer IPI</td><td>PRO (auto)</td><td><span class="tag red">Fixable · in Wizard queue</span></td></tr> </tbody> </table> </div> <div class="card"> <h2>What TrapRoyaltiesPro fixed this quarter</h2> <div class="bars"> <div class="bar"> <div class="lbl">IPIs added via MusicBrainz<span class="d">writers that had no IPI before</span></div> <div class="track"><div class="fill grn" style="width:78%"></div></div> <div class="n">+39</div> </div> <div class="bar"> <div class="lbl">ISWCs resolved<span class="d">matched to registered works</span></div> <div class="track"><div class="fill grn" style="width:60%"></div></div> <div class="n">+17</div> </div> <div class="bar"> <div class="lbl">Split-sum corrections<span class="d">catalog now sums to 100%</span></div> <div class="track"><div class="fill grn" style="width:50%"></div></div> <div class="n">+11</div> </div> <div class="bar"> <div class="lbl">Duplicate writers merged<span class="d">e.g. "Erik A." → "Erik Andersson"</span></div> <div class="track"><div class="fill grn" style="width:36%"></div></div> <div class="n">+6</div> </div> <div class="bar"> <div class="lbl">Foreign sub-publishing flags<span class="d">E/SE/AM declarations added</span></div> <div class="track"><div class="fill grn" style="width:28%"></div></div> <div class="n">+4</div> </div> </div> </div> <div class="page-nav"> <a href="/pages/demo-hub.html">← All demos</a> <a href="/pages/demo-health-dashboard.html">← Per-work dashboard</a> <a href="/pages/demo-cwr-result.html">← CWR Packet Result</a> <a href="/pages/demo-pilot-signup.html">→ Join the Pilot</a> </div>
 </div>
 </body>
 </html>

@@ -3,38 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roya • Dry Cleaning Report (Sample)</title>
+<title>TrapRoyaltiesPro • Dry Cleaning Report (Sample)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Inter',sans-serif; background:#F8FAFC; color:#1A202C; line-height:1.55; -webkit-font-smoothing:antialiased; }
+<style> * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#0f172a; color:#e2e8f0; line-height:1.55; -webkit-font-smoothing:antialiased; }
   a { color:#2B6F4B; text-decoration:none; }
   .wrap { max-width:780px; margin:0 auto; padding:32px 24px 64px; }
   .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
   .brand { display:flex; align-items:center; gap:10px; }
-  .brand-icon { background:#2B6F4B; color:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .brand-icon { background:#2B6F4B; color:#e2e8f0; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
   .brand-text { font-weight:700; font-size:18px; }
-  .sample-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#2B6F4B; background:#E8F3ED; padding:4px 10px; border-radius:99px; }
+  .sample-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#2B6F4B; background:rgba(34,197,94,0.10); padding:4px 10px; border-radius:99px; }
   h1 { font-size:30px; font-weight:800; line-height:1.2; margin-bottom:8px; }
-  .subtitle { color:#64748B; font-size:14px; margin-bottom:28px; }
-  .card { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:24px; margin-bottom:16px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
-  .card h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748B; margin-bottom:12px; }
+  .subtitle { color:#94a3b8; font-size:14px; margin-bottom:28px; }
+  .card { background:#0f172a; border:1px solid #E2E8F0; border-radius:14px; padding:24px; margin-bottom:16px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+  .card h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:12px; }
   .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-  .stat { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:14px; }
-  .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#64748B; font-weight:600; }
-  .stat-value { font-size:24px; font-weight:800; color:#1A202C; margin-top:4px; }
+  .stat { background:#0f172a; border:1px solid #E2E8F0; border-radius:10px; padding:14px; }
+  .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#94a3b8; font-weight:600; }
+  .stat-value { font-size:24px; font-weight:800; color:#e2e8f0; margin-top:4px; }
   .score-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
   .score-hero { display:flex; align-items:center; gap:20px; padding:8px 4px 4px; }
   .score-ring { position:relative; width:96px; height:96px; flex-shrink:0; }
   .score-ring svg { transform:rotate(-90deg); }
   .score-ring .bg { stroke:#E2E8F0; }
   .score-ring .fg { stroke:#E8A33F; transition:stroke-dashoffset 1s; }
-  .score-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; color:#1A202C; }
+  .score-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; color:#e2e8f0; }
   .score-meta .band { font-size:18px; font-weight:700; color:#B9741A; }
-  .score-meta .range { color:#64748B; font-size:13px; margin-top:2px; }
-  .blackbox { background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%); border:1px solid #FCA5A5; border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; justify-content:center; }
+  .score-meta .range { color:#94a3b8; font-size:13px; margin-top:2px; }
+  .blackbox { background:linear-gradient(135deg,rgba(239,68,68,0.10) 0%,rgba(239,68,68,0.15) 100%); border:1px solid #FCA5A5; border-radius:12px; padding:14px 16px; display:flex; flex-direction:column; justify-content:center; }
   .blackbox .bb-label { font-size:10px; text-transform:uppercase; letter-spacing:0.8px; font-weight:700; color:#991B1B; display:flex; align-items:center; gap:6px; }
-  .blackbox .bb-label .ic { background:#991B1B; color:#FEE2E2; width:18px; height:18px; border-radius:99px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; }
+  .blackbox .bb-label .ic { background:#991B1B; color:rgba(239,68,68,0.15); width:18px; height:18px; border-radius:99px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; }
   .blackbox .bb-value { font-size:28px; font-weight:800; color:#991B1B; margin-top:4px; line-height:1.1; }
   .blackbox .bb-value small { font-size:13px; font-weight:600; color:#7F1D1D; }
   .blackbox .bb-caption { font-size:11px; color:#7F1D1D; margin-top:4px; }
@@ -44,185 +43,62 @@
   .issues-list { list-style:none; }
   .issues-list li { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px dashed #E2E8F0; font-size:14px; }
   .issues-list li:last-child { border-bottom:0; }
-  .issues-list .count { background:#FEF2F2; color:#B91C1C; font-weight:700; padding:3px 10px; border-radius:99px; font-size:13px; min-width:36px; text-align:center; }
-  .issues-list .count.warn { background:#FEF9C3; color:#854D0E; }
-  .work-item { border:1px solid #FECACA; background:#FEF2F2; border-radius:10px; padding:14px 16px; margin-bottom:10px; }
-  .work-item .title { font-weight:700; margin-bottom:6px; color:#1A202C; }
+  .issues-list .count { background:rgba(239,68,68,0.10); color:#B91C1C; font-weight:700; padding:3px 10px; border-radius:99px; font-size:13px; min-width:36px; text-align:center; }
+  .issues-list .count.warn { background:rgba(234,179,8,0.14); color:#854D0E; }
+  .work-item { border:1px solid #FECACA; background:rgba(239,68,68,0.10); border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .work-item .title { font-weight:700; margin-bottom:6px; color:#e2e8f0; }
   .work-item ul { list-style:none; font-size:13px; color:#7F1D1D; }
   .work-item li { padding:3px 0; display:flex; gap:8px; align-items:flex-start; }
-  .work-item li::before { content:'✗'; color:#DC2626; font-weight:700; }
+  .work-item li::before { content:''; color:#DC2626; font-weight:700; }
   .checklist { list-style:none; }
-  .checklist li { padding:10px 14px; background:#F0FDF4; border-left:3px solid #2B6F4B; border-radius:4px; margin-bottom:6px; font-size:14px; display:flex; gap:10px; align-items:flex-start; }
-  .checklist li::before { content:'☐'; font-size:16px; color:#2B6F4B; font-weight:700; }
-  .footer-note { margin-top:24px; padding:16px; background:#F0F9FF; border:1px solid #BAE6FD; border-radius:10px; font-size:13px; color:#075985; }
+  .checklist li { padding:10px 14px; background:rgba(34,197,94,0.10); border-left:3px solid #2B6F4B; border-radius:4px; margin-bottom:6px; font-size:14px; display:flex; gap:10px; align-items:flex-start; }
+  .checklist li::before { content:''; font-size:16px; color:#2B6F4B; font-weight:700; }
+  .footer-note { margin-top:24px; padding:16px; background:rgba(59,130,246,0.08); border:1px solid #BAE6FD; border-radius:10px; font-size:13px; color:#075985; }
   .footer-note strong { color:#0C4A6E; }
   .page-nav { margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; }
-  .page-nav a { background:#fff; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#1A202C; }
+  .page-nav a { background:#0f172a; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#e2e8f0; }
   .page-nav a:hover { border-color:#2B6F4B; color:#2B6F4B; }
   @media (max-width:520px) { .stat-grid { grid-template-columns:repeat(2,1fr); } h1 { font-size:24px; } }
-  @media print { body { background:#fff; } .page-nav, .footer-note, .cta-button { display:none; } .card { box-shadow:none; page-break-inside:avoid; } }
+  @media print { body { background:#0f172a; } .page-nav, .footer-note, .cta-button { display:none; } .card { box-shadow:none; page-break-inside:avoid; } }
 
   /* financial-alert hero */
   h1 .money-flag { color:#991B1B; }
-  .subhead { font-size:17px; color:#334155; font-weight:500; margin-bottom:22px; border-left:3px solid #E8A33F; padding-left:14px; line-height:1.5; }
-  .hero-loss-card { background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%); border:1px solid #FCA5A5; border-radius:18px; padding:22px 24px; margin-bottom:20px; box-shadow:0 8px 20px rgba(153,27,27,0.05); }
+  .subhead { font-size:17px; color:#cbd5e1; font-weight:500; margin-bottom:22px; border-left:3px solid #E8A33F; padding-left:14px; line-height:1.5; }
+  .hero-loss-card { background:linear-gradient(135deg,rgba(239,68,68,0.10) 0%,rgba(239,68,68,0.15) 100%); border:1px solid #FCA5A5; border-radius:18px; padding:22px 24px; margin-bottom:20px; box-shadow:0 8px 20px rgba(153,27,27,0.05); }
   .hero-loss-title { font-size:26px; font-weight:800; color:#991B1B; line-height:1.2; margin-bottom:16px; }
   .money-lost-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:18px; }
-  .loss-item { background:rgba(255,255,250,0.8); border:1px solid #FECACA; border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:12px; }
-  .loss-emoji { font-size:22px; background:#fff; width:42px; height:42px; border-radius:99px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid #FECACA; }
+  .loss-item { background:rgba(15,23,42,0.8); border:1px solid #FECACA; border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:12px; }
+  .loss-emoji { font-size:22px; background:#0f172a; width:42px; height:42px; border-radius:99px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:1px solid #FECACA; }
   .loss-text { font-weight:700; font-size:14px; color:#7F1D1D; line-height:1.35; }
   .loss-text small { font-weight:400; font-size:12px; color:#991B1B; display:block; margin-top:2px; }
   .cta-row { text-align:right; }
-  .cta-button { background:#1A4D3E; border:0; border-radius:99px; padding:12px 24px; font-weight:700; font-size:14px; color:#fff; display:inline-flex; align-items:center; gap:10px; cursor:pointer; text-decoration:none; transition:background 0.15s, transform 0.15s; }
-  .cta-button:hover { background:#0F3B2F; transform:translateY(-1px); color:#fff; }
+  .cta-button { background:#1A4D3E; border:0; border-radius:99px; padding:12px 24px; font-weight:700; font-size:14px; color:#e2e8f0; display:inline-flex; align-items:center; gap:10px; cursor:pointer; text-decoration:none; transition:background 0.15s, transform 0.15s; }
+  .cta-button:hover { background:#0F3B2F; transform:translateY(-1px); color:#e2e8f0; }
   @media (max-width:620px) { .money-lost-grid { grid-template-columns:1fr; } .hero-loss-title { font-size:22px; } }
-</style>
-</head>
+
+/* dark-theme hard overrides (auto) */
+html, body { background:#020617 !important; color:#cbd5e1 !important; }
+.card, .panel, .section-card, .summary, .summary-card, .banner, .notice, .callout,
+.stat, .stat-card, .tile, .tile-card, .kpi, .kpi-card, .metric, .metric-card,
+.score-card, .box, .box-card, .entry, .entry-card, .item, .item-card,
+.readiness, .readiness-banner, .submission-banner, .health-score, .health-card,
+.packet, .packet-row, .risk-card, .risk-row, .fix-card, .fix-row,
+.what-we-do, .what-we-dont, .signup-card, .form-card, .form-row,
+.row-card, .row-item, .row-block, .field, .field-row,
+table, thead, tbody, tr, td, th { background:#0f172a !important; background-image:none !important; color:#cbd5e1 !important; border-color:rgba(99,102,241,0.2) !important; }
+thead, thead th { background:#0b1222 !important; color:#94a3b8 !important; }
+body > *, main > * { color:#cbd5e1; }
+h1, h2, h3, h4, h5, h6 { color:#f1f5f9 !important; }
+strong, b { color:#f1f5f9 !important; }
+hr { border-color: rgba(15,23,42,0.8) !important; }
+</style> <link rel="stylesheet" href="/publisher-portal/css/theme.css"> </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <div class="brand">
-      <div class="brand-icon">R</div>
-      <div class="brand-text">Roya</div>
-    </div>
-    <span class="sample-tag">Metadata Dry Cleaning Report</span>
-  </div>
-
-  <h1>👉 <span class="money-flag">“€47,000 in Missing Royalties Identified”</span></h1>
-  <div class="subhead">“Caused by metadata gaps, missing ISRCs, and unregistered works.”</div>
-
-  <div class="hero-loss-card">
-    <div class="hero-loss-title">Where this money is lost:</div>
-    <div class="money-lost-grid">
-      <div class="loss-item">
-        <div class="loss-emoji">🎙️</div>
-        <div class="loss-text">Missing SoundExchange registrations<small>Unclaimed digital performances</small></div>
-      </div>
-      <div class="loss-item">
-        <div class="loss-emoji">⚖️</div>
-        <div class="loss-text">Split inconsistencies<small>Writer/publisher shares don’t sum to 100%</small></div>
-      </div>
-      <div class="loss-item">
-        <div class="loss-emoji">🔗</div>
-        <div class="loss-text">Unmatched ISRCs<small>No link between recording and composition</small></div>
-      </div>
-      <div class="loss-item">
-        <div class="loss-emoji">🌍</div>
-        <div class="loss-text">Foreign collection gaps<small>Unregistered works abroad → lost neighbouring rights</small></div>
-      </div>
-    </div>
-    <div class="cta-row">
-      <a href="#detection" class="cta-button">👉 “See how this was detected →”</a>
-    </div>
-  </div>
-
-  <div id="detection"></div>
-  <div class="card" style="background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);border-color:#FCA5A5;">
-    <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
-      <div style="flex:1 1 260px;min-width:240px;">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;color:#991B1B;display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-          <span style="background:#991B1B;color:#FEE2E2;width:20px;height:20px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;">⬛</span>
-          Revenue at Risk · Black Box Exposure
-        </div>
-        <div style="font-size:40px;font-weight:800;color:#991B1B;line-height:1;">≈ 47,000 <span style="font-size:18px;font-weight:700;">SEK / year</span></div>
-        <div style="font-size:13px;color:#7F1D1D;margin-top:8px;max-width:520px;">11 of 48 works contain metadata issues that may delay, reduce, or block royalty payments. Publisher share stuck in the society "black box" because of fixable errors.</div>
-      </div>
-      <div style="flex:1 1 240px;min-width:220px;background:#fff;border:1px solid #FCA5A5;border-radius:10px;padding:14px;">
-        <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;color:#166534;margin-bottom:6px;">💰 Recovery Potential</div>
-        <div style="font-size:24px;font-weight:800;color:#166534;line-height:1.1;">28,000 – 42,000 <small style="font-size:12px;font-weight:600;color:#166534;">SEK</small></div>
-        <div style="font-size:11px;color:#166534;margin-top:4px;">Recoverable once metadata is corrected — based on historical claim recovery rates, matching completeness, and DSP usage signals.</div>
-      </div>
-    </div>
-    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:12px;color:#7F1D1D;">
-      <div style="background:rgba(255,255,255,0.7);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Missing ISWC</b> · 7 works<br><b style="color:#991B1B;">18,000 SEK</b></div>
-      <div style="background:rgba(255,255,255,0.7);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Missing Publisher</b> · 5 works<br><b style="color:#991B1B;">12,000 SEK</b></div>
-      <div style="background:rgba(255,255,255,0.7);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Missing Writers</b> · 4 works<br><b style="color:#991B1B;">9,000 SEK</b></div>
-      <div style="background:rgba(255,255,255,0.7);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Broken Shares</b> · 3 works<br><b style="color:#991B1B;">7,000 SEK</b></div>
-      <div style="background:rgba(255,255,255,0.7);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Invalid IPI</b> · 2 works<br><b style="color:#991B1B;">1,000 SEK</b></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Catalog Summary</h2>
-    <div class="score-hero">
-      <div class="score-ring">
-        <svg width="96" height="96" viewBox="0 0 96 96">
-          <circle class="bg" cx="48" cy="48" r="40" fill="none" stroke-width="10"/>
-          <circle class="fg" cx="48" cy="48" r="40" fill="none" stroke-width="10" stroke-linecap="round"
-                  stroke-dasharray="251.3" stroke-dashoffset="67.9"/>
-        </svg>
-        <div class="score-num">73</div>
-      </div>
-      <div class="score-meta">
-        <div class="band">Needs Minor Fixes</div>
-        <div class="range">Publishing Health Score · 70–89 band</div>
-      </div>
-    </div>
-    <div class="stat-grid" style="margin-top:18px;">
-      <div class="stat"><div class="stat-label">Total Works</div><div class="stat-value">48</div></div>
-      <div class="stat"><div class="stat-label">With Issues</div><div class="stat-value" style="color:#B91C1C;">11</div></div>
-      <div class="stat"><div class="stat-label">Clean</div><div class="stat-value" style="color:#16A34A;">37</div></div>
-    </div>
-    <div style="margin-top:14px;padding:12px 14px;background:#FAFBFC;border:1px dashed #CBD5E1;border-radius:8px;font-size:11px;color:#64748B;line-height:1.6;">
-      <b style="color:#475569;">Estimate method:</b> avg 1,000,000 Spotify streams/work/year (Nordic indie baseline) × 0.001 SEK/stream publisher share = ≈1,000 SEK/work/year at risk. Each metadata error removes the publisher from the payment chain until corrected — societies hold the unallocated share in the black box, typically for 2–3 years before redistribution. Actual exposure varies by territory and DSP mix.
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Top Issues Detected</h2>
-    <ul class="issues-list">
-      <li><span>Missing ISWC</span><span class="count">18</span></li>
-      <li><span>Missing Publishers</span><span class="count">12</span></li>
-      <li><span>Missing Writers</span><span class="count">9</span></li>
-      <li><span>Broken Shares</span><span class="count">7</span></li>
-      <li><span>Invalid IPI Numbers</span><span class="count">5</span></li>
-      <li><span>Duplicate Works</span><span class="count warn">4</span></li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>Example Work Issues</h2>
-    <div class="work-item">
-      <div class="title">“Midnight Echo”</div>
-      <ul>
-        <li>Missing ISWC</li>
-        <li>Writer share imbalance — 50/50 expected, 100/0 found</li>
-        <li>Publisher missing</li>
-      </ul>
-    </div>
-    <div class="work-item">
-      <div class="title">“Glass River”</div>
-      <ul>
-        <li>Duplicate title detected — 2 versions with different writers</li>
-        <li>Invalid IPI for Writer #2</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>Fix-Later Checklist</h2>
-    <ul class="checklist">
-      <li>Add ISWC for 18 works</li>
-      <li>Add missing writers for 9 works</li>
-      <li>Add publishers for 12 works</li>
-      <li>Correct share splits for 7 works</li>
-      <li>Resolve 4 duplicate works</li>
-      <li>Validate 5 IPI numbers</li>
-    </ul>
-  </div>
-
-  <div class="footer-note">
-    <strong>What this is:</strong> A Roya dry-cleaning pass is a non-destructive scan of a publishing catalog. We never
+<div class="wrap"> <div class="header"> <div class="brand"> <div class="brand-icon">R</div> <div class="brand-text">TrapRoyaltiesPro</div> </div> <span class="sample-tag">Metadata Dry Cleaning Report</span> </div> <h1> <span class="money-flag">“$47,000 in Missing Royalties Identified”</span></h1> <div class="subhead">“Caused by metadata gaps, missing ISRCs, and unregistered works.”</div> <div class="hero-loss-card"> <div class="hero-loss-title">Where this money is lost:</div> <div class="money-lost-grid"> <div class="loss-item"> <div class="loss-emoji"></div> <div class="loss-text">Missing SoundExchange registrations<small>Unclaimed digital performances</small></div> </div> <div class="loss-item"> <div class="loss-emoji"></div> <div class="loss-text">Split inconsistencies<small>Writer/publisher shares don’t sum to 100%</small></div> </div> <div class="loss-item"> <div class="loss-emoji"></div> <div class="loss-text">Unmatched ISRCs<small>No link between recording and composition</small></div> </div> <div class="loss-item"> <div class="loss-emoji"></div> <div class="loss-text">Foreign collection gaps<small>Unregistered works abroad → lost neighbouring rights</small></div> </div> </div> <div class="cta-row"> <a href="#detection" class="cta-button"> “See how this was detected →”</a> </div> </div> <div id="detection"></div> <div class="card" style="background:linear-gradient(135deg,rgba(239,68,68,0.10) 0%,rgba(239,68,68,0.15) 100%);border-color:#FCA5A5;"> <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;"> <div style="flex:1 1 260px;min-width:240px;"> <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;color:#991B1B;display:flex;align-items:center;gap:6px;margin-bottom:6px;"> <span style="background:#991B1B;color:rgba(239,68,68,0.15);width:20px;height:20px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;">⬛</span> Revenue at Risk · Black Box Exposure
+        </div> <div style="font-size:40px;font-weight:800;color:#991B1B;line-height:1;">≈ $47,000 <span style="font-size:18px;font-weight:700;">/ year</span></div> <div style="font-size:13px;color:#7F1D1D;margin-top:8px;max-width:520px;">11 of 48 works contain metadata issues that may delay, reduce, or block royalty payments. Publisher share stuck in the society "black box" because of fixable errors.</div> </div> <div style="flex:1 1 240px;min-width:220px;background:#0f172a;border:1px solid #FCA5A5;border-radius:10px;padding:14px;"> <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.8px;font-weight:700;color:#166534;margin-bottom:6px;"> Recovery Potential</div> <div style="font-size:24px;font-weight:800;color:#166534;line-height:1.1;">$28,000 – $42,000 <small style="font-size:12px;font-weight:600;color:#166534;"></small></div> <div style="font-size:11px;color:#166534;margin-top:4px;">Recoverable once metadata is corrected — based on historical claim recovery rates, matching completeness, and DSP usage signals.</div> </div> </div> <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;font-size:12px;color:#7F1D1D;"> <div style="background:rgba(15,23,42,0.8);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Missing ISWC</b> · 7 works<br><b style="color:#991B1B;">$18,000</b></div> <div style="background:rgba(15,23,42,0.8);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Missing Publisher</b> · 5 works<br><b style="color:#991B1B;">$12,000</b></div> <div style="background:rgba(15,23,42,0.8);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Missing Writers</b> · 4 works<br><b style="color:#991B1B;">$9,000</b></div> <div style="background:rgba(15,23,42,0.8);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Broken Shares</b> · 3 works<br><b style="color:#991B1B;">$7,000</b></div> <div style="background:rgba(15,23,42,0.8);border:1px solid #FCA5A5;border-radius:8px;padding:8px 10px;"><b>Invalid IPI</b> · 2 works<br><b style="color:#991B1B;">$1,000</b></div> </div> </div> <div class="card"> <h2>Catalog Summary</h2> <div class="score-hero"> <div class="score-ring"> <svg width="96" height="96" viewBox="0 0 96 96"> <circle class="bg" cx="48" cy="48" r="40" fill="none" stroke-width="10"/> <circle class="fg" cx="48" cy="48" r="40" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="67.9"/> </svg> <div class="score-num">73</div> </div> <div class="score-meta"> <div class="band">Needs Minor Fixes</div> <div class="range">Publishing Health Score · 70–89 band</div> </div> </div> <div class="stat-grid" style="margin-top:18px;"> <div class="stat"><div class="stat-label">Total Works</div><div class="stat-value">48</div></div> <div class="stat"><div class="stat-label">With Issues</div><div class="stat-value" style="color:#B91C1C;">11</div></div> <div class="stat"><div class="stat-label">Clean</div><div class="stat-value" style="color:#16A34A;">37</div></div> </div> <div style="margin-top:14px;padding:12px 14px;background:#0f172a;border:1px dashed #CBD5E1;border-radius:8px;font-size:11px;color:#94a3b8;line-height:1.6;"> <b style="color:#94a3b8;">Estimate method:</b> avg 1,000,000 Spotify streams/work/year (Nordic indie baseline) × $0.001/stream publisher share = ≈$1,000/work/year at risk. Each metadata error removes the publisher from the payment chain until corrected — societies hold the unallocated share in the black box, typically for 2–3 years before redistribution. Actual exposure varies by territory and DSP mix.
+    </div> </div> <div class="card"> <h2>Top Issues Detected</h2> <ul class="issues-list"> <li><span>Missing ISWC</span><span class="count">18</span></li> <li><span>Missing Publishers</span><span class="count">12</span></li> <li><span>Missing Writers</span><span class="count">9</span></li> <li><span>Broken Shares</span><span class="count">7</span></li> <li><span>Invalid IPI Numbers</span><span class="count">5</span></li> <li><span>Duplicate Works</span><span class="count warn">4</span></li> </ul> </div> <div class="card"> <h2>Example Work Issues</h2> <div class="work-item"> <div class="title">“Midnight Echo”</div> <ul> <li>Missing ISWC</li> <li>Writer share imbalance — 50/50 expected, 100/0 found</li> <li>Publisher missing</li> </ul> </div> <div class="work-item"> <div class="title">“Glass River”</div> <ul> <li>Duplicate title detected — 2 versions with different writers</li> <li>Invalid IPI for Writer #2</li> </ul> </div> </div> <div class="card"> <h2>Fix-Later Checklist</h2> <ul class="checklist"> <li>Add ISWC for 18 works</li> <li>Add missing writers for 9 works</li> <li>Add publishers for 12 works</li> <li>Correct share splits for 7 works</li> <li>Resolve 4 duplicate works</li> <li>Validate 5 IPI numbers</li> </ul> </div> <div class="footer-note"> <strong>What this is:</strong> A TrapRoyaltiesPro dry-cleaning pass is a non-destructive scan of a publishing catalog. We never
     auto-correct ownership data — every fix is proposed and confirmed by the publisher, and each confirmed fix trains
     the Master Catalog for the next scan.
-  </div>
-
-  <div class="page-nav">
-    <a href="/pages/demo-health-dashboard.html">→ Health Dashboard</a>
-    <a href="/pages/demo-cwr-preflight.html">→ CWR Pre-Flight</a>
-    <a href="/pages/demo-pilot-signup.html">→ Join the Pilot</a>
-    <a href="javascript:window.print()">🖨 Print</a>
-  </div>
+  </div> <div class="page-nav"> <a href="/pages/demo-health-dashboard.html">→ Health Dashboard</a> <a href="/pages/demo-cwr-preflight.html">→ CWR Pre-Flight</a> <a href="/pages/demo-pilot-signup.html">→ Join the Pilot</a> <a href="javascript:window.print()"> Print</a> </div>
 </div>
 </body>
 </html>

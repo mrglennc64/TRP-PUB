@@ -189,7 +189,7 @@ export default function ForensicLanding() {
               <p className="text-xs text-slate-500 mb-3 leading-relaxed">
                 ISRC lookup, PRO gap analysis, and missing royalty identification across your catalog.
               </p>
-              <a href="https://traproyalties.com" target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-400 hover:text-indigo-300 transition">
+              <a href="/publisher-portal/pages/cleaning-wizard.html" className="text-xs text-indigo-400 hover:text-indigo-300 transition">
                 Run free audit →
               </a>
             </div>

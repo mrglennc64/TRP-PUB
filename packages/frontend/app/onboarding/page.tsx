@@ -174,7 +174,7 @@ export default function OnboardingPage() {
               className="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-xl transition text-base">
               ⚡ Open Data Hub
             </Link>
-            <Link href="/free-audit"
+            <Link href="/publisher-portal/pages/cleaning-wizard.html"
               className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition text-base border border-white/20">
               Run Free Audit
             </Link>

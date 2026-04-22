@@ -3,169 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roya • Join the Publishing Health Pilot</title>
+<title>TrapRoyaltiesPro • Join the Publishing Health Pilot</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Inter',sans-serif; background:#F8FAFC; color:#1A202C; line-height:1.55; -webkit-font-smoothing:antialiased; }
+<style> * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#0f172a; color:#e2e8f0; line-height:1.55; -webkit-font-smoothing:antialiased; }
   a { color:#2B6F4B; text-decoration:none; }
   .wrap { max-width:640px; margin:0 auto; padding:32px 24px 64px; }
   .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
   .brand { display:flex; align-items:center; gap:10px; }
-  .brand-icon { background:#2B6F4B; color:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .brand-icon { background:#2B6F4B; color:#e2e8f0; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
   .brand-text { font-weight:700; font-size:18px; }
-  .pilot-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#B45309; background:#FEF3C7; padding:4px 10px; border-radius:99px; }
+  .pilot-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#B45309; background:rgba(234,179,8,0.12); padding:4px 10px; border-radius:99px; }
 
   h1 { font-size:32px; font-weight:800; line-height:1.2; margin-bottom:8px; }
-  .intro { color:#475569; font-size:15px; margin-bottom:24px; }
+  .intro { color:#94a3b8; font-size:15px; margin-bottom:24px; }
 
-  .pitch { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:22px; margin-bottom:20px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
-  .pitch h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748B; margin-bottom:10px; }
+  .pitch { background:#0f172a; border:1px solid #E2E8F0; border-radius:14px; padding:22px; margin-bottom:20px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+  .pitch h2 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:10px; }
   .pitch ul { list-style:none; }
   .pitch li { padding:8px 0; font-size:14px; display:flex; gap:10px; align-items:flex-start; border-bottom:1px dashed #E2E8F0; }
   .pitch li:last-child { border-bottom:0; }
-  .pitch li::before { content:'✓'; color:#2B6F4B; font-weight:700; }
-  .scarcity { background:linear-gradient(135deg,#FEF3C7,#FDE68A); border:1px solid #FCD34D; border-radius:10px; padding:14px 18px; margin-bottom:20px; font-weight:600; color:#78350F; display:flex; align-items:center; gap:10px; }
-  .scarcity .seats { background:#fff; color:#B45309; font-weight:800; padding:3px 10px; border-radius:99px; font-size:13px; }
+  .pitch li::before { content:''; color:#2B6F4B; font-weight:700; }
+  .scarcity { background:linear-gradient(135deg,rgba(234,179,8,0.12),rgba(234,179,8,0.25)); border:1px solid #FCD34D; border-radius:10px; padding:14px 18px; margin-bottom:20px; font-weight:600; color:#78350F; display:flex; align-items:center; gap:10px; }
+  .scarcity .seats { background:#0f172a; color:#B45309; font-weight:800; padding:3px 10px; border-radius:99px; font-size:13px; }
 
-  form { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:22px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+  form { background:#0f172a; border:1px solid #E2E8F0; border-radius:14px; padding:22px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
   .field { margin-bottom:14px; }
-  .field label { display:block; font-size:12px; font-weight:600; color:#475569; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
-  .field input, .field select, .field textarea { width:100%; padding:11px 14px; border:1px solid #CBD5E1; border-radius:8px; font-size:14px; font-family:inherit; color:#1A202C; background:#fff; }
+  .field label { display:block; font-size:12px; font-weight:600; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
+  .field input, .field select, .field textarea { width:100%; padding:11px 14px; border:1px solid #CBD5E1; border-radius:8px; font-size:14px; font-family:inherit; color:#e2e8f0; background:#0f172a; }
   .field input:focus, .field select:focus, .field textarea:focus { outline:none; border-color:#2B6F4B; box-shadow:0 0 0 3px rgba(43,111,75,0.15); }
   .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .btn { width:100%; background:#2B6F4B; color:#fff; border:0; border-radius:10px; padding:14px 20px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px; }
+  .btn { width:100%; background:#2B6F4B; color:#e2e8f0; border:0; border-radius:10px; padding:14px 20px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px; }
   .btn:hover { background:#1F5538; }
   .btn:disabled { background:#94A3B8; cursor:not-allowed; }
-  .privacy { font-size:12px; color:#64748B; margin-top:12px; text-align:center; }
+  .privacy { font-size:12px; color:#94a3b8; margin-top:12px; text-align:center; }
 
-  .success { background:#F0FDF4; border:1px solid #BBF7D0; border-radius:14px; padding:22px; text-align:center; }
+  .success { background:rgba(34,197,94,0.10); border:1px solid #BBF7D0; border-radius:14px; padding:22px; text-align:center; }
   .success h2 { color:#15803D; font-size:20px; margin-bottom:8px; }
   .success p { color:#166534; font-size:14px; }
 
   .page-nav { margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
-  .page-nav a { background:#fff; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#1A202C; }
+  .page-nav a { background:#0f172a; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#e2e8f0; }
   .page-nav a:hover { border-color:#2B6F4B; color:#2B6F4B; }
 
   @media (max-width:480px) { .field-row { grid-template-columns:1fr; } h1 { font-size:26px; } .hero h1 { font-size:24px !important; } .pilot-scope { gap:0.8rem !important; } }
 
   .hero { margin-bottom:24px; }
-  .hero h1 { font-size:36px; font-weight:800; line-height:1.2; margin-bottom:14px; letter-spacing:-0.02em; background:linear-gradient(135deg,#1A4D3E 0%,#2B6F4B 100%); background-clip:text; -webkit-background-clip:text; color:transparent; }
-  .hero p { font-size:16px; color:#334155; margin-bottom:18px; }
-  .pilot-scope { background:#F1F5F9; border-radius:14px; padding:14px 18px; display:flex; flex-wrap:wrap; gap:20px; align-items:baseline; border:1px solid #E2E8F0; }
-  .pilot-scope strong { font-weight:700; color:#0F172A; font-size:13px; }
-  .pilot-scope span { color:#475569; font-size:13px; }
-</style>
-</head>
+  .hero h1 { font-size:36px; font-weight:800; line-height:1.2; margin-bottom:14px; letter-spacing:-0.02em; color:#f1f5f9; }
+  .hero p { font-size:16px; color:#cbd5e1; margin-bottom:18px; }
+  .pilot-scope { background:#1e293b; border-radius:14px; padding:14px 18px; display:flex; flex-wrap:wrap; gap:20px; align-items:baseline; border:1px solid #E2E8F0; }
+  .pilot-scope strong { font-weight:700; color:#e2e8f0; font-size:13px; }
+  .pilot-scope span { color:#94a3b8; font-size:13px; }
+
+/* dark-theme hard overrides (auto) */
+html, body { background:#020617 !important; color:#cbd5e1 !important; }
+.card, .panel, .section-card, .summary, .summary-card, .banner, .notice, .callout,
+.stat, .stat-card, .tile, .tile-card, .kpi, .kpi-card, .metric, .metric-card,
+.score-card, .box, .box-card, .entry, .entry-card, .item, .item-card,
+.readiness, .readiness-banner, .submission-banner, .health-score, .health-card,
+.packet, .packet-row, .risk-card, .risk-row, .fix-card, .fix-row,
+.what-we-do, .what-we-dont, .signup-card, .form-card, .form-row,
+.row-card, .row-item, .row-block, .field, .field-row,
+table, thead, tbody, tr, td, th { background:#0f172a !important; background-image:none !important; color:#cbd5e1 !important; border-color:rgba(99,102,241,0.2) !important; }
+thead, thead th { background:#0b1222 !important; color:#94a3b8 !important; }
+body > *, main > * { color:#cbd5e1; }
+h1, h2, h3, h4, h5, h6 { color:#f1f5f9 !important; }
+strong, b { color:#f1f5f9 !important; }
+hr { border-color: rgba(15,23,42,0.8) !important; }
+</style> <link rel="stylesheet" href="/publisher-portal/css/theme.css"> </head>
 <body>
-<div class="wrap">
-  <div class="header">
-    <div class="brand">
-      <div class="brand-icon">R</div>
-      <div class="brand-text">Roya</div>
-    </div>
-    <span class="pilot-tag">Catalog Evaluation Pilot</span>
-  </div>
-
-  <div class="hero">
-    <h1>Identify and Recover Missing Royalties in 30 Days</h1>
-    <p>We run your catalog through Roya to detect metadata gaps, registration issues, and unclaimed royalties — before and after submission to PRO and other CMOs.</p>
-    <div class="pilot-scope">
-      <div><strong>📦 Pilot scope:</strong> <span>20–50 works</span></div>
-      <div><strong>⏱️ Duration:</strong> <span>30 days</span></div>
-      <div><strong>💰 Cost:</strong> <span>Free · no obligation</span></div>
-    </div>
-  </div>
-
-  <div class="scarcity">
-    <span class="seats">3/5</span>
-    <span>Seats still available — closes when partners commit or at Stockholm Music Week wrap.</span>
-  </div>
-
-  <div class="pitch">
-    <h2>What you get as a pilot partner</h2>
-    <ul>
-      <li>Full catalog scan (up to 500 works) — no charge during pilot</li>
-      <li>Publishing Health Score + per-work readiness report</li>
-      <li>Fix-Later Packet PDF for your team</li>
-      <li>CWR v2.1 pre-flight validation before PRO submission</li>
-      <li>Direct line to the Roya team — your feedback shapes the product</li>
-    </ul>
-  </div>
-
-  <form id="pilot-form" onsubmit="return submitPilot(event)">
-    <div class="field">
-      <label>Your name</label>
-      <input type="text" name="name" required autocomplete="name">
-    </div>
-    <div class="field">
-      <label>Company / publisher</label>
-      <input type="text" name="company" required autocomplete="organization">
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Email</label>
-        <input type="email" name="email" required autocomplete="email">
-      </div>
-      <div class="field">
-        <label>Role</label>
-        <select name="role" required>
-          <option value="">Select…</option>
-          <option>Publisher / A&amp;R</option>
-          <option>Label manager</option>
-          <option>Rights admin service</option>
-          <option>Artist manager</option>
-          <option>Independent creator</option>
-          <option>PRO / CMO</option>
-          <option>Other</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Catalog size</label>
-        <select name="catalog_size" required>
-          <option value="">Select…</option>
-          <option>Under 50 works</option>
-          <option>50–200 works</option>
-          <option>200–500 works</option>
-          <option>500+ works</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Primary PRO</label>
-        <select name="pro" required>
-          <option value="">Select…</option>
-          <option>PRO</option>
-          <option>ICE</option>
-          <option>PRS</option>
-          <option>GEMA</option>
-          <option>TONO</option>
-          <option>Other / multiple</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label>Biggest metadata pain right now (optional)</label>
-      <textarea name="pain" rows="3" placeholder="e.g. half our indie releases still don't have ISWCs…"></textarea>
-    </div>
-    <button type="submit" class="btn" id="btn">Request Pilot Seat →</button>
-    <div class="privacy">We only use this to get in touch about the pilot. No newsletter, no sharing.</div>
-  </form>
-
-  <div id="success" class="success" style="display:none;">
-    <h2>Thanks — request sent.</h2>
-    <p>Your email client will open with a pre-filled message to Glenn. Hit send and we'll be in touch within 48 hours.</p>
-  </div>
-
-  <div class="page-nav">
-    <a href="/pages/demo-dry-cleaning.html">Dry Cleaning Report</a>
-    <a href="/pages/demo-health-dashboard.html">Health Dashboard</a>
-    <a href="/pages/demo-cwr-preflight.html">CWR Pre-Flight</a>
-  </div>
-</div>
-
-<script>
+<div class="wrap"> <div class="header"> <div class="brand"> <div class="brand-icon">R</div> <div class="brand-text">TrapRoyaltiesPro</div> </div> <span class="pilot-tag">Catalog Evaluation Pilot</span> </div> <div class="hero"> <h1>Identify and Recover Missing Royalties in 30 Days</h1> <p>We run your catalog through TrapRoyaltiesPro to detect metadata gaps, registration issues, and unclaimed royalties — before and after submission to PRO and other CMOs.</p> <div class="pilot-scope"> <div><strong> Pilot scope:</strong> <span>20–50 works</span></div> <div><strong>⏱ Duration:</strong> <span>30 days</span></div> <div><strong> Cost:</strong> <span>Free · no obligation</span></div> </div> </div> <div class="scarcity"> <span class="seats">3/5</span> <span>Seats still available — closes when partners commit or at Stockholm Music Week wrap.</span> </div> <div class="pitch"> <h2>What you get as a pilot partner</h2> <ul> <li>Full catalog scan (up to 500 works) — no charge during pilot</li> <li>Publishing Health Score + per-work readiness report</li> <li>Fix-Later Packet PDF for your team</li> <li>CWR v2.1 pre-flight validation before PRO submission</li> <li>Direct line to the TrapRoyaltiesPro team — your feedback shapes the product</li> </ul> </div> <form id="pilot-form" onsubmit="return submitPilot(event)"> <div class="field"> <label>Your name</label> <input type="text" name="name" required autocomplete="name"> </div> <div class="field"> <label>Company / publisher</label> <input type="text" name="company" required autocomplete="organization"> </div> <div class="field-row"> <div class="field"> <label>Email</label> <input type="email" name="email" required autocomplete="email"> </div> <div class="field"> <label>Role</label> <select name="role" required> <option value="">Select…</option> <option>Publisher / A&amp;R</option> <option>Label manager</option> <option>Rights admin service</option> <option>Artist manager</option> <option>Independent creator</option> <option>PRO / CMO</option> <option>Other</option> </select> </div> </div> <div class="field-row"> <div class="field"> <label>Catalog size</label> <select name="catalog_size" required> <option value="">Select…</option> <option>Under 50 works</option> <option>50–200 works</option> <option>200–500 works</option> <option>500+ works</option> </select> </div> <div class="field"> <label>Primary PRO</label> <select name="pro" required> <option value="">Select…</option> <option>PRO</option> <option>ICE</option> <option>PRS</option> <option>GEMA</option> <option>TONO</option> <option>Other / multiple</option> </select> </div> </div> <div class="field"> <label>Biggest metadata pain right now (optional)</label> <textarea name="pain" rows="3" placeholder="e.g. half our indie releases still don't have ISWCs…"></textarea> </div> <button type="submit" class="btn" id="btn">Request Pilot Seat →</button> <div class="privacy">We only use this to get in touch about the pilot. No newsletter, no sharing.</div> </form> <div id="success" class="success" style="display:none;"> <h2>Thanks — request sent.</h2> <p>Your email client will open with a pre-filled message to Glenn. Hit send and we'll be in touch within 48 hours.</p> </div> <div class="page-nav"> <a href="/pages/demo-dry-cleaning.html">Dry Cleaning Report</a> <a href="/pages/demo-health-dashboard.html">Health Dashboard</a> <a href="/pages/demo-cwr-preflight.html">CWR Pre-Flight</a> </div>
+</div> <script>
 function submitPilot(e){
   e.preventDefault();
   const f = document.getElementById('pilot-form');
@@ -173,7 +81,7 @@ function submitPilot(e){
   const lines = [
     'Hi Glenn,',
     '',
-    'I\'d like to join the Roya Publishing Health Pilot.',
+    'I\'d like to join the TrapRoyaltiesPro Publishing Health Pilot.',
     '',
     'Name: ' + data.name,
     'Company: ' + data.company,
@@ -188,8 +96,8 @@ function submitPilot(e){
     'Best,',
     data.name,
   ].join('\r\n');
-  const subject = 'Roya Pilot request — ' + data.company;
-  const mailto = 'mailto:Ken@heyroya.se?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines);
+  const subject = 'TrapRoyaltiesPro Pilot request — ' + data.company;
+  const mailto = 'mailto:hello@traproyaltiespro.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(lines);
   window.location.href = mailto;
   f.style.display = 'none';
   document.getElementById('success').style.display = 'block';
