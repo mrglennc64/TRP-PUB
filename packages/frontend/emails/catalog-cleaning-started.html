@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Your Catalog Cleaning Has Started</title>
+  <!--
+    Transactional email template — sent on successful payment for
+    Full-Service Metadata Cleaning.
+
+    Variables (replace server-side before send):
+      {{firstName}}       Publisher contact first name
+      {{orderId}}         Shopify / payment order id
+      {{catalogName}}     Submitted catalog label (optional)
+      {{worksCount}}      Total works in queue
+      {{etaStart}}        YYYY-MM-DD
+      {{etaEnd}}          YYYY-MM-DD
+      {{dashboardUrl}}    Deep link to publisher portal status
+      {{supportEmail}}    hello@traproyaltiespro.com
+  -->
+</head>
+<body style="margin:0; padding:0; background:#fafcff; font-family:'Inter',Arial,Helvetica,sans-serif; color:#0b2b2f; line-height:1.55;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fafcff;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; width:100%;">
+
+          <!-- Brand -->
+          <tr>
+            <td style="padding:0 0 20px;">
+              <div style="font-weight:800; font-size:20px; letter-spacing:-0.02em; color:#0b4f3c;">TrapRoyaltiesPro</div>
+              <div style="font-size:11px; color:#6b8b96; letter-spacing:0.08em; text-transform:uppercase; margin-top:2px;">Catalog Cleaning Confirmation</div>
+            </td>
+          </tr>
+
+          <!-- Hero -->
+          <tr>
+            <td style="background:linear-gradient(135deg,#0b2b2f 0%,#0b4f3c 100%); border-radius:16px; padding:28px 28px 24px; color:#ffffff;">
+              <div style="display:inline-block; font-size:11px; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:#0b4f3c; background:#86efac; padding:5px 12px; border-radius:99px; margin-bottom:14px;">Cleaning Started</div>
+              <div style="font-size:24px; font-weight:800; letter-spacing:-0.01em; line-height:1.2; margin-bottom:10px;">Your catalog is now in the cleaning queue</div>
+              <div style="font-size:14px; color:#e2edf2;">Hi {{firstName}} — our specialists have begun preparing your corrected, submission-ready package. You'll receive a delivery notification when it's ready.</div>
+            </td>
+          </tr>
+
+          <!-- Order line -->
+          <tr>
+            <td style="padding:22px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border:1px solid #e2edf2; border-radius:12px;">
+                <tr>
+                  <td style="padding:18px 22px; font-size:13px; color:#2c4650;">
+                    <div><strong style="color:#0b2b2f;">Order:</strong> {{orderId}}</div>
+                    <div style="margin-top:4px;"><strong style="color:#0b2b2f;">Catalog:</strong> {{catalogName}} &middot; {{worksCount}} works</div>
+                    <div style="margin-top:4px;"><strong style="color:#0b2b2f;">Estimated delivery:</strong> {{etaStart}} &ndash; {{etaEnd}}</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- What we're doing now -->
+          <tr>
+            <td style="padding:18px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border:1px solid #e2edf2; border-radius:12px;">
+                <tr>
+                  <td style="padding:22px;">
+                    <div style="font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:#0b4f3c; margin-bottom:10px;">What we're doing now</div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Reviewing all works and issue types</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Resolving missing identifiers and contributor gaps</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Validating publisher and writer information</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Correcting structural metadata issues</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Preparing clean CWR files</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Generating your Publishing Health Report</td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- What you'll receive -->
+          <tr>
+            <td style="padding:14px 0 0;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff; border:1px solid #e2edf2; border-radius:12px;">
+                <tr>
+                  <td style="padding:22px;">
+                    <div style="font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:#0b4f3c; margin-bottom:10px;">What you'll receive</div>
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; A fully cleaned catalog package</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; A detailed report of all corrections</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; Submission-ready CWR files</td></tr>
+                      <tr><td style="padding:6px 0; font-size:14px; color:#2c4650;">&#10003; &nbsp; A Fix-Later Task Summary for any optional enhancements</td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CTA -->
+          <tr>
+            <td align="center" style="padding:26px 0 8px;">
+              <a href="{{dashboardUrl}}" style="display:inline-block; background:#0b4f3c; color:#ffffff; text-decoration:none; font-weight:800; font-size:14px; padding:14px 26px; border-radius:99px; letter-spacing:0.01em;">View Cleaning Status &rarr;</a>
+            </td>
+          </tr>
+
+          <!-- Service agreement -->
+          <tr>
+            <td style="padding:4px 0 0; text-align:center; font-size:12px; color:#6b8b96;">
+              This engagement is governed by our
+              <a href="https://traproyaltiespro.com/publisher-portal/pages/service-agreement.html" style="color:#0b4f3c; text-decoration:underline;">Service Agreement</a>.
+              Questions? Reply to this email or write to
+              <a href="mailto:{{supportEmail}}" style="color:#0b4f3c; text-decoration:underline;">{{supportEmail}}</a>.
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:28px 0 0; border-top:1px solid #e2edf2; margin-top:20px; text-align:center; font-size:11px; color:#6b8b96;">
+              <div style="padding-top:16px;">&copy; 2026 TrapRoyaltiesPro &middot; Professional metadata cleaning for music publishers</div>
+              <div style="padding-top:6px;">
+                <a href="https://traproyaltiespro.com/privacy" style="color:#6b8b96; text-decoration:underline;">Privacy</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://traproyaltiespro.com/terms" style="color:#6b8b96; text-decoration:underline;">Terms</a>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
