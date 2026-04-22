@@ -28,12 +28,9 @@ export default function ForensicLanding() {
             TrapRoyaltiesPro
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm">
-            <Link href="/royalty-finder" className="text-slate-400 hover:text-slate-200 transition">Royalty Finder</Link>
-            <Link href="/cwr-generator" className="text-slate-400 hover:text-slate-200 transition">CWR Generator</Link>
             <Link href="/label" className="text-slate-400 hover:text-slate-200 transition">Label Portal</Link>
             <Link href="/for-attorneys" className="text-amber-400 hover:text-amber-300 transition">For Attorneys</Link>
             <Link href="/publisher-portal" className="text-emerald-400 hover:text-emerald-300 transition">For Publishers</Link>
-            <Link href="/free-audit" className="text-indigo-400 hover:text-indigo-300 transition font-medium">Run Audit →</Link>
           </div>
           <button className="md:hidden p-2 text-slate-400">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -192,9 +189,9 @@ export default function ForensicLanding() {
               <p className="text-xs text-slate-500 mb-3 leading-relaxed">
                 ISRC lookup, PRO gap analysis, and missing royalty identification across your catalog.
               </p>
-              <Link href="/free-audit" className="text-xs text-indigo-400 hover:text-indigo-300 transition">
+              <a href="https://traproyalties.com" target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-400 hover:text-indigo-300 transition">
                 Run free audit →
-              </Link>
+              </a>
             </div>
             <div className="border-l-2 border-indigo-600 pl-4">
               <p className="text-sm font-semibold text-slate-200 mb-1">Labels &amp; Managers</p>

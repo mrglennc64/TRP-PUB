@@ -116,8 +116,61 @@ function buildFixes(data: Contributor[]): FixSuggestion[] {
   return fixes
 }
 
+// ── Passcode gate ──────────────────────────────────────────────
+const PASSCODE = process.env.NEXT_PUBLIC_SPLIT_VERIFICATION_PASSCODE || 'TRP-2026'
+const UNLOCK_KEY = 'trp.splitVerification.unlocked'
+
+function PasscodeGate({ children }: { children: React.ReactNode }) {
+  const [unlocked, setUnlocked] = useState(false)
+  const [entered, setEntered] = useState('')
+  const [error, setError] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.sessionStorage.getItem(UNLOCK_KEY) === '1') {
+      setUnlocked(true)
+    }
+    setReady(true)
+  }, [])
+
+  if (!ready) return null
+  if (unlocked) return <>{children}</>
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (entered.trim() === PASSCODE) {
+      window.sessionStorage.setItem(UNLOCK_KEY, '1')
+      setUnlocked(true)
+    } else {
+      setError(true)
+      setEntered('')
+    }
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#020617', color: '#f1f5f9', fontFamily: 'Inter, system-ui, sans-serif', padding: '2rem' }}>
+      <form onSubmit={submit} style={{ width: '100%', maxWidth: 420, background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '2.2rem 2rem', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6ee7b7', marginBottom: 10 }}>Restricted</div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em', marginBottom: 8 }}>Split Verification</h1>
+        <p style={{ fontSize: 14, color: '#cbd5e1', marginBottom: 20, lineHeight: 1.55 }}>This workspace is protected. Enter the passcode provided by your TrapRoyaltiesPro contact to continue.</p>
+        <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#cbd5e1', marginBottom: 6 }}>Passcode</label>
+        <input
+          type="password"
+          autoFocus
+          value={entered}
+          onChange={(e) => { setEntered(e.target.value); if (error) setError(false) }}
+          style={{ width: '100%', padding: '0.8rem 0.95rem', background: '#1e293b', border: `1px solid ${error ? '#f43f5e' : 'rgba(255,255,255,0.12)'}`, borderRadius: 10, color: '#f1f5f9', fontSize: 15, outline: 'none', letterSpacing: '0.08em' }}
+        />
+        {error && <div style={{ marginTop: 8, fontSize: 12, color: '#f43f5e' }}>Incorrect passcode.</div>}
+        <button type="submit" style={{ marginTop: 18, width: '100%', padding: '0.85rem 1rem', background: 'linear-gradient(135deg,#6366f1,#818cf8)', color: '#fff', fontWeight: 800, fontSize: 14, border: 'none', borderRadius: 10, cursor: 'pointer', letterSpacing: '0.02em' }}>Unlock</button>
+        <div style={{ marginTop: 16, fontSize: 11, color: '#64748b', textAlign: 'center' }}>Access is logged. Do not share this passcode.</div>
+      </form>
+    </div>
+  )
+}
+
 // ── Page ───────────────────────────────────────────────────────
-export default function VerifySplitsPage() {
+function VerifySplitsPageInner() {
   const { demoMode } = useDemoMode()
   const [currentData,     setCurrentData]     = useState<Contributor[]>([])
   const [errors,          setErrors]          = useState<ValidationError[]>([])
@@ -1463,5 +1516,13 @@ export default function VerifySplitsPage() {
         </footer>
       </div>
     </div>
+  )
+}
+
+export default function VerifySplitsPage() {
+  return (
+    <PasscodeGate>
+      <VerifySplitsPageInner />
+    </PasscodeGate>
   )
 }
