@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRO Pilot – 4 Weeks | Roya</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.45;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .pro-pilot { max-width: 1200px; margin: 0 auto; }
+        .hero-pro {
+            background: #111; border-radius: 2rem; padding: 2.5rem 2.8rem;
+            color: white; margin-bottom: 2rem; border: 1px solid #2a2a2a;
+        }
+        .hero-pro h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+        .hero-pro .ingress {
+            font-size: 1.05rem; color: #9ca3af; max-width: 85%;
+            border-left: 3px solid #22d3ee; padding-left: 1.2rem; margin-top: 0.8rem;
+        }
+        .badge-pro {
+            background: #22d3ee; color: #000; display: inline-block;
+            padding: 0.2rem 1rem; border-radius: 60px; font-size: 0.7rem; font-weight: 600; margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 1.4rem; font-weight: 700; color: #22d3ee;
+            border-left: 4px solid #22d3ee; padding-left: 1rem; margin: 2rem 0 1.2rem 0;
+        }
+        .scope-bar {
+            background: #111; border-radius: 1.5rem; padding: 1.2rem 1.8rem;
+            margin-bottom: 0.5rem; border: 1px solid #2a2a2a;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+        }
+        .week-grid { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.8rem 0 1rem; }
+        .week-card {
+            flex: 1; min-width: 220px; background: #111; border-radius: 1.5rem;
+            padding: 1.4rem 1.2rem; border: 1px solid #2a2a2a;
+        }
+        .week-nr {
+            font-weight: 800; font-size: 1.2rem; background: #1a1a1a;
+            display: inline-block; padding: 0.2rem 0.9rem; border-radius: 40px;
+            margin-bottom: 0.8rem; color: #22d3ee;
+        }
+        .week-title { font-weight: 700; font-size: 1.1rem; margin: 0.5rem 0 0.8rem; }
+        .week-list { list-style: none; margin-top: 0.5rem; }
+        .week-list li { margin-bottom: 0.5rem; padding-left: 1.3rem; position: relative; font-size: 0.85rem; color: #9ca3af; }
+        .week-list li::before { content: "▹"; color: #22d3ee; position: absolute; left: 0; }
+        .value-box {
+            background: #111; border-radius: 1.5rem; padding: 1.4rem 1.5rem; border: 1px solid #2a2a2a;
+        }
+        .value-list { list-style: none; }
+        .value-list li { margin-bottom: 0.7rem; padding-left: 1.5rem; position: relative; font-size: 0.9rem; color: #9ca3af; }
+        .value-list li::before { content: "✓"; color: #22d3ee; font-weight: bold; position: absolute; left: 0; }
+        .note-box {
+            background: #111; border: 1px solid #2a2a2a; border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 0.9rem; color: #9ca3af;
+        }
+        .cta-footer {
+            background: #111; border-radius: 1.8rem; padding: 2rem;
+            text-align: center; margin-top: 2rem; border: 1px solid #2a2a2a;
+        }
+        .btn-mail {
+            background: #22d3ee; color: #000; padding: 0.7rem 2rem;
+            border-radius: 60px; text-decoration: none; font-weight: 600;
+            display: inline-block; margin: 1rem 0 0.5rem;
+        }
+        .btn-mail:hover { background: #06b6d4; }
+        @media (max-width: 750px) {
+            .hero-pro { padding: 1.8rem; }
+            .hero-pro .ingress { max-width: 100%; }
+            .week-grid { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="pro-pilot">
+    <nav style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+        <a href="/" style="text-decoration:none;"><span style="font-size:1.8rem;font-weight:800;color:#22d3ee;letter-spacing:-0.03em;cursor:pointer;">ROYA</span></a>
+        <div class="flex items-center gap-4" style="display:flex;align-items:center;gap:12px;"></div>
+    </nav>
+
+    <div class="hero-pro">
+        <div class="badge-pro">🧪 PRO PILOT · 4 WEEKS</div>
+        <h1>PRO Pilot — 4 weeks</h1>
+        <div class="ingress">
+            A focused pilot to evaluate how pre-validation of metadata can contribute to improved data quality before registration with PRO.
+        </div>
+        <a href="pro-documentation.html" style="display:inline-flex;align-items:center;gap:10px;margin-top:1.8rem;background:#22d3ee;color:#000;padding:14px 28px;border-radius:999px;font-size:1.05rem;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(34,211,238,0.25);transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 6px 22px rgba(34,211,238,0.45)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(34,211,238,0.25)';">
+            📄 PRO Documentation →
+        </a>
+    </div>
+
+    <div class="scope-bar">
+        <div><strong>📦 Scope</strong></div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:0.9rem;color:#9ca3af;">
+            <span>20–50 works from one publisher</span>
+            <span>·</span>
+            <span>No integration required</span>
+            <span>·</span>
+            <span>Controlled test environment</span>
+        </div>
+    </div>
+
+    <div class="section-title">📅 Implementation</div>
+    <div class="week-grid">
+        <div class="week-card">
+            <div class="week-nr">Week 1</div>
+            <div class="week-title">Baseline Analysis</div>
+            <ul class="week-list">
+                <li>Review of existing material</li>
+                <li>Identification of metadata deviations</li>
+                <li>Initial analysis summary</li>
+            </ul>
+        </div>
+        <div class="week-card">
+            <div class="week-nr">Week 2</div>
+            <div class="week-title">Validation</div>
+            <ul class="week-list">
+                <li>Structured review of identified deviations</li>
+                <li>Publisher reviews and approves adjustments</li>
+                <li>Documentation of validation process</li>
+            </ul>
+        </div>
+        <div class="week-card">
+            <div class="week-nr">Week 3</div>
+            <div class="week-title">Comparative Analysis</div>
+            <ul class="week-list">
+                <li>Comparison of original and validated material</li>
+                <li>Focus on data quality and handling process</li>
+            </ul>
+        </div>
+        <div class="week-card">
+            <div class="week-nr">Week 4</div>
+            <div class="week-title">Summary</div>
+            <ul class="week-list">
+                <li>Overall analysis of results</li>
+                <li>Identification of potential improvements</li>
+                <li>Joint review</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section-title">🤝 Purpose</div>
+    <div class="value-box" style="margin-bottom:1.5rem;">
+        <p style="font-size:1rem;color:#9ca3af;margin-bottom:1rem;">To evaluate how a pre-validation process can contribute to:</p>
+        <ul class="value-list">
+            <li>Improved data quality</li>
+            <li>Reduced manual handling</li>
+            <li>Clearer documentation for registration</li>
+        </ul>
+    </div>
+
+    <div class="note-box">
+        <strong>⚠️ Important:</strong> The pilot aims to analyze and understand effects — not to replace existing processes or systems.
+    </div>
+
+    <div class="cta-footer">
+        <div style="font-size: 1.3rem; font-weight: 700;">Interested in participating in a pilot?</div>
+        <a href="mailto:hello@heyroya.se" class="btn-mail">📧 hello@heyroya.se</a>
+        <div style="font-size: 0.8rem; margin-top: 0.8rem; color: #9ca3af;">Confidential · No commitment</div>
+    </div>
+</div>
+<script>
+window.TRANSLATIONS = {
+  "PRO Pilot \u2013 4 Weeks | Roya": "PRO-pilot \u2013 4 veckor | Roya",
+  "\ud83e\uddea PRO PILOT \u00b7 4 WEEKS": "\ud83e\uddea PRO-PILOT \u00b7 4 VECKOR",
+  "PRO Pilot \u2014 4 weeks": "PRO-pilot \u2014 4 veckor",
+  "A focused pilot to evaluate how pre-validation of metadata can contribute to improved data quality before registration with PRO.": "En avgr\u00e4nsad pilot f\u00f6r att utv\u00e4rdera hur f\u00f6rvalidering av metadata kan bidra till f\u00f6rb\u00e4ttrad datakvalitet inf\u00f6r registrering hos PRO",
+  "\ud83d\udce6 Scope": "\ud83d\udce6 Omfattning",
+  "20\u201350 works from one publisher": "20\u201350 verk fr\u00e5n ett musikf\u00f6rlag",
+  "No integration required": "Ingen integration kr\u00e4vs",
+  "Controlled test environment": "Begr\u00e4nsad och kontrollerad testmilj\u00f6",
+  "\ud83d\udcc5 Implementation": "\ud83d\udcc5 Genomf\u00f6rande",
+  "Week 1": "Vecka 1",
+  "Baseline Analysis": "Nul\u00e4gesanalys",
+  "Review of existing material": "Genomg\u00e5ng av befintligt underlag",
+  "Identification of metadata deviations": "Identifiering av metadataavvikelser",
+  "Initial analysis summary": "Sammanst\u00e4llning av initial analys",
+  "Week 2": "Vecka 2",
+  "Validation": "Validering",
+  "Structured review of identified deviations": "Strukturerad genomg\u00e5ng av identifierade avvikelser",
+  "Publisher reviews and approves adjustments": "Musikf\u00f6rlaget granskar och godk\u00e4nner eventuella justeringar",
+  "Documentation of validation process": "Dokumentation av valideringsprocess",
+  "Week 3": "Vecka 3",
+  "Comparative Analysis": "J\u00e4mf\u00f6rande analys",
+  "Comparison of original and validated material": "J\u00e4mf\u00f6relse mellan ursprungligt och validerat underlag",
+  "Focus on data quality and handling process": "Fokus p\u00e5 datakvalitet och hanteringsprocess",
+  "Week 4": "Vecka 4",
+  "Summary": "Sammanst\u00e4llning",
+  "Overall analysis of results": "\u00d6vergripande analys av resultat",
+  "Identification of potential improvements": "Identifiering av m\u00f6jliga f\u00f6rb\u00e4ttringsomr\u00e5den",
+  "Joint review": "Gemensam genomg\u00e5ng",
+  "\ud83e\udd1d Purpose": "\ud83e\udd1d Syfte",
+  "To evaluate how a pre-validation process can contribute to:": "Att utv\u00e4rdera hur en f\u00f6rvalideringsprocess kan bidra till:",
+  "Improved data quality": "F\u00f6rb\u00e4ttrad datakvalitet",
+  "Reduced manual handling": "Minskad manuell hantering",
+  "Clearer documentation for registration": "Tydligare underlag f\u00f6r registrering",
+  "Important:": "Viktigt:",
+  "The pilot aims to analyze and understand effects \u2014 not to replace existing processes or systems.": "Piloten syftar till att analysera och f\u00f6rst\u00e5 effekter \u2014 inte att ers\u00e4tta befintliga processer eller system.",
+  "Interested in participating in a pilot?": "Intresserad av att delta i pilot?",
+  "Confidential \u00b7 No commitment": "Konfidentiellt \u00b7 Ingen f\u00f6rpliktelse"
+};
+</script>
+<script src="/lang.js"></script>
+</body>
+</html>

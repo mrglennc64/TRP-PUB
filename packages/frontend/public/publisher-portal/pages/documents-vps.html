@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roya • Dokumentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-main: #0a0a0a;
+            --bg-elev: #111111;
+            --bg-soft: #151515;
+            --text-main: #e0e0e0;
+            --text-dim: #9ca3af;
+            --line: rgba(34, 211, 238, 0.25);
+            --accent: #22d3ee;
+        }
+        body { background: var(--bg-main); font-family: 'Inter', sans-serif; color: var(--text-main); }
+        .nav { max-width: 1200px; margin: 0 auto; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: #000; }
+        .logo { font-weight: 800; font-size: 26px; color: var(--accent); text-decoration: none; }
+        .nav-links { display: flex; gap: 32px; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-weight: 500; }
+        .nav-links a:hover { color: var(--accent); }
+        .container { max-width: 1000px; margin: 0 auto; padding: 48px 32px; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 48px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; }
+        .lead { font-size: 18px; color: var(--text-dim); }
+        .doc-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+        .tab-link { padding: 10px 20px; border-radius: 40px; background: var(--bg-soft); border: 1px solid var(--line); color: var(--accent); font-weight: 500; text-decoration: none; font-size: 14px; }
+        .tab-link:hover { border-color: var(--accent); }
+        .doc-section { background: var(--bg-elev); border-radius: 18px; padding: 32px; margin-bottom: 24px; border: 1px solid var(--line); scroll-margin-top: 80px; }
+        .doc-section h2 { font-size: 30px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; color: var(--accent); }
+        .doc-section h2 i { color: var(--accent); font-size: 26px; }
+        .section-meta { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; display: flex; gap: 24px; flex-wrap: wrap; }
+        .doc-section h3 { margin: 14px 0 8px; }
+        .doc-section p, .doc-section li { color: var(--text-main); }
+        .doc-section ul, .doc-section ol { margin-left: 22px; margin-top: 8px; margin-bottom: 8px; }
+        .table-container { overflow-x: auto; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; background: var(--bg-soft); border-radius: 12px; overflow: hidden; }
+        th { background: #181818; padding: 12px; text-align: left; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--line); }
+        td { padding: 12px; border-bottom: 1px solid var(--line); color: var(--text-main); }
+        .footnote { font-size: 14px; color: var(--text-dim); margin-top: 10px; }
+        .contact-box { background: var(--bg-elev); border-radius: 16px; padding: 28px; margin: 32px 0; border: 1px solid var(--line); }
+        .contact-box a { background: rgba(34, 211, 238, 0.1); color: var(--accent); padding: 12px 22px; border-radius: 999px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; border: 1px solid rgba(34, 211, 238, 0.45); }
+        .contact-box a:hover { background: var(--accent); color: #000; }
+        .footer { max-width: 1200px; margin: 0 auto; padding: 24px 32px; border-top: 1px solid var(--line); display: flex; gap: 24px; color: var(--text-dim); flex-wrap: wrap; }
+        .footer a { color: var(--text-dim); text-decoration: none; }
+        .footer a:hover { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="/" class="logo">ROYA</a>
+        <div class="nav-links">
+            <a href="/">Hem</a>
+            <a href="/pages/documents.html" style="color: #22d3ee; font-weight: 600;">Dokumentation</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Dokumentation</h1>
+            <p class="lead">Samlad information om Roya, inklusive användarvillkor, dataskydd och teknisk beskrivning av tjänsten.</p>
+        </div>
+
+        <div class="doc-tabs">
+            <a href="#terms" class="tab-link">Användarvillkor</a>
+            <a href="#privacy-security" class="tab-link">Integritet & Säkerhet</a>
+            <a href="#gdpr" class="tab-link">Dataskydd (GDPR)</a>
+            <a href="#how-it-works" class="tab-link">Så fungerar verifieringen</a>
+            <a href="#what-we-store" class="tab-link">Databehandling</a>
+            <a href="#security" class="tab-link">Säkerhet</a>
+            <a href="#dispute" class="tab-link">Tvistelösning</a>
+        </div>
+
+        <section id="terms" class="doc-section">
+            <h2><i class="fas fa-file-contract"></i> Användarvillkor</h2>
+            <div class="section-meta">
+                <span>Senast uppdaterad: 15 februari 2026 · Version 2.1</span>
+                <span>Tillämplig lag: Svensk lag</span>
+            </div>
+            <h3>1. Definitioner</h3>
+            <p>"Roya" avser Roya AB. "Tjänsten" avser plattformen för validering av metadata. "Användare" eller "musikförlag" avser den organisation som använder tjänsten.</p>
+            <h3>2. Behörighet</h3>
+            <p>Användare ska vara minst 18 år och ha rätt att företräda organisationen.</p>
+            <h3>3. Tjänstens omfattning</h3>
+            <p>Roya tillhandahåller ett verktyg för validering av metadata kopplad till musikrättigheter. Tjänsten fungerar som ett kompletterande steg före registrering hos exempelvis PRO.</p>
+            <h3>4. Äganderätt</h3>
+            <p>Användaren behåller full äganderätt till allt uppladdat material. Roya gör inga anspråk på innehållet.</p>
+            <h3>5. Tillåten användning</h3>
+            <p>Tjänsten får inte användas för olagliga ändamål eller på sätt som kränker tredje parts rättigheter.</p>
+            <h3>6. Avgifter</h3>
+            <p>Tjänsten är för närvarande kostnadsfri under pilot- och utvärderingsperiod. Eventuella framtida avgifter meddelas i förväg.</p>
+            <h3>7. Ansvarsbegränsning</h3>
+            <p>Tjänsten tillhandahålls i befintligt skick. Roya ansvarar inte för indirekta skador eller följdskador.</p>
+            <h3>8. Tillämplig lag och tvist</h3>
+            <p>Villkoren regleras av svensk lag. Tvister avgörs i svensk domstol.</p>
+        </section>
+
+        <section id="privacy-security" class="doc-section">
+            <h2><i class="fas fa-shield-alt"></i> Integritet & Säkerhet</h2>
+            <h3>Integritet som grundprincip</h3>
+            <p>Roya är utvecklad med fokus på dataminimering och separation mellan verifieringsdata och personuppgifter.</p>
+            <h3>Dataminimering</h3>
+            <p>Endast den information som krävs för validering behandlas. Personuppgifter lagras i begränsad omfattning.</p>
+            <h3>Rätt till radering</h3>
+            <p>Användare kan begära att personuppgifter tas bort, i enlighet med gällande lagstiftning.</p>
+            <h3>Personuppgiftsansvar</h3>
+            <p>Musikförlaget är personuppgiftsansvarig. Roya agerar personuppgiftsbiträde.</p>
+            <h3>Ändamålsbegränsning</h3>
+            <p>Data används enbart för validering av metadata, inte för marknadsföring eller andra syften.</p>
+        </section>
+
+        <section id="what-we-store" class="doc-section">
+            <h2><i class="fas fa-database"></i> Databehandling</h2>
+            <h3>Vad lagras och var</h3>
+            <p><strong>Verifieringsdata (extern verifieringsmekanism)</strong></p>
+            <ul>
+                <li>Tidsstämpel</li>
+                <li>Kryptografisk referens (hash)</li>
+                <li>Grundläggande metadata (t.ex. antal upphovspersoner)</li>
+            </ul>
+            <p>Inga personuppgifter lagras i denna struktur.</p>
+            <p><strong>Användarens system</strong></p>
+            <ul>
+                <li>Upphovspersoner</li>
+                <li>Fördelningar</li>
+                <li>Ersättningsinformation</li>
+            </ul>
+            <p>Denna data förblir under användarens kontroll.</p>
+        </section>
+
+        <section id="gdpr" class="doc-section">
+            <h2><i class="fas fa-gavel"></i> Dataskydd (GDPR)</h2>
+            <p>Roya är utformad för att stödja efterlevnad av dataskyddsregler, inklusive:</p>
+            <ul>
+                <li>Dataminimering</li>
+                <li>Rätt till radering</li>
+                <li>Tydlig ansvarsfördelning</li>
+                <li>Säker behandling av data</li>
+            </ul>
+        </section>
+
+        <section id="how-it-works" class="doc-section">
+            <h2><i class="fas fa-check-circle"></i> Så fungerar verifieringen</h2>
+            <h3>Digital verifiering</h3>
+            <p>Roya skapar en kryptografisk referens som fungerar som en tidsstämpel för genomförd validering.</p>
+            <h3>Vid en eventuell tvist</h3>
+            <ul>
+                <li>Tidpunkt för verifiering kan styrkas</li>
+                <li>Oförändrad datakontroll kan bekräftas</li>
+                <li>Underlag kan jämföras med originaldata</li>
+            </ul>
+            <p>Detta möjliggör oberoende verifiering utan att exponera känslig information.</p>
+            <h3>Åtkomst och kontroll</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Datatyp</th><th>Musikförlag</th><th>PRO*</th><th>Roya</th><th>Offentligt</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Upphovspersoner</td><td>✓</td><td>✓*</td><td>✗</td><td>✗</td></tr>
+                        <tr><td>Fördelningar</td><td>✓</td><td>✓*</td><td>✗</td><td>✗</td></tr>
+                        <tr><td>Ersättning</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+                        <tr><td>Verifieringstid</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+                        <tr><td>Kryptografisk referens</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="footnote">* Endast i samband med ordinarie registreringsprocess.</p>
+        </section>
+
+        <section id="security" class="doc-section">
+            <h2><i class="fas fa-lock"></i> Säkerhet</h2>
+            <ul>
+                <li>Kryptering vid lagring och överföring</li>
+                <li>Isolerade miljöer per användare</li>
+                <li>Rollbaserad åtkomstkontroll</li>
+                <li>Loggning av aktiviteter</li>
+                <li>Oföränderlig verifieringsstruktur</li>
+            </ul>
+        </section>
+
+        <section id="dispute" class="doc-section">
+            <h2><i class="fas fa-scale-balanced"></i> Tvistelösning</h2>
+            <p>Vid en tvist kan Roya tillhandahålla:</p>
+            <ul>
+                <li>Tidsstämplad verifiering</li>
+                <li>Kryptografisk matchning mot originaldata</li>
+                <li>Oföränderlig dokumentation</li>
+            </ul>
+            <p>Detta fungerar som ett neutralt stöd i processen.</p>
+        </section>
+
+        <div class="contact-box">
+            <div>
+                <h3 style="margin-bottom: 8px;">Kontakt</h3>
+                <p style="color: var(--text-dim);">För frågor om databehandling, säkerhet eller avtal.</p>
+            </div>
+            <a href="mailto:hello@heyroya.se"><i class="fas fa-envelope"></i> hello@heyroya.se</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>© Roya AB 2026</span>
+        <a href="/pages/documents.html">Dokumentation</a>
+        <a href="/pages/FAQ.html">Vanliga frågor</a>
+    </div>
+</body>
+</html>

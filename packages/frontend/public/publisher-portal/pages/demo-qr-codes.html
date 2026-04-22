@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roya • Conference QR Codes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#F8FAFC; color:#1A202C; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  a { color:#2B6F4B; text-decoration:none; }
+  .wrap { max-width:1100px; margin:0 auto; padding:32px 24px; }
+  .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand-icon { background:#2B6F4B; color:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .brand-text { font-weight:700; font-size:18px; }
+  .internal-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#B45309; background:#FEF3C7; padding:4px 10px; border-radius:99px; }
+  h1 { font-size:30px; font-weight:800; line-height:1.2; margin-bottom:6px; }
+  .subtitle { color:#64748B; font-size:14px; margin-bottom:28px; max-width:680px; }
+  .toolbar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .btn { background:#2B6F4B; color:#fff; border:0; border-radius:8px; padding:10px 18px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; text-decoration:none; display:inline-block; }
+  .btn:hover { background:#1F5538; }
+  .btn.secondary { background:#fff; color:#1A202C; border:1px solid #CBD5E1; }
+  .btn.secondary:hover { border-color:#2B6F4B; color:#2B6F4B; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
+  .qr-card { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:22px; text-align:center; box-shadow:0 1px 2px rgba(15,23,42,0.04); page-break-inside:avoid; }
+  .qr-card.primary { background:linear-gradient(135deg,#F0FDF4 0%,#fff 100%); border-color:#86EFAC; }
+  .qr-card .emoji { font-size:28px; margin-bottom:8px; }
+  .qr-card .t { font-weight:800; font-size:18px; margin-bottom:4px; }
+  .qr-card .d { font-size:13px; color:#64748B; margin-bottom:16px; min-height:36px; }
+  .qr-card img.qr { display:block; margin:0 auto 12px; width:220px; height:220px; border-radius:6px; background:#fff; border:1px solid #E2E8F0; }
+  .qr-card.primary img.qr { width:260px; height:260px; }
+  .qr-card .url { font-size:11px; color:#94A3B8; font-family:monospace; word-break:break-all; margin-bottom:10px; }
+  .qr-card .actions { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
+  .qr-card .actions a, .qr-card .actions button { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:600; cursor:pointer; color:#475569; font-family:inherit; text-decoration:none; display:inline-block; }
+  .qr-card .actions a:hover, .qr-card .actions button:hover { border-color:#2B6F4B; color:#2B6F4B; }
+  .qr-card.primary .emoji { font-size:34px; }
+
+  @media print {
+    body { background:#fff; }
+    .header, .toolbar, .actions, .subtitle { display:none; }
+    .wrap { max-width:none; padding:10px; }
+    .grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+    .qr-card { border:2px solid #000; box-shadow:none; padding:18px; }
+    .qr-card .url { color:#000; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">R</div>
+      <div class="brand-text">Roya</div>
+    </div>
+    <span class="internal-tag">Internal · Conference Prep</span>
+  </div>
+
+  <h1>Conference QR Codes</h1>
+  <div class="subtitle">
+    Print this page, save as PDF, or click "PNG" on any card to download that QR. Each QR points to a live page on
+    heyroya.se.
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" onclick="window.print()">🖨 Print all</button>
+    <a class="btn secondary" id="print-tip" style="cursor:help;" onclick="alert('Tip: use your browser&apos;s Print dialog and select &quot;Save as PDF&quot; as the destination.')">💡 How to save as PDF</a>
+  </div>
+
+  <div class="grid" id="qr-grid"></div>
+</div>
+
+<script>
+const QRS = [
+  { key:'hub',       emoji:'⭐', title:'Everything',          desc:'One scan → all demos, slide content, contact', url:'https://heyroya.se/pages/demo-hub.html', primary:true },
+  { key:'dry',       emoji:'🧼', title:'Dry Cleaning Report', desc:'Sample catalog scan + fix-later checklist',    url:'https://heyroya.se/pages/demo-dry-cleaning.html' },
+  { key:'dashboard', emoji:'📊', title:'Health Dashboard',    desc:'Per-work readiness scores + CWR-ready count',  url:'https://heyroya.se/pages/demo-health-dashboard.html' },
+  { key:'cwr',       emoji:'✈',  title:'CWR Pre-Flight',      desc:'Fatal, warnings, optional + alignment checks', url:'https://heyroya.se/pages/demo-cwr-preflight.html' },
+  { key:'pilot',     emoji:'🎯', title:'Join the Pilot',       desc:'3–5 seats · signup form',                      url:'https://heyroya.se/pages/demo-pilot-signup.html' },
+  { key:'wizard',    emoji:'🧙', title:'Live Wizard Demo',     desc:'The real Cleaning Wizard with mock catalog',   url:'https://heyroya.se/pages/review.html?demo=1' },
+  { key:'autorun',   emoji:'⚡', title:'Auto-Run Wizard',       desc:'Wizard fast-forwards to the generated CWR packet', url:'https://heyroya.se/pages/review.html?demo=1&auto=1' },
+  { key:'cwrresult', emoji:'📄', title:'CWR Packet Result',    desc:'Static snapshot — Swedish 33.33%, validation summary', url:'https://heyroya.se/pages/demo-cwr-result.html' },
+  { key:'pubhealth', emoji:'📈', title:'Publisher Scorecard',  desc:'Catalog-level health · coverage · funnel · Q2 activity', url:'https://heyroya.se/pages/demo-publisher-health.html' },
+  { key:'email',     emoji:'✉',  title:'Email Glenn',          desc:'Opens phone email app addressed to Ken',       url:'mailto:Ken@heyroya.se?subject=Roya%20-%20Stockholm%20Music%20Week' },
+];
+
+function qrImgUrl(targetUrl, size){
+  return 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&margin=10&ecc=M&data=' + encodeURIComponent(targetUrl);
+}
+function slugify(s){ return s.replace(/[^a-z0-9]/gi,'-').toLowerCase(); }
+
+function render(){
+  const grid = document.getElementById('qr-grid');
+  QRS.forEach(q => {
+    const size = q.primary ? 520 : 440;
+    const imgUrl = qrImgUrl(q.url, size);
+    const slug = slugify(q.title);
+    const cls = q.primary ? 'qr-card primary' : 'qr-card';
+    const card = document.createElement('div');
+    card.className = cls;
+    card.innerHTML =
+      '<div class="emoji">' + q.emoji + '</div>' +
+      '<div class="t">' + q.title + '</div>' +
+      '<div class="d">' + q.desc + '</div>' +
+      '<img class="qr" src="' + imgUrl + '" alt="QR for ' + q.title + '" loading="eager">' +
+      '<div class="url">' + q.url + '</div>' +
+      '<div class="actions">' +
+        '<a href="' + imgUrl + '" download="roya-qr-' + slug + '.png" target="_blank">⬇ PNG</a>' +
+        '<button data-url="' + q.url.replace(/"/g,'&quot;') + '">⧉ Copy URL</button>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+  // Wire copy buttons (avoids inline-JS escaping issues with special chars in URLs)
+  document.querySelectorAll('.qr-card .actions button[data-url]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const u = btn.getAttribute('data-url');
+      navigator.clipboard.writeText(u).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = prev; }, 1200);
+      }).catch(() => {
+        prompt('Copy the URL:', u);
+      });
+    });
+  });
+}
+render();
+</script>
+</body>
+</html>

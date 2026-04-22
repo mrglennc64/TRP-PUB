@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Roya | PRO Documentation – Grant & Evaluation Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4f7fc;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            color: #1a2c3e;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header section */
+        .doc-header {
+            background: linear-gradient(135deg, #0b2b3b 0%, #123e52 100%);
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+            color: white;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.18);
+            backdrop-filter: blur(4px);
+            padding: 0.25rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            margin-bottom: 1.2rem;
+            border: 0.5px solid rgba(255,255,255,0.3);
+        }
+
+        .doc-header h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .doc-header .sub {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            max-width: 85%;
+            font-weight: 400;
+            border-left: 3px solid #60d0ff;
+            padding-left: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* content padding */
+        .content {
+            padding: 2rem 2.5rem 3rem 2.5rem;
+        }
+
+        /* section styling */
+        .section {
+            margin-bottom: 2.5rem;
+            scroll-margin-top: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #0f2f3f;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #dceef5;
+            display: inline-block;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            padding: 1.4rem 1.6rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e7edf2;
+            transition: all 0.2s;
+        }
+
+        .info-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #115e7a;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-card p, .info-card li {
+            font-size: 0.95rem;
+            color: #2c4b60;
+        }
+
+        .info-card ul {
+            padding-left: 1.2rem;
+            margin-top: 0.5rem;
+        }
+
+        .info-card li {
+            margin: 0.5rem 0;
+        }
+
+        .highlight-box {
+            background: #eef4fa;
+            border-left: 4px solid #2c7da0;
+            padding: 1.2rem 1.6rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+        }
+
+        .two-col {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+        }
+
+        .chip {
+            background: #e5f0f5;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1a5c7a;
+        }
+
+        hr {
+            margin: 1.8rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #cbdde6, transparent);
+        }
+
+        .quote-note {
+            background: #fef9e6;
+            border-radius: 1rem;
+            padding: 1.2rem 1.8rem;
+            border: 1px solid #ffe2b5;
+            margin: 1.8rem 0;
+        }
+
+        .footer-note {
+            background: #f9f9fc;
+            border-radius: 1rem;
+            padding: 1.4rem 1.8rem;
+            font-size: 0.9rem;
+            text-align: center;
+            border: 1px solid #e2eaf0;
+            color: #3b6f8a;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 700px) {
+            .content {
+                padding: 1.5rem;
+            }
+            .doc-header {
+                padding: 1.8rem;
+            }
+            .doc-header h1 {
+                font-size: 1.9rem;
+            }
+            .section-title {
+                font-size: 1.4rem;
+            }
+        }
+
+        a {
+            color: #1f7b9e;
+            text-decoration: none;
+            border-bottom: 1px dotted #9fcbd9;
+        }
+
+        a:hover {
+            color: #0b4b63;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="doc-header">
+        <div class="badge">Research & Innovation Initiative · Testnet Environment</div>
+        <h1>Project Overview</h1>
+        <div class="sub">This prototype is part of a research and innovation initiative exploring how metadata pre‑validation can reduce administrative friction and improve trust in Swedish music royalty workflows. The system operates entirely in a testnet environment and is designed for evaluation, not production use.</div>
+    </div>
+
+    <div class="content">
+        <!-- Project Purpose -->
+        <div class="section">
+            <h2 class="section-title">🎯 Project Purpose</h2>
+            <p style="margin-bottom: 1rem; font-size: 1.05rem;"><strong>Roya</strong> investigates whether royalty metadata, ownership splits, and chain‑of‑title information can be verified before publishers submit works to collecting societies.</p>
+            <p style="margin-bottom: 1rem;">The goal is to understand whether upstream validation can:</p>
+            <ul style="margin-left: 1.2rem; margin-bottom: 1rem;">
+                <li>reduce manual handling</li>
+                <li>minimize avoidable rejections</li>
+                <li>improve metadata quality</li>
+                <li>increase transparency for rights holders</li>
+            </ul>
+            <p><em>This is a research prototype, not a commercial product.</em></p>
+        </div>
+
+        <!-- Industry Challenges + Scope -->
+        <div class="section">
+            <div class="card-grid">
+                <div class="info-card">
+                    <h3>📉 Industry Challenges</h3>
+                    <p style="margin-bottom: 0.6rem;">The project focuses on well‑known issues in the Swedish publishing ecosystem:</p>
+                    <ul>
+                        <li><strong>Lack of transparency</strong> — rights holders cannot easily verify how royalties are calculated</li>
+                        <li><strong>Manual verification</strong> — publishers and societies spend significant time correcting metadata</li>
+                        <li><strong>System fragmentation</strong> — inconsistent formats across the royalty chain</li>
+                        <li><strong>High administrative costs</strong> — reconciliation and dispute resolution require substantial resources</li>
+                        <li><strong>Processing delays</strong> — metadata issues slow down registration and distribution</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h3>🔍 Scope of the Prototype</h3>
+                    <p style="margin-bottom: 0.6rem;">The prototype evaluates:</p>
+                    <ul>
+                        <li>Metadata verification (split integrity, identifiers, roles, chain‑of‑title)</li>
+                        <li>Mathematical validation of ownership shares</li>
+                        <li>Generation of audit‑ready execution references</li>
+                        <li>Simulation of payment‑instruction workflows (testnet only)</li>
+                        <li>Publisher‑facing documentation (Metadata Health Reports)</li>
+                        <li>Feedback collection from publishers and industry stakeholders</li>
+                    </ul>
+                    <p style="margin-top: 0.8rem; font-size: 0.9rem; font-style: italic;">All activity occurs in a controlled test environment with synthetic or publisher‑provided non‑production data.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Out of Scope -->
+        <div class="section">
+            <h2 class="section-title">⛔ Out of Scope</h2>
+            <div class="highlight-box">
+                <p><strong>To avoid any misunderstanding:</strong></p>
+                <ul style="margin-top: 0.75rem; margin-left: 1.2rem;">
+                    <li>❌ No custody of funds</li>
+                    <li>❌ No real payment execution</li>
+                    <li>❌ No bank or financial data</li>
+                    <li>❌ No PSD2‑regulated activity</li>
+                    <li>❌ No production integrations</li>
+                    <li>❌ No changes to PRO systems</li>
+                    <li>❌ No replacement of PRO workflows</li>
+                    <li>❌ No processing of live royalty data</li>
+                </ul>
+                <p style="margin-top: 1rem; font-weight: 600;">Roya is a verification layer, not a payment service.</p>
+            </div>
+        </div>
+
+        <!-- Compliance & Risk Mitigation -->
+        <div class="section">
+            <h2 class="section-title">⚖️ Compliance & Risk Mitigation</h2>
+            <p>The prototype is designed with strict boundaries:</p>
+            <div class="two-col">
+                <div class="info-card" style="margin-top: 0.5rem;">
+                    <h3>📜 Regulatory considerations</h3>
+                    <ul>
+                        <li><strong>PSD2</strong> — Roya does not initiate or process payments</li>
+                        <li><strong>GDPR</strong> — data minimization, privacy‑by‑design, and sandbox‑only processing</li>
+                        <li><strong>Financial regulation</strong> — clear separation from regulated financial activities</li>
+                        <li><strong>Industry standards</strong> — alignment with CWR, DDEX, and Nordic metadata conventions</li>
+                    </ul>
+                </div>
+                <div class="info-card" style="margin-top: 0.5rem;">
+                    <h3>⚠️ Risk Management</h3>
+                    <ul>
+                        <li><strong>Technical risks</strong> — isolated testnet, no production access</li>
+                        <li><strong>Operational risks</strong> — strict scope boundaries</li>
+                        <li><strong>Compliance risks</strong> — ongoing legal review</li>
+                        <li><strong>Reputational risks</strong> — transparent communication with stakeholders</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Overview + Stack -->
+        <div class="section">
+            <h2 class="section-title">🛠️ Technology Overview</h2>
+            <p>The prototype uses a <strong>testnet‑based registry</strong> to store verification references.</p>
+            <p style="margin-top: 0.6rem;">This enables:</p>
+            <ul style="margin-left: 1.2rem; margin-top: 0.4rem;">
+                <li>auditability</li>
+                <li>reproducibility</li>
+                <li>interoperability</li>
+                <li>safe experimentation without exposing sensitive data</li>
+            </ul>
+            <p style="margin-top: 0.8rem;">All verification logic is open for review and designed to integrate with existing publisher workflows.</p>
+            <div class="card-grid" style="margin-top: 1.2rem;">
+                <div class="info-card">
+                    <h3>🧱 Technical Stack</h3>
+                    <ul>
+                        <li><strong>Frontend:</strong> Modern web (HTML5, CSS3, JS)</li>
+                        <li><strong>Backend:</strong> Microservices architecture</li>
+                        <li><strong>Storage:</strong> Encrypted, access‑controlled data stores</li>
+                        <li><strong>APIs:</strong> RESTful interfaces</li>
+                        <li><strong>Security:</strong> Industry‑standard encryption and isolation</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h3>🔄 Development Approach</h3>
+                    <ul>
+                        <li>Iterative development with publisher feedback</li>
+                        <li>Test‑driven development for verification logic</li>
+                        <li>Documentation‑first approach</li>
+                        <li>Open review of architecture and code</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Status + Next Steps -->
+        <div class="section">
+            <h2 class="section-title">📊 Evaluation Status</h2>
+            <p>The prototype is currently in a <strong>controlled evaluation phase</strong> and is used only for:</p>
+            <ul style="margin-left: 1.2rem; margin-top: 0.4rem;">
+                <li>technical assessment</li>
+                <li>metadata quality analysis</li>
+                <li>usability testing</li>
+                <li>industry feedback</li>
+                <li>compliance review</li>
+            </ul>
+            <p style="margin-top: 0.8rem; font-style: italic;">No production data or financial flows are involved.</p>
+            <div class="two-col" style="margin-top: 1.2rem;">
+                <div class="info-card">
+                    <h3>📍 Current Phase</h3>
+                    <ul>
+                        <li>Technical evaluation</li>
+                        <li>Usability testing</li>
+                        <li>Industry review</li>
+                        <li>Compliance assessment</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <h3>🚀 Next Steps</h3>
+                    <ul>
+                        <li>Limited pilot with selected publishers</li>
+                        <li>Feature refinement based on feedback</li>
+                        <li>Integration testing (testnet only)</li>
+                        <li>Preparation for potential limited production trials</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prototype clarifications & Pilot description -->
+        <div class="section">
+            <h2 class="section-title">✨ Prototype Clarifications — Roya</h2>
+            <div class="quote-note">
+                <p style="font-weight: 600; margin-bottom: 0.75rem;">To ensure full clarity:</p>
+                <ul style="margin: 0.75rem 0 0 1.2rem;">
+                    <li>We are <strong>not asking PRO to change any workflow</strong></li>
+                    <li>We are <strong>not integrating with PRO systems</strong></li>
+                    <li>We are <strong>not replacing any part of PRO’s process</strong></li>
+                    <li>We are <strong>not offering a product or service to PRO</strong></li>
+                    <li>We are <strong>not processing payments</strong></li>
+                    <li>We are <strong>not touching financial flows</strong></li>
+                </ul>
+                <p style="margin-top: 1rem; font-weight: 600;">Roya is a metadata verification prototype, nothing more.</p>
+            </div>
+
+            <div class="highlight-box" style="background: #e9f3f7;">
+                <h3 style="margin-bottom: 0.6rem; font-size: 1.2rem;">📌 About the Pilot</h3>
+                <p>Participating publishers use their own metadata in a sandbox environment to evaluate:</p>
+                <ul style="margin: 0.7rem 0 0 1.2rem;">
+                    <li>how metadata issues appear before registration</li>
+                    <li>how pre‑validation affects data quality</li>
+                    <li>how much manual work can be reduced</li>
+                    <li>which documentation is most useful</li>
+                </ul>
+                <p style="margin-top: 1rem;"><strong>All processing occurs in a controlled environment:</strong></p>
+                <ul style="margin: 0.5rem 0 0 1.2rem;">
+                    <li>✅ No production data is sent anywhere</li>
+                    <li>✅ No financial transactions occur</li>
+                    <li>✅ No bank or payment information is used</li>
+                    <li>✅ No changes are made to publisher or PRO systems</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PRO Stakeholder Transparency Section -->
+        <div class="section">
+            <h2 class="section-title">🤝 Communication with PRO</h2>
+            <div class="info-card" style="background: #fefaf5; border-left: 5px solid #2c7da0;">
+                <p style="font-size: 1rem;">Because PRO is a central stakeholder in the Swedish publishing ecosystem, we maintain:</p>
+                <ul style="margin-top: 0.8rem;">
+                    <li>🔹 transparency about the pilot</li>
+                    <li>🔹 clarity about scope and limitations</li>
+                    <li>🔹 open communication channels</li>
+                    <li>🔹 opportunities for feedback</li>
+                </ul>
+                <p style="margin-top: 1rem; font-style: italic;">This ensures the research remains aligned with industry needs.</p>
+                <div class="chip-list" style="margin-top: 1.2rem;">
+                    <span class="chip">Open review</span>
+                    <span class="chip">Pilot dialogue</span>
+                    <span class="chip">Non‑intrusive design</span>
+                    <span class="chip">Metadata verification only</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional summary of operational boundaries -->
+        <div class="footer-note">
+            <strong>⛓️ Research Initiative — Testnet Verification Layer</strong><br>
+            Roya does not hold funds, execute payments, or modify production systems. This documentation reflects the current state of a grant‑funded evaluation prototype focused on improving metadata quality and reducing administrative friction in the Swedish music ecosystem.
+        </div>
+
+        <hr>
+        <div style="font-size: 0.8rem; text-align: center; color: #5c7f91; margin-top: 1rem;">
+            Roya Prototype — Grant & Evaluation Documentation<br>
+            Stockholm Music Innovation Lab
+        </div>
+    </div>
+</div>
+</body>
+</html>

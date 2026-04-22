@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Roya · The Upstream Metadata-Health Engine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {
+        font-family: Inter, sans-serif;
+        background: #0d0d0f;
+        color: #e6e6e6;
+        margin: 0;
+        padding: 40px;
+    }
+    h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #ffffff;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+    }
+    .card {
+        background: #16161a;
+        border: 1px solid #2a2a2f;
+        border-radius: 12px;
+        padding: 24px;
+        transition: 0.2s ease;
+    }
+    .card:hover {
+        border-color: #4d4dff;
+        transform: translateY(-3px);
+    }
+    .card h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+        color: #ffffff;
+    }
+    .card p {
+        font-size: 15px;
+        line-height: 1.5;
+        color: #c7c7c7;
+        margin-bottom: 20px;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        background: #4d4dff;
+        color: #fff;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .btn:hover { background:#3a3aff; }
+    footer {
+        margin-top: 40px;
+        font-size: 13px;
+        color: #8a8a8a;
+        text-align: center;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>The Upstream Metadata-Health Engine for Swedish Publishers</h1>
+
+<div class="grid">
+
+    <div class="card">
+        <h2>Metadata Dry Cleaning Report</h2>
+        <p>Scan your catalog for missing ISWC, writers, publishers, shares, duplicates, and structural metadata issues.</p>
+        <a class="btn" href="/pages/demo-dry-cleaning.html">View Details</a>
+    </div>
+
+    <div class="card">
+        <h2>Publishing Health Dashboard</h2>
+        <p>See your Publishing Health Score, errors vs warnings, category breakdowns, and prioritized fix-later tasks.</p>
+        <a class="btn" href="/pages/demo-health-dashboard.html">View Details</a>
+    </div>
+
+    <div class="card">
+        <h2>CWR Pre-Flight Validation</h2>
+        <p>Validate CWR v2.1 before submission — structural, technical, business-logic, and foreign rules.</p>
+        <a class="btn" href="/pages/demo-cwr-preflight.html">View Details</a>
+    </div>
+
+    <div class="card">
+        <h2>CWR v2.1 Packet Generation</h2>
+        <p>Generate clean, compliant CWR packets ready for PRO/ICE ingestion after pre-flight validation.</p>
+        <a class="btn" href="/pages/demo-cwr-result.html">View Details</a>
+    </div>
+
+    <div class="card">
+        <h2>Publisher Scorecard (Nordic Music AB)</h2>
+        <p>Post-submission intelligence: ACK/XRF auto-sync, Work ID + ISWC updates, payment behavior, and business health.</p>
+        <a class="btn" href="/pages/demo-publisher-health.html">View Details</a>
+    </div>
+
+    <div class="card">
+        <h2>Publishing Health Pilot</h2>
+        <p>Join the pilot program — 3–5 Swedish publishers. Full scans, CWR validation, and direct access to the Roya team.</p>
+        <a class="btn" href="/pages/demo-pilot-signup.html">View Details</a>
+    </div>
+
+</div>
+
+<footer>
+    All shown results are demo data · <a href="mailto:Ken@heyroya.se?subject=Roya%20-%20Stockholm%20Music%20Week" style="color:#8a8a8a;">Contact Ken@heyroya.se</a>
+</footer>
+
+</body>
+</html>

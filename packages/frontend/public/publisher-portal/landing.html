@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta charset=UTF-8>
+    <meta name=viewport content=width=device-width, initial-scale=1.0>
+    <title>Roya — Clean Splits for PRO & Rights Organizations</title>
+    <script src=https://cdn.tailwindcss.com></script>
+    <link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .neon-cyan { color: #22d3ee; }
+    </style>
+</head>
+<body class="bg-[#0a0a0a] text-[#e0e0e0]">
+
+    <nav class="bg-black border-b border-cyan-500 px-8 py-5 flex items-center justify-between sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <a href="/" style="text-decoration:none;"><h1 class="text-3xl font-bold tracking-tighter neon-cyan" style="cursor:pointer;">ROYA</h1></a>
+        </div>
+        <div class="flex items-center gap-4 text-sm flex-wrap">
+            <a href="/see.html" class="hover:text-cyan-400">How it Works</a>
+            <a href="/split-verification.html" class="hover:text-cyan-400 font-medium">Split Verification</a>
+            <a href="/pages/review.html" class="hover:text-cyan-400 font-medium">Cleaning Wizard</a>
+            <a href="/pages/publisher.html" class="hover:text-cyan-400 font-medium">For Publishers</a>
+            <a href="/FAQ.html" class="hover:text-cyan-400">FAQ</a>
+            <a href="/documents.html" class="hover:text-cyan-400">Documents</a>
+            <a href="/pages/pro2.html" class="hover:text-cyan-400">PRO Pilot</a>
+            <a href="/demo.html" style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.4);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;">🎬 Demo</a>
+            <a href="#" id="_liveBtn" onclick="event.preventDefault();if(localStorage.getItem('royaLive')==='stockholm1'){if(confirm('Exit live mode?')){localStorage.removeItem('royaLive');location.reload();}return;}var p=prompt('Enter live access password:');if(p&amp;&amp;(p==='demo'||p==='stockholm1')){localStorage.setItem('royaLive','stockholm1');this.style.background='#2B6F4B';this.style.borderColor='#2B6F4B';this.textContent='⚡ Live';alert('Live mode activated — API calls will use real data.');}else if(p!==null){alert('Incorrect password');}" style="background:rgba(34,211,238,0.1);color:#22d3ee;border:1px solid rgba(34,211,238,0.4);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none;cursor:pointer;">🟢 Live</a>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-8 pt-20 pb-16 text-center">
+        <h1 class="text-6xl font-bold leading-none mb-6">
+            Fix Metadata.<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-white">Before It Reaches PRO.</span>
+        </h1>
+        <p class="text-2xl text-gray-300 max-w-3xl mx-auto mb-6">
+            HeyRoya helps publishers pre‑validate ownership data, identify conflicts, and prepare PRO‑ready metadata before submission — reducing avoidable rejections and manual corrections.
+        </p>
+        <p class="text-lg text-cyan-300 max-w-2xl mx-auto mb-10 font-medium">
+            No integration required.<br>
+            No automatic changes.<br>
+            You stay in control.
+        </p>
+        <div class="flex justify-center gap-6">
+            <a href="/split-verification.html"
+               class="bg-white text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:scale-105 transition flex items-center gap-3">
+                <i class="fas fa-balance-scale"></i>
+                Try Split Verification
+            </a>
+        </div>
+        <p class="text-base text-gray-300 max-w-2xl mx-auto mt-6">
+            Upload your works in CWR, DDEX, Excel, or split‑sheet format and receive a clean, consistent, PRO‑ready file — plus a full Metadata Health Report.
+        </p>
+    </div>
+
+    <!-- FOR PUBLISHERS -->
+    <div class="max-w-6xl mx-auto px-8 py-16">
+        <div class="bg-[#111] rounded-3xl p-12 border border-cyan-500/20">
+            <h2 class="text-4xl font-bold mb-4">For Publishers — Pre‑Validated Metadata. Fewer Rejections.</h2>
+            <p class="text-xl text-gray-300 max-w-3xl mb-8">
+                Join our 30‑day pilot to improve metadata hygiene, reduce back‑and‑forth, and simplify catalog administration.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-4">Benefits for publishers</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">✓</span> Fewer rejected works</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">✓</span> Less manual correction</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">✓</span> Clearer chain‑of‑title for foreign works</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">✓</span> Consistent writer and publisher identifiers</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">✓</span> Transparent documentation of all changes</li>
+                        <li class="flex items-center gap-2"><span class="text-cyan-400">✓</span> Free 30‑day pilot</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-4">What you provide</h3>
+                    <p class="text-gray-300 mb-4">20–50 recent works in CWR, DDEX, Excel, or split‑sheet format.</p>
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-4">What you receive</h3>
+                    <ul class="space-y-1 text-gray-300">
+                        <li>• Pre‑validated, PRO‑ready metadata</li>
+                        <li>• A Metadata Health Report (before/after comparison)</li>
+                        <li>• A summary of corrections and identified risks</li>
+                        <li>• Clean CWR or Excel export files ready for submission</li>
+                    </ul>
+                </div>
+            </div>
+            <a href="/pages/publisher.html"
+               class="inline-flex items-center gap-3 bg-cyan-500 hover:bg-cyan-600 text-black px-8 py-4 rounded-3xl text-lg font-semibold">
+                Learn More →
+            </a>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-8 py-16 bg-[#111] rounded-3xl text-center">
+        <h2 class="text-4xl font-bold mb-6">The #1 Problem We Help Solve</h2>
+        <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-6">
+            Conflicting splits, missing contributors, inconsistent identifiers, and foreign formatting create unnecessary manual work and avoidable rejections.
+        </p>
+        <p class="text-lg text-cyan-300 max-w-2xl mx-auto mb-12 font-medium">
+            HeyRoya identifies these issues before they reach PRO.
+        </p>
+        <a href="/split-verification.html"
+           class="inline-flex items-center gap-3 bg-cyan-500 hover:bg-cyan-600 text-black px-10 py-6 rounded-3xl text-2xl font-semibold">
+            Open Split Verification Tool →
+        </a>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-8 py-16 text-center">
+        <h2 class="text-4xl font-bold mb-12">How HeyRoya Works for Rights Organizations</h2>
+        <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div class="bg-[#111] p-8 rounded-3xl">
+                <div class="text-5xl mb-6">📤</div>
+                <h3 class="font-semibold mb-3">Upload Once</h3>
+                <p class="text-gray-400">CWR, DDEX, or Excel — any format.</p>
+            </div>
+            <div class="bg-[#111] p-8 rounded-3xl">
+                <div class="text-5xl mb-6">🔍</div>
+                <h3 class="font-semibold mb-3">Automatic Pre‑Validation</h3>
+                <p class="text-gray-400">Checks split integrity, identifiers, roles, and chain‑of‑title.</p>
+            </div>
+            <div class="bg-[#111] p-8 rounded-3xl">
+                <div class="text-5xl mb-6">✅</div>
+                <h3 class="font-semibold mb-3">Export Clean File</h3>
+                <p class="text-gray-400">PRO‑ready metadata with full documentation of all corrections.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PILOT PROGRAM -->
+    <div class="max-w-6xl mx-auto px-8 py-8">
+        <div class="bg-[#111] rounded-3xl p-10 text-center border border-gray-800">
+            <p class="text-sm text-cyan-400 font-semibold tracking-widest uppercase mb-3">Pilot Program (30 Days)</p>
+            <h3 class="text-2xl font-bold mb-3">We’re running a short evaluation pilot with selected publishers.</h3>
+            <p class="text-lg text-gray-400 mb-6">No cost. No integration. Confidential.</p>
+            <a href="mailto:hello@heyroya.se"
+               class="inline-flex items-center gap-3 bg-cyan-500 hover:bg-cyan-600 text-black px-10 py-5 rounded-3xl text-xl font-semibold hover:scale-105 transition">
+                Join the Publisher Pilot →
+            </a>
+            <p class="text-xs text-gray-500 mt-4">hello@heyroya.se · Confidential · No commitment</p>
+        </div>
+    </div>
+
+    <div id="pilot" class="max-w-6xl mx-auto px-8 py-20 text-center border-t border-cyan-500">
+        <h2 class="text-5xl font-bold mb-6">Ready for a PRO Pilot?</h2>
+        <p class="text-xl text-gray-300 max-w-lg mx-auto mb-10">
+            Let’s run Roya on a real PRO-bound catalog together.<br>
+            30-minute live demo • Confidential • No commitment
+        </p>
+        <a href="mailto:Ken@heyroya.se"
+                class="inline-flex items-center gap-3 bg-cyan-500 hover:bg-cyan-600 text-black px-12 py-6 rounded-3xl text-2xl font-semibold hover:scale-105 transition" style="text-decoration:none;">
+            Contact Ken@heyroya.se
+        </a>
+    </div>
+
+    <footer class="bg-black py-12 text-center text-sm text-gray-400 border-t border-gray-800">
+        <p>Roya — Metadata Pre‑Validation Prototype • Research Initiative • Testnet Environment</p>
+        <p class="mt-4">© 2026 • All Rights Reserved</p>
+    </footer>
+<script>(function(){if(localStorage.getItem('royaLive')==='stockholm1'){var b=document.getElementById('_liveBtn');if(b){b.style.background='#2B6F4B';b.style.borderColor='#2B6F4B';b.textContent='⚡ Live';}}})();</script>
+<script>
+window.TRANSLATIONS = {
+    "Roya — Clean Splits for PRO & Rights Organizations": "Roya — Validering av metadata för musikrättigheter",
+
+    "How it Works": "Så fungerar det",
+    "Split Verification": "Validering av fördelningar",
+    "Cleaning Wizard": "Städguiden",
+    "For Publishers": "För musikförlag",
+    "FAQ": "Vanliga frågor",
+    "Documents": "Dokument",
+    "PRO Pilot": "PRO-pilot",
+
+    "Fix Metadata.": "Kvalitetssäkra metadata.",
+    "Before It Reaches PRO.": "Innan de når PRO.",
+    "HeyRoya helps publishers pre‑validate ownership data, identify conflicts, and prepare PRO‑ready metadata before submission — reducing avoidable rejections and manual corrections.": "HeyRoya stödjer musikförlag i att förvalidera rättighetsdata, identifiera avvikelser och säkerställa att metadata är korrekt, konsekvent och redo för inlämning till PRO — vilket minskar onödiga avvisningar och manuella korrigeringar.",
+    "No integration required.": "Ingen integration krävs.",
+    "No automatic changes.": "Inga automatiska ändringar.",
+    "You stay in control.": "Ni behåller full kontroll.",
+    "Try Split Verification": "Testa split-validering",
+    "Upload your works in CWR, DDEX, Excel, or split‑sheet format and receive a clean, consistent, PRO‑ready file — plus a full Metadata Health Report.": "Ladda upp verk i CWR-, DDEX-, Excel- eller split sheet-format och erhåll en kvalitetssäkrad, konsekvent och PRO-anpassad fil — tillsammans med en fullständig Metadata Health Report.",
+
+    "For Publishers — Pre‑Validated Metadata. Fewer Rejections.": "För musikförlag — Förvaliderad metadata. Färre avvisningar.",
+    "Join our 30‑day pilot to improve metadata hygiene, reduce back‑and‑forth, and simplify catalog administration.": "Delta i vårt 30-dagars pilotprogram för att förbättra datakvalitet, minska handläggningsfriktion och förenkla katalogadministration.",
+    "Benefits for publishers": "Fördelar för musikförlag",
+    "Fewer rejected works": "Färre avvisade verk",
+    "Less manual correction": "Minskad manuell handläggning",
+    "Clearer chain‑of‑title for foreign works": "Tydligare rättighetskedja (chain of title), särskilt för internationella verk",
+    "Consistent writer and publisher identifiers": "Konsistenta identifierare (låtskrivare och förlag, t.ex. IPI)",
+    "Transparent documentation of all changes": "Transparent dokumentation av alla justeringar",
+    "Free 30‑day pilot": "Kostnadsfri pilot (30 dagar)",
+    "What you provide": "Vad ni tillhandahåller",
+    "20–50 recent works in CWR, DDEX, Excel, or split‑sheet format.": "20–50 nyligen registrerade verk i CWR-, DDEX-, Excel- eller split sheet-format.",
+    "What you receive": "Vad ni erhåller",
+    "• Pre‑validated, PRO‑ready metadata": "• Förvaliderad, PRO-redo metadata",
+    "• A Metadata Health Report (before/after comparison)": "• En Metadata Health Report (före/efter-analys)",
+    "• A summary of corrections and identified risks": "• Sammanställning av identifierade avvikelser och risker",
+    "• Clean CWR or Excel export files ready for submission": "• Korrigerade CWR- eller Excel-filer redo för inlämning",
+    "Learn More →": "Läs mer →",
+
+    "The #1 Problem We Help Solve": "Den centrala utmaningen vi adresserar",
+    "Conflicting splits, missing contributors, inconsistent identifiers, and foreign formatting create unnecessary manual work and avoidable rejections.": "Inkonsekventa andelar, saknade upphovspersoner, felaktiga eller ofullständiga identifierare samt varierande internationella format skapar onödig manuell hantering och leder till undvikbara avvisningar.",
+    "HeyRoya identifies these issues before they reach PRO.": "HeyRoya identifierar och synliggör dessa avvikelser innan de når PRO.",
+    "Open Split Verification Tool →": "Öppna valideringsverktyget →",
+
+    "How HeyRoya Works for Rights Organizations": "Så fungerar HeyRoya för rättighetsorganisationer",
+    "Upload Once": "Uppladdning",
+    "CWR, DDEX, or Excel — any format.": "CWR, DDEX eller Excel — befintliga format utan förändringar i arbetsflödet",
+    "Automatic Pre‑Validation": "Automatisk förvalidering",
+    "Checks split integrity, identifiers, roles, and chain‑of‑title.": "Kontrollerar andelsfördelning, identifierare, roller och rättighetskedja",
+    "Export Clean File": "Export av kvalitetssäkrad data",
+    "PRO‑ready metadata with full documentation of all corrections.": "PRO-anpassad metadata med fullständig dokumentation av identifierade avvikelser och föreslagna korrigeringar",
+
+    "Pilot Program (30 Days)": "Pilotprogram (30 dagar)",
+    "We’re running a short evaluation pilot with selected publishers.": "Vi genomför ett avgränsat utvärderingspilot med utvalda musikförlag.",
+    "No cost. No integration. Confidential.": "Ingen kostnad. Ingen integration. Full konfidentialitet.",
+    "Join the Publisher Pilot →": "Ansök till pilot →",
+    "hello@heyroya.se · Confidential · No commitment": "hello@heyroya.se · Konfidentiellt · Ingen förpliktelse",
+
+    "Ready for a PRO Pilot?": "Redo att utvärdera en PRO-pilot?",
+    "Let’s run Roya on a real PRO-bound catalog together.": "Vi genomför en gemensam genomgång av ett verkligt katalogutdrag avsett för inlämning till PRO.",
+    "30-minute live demo • Confidential • No commitment": "30 min genomgång · Konfidentiellt · Ingen förpliktelse",
+    "Contact Ken@heyroya.se": "Kontakta: Ken@heyroya.se",
+
+    "Roya — Metadata Pre‑Validation Prototype • Research Initiative • Testnet Environment": "HeyRoya — Metadataförvalidering för musikrättigheter • Forskningsinitiativ • Prototypmiljö (testnet)",
+    "© 2026 • All Rights Reserved": "© 2026 · Alla rättigheter förbehållna"
+};
+</script>
+<script src="/lang.js"></script>
+</body>
+</html>

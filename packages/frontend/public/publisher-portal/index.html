@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TrapRoyaltiesPro · Metadata Pre-Validation & Royalty Integrity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #fafcff;
+      color: #0b2b2f;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.2rem 2rem 4rem;
+    }
+
+    /* header / nav */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e2edf2;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #0b4f3c, #1b7e5e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.6rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #2c5f6e;
+    }
+    .demo-badge {
+      background: #eef2f5;
+      padding: 0.3rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 0 2px #dcfce7;
+    }
+
+    /* hero section */
+    .hero {
+      background: linear-gradient(105deg, #ffffff 0%, #f6fbfd 100%);
+      border-radius: 2rem;
+      padding: 2.8rem 2.5rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid #dde9ef;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .hero h1 {
+      font-size: 3.1rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .hero .accent {
+      color: #1a7e5e;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #2c5a64;
+      max-width: 80%;
+      margin-bottom: 1.8rem;
+    }
+    .hero-badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .trust-badge {
+      background: #f1f9f6;
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1b6e54;
+    }
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+    .btn-primary {
+      background: #0f5c48;
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-primary:hover {
+      background: #0a4637;
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      border: 1px solid #bdd7df;
+      background: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #1a5f6e;
+    }
+
+    /* sections grid */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 2rem 0 1rem;
+      letter-spacing: -0.3px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.6rem 1.8rem;
+      border: 1px solid #e5eef2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: all 0.2s;
+    }
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card p, .card li {
+      font-size: 0.9rem;
+      color: #365f6b;
+    }
+    .card ul {
+      margin-top: 0.6rem;
+      padding-left: 1.2rem;
+    }
+    .card li {
+      margin: 0.5rem 0;
+    }
+
+    .benefits-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+    .benefit-pill {
+      background: #f0f6f9;
+      border-radius: 60px;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #146b54;
+    }
+
+    .howit-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      justify-content: space-between;
+      margin: 1rem 0 1.8rem;
+    }
+    .step {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      text-align: center;
+      border: 1px solid #e0edf2;
+    }
+    .step .step-num {
+      background: #daf1ea;
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 60px;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+      color: #0f5c48;
+    }
+
+    .pilot-highlight {
+      background: #eef7f3;
+      border-left: 5px solid #2c9b7a;
+      border-radius: 1.2rem;
+      padding: 1.5rem;
+      margin: 1.8rem 0;
+    }
+
+    .footer-contact {
+      margin-top: 3rem;
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid #dce8ed;
+      font-size: 0.8rem;
+      color: #3c7482;
+    }
+
+    @media (max-width: 780px) {
+      .container { padding: 1rem 1.2rem 2rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero p { max-width: 100%; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .howit-row { flex-direction: column; }
+      .navbar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Navigation -->
+  <div class="navbar">
+    <a href="/publisher-portal" style="text-decoration:none;"><div class="logo">TrapRoyaltiesPro</div></a>
+    <div class="nav-links">
+      <a href="/publisher-portal/pages/demo-overview.html">How it Works</a>
+      <a href="/publisher-portal/split-verification.html">Split Verification</a>
+      <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html">Cleaning Wizard</a>
+      <a href="/publisher-portal/pages/publisher.html">For Publishers</a>
+      <a href="/publisher-portal/FAQ.html">FAQ</a>
+      <a href="/publisher-portal/documents.html">Documents</a>
+      <a href="/publisher-portal/pages/demo.html" class="demo-badge">🎬 Demo</a>
+      <span class="demo-badge"><span class="live-dot"></span> Live</span>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1>💥 <span class="accent">Fix Metadata. Recover Royalties.</span><br>Before They're Lost in the System.</h1>
+    <p>TRP helps publishers identify metadata gaps, ownership conflicts, and registration issues across global rights systems — before they result in delayed or unclaimed royalties.</p>
+    <div class="hero-badge-group">
+      <span class="trust-badge">🔌 No integration required</span>
+      <span class="trust-badge">✋ No automatic changes</span>
+      <span class="trust-badge">🎛️ You stay in control</span>
+    </div>
+    <div class="cta-group">
+      <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html" class="btn-primary">🚀 Run a Catalog Check →</a>
+      <a href="/publisher-portal/split-verification.html" class="btn-outline">👉 Scan Your Catalog</a>
+    </div>
+  </div>
+
+  <!-- For Publishers + Why this matters -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>🎯 For Publishers — Clean Data. Faster Money.</h3>
+      <p>TRP helps publishers submit accurate, consistent metadata across global collection societies and platforms such as ASCAP, BMI, SoundExchange, and PRS for Music.</p>
+      <p style="margin-top: 0.8rem;"><strong>Join our 30-day pilot</strong> to reduce rejected works, eliminate manual correction cycles, and accelerate royalty flows.</p>
+    </div>
+    <div class="card">
+      <h3>💰 Why this matters</h3>
+      <p>Most catalogs contain <strong>10–30% metadata-related revenue leakage</strong> due to:</p>
+      <ul>
+        <li>Missing or incorrect ISRCs</li>
+        <li>Split inconsistencies</li>
+        <li>Unregistered works</li>
+        <li>Cross-territory metadata mismatches</li>
+      </ul>
+      <p style="margin-top: 0.5rem;">👉 TRP identifies these issues before they impact your revenue.</p>
+    </div>
+  </div>
+
+  <!-- Benefits for Publishers + What you provide / receive -->
+  <div class="grid-2">
+    <div class="card">
+      <h3>✅ Benefits for Publishers</h3>
+      <div class="benefits-list">
+        <span class="benefit-pill">✓ Fewer rejected registrations</span>
+        <span class="benefit-pill">✓ Faster royalty payouts</span>
+        <span class="benefit-pill">✓ Reduced manual workload</span>
+        <span class="benefit-pill">✓ Clear chain-of-title across territories</span>
+        <span class="benefit-pill">✓ Consistent writer & publisher identifiers (IPI/CAE)</span>
+        <span class="benefit-pill">✓ Full audit trail of all changes</span>
+        <span class="benefit-pill">✓ Free 30-day pilot</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📥 What you provide</h3>
+      <p>20–50 recent works in:</p>
+      <ul>
+        <li>CWR</li>
+        <li>DDEX</li>
+        <li>Excel</li>
+        <li>Split sheets</li>
+      </ul>
+      <h3 style="margin-top: 1rem;">📦 What you receive</h3>
+      <ul>
+        <li>Pre-validated, registration-ready metadata</li>
+        <li>Metadata & Royalty Risk Report (before/after)</li>
+        <li>Identified gaps (missing registrations, ISRC issues, conflicts)</li>
+        <li>Clean CWR / Excel export files</li>
+        <li>Audit-ready verification reports</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- The #1 Problem We Solve -->
+  <div class="card" style="background: #fefaf0; border-color: #f7e3af;">
+    <h3>⚠️ The #1 Problem We Solve</h3>
+    <p>Fragmented and inconsistent metadata across systems leads to: delayed payments, unmatched works, royalty leakage, increased operational overhead.</p>
+    <p style="margin-top: 0.8rem;"><strong>TRP detects and resolves these issues before submission and across systems.</strong></p>
+    <div style="margin-top: 1rem;">
+      <a href="/publisher-portal/split-verification.html" class="btn-outline" style="background: white;">👉 Open Split Verification Tool</a>
+    </div>
+  </div>
+
+  <!-- How TRP Works (4 steps) -->
+  <h2 class="section-title">⚙️ How TRP Works</h2>
+  <div class="howit-row">
+    <div class="step"><div class="step-num">1</div><strong>📤 Upload Once</strong><br>CWR, DDEX, Excel — no workflow changes</div>
+    <div class="step"><div class="step-num">2</div><strong>🔍 Automatic Validation</strong><br>Checks splits, identifiers, roles, and registration gaps</div>
+    <div class="step"><div class="step-num">3</div><strong>💰 Identify Revenue Risk</strong><br>Surfaces unclaimed royalties and metadata issues</div>
+    <div class="step"><div class="step-num">4</div><strong>✅ Export Clean Data</strong><br>Ready for submission across global rights systems</div>
+  </div>
+
+  <!-- 30-Day Publisher Pilot + outcomes -->
+  <div class="pilot-highlight">
+    <h3 style="font-size: 1.5rem; font-weight: 800;">🚀 30-Day Publisher Pilot</h3>
+    <p>We run Roya on your real catalog and deliver measurable results.<br><strong>No cost. No integration. Confidential.</strong></p>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1rem 0;">
+      <div style="background: white; border-radius: 1rem; padding: 0.8rem 1rem; flex: 1; min-width: 160px;">
+        <div style="font-weight:800;">📊 Typical pilot outcomes</div>
+        <ul style="margin-top: 0.4rem;">
+          <li>10–30% metadata issues identified</li>
+          <li>€ / $10k–$100k+ revenue exposure uncovered</li>
+          <li>Significant reduction in manual correction time</li>
+        </ul>
+      </div>
+    </div>
+    <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html" class="btn-primary" style="background: #1b6e54; margin-top: 0.4rem;">👉 Start Your Catalog Evaluation →</a>
+    <div style="margin-top: 1rem; font-size: 0.8rem;">hello@heyroya.se · Confidential · No commitment</div>
+  </div>
+
+  <!-- Final CTA block: Ready to see what your catalog is missing -->
+  <div style="background: linear-gradient(115deg, #eef4f7, white); border-radius: 1.8rem; padding: 2rem; margin: 2rem 0 1.5rem; text-align: center; border: 1px solid #cfe2ea;">
+    <h2 style="font-size: 1.6rem; font-weight: 800;">🧠 Ready to see what your catalog is missing?</h2>
+    <p style="margin: 0.6rem 0 1rem;">We'll analyze your metadata, identify risks, and show where revenue may be delayed or lost.<br><strong>30-minute live walkthrough • Real data • No obligation</strong></p>
+    <a href="mailto:Glenn@traproyaltiespro.com" class="btn-primary" style="background: #0f5c48;">Contact: Glenn@traproyaltiespro.com →</a>
+  </div>
+
+  <!-- footer tagline -->
+  <div class="footer-contact">
+    <div style="font-weight: 700; margin-bottom: 0.5rem;">TrapRoyaltiesPro</div>
+    <div>Metadata Pre-Validation & Royalty Integrity Layer<br>Built for global publishing and rights management</div>
+    <div style="margin-top: 1rem;">© TRP — Fix metadata. Recover royalties.</div>
+  </div>
+</div>
+</body>
+</html>

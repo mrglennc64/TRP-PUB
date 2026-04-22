@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roya • Dry Cleaning Report (v2 · Financial Alert)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#F8FAFC; color:#1A202C; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:#2B6F4B; text-decoration:none; }
+  .wrap { max-width:780px; margin:0 auto; padding:32px 24px 64px; }
+  .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand-icon { background:#2B6F4B; color:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .brand-text { font-weight:700; font-size:18px; }
+  .sample-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#B45309; background:#FEF3C7; padding:4px 10px; border-radius:99px; }
+
+  .alert { background:linear-gradient(135deg,#450A0A 0%,#7F1D1D 100%); color:#FEF2F2; border-radius:16px; padding:36px 32px; margin-bottom:22px; box-shadow:0 10px 30px rgba(127,29,29,0.2); }
+  .alert .tag { display:inline-flex; align-items:center; gap:8px; background:rgba(254,226,226,0.12); border:1px solid rgba(254,202,202,0.3); color:#FECACA; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:6px 14px; border-radius:99px; margin-bottom:18px; }
+  .alert .tag .dot { width:8px; height:8px; background:#EF4444; border-radius:99px; animation:pulse 1.6s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .alert h1 { font-size:44px; font-weight:800; line-height:1.1; margin-bottom:14px; letter-spacing:-0.5px; }
+  .alert h1 .emoji { font-size:38px; vertical-align:middle; margin-right:8px; }
+  .alert h1 .money { color:#FCA5A5; }
+  .alert .sub { font-size:16px; color:#FECACA; margin-bottom:26px; max-width:560px; line-height:1.5; }
+  .alert .where { background:rgba(0,0,0,0.25); border:1px solid rgba(254,202,202,0.2); border-radius:12px; padding:18px 20px; margin-bottom:22px; }
+  .alert .where .lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#FCA5A5; margin-bottom:10px; }
+  .alert .where ul { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; }
+  .alert .where li { font-size:14px; color:#FEE2E2; padding:4px 0 4px 18px; position:relative; }
+  .alert .where li::before { content:'→'; position:absolute; left:0; color:#F87171; font-weight:700; }
+  .alert .cta { display:inline-block; background:#fff; color:#7F1D1D; padding:14px 24px; border-radius:10px; font-weight:800; font-size:15px; text-decoration:none; transition:transform 0.15s; }
+  .alert .cta:hover { transform:translateY(-2px); background:#FEF2F2; }
+
+  h2 { font-size:22px; font-weight:800; line-height:1.2; margin-bottom:6px; }
+  .subtitle { color:#64748B; font-size:14px; margin-bottom:22px; }
+
+  .card { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:24px; margin-bottom:16px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+  .card h3 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748B; margin-bottom:12px; }
+  .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .stat { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:14px; }
+  .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#64748B; font-weight:600; }
+  .stat-value { font-size:24px; font-weight:800; color:#1A202C; margin-top:4px; }
+  .score-hero { display:flex; align-items:center; gap:20px; padding:8px 4px 4px; }
+  .score-ring { position:relative; width:96px; height:96px; flex-shrink:0; }
+  .score-ring svg { transform:rotate(-90deg); }
+  .score-ring .bg { stroke:#E2E8F0; }
+  .score-ring .fg { stroke:#E8A33F; }
+  .score-num { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; color:#1A202C; }
+  .score-meta .band { font-size:18px; font-weight:700; color:#B9741A; }
+  .score-meta .range { color:#64748B; font-size:13px; margin-top:2px; }
+
+  .issues-list { list-style:none; }
+  .issues-list li { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px dashed #E2E8F0; font-size:14px; }
+  .issues-list li:last-child { border-bottom:0; }
+  .issues-list .count { background:#FEF2F2; color:#B91C1C; font-weight:700; padding:3px 10px; border-radius:99px; font-size:13px; min-width:36px; text-align:center; }
+  .issues-list .count.warn { background:#FEF9C3; color:#854D0E; }
+
+  .work-item { border:1px solid #FECACA; background:#FEF2F2; border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .work-item .title { font-weight:700; margin-bottom:6px; color:#1A202C; }
+  .work-item ul { list-style:none; font-size:13px; color:#7F1D1D; }
+  .work-item li { padding:3px 0; display:flex; gap:8px; align-items:flex-start; }
+  .work-item li::before { content:'✗'; color:#DC2626; font-weight:700; }
+
+  .checklist { list-style:none; }
+  .checklist li { padding:10px 14px; background:#F0FDF4; border-left:3px solid #2B6F4B; border-radius:4px; margin-bottom:6px; font-size:14px; display:flex; gap:10px; align-items:flex-start; }
+  .checklist li::before { content:'☐'; font-size:16px; color:#2B6F4B; font-weight:700; }
+
+  .footer-note { margin-top:24px; padding:16px; background:#F0F9FF; border:1px solid #BAE6FD; border-radius:10px; font-size:13px; color:#075985; }
+  .footer-note strong { color:#0C4A6E; }
+
+  .page-nav { margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; }
+  .page-nav a { background:#fff; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#1A202C; }
+  .page-nav a:hover { border-color:#2B6F4B; color:#2B6F4B; }
+
+  @media (max-width:600px) {
+    .alert { padding:28px 22px; }
+    .alert h1 { font-size:32px; }
+    .alert h1 .emoji { font-size:28px; }
+    .alert .where ul { grid-template-columns:1fr; }
+    .stat-grid { grid-template-columns:repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">R</div>
+      <div class="brand-text">Roya</div>
+    </div>
+    <span class="sample-tag">V2 Test · Financial Alert Framing</span>
+  </div>
+
+  <div class="alert">
+    <div class="tag"><span class="dot"></span>Revenue at risk · audit 21 April 2026</div>
+    <h1><span class="emoji">👉</span><span class="money">€47,000</span> in Missing Royalties Identified</h1>
+    <div class="sub">Caused by metadata gaps, missing ISRCs, and unregistered works.</div>
+
+    <div class="where">
+      <div class="lbl">Where this money is lost</div>
+      <ul>
+        <li>Missing SoundExchange registrations</li>
+        <li>Split inconsistencies</li>
+        <li>Unmatched ISRCs</li>
+        <li>Foreign collection gaps</li>
+      </ul>
+    </div>
+
+    <a href="#detection" class="cta">👉 See how this was detected →</a>
+  </div>
+
+  <h2 id="detection">Catalog audit · Nordic Music AB · 48 works</h2>
+  <div class="subtitle">Detection detail below — every item above maps to a specific metadata rule in the scanner.</div>
+
+  <div class="card">
+    <h3>Catalog Summary</h3>
+    <div class="score-hero">
+      <div class="score-ring">
+        <svg width="96" height="96" viewBox="0 0 96 96">
+          <circle class="bg" cx="48" cy="48" r="40" fill="none" stroke-width="10"/>
+          <circle class="fg" cx="48" cy="48" r="40" fill="none" stroke-width="10" stroke-linecap="round"
+                  stroke-dasharray="251.3" stroke-dashoffset="67.9"/>
+        </svg>
+        <div class="score-num">73</div>
+      </div>
+      <div class="score-meta">
+        <div class="band">Needs Minor Fixes</div>
+        <div class="range">Publishing Health Score · 70–89 band</div>
+      </div>
+    </div>
+    <div class="stat-grid" style="margin-top:18px;">
+      <div class="stat"><div class="stat-label">Total Works</div><div class="stat-value">48</div></div>
+      <div class="stat"><div class="stat-label">With Issues</div><div class="stat-value" style="color:#B91C1C;">11</div></div>
+      <div class="stat"><div class="stat-label">Clean</div><div class="stat-value" style="color:#16A34A;">37</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Top Issues Detected</h3>
+    <ul class="issues-list">
+      <li><span>Missing ISWC</span><span class="count">7</span></li>
+      <li><span>Missing Publishers</span><span class="count">5</span></li>
+      <li><span>Missing Writers</span><span class="count">4</span></li>
+      <li><span>Broken Shares</span><span class="count">3</span></li>
+      <li><span>Invalid IPI Numbers</span><span class="count">2</span></li>
+      <li><span>Duplicate Works</span><span class="count warn">1</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Example Work Issues</h3>
+    <div class="work-item">
+      <div class="title">“Midnight Echo”</div>
+      <ul>
+        <li>Missing ISWC</li>
+        <li>Writer share imbalance — 50/50 expected, 100/0 found</li>
+        <li>Publisher missing</li>
+      </ul>
+    </div>
+    <div class="work-item">
+      <div class="title">“Glass River”</div>
+      <ul>
+        <li>Duplicate title detected — 2 versions with different writers</li>
+        <li>Invalid IPI for Writer #2</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Fix-Later Checklist</h3>
+    <ul class="checklist">
+      <li>Add ISWC for 7 works</li>
+      <li>Add missing writers for 4 works</li>
+      <li>Add publishers for 5 works</li>
+      <li>Correct share splits for 3 works</li>
+      <li>Resolve 1 duplicate work</li>
+      <li>Validate 2 IPI numbers</li>
+    </ul>
+  </div>
+
+  <div class="footer-note">
+    <strong>What this is:</strong> A Roya dry-cleaning pass is a non-destructive scan of a publishing catalog. We never
+    auto-correct ownership data — every fix is proposed and confirmed by the publisher, and each confirmed fix trains
+    the Master Catalog for the next scan.
+  </div>
+
+  <div class="page-nav">
+    <a href="/pages/demo-dry-cleaning.html">← Back to v1 (live version)</a>
+    <a href="/pages/demo-health-dashboard.html">→ Health Dashboard</a>
+    <a href="/pages/demo-cwr-preflight.html">→ CWR Pre-Flight</a>
+    <a href="/pages/demo-pilot-signup.html">→ Join the Pilot</a>
+  </div>
+</div>
+</body>
+</html>

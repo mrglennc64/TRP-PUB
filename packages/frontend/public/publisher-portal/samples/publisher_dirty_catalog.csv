@@ -1,0 +1,17 @@
+title,isrc,iswc,name,ipi,role,share_percent,society,publisher,notes
+Midnight Sun,SEABC2400001,,M. Martin,00412345678,C,50,,Nordic Songs,Missing ISWC
+Midnight Sun,SEABC2400001,,A Writer,,L,50,,Nordic Songs,Missing IPI
+Falling Hard,SEABC2400002,T-555.555.555-5,Max M.,,C,60,,Nordic Songs,Split sum > 100
+Falling Hard,SEABC2400002,T-555.555.555-5,John Doe,12345678901,C,60,,Nordic Songs,Split sum > 100
+Runaway,SEABC2400003,,A. Writer,00412345678,C,50,,Nordic Songs,Duplicate writer
+Runaway,SEABC2400003,,A. Writer,00412345678,C,50,,Nordic Songs,Duplicate writer
+Echoes,SEABC2400004,T-444.444.444-4,Martin Sandberg,00412345678,C,70,,Nordic Songs,Missing IPI
+Echoes,SEABC2400004,T-444.444.444-4,Unknown,,L,30,,Nordic Songs,Missing IPI
+Love Again,SEABC2400005,T-123.456.789-0,Mrtin Sandbrg,,C,50,,Nordic Songs,Misspelled name
+Love Again,SEABC2400005,T-123.456.789-0,Anna W.,00456789012,L,50,,Nordic Songs,Misspelled name
+Skyline,SEABC2400006,T-222.222.222-2,A. Writer,00412345678,C,50,,Nordic Songs,Missing IPI
+Skyline,SEABC2400006,T-222.222.222-2,B Writer,,L,50,,Nordic Songs,Missing IPI
+Foreign Hit,USRC17607890,,J. Smith,00000000001,C,33.33,ASCAP,Nordic Songs,Foreign formatting
+Foreign Hit,USRC17607890,,Max Martin,00412345678,C,66.67,BMI,Nordic Songs,Foreign formatting
+Broken Song,,,M. Martin,,C,50,,Nordic Songs,Missing everything
+Broken Song,,,A Writer,,L,50,,Nordic Songs,Missing everything
