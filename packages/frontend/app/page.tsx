@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import Footer from './components/Footer';
 
 export const metadata: Metadata = {
   title: 'TrapRoyaltiesPro · Recover Missing Royalties from Your Catalog',
@@ -505,6 +506,7 @@ export default function HomePage() {
           <div>All example figures illustrative unless otherwise stated &middot; &copy; 2026 TrapRoyaltiesPro</div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
