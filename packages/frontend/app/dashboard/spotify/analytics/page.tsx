@@ -56,7 +56,7 @@ export default function SpotifyAnalytics() {
           <div>
             <h1 className="text-5xl font-black mb-2">
               <span className="text-purple-400">📊 Royalty</span>{" "}
-              <span className="text-blue-400">Analytics</span>
+              <span className="text-indigo-400">Analytics</span>
             </h1>
             <p className="text-gray-400 text-lg">Deep dive into playlist performance and royalty leaks</p>
           </div>
@@ -90,29 +90,29 @@ export default function SpotifyAnalytics() {
             <div className="text-xs text-purple-400 mt-2">+{Math.floor(Math.random() * 5)} new this week</div>
           </div>
           
-          <div className="bg-gradient-to-br from-blue-900 to-blue-950 p-6 rounded-xl border border-blue-500">
+          <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 p-6 rounded-xl border border-indigo-500">
             <div className="text-3xl font-bold text-white">{data?.tracks?.tracks?.length || 0}</div>
-            <div className="text-blue-300">Active Tracks</div>
-            <div className="text-xs text-blue-400 mt-2">Avg popularity: 87</div>
+            <div className="text-indigo-300">Active Tracks</div>
+            <div className="text-xs text-indigo-400 mt-2">Avg popularity: 87</div>
           </div>
           
-          <div className="bg-gradient-to-br from-green-900 to-green-950 p-6 rounded-xl border border-green-500">
+          <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 p-6 rounded-xl border border-emerald-500">
             <div className="text-3xl font-bold text-white">124</div>
-            <div className="text-green-300">Playlist Adds</div>
-            <div className="text-xs text-green-400 mt-2">Last {timeframe}</div>
+            <div className="text-emerald-300">Playlist Adds</div>
+            <div className="text-xs text-emerald-400 mt-2">Last {timeframe}</div>
           </div>
           
-          <div className="bg-gradient-to-br from-red-900 to-red-950 p-6 rounded-xl border border-red-500">
+          <div className="bg-gradient-to-br from-rose-900 to-rose-950 p-6 rounded-xl border border-rose-500">
             <div className="text-3xl font-bold text-white">${(leakData.totalLost/1000).toFixed(0)}K</div>
-            <div className="text-red-300">Unclaimed Royalties</div>
-            <div className="text-xs text-red-400 mt-2">{leakData.byCategory.length} leak types</div>
+            <div className="text-rose-300">Unclaimed Royalties</div>
+            <div className="text-xs text-rose-400 mt-2">{leakData.byCategory.length} leak types</div>
           </div>
         </div>
 
         {/* Money Leak Breakdown */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">
-            <h2 className="text-2xl font-bold mb-4 text-red-400">💰 Royalty Leak Breakdown</h2>
+            <h2 className="text-2xl font-bold mb-4 text-rose-400">💰 Royalty Leak Breakdown</h2>
             <div className="space-y-4">
               {leakData.byCategory.map((leak, i) => (
                 <div key={i} className="space-y-2">
@@ -143,11 +143,11 @@ export default function SpotifyAnalytics() {
                       <div className="font-medium">{track.track}</div>
                       <div className="text-sm text-gray-400">{track.artist}</div>
                     </div>
-                    <div className="text-xl font-bold text-red-400">${track.lost.toLocaleString()}</div>
+                    <div className="text-xl font-bold text-rose-400">${track.lost.toLocaleString()}</div>
                   </div>
                   <div className="flex gap-2">
                     {track.issues.map((issue, j) => (
-                      <span key={j} className="text-xs bg-red-900/30 text-red-300 px-2 py-1 rounded">
+                      <span key={j} className="text-xs bg-rose-900/30 text-rose-300 px-2 py-1 rounded">
                         {issue}
                       </span>
                     ))}
@@ -160,14 +160,14 @@ export default function SpotifyAnalytics() {
 
         {/* Playlist Performance */}
         <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-green-400">📋 Top Performing Playlists</h2>
+          <h2 className="text-2xl font-bold mb-4 text-emerald-400">📋 Top Performing Playlists</h2>
           <div className="grid md:grid-cols-2 gap-4">
             {data?.playlists?.playlists?.slice(0, 6).map((p: any, i: number) => (
               <div key={i} className="p-4 bg-gray-800/30 rounded-lg">
                 <div className="font-medium">{p.name}</div>
                 <div className="flex justify-between text-sm mt-2">
                   <span className="text-gray-400">{p.type}</span>
-                  <span className="text-green-400">{p.followers?.toLocaleString() || 0} followers</span>
+                  <span className="text-emerald-400">{p.followers?.toLocaleString() || 0} followers</span>
                 </div>
                 <div className="text-xs text-gray-500 mt-1">Track velocity: +{Math.floor(Math.random() * 20)}%</div>
               </div>
@@ -176,7 +176,7 @@ export default function SpotifyAnalytics() {
         </div>
 
         {/* Evidence Pack Generator */}
-        <div className="bg-gradient-to-r from-purple-900/50 via-pink-900/50 to-red-900/50 rounded-2xl border border-purple-500 p-8">
+        <div className="bg-gradient-to-r from-purple-900/50 via-pink-900/50 to-rose-900/50 rounded-2xl border border-purple-500 p-8">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h2 className="text-3xl font-bold mb-2">⚖️ Generate Evidence Pack</h2>

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 
 interface Artist {
@@ -151,11 +151,11 @@ export default function LabelPortal() {
             🎵 Label Workspace
           </Link>
           <Link href="/ingest"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-sky-300 bg-sky-600/15 border border-sky-500/30 hover:bg-sky-600/25 transition">
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-indigo-300 bg-indigo-600/15 border border-indigo-500/30 hover:bg-indigo-600/25 transition">
             📂 Bulk Ingest
           </Link>
           <Link href="/catalog-staging"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-violet-300 bg-violet-600/15 border border-violet-500/30 hover:bg-violet-600/25 transition">
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-indigo-300 bg-indigo-600/15 border border-indigo-500/30 hover:bg-indigo-600/25 transition">
             🔄 Staging
           </Link>
           <Link href="/schema-parser"
@@ -167,15 +167,15 @@ export default function LabelPortal() {
             📋 CWR Generator
           </Link>
           <Link href="/master-catalog"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-cyan-300 bg-cyan-600/15 border border-cyan-500/30 hover:bg-cyan-600/25 transition">
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-indigo-300 bg-indigo-600/15 border border-indigo-500/30 hover:bg-indigo-600/25 transition">
             📂 Master Catalog
           </Link>
           <Link href="/forensic-audit"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-pink-300 bg-pink-600/15 border border-pink-500/30 hover:bg-pink-600/25 transition">
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-rose-300 bg-rose-600/15 border border-rose-500/30 hover:bg-rose-600/25 transition">
             🔬 Audit PDF
           </Link>
           <Link href="/lod-generator"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-orange-300 bg-orange-600/15 border border-orange-500/30 hover:bg-orange-600/25 transition">
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-amber-300 bg-amber-600/15 border border-amber-500/30 hover:bg-amber-600/25 transition">
             📜 LOD Generator
           </Link>
           <Link href="/mlc-search"
@@ -183,7 +183,7 @@ export default function LabelPortal() {
             🔎 MLC Search
           </Link>
           <Link href="/split-verification"
-            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-green-300 bg-green-600/15 border border-green-500/30 hover:bg-green-600/25 transition">
+            className="mt-1 w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-emerald-300 bg-emerald-600/15 border border-emerald-500/30 hover:bg-emerald-600/25 transition">
             ✅ Split Verification
           </Link>
         </nav>
@@ -244,24 +244,24 @@ export default function LabelPortal() {
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                   <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">Metadata Health Score</p>
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="text-5xl font-black text-red-400">{healthScore}%</div>
+                    <div className="text-5xl font-black text-rose-400">{healthScore}%</div>
                     <div>
                       <p className="text-sm text-slate-300 font-bold">Needs Attention</p>
                       <p className="text-xs text-gray-500">1,242 assets scanned</p>
                     </div>
                   </div>
                   <div className="w-full bg-white/10 rounded-full h-2 mb-4">
-                    <div className="bg-red-500 h-2 rounded-full" style={{width:`${healthScore}%`}} />
+                    <div className="bg-rose-500 h-2 rounded-full" style={{width:`${healthScore}%`}} />
                   </div>
                   <button onClick={() => setView('metadata')}
-                    className="w-full py-2 bg-red-500/10 border border-red-500/30 text-red-300 text-xs font-bold rounded-xl hover:bg-red-500/20 transition">
+                    className="w-full py-2 bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-bold rounded-xl hover:bg-rose-500/20 transition">
                     View Metadata Health →
                   </button>
                 </div>
 
                 <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                   <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4">Global Leakage</p>
-                  <p className="text-3xl font-black text-green-400">${totalUnclaimed.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
+                  <p className="text-3xl font-black text-emerald-400">${totalUnclaimed.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                   <p className="text-xs text-gray-500 mt-1 mb-4">uncollected across territories</p>
                   {TERRITORY_DATA.filter(t=>t.status!=='collecting').slice(0,3).map(t=>(
                     <div key={t.code} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0 last:pb-0">
@@ -315,10 +315,10 @@ export default function LabelPortal() {
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-sm font-black text-green-400">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
+                          <p className="text-sm font-black text-emerald-400">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                           <p className="text-xs text-gray-500">earned</p>
                         </div>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-green-500/20 text-green-300':'bg-yellow-500/20 text-yellow-300'}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-emerald-500/20 text-emerald-300':'bg-yellow-500/20 text-yellow-300'}`}>
                           {a.recouped?'RECOUPED':'UNRECOUPED'}
                         </span>
                       </div>
@@ -389,18 +389,18 @@ export default function LabelPortal() {
                         <p className="font-bold">{a.stage}</p>
                         <p className="text-xs text-gray-500">{a.genre}</p>
                       </div>
-                      <span className={`ml-auto px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-green-500/20 text-green-300':'bg-yellow-500/20 text-yellow-300'}`}>
+                      <span className={`ml-auto px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-emerald-500/20 text-emerald-300':'bg-yellow-500/20 text-yellow-300'}`}>
                         {a.recouped?'RECOUPED':'UNRECOUPED'}
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-white rounded-lg p-2">
                         <p className="text-gray-500 mb-0.5">Earnings</p>
-                        <p className="font-bold text-green-400">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
+                        <p className="font-bold text-emerald-400">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                       </div>
                       <div className="bg-white rounded-lg p-2">
                         <p className="text-gray-500 mb-0.5">Expenses</p>
-                        <p className="font-bold text-red-400">${a.expenses.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
+                        <p className="font-bold text-rose-400">${a.expenses.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                       </div>
                     </div>
                     {a.email && <p className="text-xs text-gray-500 mt-3 truncate">{a.email}</p>}
@@ -429,17 +429,17 @@ export default function LabelPortal() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
                 {TERRITORY_DATA.map(t => (
-                  <div key={t.code} className={`border rounded-xl p-4 ${t.status==='collecting'?'border-green-500/30 bg-green-500/5':t.status==='gap'?'border-yellow-500/30 bg-yellow-500/5':'border-red-500/30 bg-red-500/5'}`}>
+                  <div key={t.code} className={`border rounded-xl p-4 ${t.status==='collecting'?'border-emerald-500/30 bg-emerald-500/5':t.status==='gap'?'border-yellow-500/30 bg-yellow-500/5':'border-rose-500/30 bg-rose-500/5'}`}>
                     <div className="flex justify-between items-start mb-2">
                       <span className="text-xs font-black text-gray-500 uppercase">{t.code}</span>
-                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${t.status==='collecting'?'bg-green-500/20 text-green-300':t.status==='gap'?'bg-yellow-500/20 text-yellow-300':'bg-red-500/20 text-red-300'}`}>
+                      <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${t.status==='collecting'?'bg-emerald-500/20 text-emerald-300':t.status==='gap'?'bg-yellow-500/20 text-yellow-300':'bg-rose-500/20 text-rose-300'}`}>
                         {t.status.toUpperCase()}
                       </span>
                     </div>
                     <p className="text-xs text-slate-300 mb-2">{t.region}</p>
-                    <p className={`text-lg font-black ${t.status==='collecting'?'text-green-400':t.status==='gap'?'text-yellow-400':'text-red-400'}`}>${t.amount.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
+                    <p className={`text-lg font-black ${t.status==='collecting'?'text-emerald-400':t.status==='gap'?'text-yellow-400':'text-rose-400'}`}>${t.amount.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</p>
                     <div className="mt-2 bg-white/10 rounded-full h-1.5">
-                      <div className={`h-1.5 rounded-full ${t.status==='collecting'?'bg-green-500':t.status==='gap'?'bg-yellow-500':'bg-red-500'}`} style={{width:`${t.pct}%`}} />
+                      <div className={`h-1.5 rounded-full ${t.status==='collecting'?'bg-emerald-500':t.status==='gap'?'bg-yellow-500':'bg-rose-500'}`} style={{width:`${t.pct}%`}} />
                     </div>
                     <p className="text-[10px] text-gray-500 mt-1">{t.pct}% of total</p>
                   </div>
@@ -449,9 +449,9 @@ export default function LabelPortal() {
                 <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                   <h3 className="font-black text-sm uppercase tracking-wider text-gray-500">Territory Action List</h3>
                   <div className="flex gap-4 text-xs">
-                    <span className="text-green-400">● Collecting</span>
+                    <span className="text-emerald-400">● Collecting</span>
                     <span className="text-yellow-400">● Gap</span>
-                    <span className="text-red-400">● Unclaimed</span>
+                    <span className="text-rose-400">● Unclaimed</span>
                   </div>
                 </div>
                 <table className="w-full text-xs">
@@ -468,11 +468,11 @@ export default function LabelPortal() {
                       <tr key={t.code} className="hover:bg-white/5 transition">
                         <td className="p-4 font-bold text-slate-300">{t.region}</td>
                         <td className="p-4">
-                          <span className={`font-mono text-[10px] font-black ${t.status==='gap'?'text-yellow-400':'text-red-400'}`}>{t.status.toUpperCase()}</span>
+                          <span className={`font-mono text-[10px] font-black ${t.status==='gap'?'text-yellow-400':'text-rose-400'}`}>{t.status.toUpperCase()}</span>
                         </td>
-                        <td className="p-4 text-right font-mono font-black text-green-400">${t.amount.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
+                        <td className="p-4 text-right font-mono font-black text-emerald-400">${t.amount.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
                         <td className="p-4 text-right">
-                          <button className={`px-3 py-1 border text-[10px] font-black rounded-lg transition ${t.status==='gap'?'border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/20':'border-red-500/30 text-red-300 hover:bg-red-500/20'}`}>
+                          <button className={`px-3 py-1 border text-[10px] font-black rounded-lg transition ${t.status==='gap'?'border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/20':'border-rose-500/30 text-rose-300 hover:bg-rose-500/20'}`}>
                             {t.status==='gap'?'File Claim':'Register'}
                           </button>
                         </td>
@@ -501,12 +501,12 @@ export default function LabelPortal() {
                 <div className="flex gap-6">
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-gray-500 uppercase">Health Score</p>
-                    <p className="text-3xl font-black text-red-400">{healthScore}%</p>
+                    <p className="text-3xl font-black text-rose-400">{healthScore}%</p>
                   </div>
                   <div className="w-px bg-white/10" />
                   <div className="text-right">
                     <p className="text-[10px] font-bold text-gray-500 uppercase">Est. Monthly Leak</p>
-                    <p className="text-3xl font-black text-green-400">${totalLeak.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}.00</p>
+                    <p className="text-3xl font-black text-emerald-400">${totalLeak.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}.00</p>
                   </div>
                 </div>
               </div>
@@ -515,15 +515,15 @@ export default function LabelPortal() {
                 {METADATA_ISSUES.map(issue => {
                   const isCritical = issue.severity === 'critical';
                   const styles: Record<string, { card: string; badge: string; btn: string }> = {
-                    red:    { card: 'border-red-500/30 bg-red-500/5',       badge: 'bg-red-500/20 text-red-300',       btn: 'bg-white text-black hover:bg-red-500 hover:text-white border-transparent' },
-                    orange: { card: 'border-orange-500/30 bg-orange-500/5', badge: 'bg-orange-500/20 text-orange-300', btn: 'border-orange-500/50 text-orange-400 hover:bg-orange-500 hover:text-white' },
+                    red:    { card: 'border-rose-500/30 bg-rose-500/5',       badge: 'bg-rose-500/20 text-rose-300',       btn: 'bg-white text-black hover:bg-rose-500 hover:text-white border-transparent' },
+                    orange: { card: 'border-amber-500/30 bg-amber-500/5', badge: 'bg-amber-500/20 text-amber-300', btn: 'border-amber-500/50 text-amber-400 hover:bg-amber-500 hover:text-white' },
                     purple: { card: 'border-purple-500/30 bg-purple-500/5', badge: 'bg-purple-500/20 text-purple-300', btn: 'border-purple-500/50 text-purple-400 hover:bg-purple-500 hover:text-white' },
-                    blue:   { card: 'border-blue-500/30 bg-blue-500/5',     badge: 'bg-blue-500/20 text-blue-300',     btn: 'border-blue-500/50 text-blue-400 hover:bg-blue-500 hover:text-white' },
+                    blue:   { card: 'border-indigo-500/30 bg-indigo-500/5',     badge: 'bg-indigo-500/20 text-indigo-300',     btn: 'border-indigo-500/50 text-indigo-400 hover:bg-indigo-500 hover:text-white' },
                   };
                   const s = styles[issue.color] ?? styles.blue;
                   return (
                     <div key={issue.type} className={`glass p-6 rounded-3xl border relative overflow-hidden ${s.card}`}>
-                      {isCritical && <div className="absolute top-0 right-0 bg-red-500 text-[9px] font-black px-3 py-1 rounded-bl-lg">CRITICAL</div>}
+                      {isCritical && <div className="absolute top-0 right-0 bg-rose-500 text-[9px] font-black px-3 py-1 rounded-bl-lg">CRITICAL</div>}
                       <div className={`inline-flex items-center gap-2 px-2 py-0.5 rounded-full text-[10px] font-black mb-3 ${s.badge}`}>
                         {issue.count} issues
                       </div>
@@ -531,7 +531,7 @@ export default function LabelPortal() {
                       <p className="text-xs text-gray-500 mb-4">{issue.desc}</p>
                       <div className="flex items-center justify-between mb-4">
                         <span className="text-xs text-gray-500">Recovery value</span>
-                        <span className="text-sm font-black text-green-400">+${issue.value.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}/mo</span>
+                        <span className="text-sm font-black text-emerald-400">+${issue.value.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}/mo</span>
                       </div>
                       <Link href={(issue as any).href} className={`block w-full py-3 text-[10px] font-black uppercase rounded-xl transition border text-center ${s.btn}`}>
                         {issue.action}
@@ -557,17 +557,17 @@ export default function LabelPortal() {
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {([
-                      { title: "Trappin' Hard",     artist: "Young Thug",   issue: "MISSING_ISWC",   value: 1240.50, issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20',     href: '/mlc-search' },
+                      { title: "Trappin' Hard",     artist: "Young Thug",   issue: "MISSING_ISWC",   value: 1240.50, issueClass: 'text-rose-400',    btnClass: 'border-rose-500/30 text-rose-300 hover:bg-rose-500/20',     href: '/mlc-search' },
                       { title: "Neon Drip",          artist: "21 Savage",    issue: "DUPLICATE_ISRC", value: 890.00,  issueClass: 'text-purple-400', btnClass: 'border-purple-500/30 text-purple-300 hover:bg-purple-500/20', href: '/royalty-finder' },
-                      { title: "Street Ballad",      artist: "Metro Boomin", issue: "MISSING_UPC",    value: 450.25,  issueClass: 'text-blue-400',   btnClass: 'border-blue-500/30 text-blue-300 hover:bg-blue-500/20',     href: '/dashboard' },
-                      { title: "Zone 6 Forever",     artist: "Drake",        issue: "NAME_DRIFT",     value: 1100.75, issueClass: 'text-orange-400', btnClass: 'border-orange-500/30 text-orange-300 hover:bg-orange-500/20', href: '/schema-parser' },
-                      { title: "Midnight Frequency", artist: "Travis Scott", issue: "MISSING_ISWC",   value: 720.00,  issueClass: 'text-red-400',    btnClass: 'border-red-500/30 text-red-300 hover:bg-red-500/20',         href: '/mlc-search' },
+                      { title: "Street Ballad",      artist: "Metro Boomin", issue: "MISSING_UPC",    value: 450.25,  issueClass: 'text-indigo-400',   btnClass: 'border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/20',     href: '/dashboard' },
+                      { title: "Zone 6 Forever",     artist: "Drake",        issue: "NAME_DRIFT",     value: 1100.75, issueClass: 'text-amber-400', btnClass: 'border-amber-500/30 text-amber-300 hover:bg-amber-500/20', href: '/schema-parser' },
+                      { title: "Midnight Frequency", artist: "Travis Scott", issue: "MISSING_ISWC",   value: 720.00,  issueClass: 'text-rose-400',    btnClass: 'border-rose-500/30 text-rose-300 hover:bg-rose-500/20',         href: '/mlc-search' },
                     ] as const).map((r, i) => (
                       <tr key={i} className="hover:bg-white/5 transition">
                         <td className="p-4 font-bold text-slate-300">{r.title}</td>
                         <td className="p-4 text-gray-500">{r.artist}</td>
                         <td className="p-4"><span className={`${r.issueClass} font-mono text-[10px]`}>{r.issue}</span></td>
-                        <td className="p-4 text-right font-mono text-green-400 font-bold">+${r.value.toFixed(2)}</td>
+                        <td className="p-4 text-right font-mono text-emerald-400 font-bold">+${r.value.toFixed(2)}</td>
                         <td className="p-4 text-right">
                           <Link href={(r as any).href} className={`px-3 py-1 border text-[10px] font-black rounded-lg transition ${r.btnClass}`}>Auto-Fix</Link>
                         </td>
@@ -593,7 +593,7 @@ export default function LabelPortal() {
               <div className="grid grid-cols-3 gap-4 mb-6">
                 {[
                   { label: 'Total Advances',  value: '$'+artists.reduce((s,a)=>s+a.expenses,0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-slate-300' },
-                  { label: 'Total Earned',    value: '$'+artists.reduce((s,a)=>s+a.earnings,0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-green-400' },
+                  { label: 'Total Earned',    value: '$'+artists.reduce((s,a)=>s+a.earnings,0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-emerald-400' },
                   { label: 'Net Unrecouped',  value: '$'+artists.filter(a=>!a.recouped).reduce((s,a)=>s+(a.expenses-a.earnings),0).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0}), color: 'text-yellow-400' },
                 ].map(s => (
                   <div key={s.label} className="bg-slate-900/50 border border-slate-800 rounded-xl px-5 py-4">
@@ -628,19 +628,19 @@ export default function LabelPortal() {
                           </td>
                           <td className="px-5 py-4 text-right font-mono text-gray-500">${a.expenses.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
                           <td className="px-5 py-4 text-right font-mono text-slate-300">${a.earnings.toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
-                          <td className={`px-5 py-4 text-right font-mono font-semibold ${balance >= 0 ? 'text-green-400' : 'text-yellow-400'}`}>
+                          <td className={`px-5 py-4 text-right font-mono font-semibold ${balance >= 0 ? 'text-emerald-400' : 'text-yellow-400'}`}>
                             {balance >= 0 ? '+' : '-'}${Math.abs(balance).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}
                           </td>
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-2">
                               <div className="flex-1 bg-white/10 rounded-full h-1.5">
-                                <div className={`h-1.5 rounded-full ${a.recouped ? 'bg-green-500' : 'bg-yellow-500'}`} style={{width:`${pct}%`}} />
+                                <div className={`h-1.5 rounded-full ${a.recouped ? 'bg-emerald-500' : 'bg-yellow-500'}`} style={{width:`${pct}%`}} />
                               </div>
                               <span className="text-[10px] text-gray-500 font-mono w-8 text-right">{pct}%</span>
                             </div>
                           </td>
                           <td className="px-5 py-4 text-center">
-                            <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide ${a.recouped ? 'bg-green-500/15 text-green-400 border border-green-500/25' : 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/25'}`}>
+                            <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide ${a.recouped ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25' : 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/25'}`}>
                               {a.recouped ? 'RECOUPED' : 'PENDING'}
                             </span>
                           </td>
@@ -673,8 +673,8 @@ export default function LabelPortal() {
                       <p className="text-xs text-gray-500 mt-0.5">{c.type} · {c.date}</p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${c.status==='Active'?'bg-green-500/20 text-green-300':'bg-red-500/20 text-red-300'}`}>{c.status}</span>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${c.risk==='Low'?'bg-green-500/20 text-green-300':c.risk==='Medium'?'bg-yellow-500/20 text-yellow-300':'bg-red-500/20 text-red-300'}`}>{c.risk} Risk</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${c.status==='Active'?'bg-emerald-500/20 text-emerald-300':'bg-rose-500/20 text-rose-300'}`}>{c.status}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${c.risk==='Low'?'bg-emerald-500/20 text-emerald-300':c.risk==='Medium'?'bg-yellow-500/20 text-yellow-300':'bg-rose-500/20 text-rose-300'}`}>{c.risk} Risk</span>
                       <Link href="/attorney-portal" className="px-3 py-1 text-[10px] font-black border border-indigo-500/30 text-indigo-300 rounded-lg hover:bg-indigo-500/20 transition">Review</Link>
                     </div>
                   </div>
@@ -705,11 +705,11 @@ export default function LabelPortal() {
                     {artists.filter(a=>a.recouped).map(a=>(
                       <tr key={a.id} className="hover:bg-white/5 transition">
                         <td className="p-4 font-bold text-slate-300">{a.stage}</td>
-                        <td className="p-4 text-right font-mono font-black text-green-400">${(a.earnings-a.expenses).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
+                        <td className="p-4 text-right font-mono font-black text-emerald-400">${(a.earnings-a.expenses).toLocaleString('en-US', {useGrouping:true,maximumFractionDigits:0})}</td>
                         <td className="p-4 text-right text-gray-500">Feb 2026</td>
-                        <td className="p-4 text-right"><span className="text-green-400 font-black text-[10px]">READY</span></td>
+                        <td className="p-4 text-right"><span className="text-emerald-400 font-black text-[10px]">READY</span></td>
                         <td className="p-4 text-right">
-                          <button className="px-3 py-1 bg-green-600/20 border border-green-500/30 text-green-300 text-[10px] font-black rounded-lg hover:bg-green-600/40 transition">Pay Now</button>
+                          <button className="px-3 py-1 bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 text-[10px] font-black rounded-lg hover:bg-emerald-600/40 transition">Pay Now</button>
                         </td>
                       </tr>
                     ))}
@@ -747,7 +747,7 @@ export default function LabelPortal() {
                     <p className="text-sm font-bold text-white">MP3 Upload — Real Storage</p>
                     <p className="text-xs text-gray-500">Uploads to IDrive e2 with SHA-256 hash for chain of custody</p>
                   </div>
-                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 bg-green-900/40 text-green-400 border border-green-700/40 rounded">⚡ Live</span>
+                  <span className="ml-auto text-[10px] font-bold px-2 py-0.5 bg-emerald-900/40 text-emerald-400 border border-emerald-700/40 rounded">⚡ Live</span>
                 </div>
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -773,7 +773,7 @@ export default function LabelPortal() {
 
                   <div
                     onClick={() => mp3Ref.current?.click()}
-                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${mp3File ? 'border-green-500/50 bg-green-500/5' : 'border-gray-300 hover:border-indigo-500/50 hover:bg-indigo-500/5'}`}>
+                    className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${mp3File ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-gray-300 hover:border-indigo-500/50 hover:bg-indigo-500/5'}`}>
                     <div className="text-4xl mb-2">{mp3File ? '✅' : '🎵'}</div>
                     <p className="text-sm font-bold text-slate-300">
                       {mp3File ? mp3File.name : 'Click to select MP3 file'}
@@ -791,8 +791,8 @@ export default function LabelPortal() {
                   </button>
 
                   {uploadResult && !uploadResult.error && (
-                    <div className="p-4 bg-green-900/20 border border-green-700/40 rounded-xl space-y-2">
-                      <p className="text-sm font-bold text-green-400">✓ Upload successful</p>
+                    <div className="p-4 bg-emerald-900/20 border border-emerald-700/40 rounded-xl space-y-2">
+                      <p className="text-sm font-bold text-emerald-400">✓ Upload successful</p>
                       <div className="text-xs text-gray-500 space-y-1">
                         <div className="flex gap-3"><span className="text-slate-600 w-24">Track ID</span><span className="font-mono text-slate-300">{uploadResult.track_id}</span></div>
                         <div className="flex gap-3"><span className="text-slate-600 w-24">SHA-256</span><span className="font-mono text-slate-300 break-all">{uploadResult.hash}</span></div>
@@ -808,7 +808,7 @@ export default function LabelPortal() {
                     </div>
                   )}
                   {uploadResult?.error && (
-                    <div className="p-3 bg-red-900/20 border border-red-700/40 rounded-xl text-xs text-red-400 font-semibold">
+                    <div className="p-3 bg-rose-900/20 border border-rose-700/40 rounded-xl text-xs text-rose-400 font-semibold">
                       Error: {uploadResult.error}
                     </div>
                   )}
@@ -836,7 +836,7 @@ export default function LabelPortal() {
                   </div>
 
                   {importStatus && (
-                    <div className={`p-4 rounded-xl border text-sm font-semibold ${importStatus.includes('issue') ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' : importStatus.includes('Error') || importStatus.includes('Unsupported') ? 'bg-red-500/10 border-red-500/30 text-red-300' : 'bg-slate-800/60 border-gray-200 text-slate-300'}`}>
+                    <div className={`p-4 rounded-xl border text-sm font-semibold ${importStatus.includes('issue') ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300' : importStatus.includes('Error') || importStatus.includes('Unsupported') ? 'bg-rose-500/10 border-rose-500/30 text-rose-300' : 'bg-slate-800/60 border-gray-200 text-slate-300'}`}>
                       {importStatus}
                       {importStatus.includes('issue') && !csvFixed && (
                         <button onClick={() => { setCsvFixed(true); setImportStatus('Issues noted — fix in your spreadsheet app then re-upload.'); }}
@@ -860,7 +860,7 @@ export default function LabelPortal() {
                           <tbody className="divide-y divide-white/5">
                             {importRows.slice(1).map((row,i)=>(
                               <tr key={i} className="hover:bg-white/5">
-                                {row.map((cell,j)=><td key={j} className={`p-3 ${cell===''?'bg-red-500/10 text-red-400':'text-slate-300'}`}>{cell||'⚠ empty'}</td>)}
+                                {row.map((cell,j)=><td key={j} className={`p-3 ${cell===''?'bg-rose-500/10 text-rose-400':'text-slate-300'}`}>{cell||'⚠ empty'}</td>)}
                               </tr>
                             ))}
                           </tbody>

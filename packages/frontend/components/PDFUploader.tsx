@@ -120,27 +120,27 @@ export default function PDFUploader({ onDataExtracted }: { onDataExtracted: (dat
       </div>
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
-          <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-lg flex items-start space-x-2">
+          <AlertCircle className="h-5 w-5 text-rose-500 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-rose-600">{error}</p>
         </div>
       )}
 
       <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-500">
         <div className="flex items-center">
-          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+          <CheckCircle className="h-4 w-4 text-emerald-500 mr-1" />
           ASCAP/BMI/PRS
         </div>
         <div className="flex items-center">
-          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+          <CheckCircle className="h-4 w-4 text-emerald-500 mr-1" />
           DistroKid/TuneCore
         </div>
         <div className="flex items-center">
-          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+          <CheckCircle className="h-4 w-4 text-emerald-500 mr-1" />
           Label statements
         </div>
         <div className="flex items-center">
-          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+          <CheckCircle className="h-4 w-4 text-emerald-500 mr-1" />
           Royalty contracts
         </div>
       </div>

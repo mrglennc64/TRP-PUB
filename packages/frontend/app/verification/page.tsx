@@ -342,14 +342,14 @@ export default function VerifySplitsPage() {
 
         {/* Before vs After Banner */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white border border-gray-200 rounded-2xl p-6 mb-8 shadow-sm">
-          <div className="md:border-r-2 border-red-100 pr-6">
-            <h3 className="text-xl text-red-600 mb-4 flex items-center gap-2">
+          <div className="md:border-r-2 border-rose-100 pr-6">
+            <h3 className="text-xl text-rose-600 mb-4 flex items-center gap-2">
               <i className="fas fa-times-circle"></i> Before TrapRoyaltiesPro
             </h3>
             <div className="flex items-center gap-3 flex-wrap text-sm">
               <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">Label</span>
               <i className="fas fa-arrow-right text-gray-300"></i>
-              <span className="bg-red-100 text-red-600 px-4 py-2 rounded-full border border-red-200">Split Issues</span>
+              <span className="bg-rose-100 text-rose-600 px-4 py-2 rounded-full border border-rose-200">Split Issues</span>
               <i className="fas fa-arrow-right text-gray-300"></i>
               <span className="bg-gray-100 px-4 py-2 rounded-full border border-gray-200">PRO</span>
               <i className="fas fa-arrow-right text-gray-300"></i>
@@ -487,7 +487,7 @@ export default function VerifySplitsPage() {
               </button>
               <button 
                 onClick={loadErrorSample}
-                className="text-red-600 text-sm mx-2 font-medium hover:underline"
+                className="text-rose-600 text-sm mx-2 font-medium hover:underline"
               >
                 Load test with errors
               </button>
@@ -495,12 +495,12 @@ export default function VerifySplitsPage() {
 
             {/* Error Panel */}
             {errors.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 my-4">
-                <div className="flex items-center gap-2 text-red-600 font-semibold mb-3">
+              <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 my-4">
+                <div className="flex items-center gap-2 text-rose-600 font-semibold mb-3">
                   <i className="fas fa-exclamation-triangle"></i>
                   <span>Issues Detected</span>
                 </div>
-                <div className="text-red-800 text-sm mb-3">
+                <div className="text-rose-800 text-sm mb-3">
                   {errors.map((error, i) => (
                     <div key={i}>• {error.message}</div>
                   ))}
@@ -523,8 +523,8 @@ export default function VerifySplitsPage() {
                     <span className="font-semibold text-indigo-900">Summer Nights EP</span>
                     <span className={`text-xs px-2 py-1 rounded-full ${
                       errors.length > 0 
-                        ? 'bg-red-100 text-red-600' 
-                        : 'bg-green-100 text-green-700'
+                        ? 'bg-rose-100 text-rose-600' 
+                        : 'bg-emerald-100 text-emerald-700'
                     }`}>
                       {errors.length > 0 ? `${errors.length} issues` : 'Ready'}
                     </span>
@@ -537,7 +537,7 @@ export default function VerifySplitsPage() {
                         (e.message.includes('missing') && !item.name)
                       )
                       return (
-                        <div key={i} className={`flex justify-between items-center py-2 ${hasError ? 'bg-red-50 -mx-5 px-5' : ''}`}>
+                        <div key={i} className={`flex justify-between items-center py-2 ${hasError ? 'bg-rose-50 -mx-5 px-5' : ''}`}>
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-gray-200 rounded-lg flex items-center justify-center font-semibold text-indigo-900">
                               {item.name?.[0] || '?'}
@@ -547,7 +547,7 @@ export default function VerifySplitsPage() {
                               <div className="text-xs text-gray-500">{item.role} · IPI: {item.ipi || 'Missing'}</div>
                             </div>
                           </div>
-                          <span className={`font-semibold ${hasError ? 'text-red-600' : 'text-indigo-900'}`}>
+                          <span className={`font-semibold ${hasError ? 'text-rose-600' : 'text-indigo-900'}`}>
                             {item.percentage}%
                           </span>
                         </div>
@@ -609,9 +609,9 @@ export default function VerifySplitsPage() {
 
                   <div className="flex justify-between items-center py-2">
                     <span className="text-gray-500 text-sm flex items-center gap-2">
-                      <i className="fas fa-check-circle text-green-600"></i> Status
+                      <i className="fas fa-check-circle text-emerald-600"></i> Status
                     </span>
-                    <span className="text-green-600 font-medium text-sm">Verified ✓</span>
+                    <span className="text-emerald-600 font-medium text-sm">Verified ✓</span>
                   </div>
 
                   {/* System Reference */}
@@ -673,7 +673,7 @@ export default function VerifySplitsPage() {
 
             {/* Payment Summary */}
             {currentStep >= 4 && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5">
                 <div className="flex justify-between items-center mb-4">
                   <span className="font-semibold text-indigo-900 flex items-center gap-2">
                     <i className="fas fa-credit-card"></i> Payment Summary
@@ -690,7 +690,7 @@ export default function VerifySplitsPage() {
                   </div>
                   <div className="flex justify-between py-2 border-b border-gray-100">
                     <span className="text-gray-500">Swedish Tax Withholding (25%)</span>
-                    <span className="font-semibold text-red-600">-${taxAmount.toLocaleString()}</span>
+                    <span className="font-semibold text-rose-600">-${taxAmount.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between py-2">
                     <span className="text-gray-500">Net Payment</span>
@@ -698,7 +698,7 @@ export default function VerifySplitsPage() {
                   </div>
                 </div>
 
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-800 flex items-center gap-2 mb-4">
+                <div className="bg-rose-50 border border-rose-200 rounded-lg p-3 text-xs text-rose-800 flex items-center gap-2 mb-4">
                   <i className="fas fa-info-circle"></i>
                   <span>25% tax withholding automatically calculated for Swedish payees</span>
                 </div>
@@ -714,7 +714,7 @@ export default function VerifySplitsPage() {
                         </div>
                         <div className="text-right">
                           <div className="font-semibold text-indigo-900">${item.grossShare.toLocaleString()}</div>
-                          <div className="text-xs text-red-600">-${item.taxShare.toLocaleString()} tax</div>
+                          <div className="text-xs text-rose-600">-${item.taxShare.toLocaleString()} tax</div>
                           <div className="text-xs text-indigo-900 font-medium">${item.netShare.toLocaleString()} net</div>
                         </div>
                       </div>

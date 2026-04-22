@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-white font-bold mb-4">TrapRoyalties Pro</h3>
+            <h3 className="text-white font-bold mb-4">VerseIQ</h3>
             <p className="text-sm">The protocol that powers transparent music royalties.</p>
           </div>
           <div>
@@ -36,7 +36,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          © 2026 TrapRoyalties Pro. All rights reserved.
+          © 2026 VerseIQ. All rights reserved.
         </div>
       </div>
     </footer>

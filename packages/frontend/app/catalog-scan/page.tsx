@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 // ── Types ─────────────────────────────────────────────────────────────
@@ -60,7 +60,7 @@ function ScoreRing({ score }: { score: number }) {
 }
 
 function VerdictDot({ color }: { color: string }) {
-  const cls = color === 'red' ? 'bg-red-500' : color === 'yellow' ? 'bg-yellow-500' : color === 'green' ? 'bg-green-500' : 'bg-slate-500';
+  const cls = color === 'red' ? 'bg-rose-500' : color === 'yellow' ? 'bg-yellow-500' : color === 'green' ? 'bg-emerald-500' : 'bg-slate-500';
   return <span className={`inline-block w-2 h-2 rounded-full ${cls} flex-shrink-0`} />;
 }
 
@@ -179,14 +179,14 @@ export default function CatalogScanPage() {
               />
               <p className="text-[11px] text-slate-600 mt-1">
                 {parsedCount > 0 ? (
-                  <span className={parsedCount > 25 ? 'text-red-400' : 'text-slate-400'}>
+                  <span className={parsedCount > 25 ? 'text-rose-400' : 'text-slate-400'}>
                     {parsedCount} valid ISRC{parsedCount !== 1 ? 's' : ''} detected{parsedCount > 25 ? ' — reduce to 25 max' : ''}
                   </span>
                 ) : 'No ISRCs detected yet'}
               </p>
             </div>
 
-            {error && <div className="mb-4 p-3 bg-red-900/20 border border-red-800 rounded text-sm text-red-300">{error}</div>}
+            {error && <div className="mb-4 p-3 bg-rose-900/20 border border-rose-800 rounded text-sm text-rose-300">{error}</div>}
 
             <button
               onClick={handleScan}
@@ -214,10 +214,10 @@ export default function CatalogScanPage() {
               <div className="flex items-start justify-between gap-6 flex-wrap">
                 <div className="flex-1">
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Summary of Loss — {result.label}</p>
-                  <p className="text-3xl font-bold text-red-400">${result.leakage_total.toLocaleString()}</p>
+                  <p className="text-3xl font-bold text-rose-400">${result.leakage_total.toLocaleString()}</p>
                   <p className="text-xs text-slate-500 mt-1">Total estimated unclaimed revenue across {result.actionable_claims} actionable claim{result.actionable_claims !== 1 ? 's' : ''}</p>
                   {result.black_box_count > 0 && (
-                    <p className="text-xs text-red-400 font-bold mt-2">⚠ {result.black_box_count} Black Box detection{result.black_box_count !== 1 ? 's' : ''} — funds actively held in unmatched pool</p>
+                    <p className="text-xs text-rose-400 font-bold mt-2">⚠ {result.black_box_count} Black Box detection{result.black_box_count !== 1 ? 's' : ''} — funds actively held in unmatched pool</p>
                   )}
                 </div>
                 <ScoreRing score={result.health_score} />
@@ -227,9 +227,9 @@ export default function CatalogScanPage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
                 {[
                   { label: 'Total Tracks', value: result.total_tracks.toString(), sub: 'scanned', color: 'text-slate-300' },
-                  { label: 'Exposure Rate', value: result.exposure_rate + '%', sub: 'at risk', color: result.exposure_rate > 50 ? 'text-red-400' : result.exposure_rate > 20 ? 'text-yellow-400' : 'text-green-400' },
-                  { label: 'Actionable Claims', value: result.actionable_claims.toString(), sub: 'ready to file', color: result.actionable_claims > 0 ? 'text-red-400' : 'text-green-400' },
-                  { label: 'Black Box', value: result.black_box_count.toString(), sub: 'detected', color: result.black_box_count > 0 ? 'text-red-400' : 'text-slate-400' },
+                  { label: 'Exposure Rate', value: result.exposure_rate + '%', sub: 'at risk', color: result.exposure_rate > 50 ? 'text-rose-400' : result.exposure_rate > 20 ? 'text-yellow-400' : 'text-emerald-400' },
+                  { label: 'Actionable Claims', value: result.actionable_claims.toString(), sub: 'ready to file', color: result.actionable_claims > 0 ? 'text-rose-400' : 'text-emerald-400' },
+                  { label: 'Black Box', value: result.black_box_count.toString(), sub: 'detected', color: result.black_box_count > 0 ? 'text-rose-400' : 'text-slate-400' },
                 ].map(m => (
                   <div key={m.label} className="bg-slate-800/30 rounded p-3">
                     <p className="text-[10px] text-slate-500 uppercase">{m.label}</p>
@@ -242,7 +242,7 @@ export default function CatalogScanPage() {
               {/* Action sidebar buttons */}
               <div className="flex flex-wrap gap-2 mt-5 pt-5 border-t border-slate-800">
                 <Link href="/attorney-portal"
-                  className="flex items-center gap-2 px-4 py-2 bg-red-700/80 hover:bg-red-700 text-white text-xs font-bold rounded transition">
+                  className="flex items-center gap-2 px-4 py-2 bg-rose-700/80 hover:bg-rose-700 text-white text-xs font-bold rounded transition">
                   ⚖️ Generate Letter of Direction
                 </Link>
                 <Link href="/cwr-generator"
@@ -274,7 +274,7 @@ export default function CatalogScanPage() {
 
               <div className="divide-y divide-slate-800/60">
                 {result.tracks.map((t, i) => (
-                  <div key={t.isrc} className={`px-5 py-3.5 hover:bg-slate-800/20 transition ${t.black_box ? 'bg-red-950/10' : ''}`}>
+                  <div key={t.isrc} className={`px-5 py-3.5 hover:bg-slate-800/20 transition ${t.black_box ? 'bg-rose-950/10' : ''}`}>
                     <div className="flex items-center gap-3">
                       {/* Rank */}
                       <span className="text-xs font-mono text-slate-600 w-5 flex-shrink-0">{i + 1}</span>
@@ -287,13 +287,13 @@ export default function CatalogScanPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="text-sm font-medium text-slate-200 truncate">{t.song_title}</p>
                           {t.black_box && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-red-900/50 text-red-400 border border-red-800/50 rounded uppercase">Black Box</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-rose-900/50 text-rose-400 border border-rose-800/50 rounded uppercase">Black Box</span>
                           )}
                           {!t.mlc_matched && !t.black_box && (
                             <span className="text-[9px] font-bold px-1.5 py-0.5 bg-yellow-900/30 text-yellow-500 border border-yellow-800/30 rounded uppercase">Unmatched</span>
                           )}
                           {!t.has_iswc && (
-                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-orange-900/30 text-orange-400 border border-orange-800/30 rounded uppercase">No ISWC</span>
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 bg-amber-900/30 text-amber-400 border border-amber-800/30 rounded uppercase">No ISWC</span>
                           )}
                         </div>
                         <div className="flex items-center gap-3 mt-0.5 flex-wrap">
@@ -307,7 +307,7 @@ export default function CatalogScanPage() {
                       <div className="flex items-center gap-3 flex-shrink-0 ml-2">
                         <div className="text-right">
                           {t.estimated_revenue > 0 ? (
-                            <p className={`text-sm font-bold ${t.black_box ? 'text-red-400' : 'text-slate-300'}`}>
+                            <p className={`text-sm font-bold ${t.black_box ? 'text-rose-400' : 'text-slate-300'}`}>
                               ${t.estimated_revenue.toLocaleString()}
                             </p>
                           ) : (

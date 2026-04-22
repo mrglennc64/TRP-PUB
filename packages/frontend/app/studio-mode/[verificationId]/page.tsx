@@ -139,7 +139,7 @@ export default function StudioModeSigningPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-md text-center">
-          <div className="text-6xl text-red-500 mb-4">⏰</div>
+          <div className="text-6xl text-rose-500 mb-4">⏰</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Link Expired</h1>
           <p className="text-gray-600 mb-6">
             This handshake link expired on {new Date(handshake.expiresAt).toLocaleDateString()}.
@@ -157,8 +157,8 @@ export default function StudioModeSigningPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-md text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
@@ -171,8 +171,8 @@ export default function StudioModeSigningPage() {
             <p className="text-xs font-mono break-all bg-white p-2 rounded border border-gray-200">
               {sealHash}
             </p>
-            <p className="text-xs text-green-600 mt-2 flex items-center">
-              <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
+            <p className="text-xs text-emerald-600 mt-2 flex items-center">
+              <span className="w-2 h-2 bg-emerald-600 rounded-full mr-2"></span>
               Verified on Monad Blockchain
             </p>
           </div>
@@ -274,8 +274,8 @@ export default function StudioModeSigningPage() {
                 )}
               </button>
             ) : (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                <p className="text-green-700 flex items-center">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
+                <p className="text-emerald-700 flex items-center">
                   <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
@@ -287,7 +287,7 @@ export default function StudioModeSigningPage() {
             <button
               onClick={handleSign}
               disabled={!biometricVerified || !currentSigner || signing}
-              className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold text-lg hover:from-purple-500 hover:to-pink-500 transition disabled:opacity-50"
+              className="w-full py-4 bg-gradient-to-r from-purple-600 to-rose-600 text-white rounded-lg font-bold text-lg hover:from-purple-500 hover:to-rose-500 transition disabled:opacity-50"
             >
               {signing ? (
                 <span className="flex items-center justify-center">
@@ -308,7 +308,7 @@ export default function StudioModeSigningPage() {
 
         {/* Security Badge */}
         <div className="mt-6 flex justify-center items-center space-x-2 text-sm text-gray-500">
-          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+          <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
           <span>End-to-end encrypted • Biometric verified • Monad blockchain sealed</span>
         </div>
       </main>

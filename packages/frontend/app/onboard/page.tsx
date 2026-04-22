@@ -21,9 +21,9 @@ const FOLDERS = [
     sub: 'The "Evidence"',
     icon: '📋',
     color: 'purple',
-    desc: 'PDF or CSV statements from SoundExchange, ASCAP/BMI, and The MLC. This is where the gap between what you earned and what you collected becomes visible.',
+    desc: 'PDF or CSV statements from Rights Administrator, ASCAP/BMI, and The MLC. This is where the gap between what you earned and what you collected becomes visible.',
     accepts: '.pdf, .csv',
-    examples: ['SoundExchange quarterly statement', 'ASCAP/BMI royalty statement', 'The MLC matching report'],
+    examples: ['Rights Administrator quarterly statement', 'ASCAP/BMI royalty statement', 'The MLC matching report'],
   },
   {
     id: 'splits',
@@ -65,7 +65,7 @@ const AUTO_FIX_ITEMS = [
 const LEAKAGE_TABLE = [
   { source: 'Missing ISWC → ISRC Link', tracks: 38, estLoss: 84000,  severity: 'critical' },
   { source: 'IPI Mismatch / Writer Gaps', tracks: 12, estLoss: 22500, severity: 'critical' },
-  { source: 'Unclaimed SoundExchange',   tracks: 22, estLoss: 41200,  severity: 'warning'  },
+  { source: 'Unclaimed Rights Administrator',   tracks: 22, estLoss: 41200,  severity: 'warning'  },
   { source: 'Double Claims / Over-Alloc', tracks: 5, estLoss: 39500,  severity: 'warning'  },
 ];
 
@@ -73,7 +73,7 @@ const STEPS = [
   { n: '01', icon: '🔌', title: 'Plug in USB',          desc: 'Arrive at the office with a portable external drive containing the 4 data folders.' },
   { n: '02', icon: '📂', title: 'Drag Folders In',       desc: 'Client drags each USB folder into the corresponding upload zone. All encryption happens locally in the browser before any data leaves their machine.' },
   { n: '03', icon: '🧠', title: 'AI Parsing Engine',     desc: 'Schema-agnostic parser identifies columns across any distributor format. DistroKid, The Orchard, UnitedMasters — all normalized to the same Master Catalog JSON.' },
-  { n: '04', icon: '🔍', title: 'Forensic Scan',         desc: 'Cross-references 15+ databases: MusicBrainz, SoundExchange, ASCAP, BMI, The MLC, ISRC Registry, Spotify, Apple Music, AcoustID.' },
+  { n: '04', icon: '🔍', title: 'Forensic Scan',         desc: 'Cross-references 15+ databases: MusicBrainz, Rights Administrator, ASCAP, BMI, The MLC, ISRC Registry, Spotify, Apple Music, AcoustID.' },
   { n: '05', icon: '⚡', title: 'Auto-Fix Triggers',     desc: 'Critical errors surface instantly. One-click submission generates CWR files, submits ISRC requests, and flags splits for attorney review.' },
   { n: '06', icon: '💰', title: 'Live Dashboard',        desc: 'Mock data is replaced by real forensic math. The "$187,200 Projected Recovery Opportunity" becomes specific to their catalog.' },
 ];
@@ -176,7 +176,7 @@ export default function OnboardPage() {
                 indigo: done ? 'border-indigo-500/60 bg-indigo-600/10' : over ? 'border-indigo-400 bg-indigo-600/15' : 'border-white/10 bg-[#0f172a]',
                 purple: done ? 'border-purple-500/60 bg-purple-600/10' : over ? 'border-purple-400 bg-purple-600/15' : 'border-white/10 bg-[#0f172a]',
                 emerald: done ? 'border-emerald-500/60 bg-emerald-600/10' : over ? 'border-emerald-400 bg-emerald-600/15' : 'border-white/10 bg-[#0f172a]',
-                red: done ? 'border-red-500/60 bg-red-600/10' : over ? 'border-red-400 bg-red-600/15' : 'border-white/10 bg-[#0f172a]',
+                red: done ? 'border-rose-500/60 bg-rose-600/10' : over ? 'border-rose-400 bg-rose-600/15' : 'border-white/10 bg-[#0f172a]',
               }[f.color];
               return (
                 <div
@@ -257,14 +257,14 @@ export default function OnboardPage() {
         {/* Forensic Scan Results */}
         {scanDone && (
           <section className="fade-up">
-            <div className="bg-[#0f172a] border border-red-500/30 rounded-2xl overflow-hidden">
-              <div className="px-6 py-4 bg-red-500/10 border-b border-red-500/20 flex items-center justify-between">
+            <div className="bg-[#0f172a] border border-rose-500/30 rounded-2xl overflow-hidden">
+              <div className="px-6 py-4 bg-rose-500/10 border-b border-rose-500/20 flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] font-mono text-red-400 uppercase tracking-widest mb-1">CONFIDENTIAL — Forensic Metadata Audit</div>
+                  <div className="text-[10px] font-mono text-rose-400 uppercase tracking-widest mb-1">CONFIDENTIAL — Forensic Metadata Audit</div>
                   <h2 className="text-lg font-black text-white">⚠ CRITICAL ACTION REQUIRED</h2>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-black text-red-400">${totalLeakage.toLocaleString('en-US')}</div>
+                  <div className="text-3xl font-black text-rose-400">${totalLeakage.toLocaleString('en-US')}</div>
                   <div className="text-xs text-slate-500">Projected Recovery Opportunity</div>
                 </div>
               </div>
@@ -274,17 +274,17 @@ export default function OnboardPage() {
                   <div className="bg-[#1e293b] rounded-xl p-4 text-center border border-white/5">
                     <div className="text-2xl font-black text-white">69%</div>
                     <div className="text-xs text-slate-500 mt-1">Metadata Health Score</div>
-                    <div className="text-[10px] text-red-400 mt-0.5">Industry standard: &gt;95%</div>
+                    <div className="text-[10px] text-rose-400 mt-0.5">Industry standard: &gt;95%</div>
                   </div>
                   <div className="bg-[#1e293b] rounded-xl p-4 text-center border border-white/5">
-                    <div className="text-2xl font-black text-orange-400">31%</div>
+                    <div className="text-2xl font-black text-amber-400">31%</div>
                     <div className="text-xs text-slate-500 mt-1">Metadata Leakage Rate</div>
                     <div className="text-[10px] text-slate-600 mt-0.5">Black Box accumulation</div>
                   </div>
                   <div className="bg-[#1e293b] rounded-xl p-4 text-center border border-white/5">
-                    <div className="text-2xl font-black text-red-400">5</div>
+                    <div className="text-2xl font-black text-rose-400">5</div>
                     <div className="text-xs text-slate-500 mt-1">Critical Errors</div>
-                    <div className="text-[10px] text-red-400 mt-0.5">Payments currently locked</div>
+                    <div className="text-[10px] text-rose-400 mt-0.5">Payments currently locked</div>
                   </div>
                 </div>
 
@@ -305,17 +305,17 @@ export default function OnboardPage() {
                           <tr key={i} className="border-b border-white/5 hover:bg-white/3 transition">
                             <td className="py-3 px-3">
                               <div className="flex items-center gap-2">
-                                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${row.severity === 'critical' ? 'bg-red-500' : 'bg-orange-400'}`} />
+                                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${row.severity === 'critical' ? 'bg-rose-500' : 'bg-amber-400'}`} />
                                 <span className="text-white text-sm">{row.source}</span>
                               </div>
                             </td>
                             <td className="py-3 px-3 text-center text-slate-400 text-sm">{row.tracks} tracks</td>
-                            <td className="py-3 px-3 text-right font-bold text-red-400">${row.estLoss.toLocaleString('en-US')}</td>
+                            <td className="py-3 px-3 text-right font-bold text-rose-400">${row.estLoss.toLocaleString('en-US')}</td>
                           </tr>
                         ))}
-                        <tr className="border-t border-red-500/30 bg-red-500/5">
+                        <tr className="border-t border-rose-500/30 bg-rose-500/5">
                           <td colSpan={2} className="py-3 px-3 font-black text-white">TOTAL PROJECTED RECOVERY</td>
-                          <td className="py-3 px-3 text-right font-black text-red-400 text-lg">${totalLeakage.toLocaleString('en-US')}</td>
+                          <td className="py-3 px-3 text-right font-black text-rose-400 text-lg">${totalLeakage.toLocaleString('en-US')}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -338,13 +338,13 @@ export default function OnboardPage() {
           <div className="space-y-2">
             {AUTO_FIX_ITEMS.map((item, i) => (
               <div key={i} className={`flex items-center gap-4 bg-[#0f172a] border rounded-xl px-4 py-3 ${
-                item.color === 'red' ? 'border-red-500/20' : item.color === 'orange' ? 'border-orange-500/20' : 'border-white/5'
+                item.color === 'red' ? 'border-rose-500/20' : item.color === 'orange' ? 'border-amber-500/20' : 'border-white/5'
               }`}>
                 <span className="text-lg flex-shrink-0">{item.icon}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-xs font-bold uppercase tracking-wide ${
-                      item.color === 'red' ? 'text-red-400' : item.color === 'orange' ? 'text-orange-400' : 'text-blue-400'
+                      item.color === 'red' ? 'text-rose-400' : item.color === 'orange' ? 'text-amber-400' : 'text-indigo-400'
                     }`}>{item.severity}</span>
                     <span className="text-white text-sm font-semibold">{item.label}</span>
                   </div>
@@ -352,10 +352,10 @@ export default function OnboardPage() {
                 </div>
                 <button className={`flex-shrink-0 text-xs px-3 py-1.5 rounded-lg font-semibold transition ${
                   item.color === 'red'
-                    ? 'bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30'
+                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30'
                     : item.color === 'orange'
-                    ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30 hover:bg-orange-500/30'
-                    : 'bg-blue-500/20 text-blue-300 border border-blue-500/30 hover:bg-blue-500/30'
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30'
+                    : 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30'
                 }`}>
                   Auto-Fix →
                 </button>

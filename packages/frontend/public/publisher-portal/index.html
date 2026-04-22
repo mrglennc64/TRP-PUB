@@ -253,6 +253,25 @@
       .howit-row { flex-direction: column; }
       .navbar { flex-direction: column; align-items: stretch; }
     }
+
+    /* inline heroicon-style SVGs */
+    .icon {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: -0.15em;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .icon-check {
+      width: 0.9em;
+      height: 0.9em;
+      margin-right: 0.2em;
+    }
   </style>
 </head>
 <body>
@@ -261,41 +280,40 @@
   <div class="navbar">
     <a href="/publisher-portal" style="text-decoration:none;"><div class="logo">TrapRoyaltiesPro</div></a>
     <div class="nav-links">
-      <a href="/publisher-portal/pages/demo-overview.html">How it Works</a>
+      <a href="/publisher-portal/pages/how-it-works.html">How it Works</a>
       <a href="/publisher-portal/split-verification.html">Split Verification</a>
-      <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html">Cleaning Wizard</a>
+      <a href="/publisher-portal/pages/cleaning-wizard.html">Cleaning Wizard</a>
       <a href="/publisher-portal/pages/publisher.html">For Publishers</a>
       <a href="/publisher-portal/FAQ.html">FAQ</a>
       <a href="/publisher-portal/documents.html">Documents</a>
-      <a href="/publisher-portal/pages/demo.html" class="demo-badge">🎬 Demo</a>
+      <a href="/publisher-portal/pages/preview.html" class="demo-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M7 6l-2 4M12 6l-2 4M17 6l-2 4"/></svg> Preview</a>
       <span class="demo-badge"><span class="live-dot"></span> Live</span>
     </div>
   </div>
 
   <!-- Hero Section -->
   <div class="hero">
-    <h1>💥 <span class="accent">Fix Metadata. Recover Royalties.</span><br>Before They're Lost in the System.</h1>
+    <h1><span class="accent">Fix Metadata. Recover Royalties.</span><br>Before They're Lost in the System.</h1>
     <p>TRP helps publishers identify metadata gaps, ownership conflicts, and registration issues across global rights systems — before they result in delayed or unclaimed royalties.</p>
     <div class="hero-badge-group">
-      <span class="trust-badge">🔌 No integration required</span>
-      <span class="trust-badge">✋ No automatic changes</span>
-      <span class="trust-badge">🎛️ You stay in control</span>
+      <span class="trust-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v4a5 5 0 01-10 0z"/><path d="M12 17v5"/></svg> No integration required</span>
+      <span class="trust-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 11V6a2 2 0 00-4 0M14 10V4a2 2 0 00-4 0v2"/><path d="M10 10.5V6a2 2 0 00-4 0v8"/><path d="M18 8a2 2 0 014 0v6a8 8 0 01-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 012.83-2.82L7 15"/></svg> No automatic changes</span>
+      <span class="trust-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg> You stay in control</span>
     </div>
     <div class="cta-group">
-      <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html" class="btn-primary">🚀 Run a Catalog Check →</a>
-      <a href="/publisher-portal/split-verification.html" class="btn-outline">👉 Scan Your Catalog</a>
+      <a href="/publisher-portal/pages/cleaning-wizard.html" class="btn-outline"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Scan Your Catalog</a>
     </div>
   </div>
 
   <!-- For Publishers + Why this matters -->
   <div class="grid-2">
     <div class="card">
-      <h3>🎯 For Publishers — Clean Data. Faster Money.</h3>
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> For Publishers — Clean Data. Faster Money.</h3>
       <p>TRP helps publishers submit accurate, consistent metadata across global collection societies and platforms such as ASCAP, BMI, SoundExchange, and PRS for Music.</p>
       <p style="margin-top: 0.8rem;"><strong>Join our 30-day pilot</strong> to reduce rejected works, eliminate manual correction cycles, and accelerate royalty flows.</p>
     </div>
     <div class="card">
-      <h3>💰 Why this matters</h3>
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 000 4h4a2 2 0 010 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg> Why this matters</h3>
       <p>Most catalogs contain <strong>10–30% metadata-related revenue leakage</strong> due to:</p>
       <ul>
         <li>Missing or incorrect ISRCs</li>
@@ -303,26 +321,26 @@
         <li>Unregistered works</li>
         <li>Cross-territory metadata mismatches</li>
       </ul>
-      <p style="margin-top: 0.5rem;">👉 TRP identifies these issues before they impact your revenue.</p>
+      <p style="margin-top: 0.5rem;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> TRP identifies these issues before they impact your revenue.</p>
     </div>
   </div>
 
   <!-- Benefits for Publishers + What you provide / receive -->
   <div class="grid-2">
     <div class="card">
-      <h3>✅ Benefits for Publishers</h3>
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg> Benefits for Publishers</h3>
       <div class="benefits-list">
-        <span class="benefit-pill">✓ Fewer rejected registrations</span>
-        <span class="benefit-pill">✓ Faster royalty payouts</span>
-        <span class="benefit-pill">✓ Reduced manual workload</span>
-        <span class="benefit-pill">✓ Clear chain-of-title across territories</span>
-        <span class="benefit-pill">✓ Consistent writer & publisher identifiers (IPI/CAE)</span>
-        <span class="benefit-pill">✓ Full audit trail of all changes</span>
-        <span class="benefit-pill">✓ Free 30-day pilot</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Fewer rejected registrations</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Faster royalty payouts</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Reduced manual workload</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Clear chain-of-title across territories</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Consistent writer &amp; publisher identifiers (IPI/CAE)</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Full audit trail of all changes</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Free 30-day pilot</span>
       </div>
     </div>
     <div class="card">
-      <h3>📥 What you provide</h3>
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> What you provide</h3>
       <p>20–50 recent works in:</p>
       <ul>
         <li>CWR</li>
@@ -330,7 +348,7 @@
         <li>Excel</li>
         <li>Split sheets</li>
       </ul>
-      <h3 style="margin-top: 1rem;">📦 What you receive</h3>
+      <h3 style="margin-top: 1rem;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><polyline points="3 8 12 13 21 8"/><line x1="12" y1="13" x2="12" y2="23"/></svg> What you receive</h3>
       <ul>
         <li>Pre-validated, registration-ready metadata</li>
         <li>Metadata & Royalty Risk Report (before/after)</li>
@@ -343,30 +361,27 @@
 
   <!-- The #1 Problem We Solve -->
   <div class="card" style="background: #fefaf0; border-color: #f7e3af;">
-    <h3>⚠️ The #1 Problem We Solve</h3>
+    <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> The #1 Problem We Solve</h3>
     <p>Fragmented and inconsistent metadata across systems leads to: delayed payments, unmatched works, royalty leakage, increased operational overhead.</p>
     <p style="margin-top: 0.8rem;"><strong>TRP detects and resolves these issues before submission and across systems.</strong></p>
-    <div style="margin-top: 1rem;">
-      <a href="/publisher-portal/split-verification.html" class="btn-outline" style="background: white;">👉 Open Split Verification Tool</a>
-    </div>
   </div>
 
   <!-- How TRP Works (4 steps) -->
-  <h2 class="section-title">⚙️ How TRP Works</h2>
+  <h2 class="section-title"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> How TRP Works</h2>
   <div class="howit-row">
-    <div class="step"><div class="step-num">1</div><strong>📤 Upload Once</strong><br>CWR, DDEX, Excel — no workflow changes</div>
-    <div class="step"><div class="step-num">2</div><strong>🔍 Automatic Validation</strong><br>Checks splits, identifiers, roles, and registration gaps</div>
-    <div class="step"><div class="step-num">3</div><strong>💰 Identify Revenue Risk</strong><br>Surfaces unclaimed royalties and metadata issues</div>
-    <div class="step"><div class="step-num">4</div><strong>✅ Export Clean Data</strong><br>Ready for submission across global rights systems</div>
+    <div class="step"><div class="step-num">1</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Once</strong><br>CWR, DDEX, Excel — no workflow changes</div>
+    <div class="step"><div class="step-num">2</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Automatic Validation</strong><br>Checks splits, identifiers, roles, and registration gaps</div>
+    <div class="step"><div class="step-num">3</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 000 4h4a2 2 0 010 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg> Identify Revenue Risk</strong><br>Surfaces unclaimed royalties and metadata issues</div>
+    <div class="step"><div class="step-num">4</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg> Export Clean Data</strong><br>Ready for submission across global rights systems</div>
   </div>
 
   <!-- 30-Day Publisher Pilot + outcomes -->
   <div class="pilot-highlight">
-    <h3 style="font-size: 1.5rem; font-weight: 800;">🚀 30-Day Publisher Pilot</h3>
+    <h3 style="font-size: 1.5rem; font-weight: 800;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> 30-Day Publisher Pilot</h3>
     <p>We run Roya on your real catalog and deliver measurable results.<br><strong>No cost. No integration. Confidential.</strong></p>
     <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1rem 0;">
       <div style="background: white; border-radius: 1rem; padding: 0.8rem 1rem; flex: 1; min-width: 160px;">
-        <div style="font-weight:800;">📊 Typical pilot outcomes</div>
+        <div style="font-weight:800;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Typical pilot outcomes</div>
         <ul style="margin-top: 0.4rem;">
           <li>10–30% metadata issues identified</li>
           <li>€ / $10k–$100k+ revenue exposure uncovered</li>
@@ -374,13 +389,13 @@
         </ul>
       </div>
     </div>
-    <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html" class="btn-primary" style="background: #1b6e54; margin-top: 0.4rem;">👉 Start Your Catalog Evaluation →</a>
+    <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html" class="btn-primary" style="background: #1b6e54; margin-top: 0.4rem;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Start Your Catalog Evaluation</a>
     <div style="margin-top: 1rem; font-size: 0.8rem;">hello@heyroya.se · Confidential · No commitment</div>
   </div>
 
   <!-- Final CTA block: Ready to see what your catalog is missing -->
   <div style="background: linear-gradient(115deg, #eef4f7, white); border-radius: 1.8rem; padding: 2rem; margin: 2rem 0 1.5rem; text-align: center; border: 1px solid #cfe2ea;">
-    <h2 style="font-size: 1.6rem; font-weight: 800;">🧠 Ready to see what your catalog is missing?</h2>
+    <h2 style="font-size: 1.6rem; font-weight: 800;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12.74V17a2 2 0 002 2h4a2 2 0 002-2v-2.26A7 7 0 0012 2z"/></svg> Ready to see what your catalog is missing?</h2>
     <p style="margin: 0.6rem 0 1rem;">We'll analyze your metadata, identify risks, and show where revenue may be delayed or lost.<br><strong>30-minute live walkthrough • Real data • No obligation</strong></p>
     <a href="mailto:Glenn@traproyaltiespro.com" class="btn-primary" style="background: #0f5c48;">Contact: Glenn@traproyaltiespro.com →</a>
   </div>

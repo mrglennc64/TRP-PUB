@@ -54,7 +54,7 @@ const LOD_TYPE_META: Record<LODType, { label: string; description: string; recip
   pro_mechanical:   { label: "PRO Mechanical Royalties",   description: "Directs MLC, DistroKid, or a mechanical rights organization to route mechanical royalties.", recipient_hint: "The MLC / Harry Fox Agency" },
   distribution:     { label: "Distribution Royalties",     description: "Instructs a distributor (TuneCore, DistroKid, CD Baby) to redirect streaming/download revenue.", recipient_hint: "TuneCore / DistroKid / CD Baby" },
   sync:             { label: "Sync Licensing Revenue",     description: "Directs sync licensing income from film, TV, and ad placements to a named administrator.", recipient_hint: "Music Supervisor / Licensing Co." },
-  master:           { label: "Master Recording Royalties", description: "Routes master recording income (SoundExchange, neighboring rights) to a specified label or administrator.", recipient_hint: "SoundExchange / Label" },
+  master:           { label: "Master Recording Royalties", description: "Routes master recording income (Rights Administrator, neighboring rights) to a specified label or administrator.", recipient_hint: "Rights Administrator / Label" },
   blanket:          { label: "Blanket Direction (All Revenue)", description: "Comprehensive direction covering all royalty streams — performance, mechanical, master, and sync.", recipient_hint: "All sources / Admin company" },
 };
 
@@ -158,7 +158,7 @@ function LODDocument({ f }: { f: LODForm }) {
         <div className="text-right text-xs text-gray-500 font-sans">
           <div className="font-semibold text-gray-700">Ref: {refNum}</div>
           <div>Date: {fmtDate(f.sig_date)}</div>
-          {f.notarized && <div className="text-blue-600 font-semibold mt-1">⊕ Notarized Document</div>}
+          {f.notarized && <div className="text-indigo-600 font-semibold mt-1">⊕ Notarized Document</div>}
         </div>
       </div>
 
@@ -277,9 +277,9 @@ function LODDocument({ f }: { f: LODForm }) {
               <div className="text-sm text-gray-400 italic">Witness signature (if required)</div>
             )}
             {f.notarized && (
-              <div className="mt-3 border border-blue-300 rounded-lg p-3 bg-blue-50 text-xs text-blue-700">
+              <div className="mt-3 border border-indigo-300 rounded-lg p-3 bg-indigo-50 text-xs text-indigo-700">
                 <div className="font-bold mb-1">NOTARY PUBLIC</div>
-                <div className="h-6 border-b border-blue-300 mb-1" />
+                <div className="h-6 border-b border-indigo-300 mb-1" />
                 <div>Commission expires: ___________</div>
               </div>
             )}
@@ -342,7 +342,7 @@ export default function LODGeneratorPage() {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-2xl">📜</span>
                 <h1 className="text-xl font-black text-white tracking-tight">LOD Generator</h1>
-                <span className="px-2 py-0.5 text-xs font-bold text-violet-300 bg-violet-500/20 border border-violet-500/30 rounded-full">Letter of Direction</span>
+                <span className="px-2 py-0.5 text-xs font-bold text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 rounded-full">Letter of Direction</span>
               </div>
               <p className="text-slate-400 text-sm">
                 Generate court-ready Letters of Direction to redirect royalty payments from any PRO, distributor, or label to a publisher, manager, or attorney.
@@ -550,7 +550,7 @@ export default function LODGeneratorPage() {
                     <button
                       onClick={() => setPreview(true)}
                       disabled={!isComplete}
-                      className="px-5 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-500 disabled:bg-white/10 disabled:text-slate-600 rounded-xl transition"
+                      className="px-5 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 disabled:bg-white/10 disabled:text-slate-600 rounded-xl transition"
                     >
                       Generate LOD →
                     </button>
@@ -572,7 +572,7 @@ export default function LODGeneratorPage() {
                     { label: "Works list (if specific scope)", ok: form.scope === "all_works" || !!form.works_list },
                   ].map(item => (
                     <div key={item.label} className="flex items-center gap-2">
-                      <span className={item.ok ? "text-green-400" : "text-slate-600"}>
+                      <span className={item.ok ? "text-emerald-400" : "text-slate-600"}>
                         {item.ok ? "✓" : "○"}
                       </span>
                       <span className={item.ok ? "text-slate-300" : "text-slate-600"}>{item.label}</span>
@@ -588,7 +588,7 @@ export default function LODGeneratorPage() {
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Document Preview</div>
                 {preview && (
                   <div className="flex items-center gap-2">
-                    <button onClick={printDoc} className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded-lg transition">
+                    <button onClick={printDoc} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition">
                       ↓ Download / Print PDF
                     </button>
                     <Link href="/attorney-portal" className="px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold rounded-lg border border-white/10 transition">

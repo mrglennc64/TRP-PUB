@@ -140,7 +140,7 @@ export default function MLCSearchPage() {
             <div className="flex items-center gap-2 mb-1">
               <span className="text-2xl">🔎</span>
               <h1 className="text-xl font-black text-white tracking-tight">MLC Search Gateway</h1>
-              <span className="px-2 py-0.5 text-xs font-bold text-green-300 bg-green-500/20 border border-green-500/30 rounded-full">
+              <span className="px-2 py-0.5 text-xs font-bold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 rounded-full">
                 Real Portal
               </span>
             </div>
@@ -190,7 +190,7 @@ export default function MLCSearchPage() {
               <button
                 onClick={handleSearchMLC}
                 disabled={!searchTerm.trim()}
-                className="px-5 py-3 bg-green-700 hover:bg-green-600 disabled:bg-white/10 disabled:text-slate-600 text-white font-bold rounded-xl text-sm transition flex items-center gap-2 whitespace-nowrap"
+                className="px-5 py-3 bg-emerald-700 hover:bg-emerald-600 disabled:bg-white/10 disabled:text-slate-600 text-white font-bold rounded-xl text-sm transition flex items-center gap-2 whitespace-nowrap"
               >
                 Search The MLC ↗
               </button>
@@ -210,18 +210,18 @@ export default function MLCSearchPage() {
 
             {/* Clipboard notice */}
             {copied && (
-              <div className="flex items-center gap-2 px-4 py-2.5 bg-green-900/30 border border-green-700/40 rounded-xl text-xs text-green-300">
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-900/30 border border-emerald-700/40 rounded-xl text-xs text-emerald-300">
                 <span>✓</span>
                 <span><strong>"{searchTerm}"</strong> copied to clipboard — paste it into the MLC search box that just opened.</span>
               </div>
             )}
 
             {/* Info callout */}
-            <div className="flex gap-3 p-4 bg-blue-950/30 border border-blue-700/40 rounded-xl text-xs text-blue-200/80 leading-relaxed">
+            <div className="flex gap-3 p-4 bg-indigo-950/30 border border-indigo-700/40 rounded-xl text-xs text-indigo-200/80 leading-relaxed">
               <span className="text-lg flex-shrink-0">ℹ️</span>
               <div>
-                <span className="font-bold text-blue-300 block mb-1">How this works</span>
-                Clicking <strong>Search The MLC ↗</strong> opens <span className="font-mono text-blue-300">portal.themlc.com</span> in a new tab and copies your search term to the clipboard.
+                <span className="font-bold text-indigo-300 block mb-1">How this works</span>
+                Clicking <strong>Search The MLC ↗</strong> opens <span className="font-mono text-indigo-300">portal.themlc.com</span> in a new tab and copies your search term to the clipboard.
                 Paste it into the MLC search box, find your work, note the <strong>MLC Song Code</strong>, <strong>ISWC</strong>, and <strong>Known Shares %</strong>, then come back to Step 2 below.
               </div>
             </div>
@@ -505,10 +505,10 @@ export default function MLCSearchPage() {
               {/* SHA-256 chain of custody */}
               <div className="p-4 bg-black/40 border border-white/10 rounded-xl space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-green-400">🔐</span>
-                  <span className="text-xs font-bold text-green-400">Chain of Custody — SHA-256</span>
+                  <span className="text-emerald-400">🔐</span>
+                  <span className="text-xs font-bold text-emerald-400">Chain of Custody — SHA-256</span>
                 </div>
-                <div className="font-mono text-xs text-green-300/80 break-all leading-relaxed">
+                <div className="font-mono text-xs text-emerald-300/80 break-all leading-relaxed">
                   {activeDoc.sha256}
                 </div>
                 <div className="text-[11px] text-slate-600">
@@ -523,7 +523,7 @@ export default function MLCSearchPage() {
                   CWR Generator →
                 </Link>
                 <a href="https://portal.themlc.com" target="_blank" rel="noopener noreferrer"
-                  className="px-4 py-2 bg-green-700/20 hover:bg-green-700/30 text-green-300 border border-green-700/30 rounded-lg text-xs font-semibold transition">
+                  className="px-4 py-2 bg-emerald-700/20 hover:bg-emerald-700/30 text-emerald-300 border border-emerald-700/30 rounded-lg text-xs font-semibold transition">
                   File at MLC ↗
                 </a>
                 <button

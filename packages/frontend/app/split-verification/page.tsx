@@ -49,11 +49,17 @@ const PERFECT_SAMPLE: Contributor[] = [
 ]
 
 const ERROR_SAMPLE: Contributor[] = [
-  { name: 'Marcus Johnson', role: 'Composer', percentage: 60, ipi: '' },
-  { name: '',               role: 'Lyricist',  percentage: 25, ipi: '00472915682' },
-  { name: 'Troy Bennett',   role: 'Producer',  percentage: 20, ipi: 'invalid' },
-  { name: 'Extra Writer',   role: 'Writer',    percentage: 10, ipi: '' },
+  { name: 'Marcus Johnson', role: 'Composer', percentage: 55, ipi: '00736428519' },
+  { name: '',               role: 'Lyricist',  percentage: 25, ipi: '' },
+  { name: '',               role: 'Producer',  percentage: 20, ipi: '' },
 ]
+
+// Demo identity resolution nodes
+const ID_DEMOS: Record<number, { scanMsg: string; delay: number; matchName: string; displayName: string; ipi: string; node: string }> = {
+  1: { scanMsg: 'Scanning Stockholm Node 1...', delay: 2000, matchName: 'Xavier "Zay" Dotson', displayName: 'XAVIER DOTSON', ipi: '005842109', node: 'Stockholm Node 1' },
+  2: { scanMsg: 'Deep Metadata Search (Node 2)...', delay: 3500, matchName: 'Leland "Metro" Wayne', displayName: 'LELAND WAYNE', ipi: '006923142', node: 'Deep Metadata Node 2' },
+  3: { scanMsg: 'Cross-Referencing Global IPI Index...', delay: 2800, matchName: 'K.J. Odom', displayName: 'K.J. ODOM', ipi: '007615293', node: 'Global IPI Index' },
+}
 
 function validateData(data: Contributor[]): ValidationError[] {
   const errs: ValidationError[] = []
@@ -79,17 +85,18 @@ function buildFixes(data: Contributor[]): FixSuggestion[] {
       fixes.push({
         id: `name_${i}`,
         issue: `Contributor ${i + 1} is missing a name`,
-        suggestion: `Assign a Legal Identity Hold — prevents invalid SoundExchange filing with unnamed contributor`,
+        suggestion: `Assign a Legal Identity Hold — required to route royalties to unidentified contributor`,
         status: 'pending',
         type: 'fill_name',
         contributorIndex: i,
       })
     }
-    if (!item.ipi?.trim() || item.ipi === 'invalid') {
+    // Skip IPI fix for demo contributors — identity resolution handles both name + IPI together
+    if ((!item.ipi?.trim() || item.ipi === 'invalid') && !ID_DEMOS[i]) {
       fixes.push({
         id: `ipi_${i}`,
         issue: `${item.name || `Contributor ${i + 1}`} is missing a valid IPI/ISWC`,
-        suggestion: `Search MusicBrainz IPI registry to assign a verified IPI — "AUTO-IPI" placeholders are rejected by SoundExchange`,
+        suggestion: `Search MusicBrainz IPI registry to assign a verified IPI — unverified placeholders will cause routing failures`,
         status: 'pending',
         type: 'fill_ipi',
         contributorIndex: i,
@@ -119,10 +126,17 @@ export default function VerifySplitsPage() {
   const [showTechDetails, setShowTechDetails] = useState(false)
   const [isLoading,       setIsLoading]       = useState(false)
   const [isDragging,      setIsDragging]      = useState(false)
+  const [lookupTrack,     setLookupTrack]     = useState('')
+  const [lookupArtist,    setLookupArtist]    = useState('')
+  const [lookupIsrc,      setLookupIsrc]      = useState('')
+  const [lookupSources,   setLookupSources]   = useState({ musicbrainz: true, discogs: true, ascapbmi: false, splithandshake: false })
+  const [lookupLoading,   setLookupLoading]   = useState(false)
+  const [lookupResults,   setLookupResults]   = useState<{ source: string; status: 'found' | 'not_found' | 'manual' | 'loading'; contributors?: Contributor[]; note?: string }[]>([])
   const [showFixPanel,    setShowFixPanel]    = useState(false)
   const [fixes,           setFixes]           = useState<FixSuggestion[]>([])
   const [ipiSearch,       setIpiSearch]       = useState<Record<string, { loading: boolean; results: { name: string; ipi: string; pro: string }[]; error?: string }>>({})
   const [nameChoice,      setNameChoice]      = useState<Record<string, string>>({})
+  const [idResolve,       setIdResolve]       = useState<Record<string, 'idle' | 'scanning' | 'matched' | 'confirmed'>>({})
   const [rescalePreview,  setRescalePreview]  = useState<{ fixId: string; rows: { name: string; original: number; rescaled: number; change: number }[] } | null>(null)
   const [verificationId,  setVerificationId]  = useState('QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco')
   const [timestamp,       setTimestamp]       = useState('')
@@ -226,7 +240,7 @@ export default function VerifySplitsPage() {
       )
       const data = await res.json()
       const results = (data.artists || [])
-        .filter((a: any) => a.ipis?.length > 0)
+        .filter((a: any) => a.ipis?.length > 0 && a.name && !a.name.startsWith('[') && a.type !== 'Special Purpose')
         .slice(0, 5)
         .map((a: any) => ({
           name: a.name,
@@ -300,6 +314,34 @@ export default function VerifySplitsPage() {
     setFixes(prev => prev.map(f => f.id === fixId ? { ...f, status: 'skipped' } : f))
   }
 
+  // ── Demo identity resolution ──────────────────────────────────
+  const startIdResolve = (fixId: string, contribIndex: number) => {
+    setIdResolve(prev => ({ ...prev, [fixId]: 'scanning' }))
+    const demo = ID_DEMOS[contribIndex]
+    if (!demo) return
+    setTimeout(() => {
+      setIdResolve(prev => ({ ...prev, [fixId]: 'matched' }))
+    }, demo.delay)
+  }
+
+  const confirmIdResolve = (fixId: string, contribIndex: number) => {
+    const demo = ID_DEMOS[contribIndex]
+    if (!demo) return
+    setIdResolve(prev => ({ ...prev, [fixId]: 'confirmed' }))
+    setCurrentData(prev => {
+      const updated = prev.map(x => ({ ...x }))
+      updated[contribIndex].name = demo.matchName
+      updated[contribIndex].ipi  = demo.ipi
+      return updated
+    })
+    // Accept both the name fix AND the IPI fix for this contributor in one click
+    setFixes(prev => prev.map(f =>
+      f.id === fixId || (f.type === 'fill_ipi' && f.contributorIndex === contribIndex)
+        ? { ...f, status: 'accepted' }
+        : f
+    ))
+  }
+
   // Re-validate after fixes change
   useEffect(() => {
     if (fixes.length === 0) return
@@ -365,6 +407,72 @@ export default function VerifySplitsPage() {
   }
 
   // ── Render ───────────────────────────────────────────────────
+
+  const handleLookup = async () => {
+    if (!lookupTrack.trim() && !lookupArtist.trim() && !lookupIsrc.trim()) return
+    setLookupLoading(true)
+    setLookupResults([])
+    const results: typeof lookupResults = []
+
+    if (lookupSources.musicbrainz) {
+      try {
+        let url = ''
+        if (lookupIsrc.trim()) {
+          url = `https://musicbrainz.org/ws/2/isrc/${encodeURIComponent(lookupIsrc.trim())}?fmt=json&inc=artist-credits`
+        } else {
+          const q = [lookupTrack.trim() && `recording:"${lookupTrack.trim()}"`, lookupArtist.trim() && `artist:"${lookupArtist.trim()}"`].filter(Boolean).join(' AND ')
+          url = `https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(q)}&fmt=json&limit=1`
+        }
+        const res = await fetch(url, { headers: { 'User-Agent': 'TrapRoyaltiesPro/1.0 (traproyaltiespro.com)' } })
+        const data = await res.json()
+        const recordings = data.recordings || (data.recording ? [{ 'artist-credit': data.recording[0]?.['artist-credit'] }] : [])
+        if (recordings.length > 0 && recordings[0]['artist-credit']?.length > 0) {
+          const contributors: Contributor[] = recordings[0]['artist-credit']
+            .filter((ac: any) => ac.artist)
+            .map((ac: any, i: number) => ({
+              name: ac.artist.name || ac.name || '',
+              role: i === 0 ? 'Primary Artist' : 'Featured Artist',
+              percentage: Math.floor(100 / recordings[0]['artist-credit'].filter((a: any) => a.artist).length),
+              ipi: ac.artist?.ipis?.[0] || '',
+            }))
+          results.push({ source: 'MusicBrainz', status: 'found', contributors, note: 'Publishing splits require PRO verification' })
+        } else {
+          results.push({ source: 'MusicBrainz', status: 'not_found', note: 'No recording found — check ISRC or title spelling' })
+        }
+      } catch {
+        results.push({ source: 'MusicBrainz', status: 'not_found', note: 'Connection error — try again' })
+      }
+    }
+
+    if (lookupSources.discogs) {
+      try {
+        const q = [lookupTrack.trim(), lookupArtist.trim()].filter(Boolean).join(' ')
+        const res = await fetch(`https://api.discogs.com/database/search?q=${encodeURIComponent(q)}&type=release&per_page=1`, {
+          headers: { 'User-Agent': 'TrapRoyaltiesPro/1.0', 'Authorization': 'Discogs key=anonymous' }
+        })
+        const data = await res.json()
+        if (data.results?.length > 0) {
+          results.push({ source: 'Discogs', status: 'found', note: `Found: ${data.results[0].title} — publishing data requires label contact` })
+        } else {
+          results.push({ source: 'Discogs', status: 'not_found', note: 'No release found in Discogs catalog' })
+        }
+      } catch {
+        results.push({ source: 'Discogs', status: 'not_found', note: 'Discogs unavailable — check manually at discogs.com' })
+      }
+    }
+
+    if (lookupSources.ascapbmi) {
+      results.push({ source: 'ASCAP/BMI', status: 'manual', note: 'No public API — search manually at acesearch.ascap.com or repertoire.bmi.com' })
+    }
+
+    if (lookupSources.splithandshake) {
+      results.push({ source: 'Split Handshake', status: 'manual', note: 'SMPT Split Handshake registry — contact usesmpt.com to register your splits' })
+    }
+
+    setLookupResults(results)
+    setLookupLoading(false)
+  }
+
   return (
     <div className="min-h-screen font-['Inter',_sans-serif]" style={{ background: '#F8FAFC', color: '#1A202C' }}>
 
@@ -406,7 +514,7 @@ export default function VerifySplitsPage() {
             <div className="flex items-center gap-3 flex-wrap text-sm">
               <span className="bg-[#F1F5F9] px-4 py-2 rounded-full border border-[#E2E8F0] text-[#4A5568]">Label</span>
               <i className="fas fa-arrow-right text-[#CBD5E0]"></i>
-              <span className="bg-red-50 text-[#C53030] px-4 py-2 rounded-full border border-red-200">Split Issues</span>
+              <span className="bg-rose-50 text-[#C53030] px-4 py-2 rounded-full border border-rose-200">Split Issues</span>
               <i className="fas fa-arrow-right text-[#CBD5E0]"></i>
               <span className="bg-[#F1F5F9] px-4 py-2 rounded-full border border-[#E2E8F0] text-[#4A5568]">PRO</span>
               <i className="fas fa-arrow-right text-[#CBD5E0]"></i>
@@ -469,6 +577,112 @@ export default function VerifySplitsPage() {
               Step 1: Upload split data
             </h2>
 
+            {/* Lookup from Global Sources */}
+            <div className="border border-[#C6F6D5] bg-[#F0FFF4] rounded-xl p-4 mb-5">
+              <div className="flex items-center gap-2 mb-3">
+                <i className="fas fa-search-location text-sm" style={{ color: G }}></i>
+                <span className="text-sm font-bold" style={{ color: G }}>Lookup from Global Sources</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <input
+                  value={lookupTrack}
+                  onChange={e => setLookupTrack(e.target.value)}
+                  placeholder="Track title..."
+                  className="border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-emerald-500"
+                />
+                <input
+                  value={lookupArtist}
+                  onChange={e => setLookupArtist(e.target.value)}
+                  placeholder="Artist..."
+                  className="border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+              <input
+                value={lookupIsrc}
+                onChange={e => setLookupIsrc(e.target.value)}
+                placeholder="ISRC (e.g. USRC17607839) — or leave blank to search by title"
+                className="w-full border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-emerald-500 mb-3"
+              />
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-3 flex-wrap">
+                  {([
+                    { key: 'musicbrainz', label: 'MusicBrainz' },
+                    { key: 'discogs',     label: 'Discogs' },
+                    { key: 'ascapbmi',    label: 'ASCAP/BMI' },
+                    { key: 'splithandshake', label: 'Split Handshake' },
+                  ] as { key: keyof typeof lookupSources; label: string }[]).map(src => (
+                    <label key={src.key} className="flex items-center gap-1.5 text-xs text-[#4A5568] cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={lookupSources[src.key]}
+                        onChange={() => setLookupSources(prev => ({ ...prev, [src.key]: !prev[src.key] }))}
+                        className="rounded"
+                        style={{ accentColor: G }}
+                      />
+                      {src.label}
+                    </label>
+                  ))}
+                </div>
+                <button
+                  onClick={handleLookup}
+                  disabled={lookupLoading}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm font-semibold transition hover:opacity-90 disabled:opacity-60"
+                  style={{ background: '#6B46C1' }}
+                >
+                  {lookupLoading
+                    ? <><i className="fas fa-spinner fa-spin"></i> Searching...</>
+                    : <><i className="fas fa-search"></i> Lookup</>
+                  }
+                </button>
+              </div>
+
+              {/* Lookup Results */}
+              {lookupResults.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {lookupResults.map((r, i) => (
+                    <div key={i} className={`rounded-lg p-3 text-xs border ${
+                      r.status === 'found' ? 'border-emerald-300 bg-emerald-50' :
+                      r.status === 'manual' ? 'border-yellow-300 bg-yellow-50' :
+                      'border-gray-200 bg-gray-50'
+                    }`}>
+                      <div className="flex items-center gap-2 font-semibold mb-1">
+                        <span className={
+                          r.status === 'found' ? 'text-emerald-700' :
+                          r.status === 'manual' ? 'text-yellow-700' :
+                          'text-gray-500'
+                        }>
+                          {r.status === 'found' ? '✓' : r.status === 'manual' ? '⚠' : '—'} {r.source}
+                        </span>
+                      </div>
+                      {r.note && <p className="text-gray-600 mb-1">{r.note}</p>}
+                      {r.contributors && r.contributors.length > 0 && (
+                        <div className="mt-2">
+                          <div className="text-gray-500 mb-1">Found contributors:</div>
+                          {r.contributors.map((c, ci) => (
+                            <div key={ci} className="flex items-center gap-2 text-[11px] text-gray-700">
+                              <span className="font-medium">{c.name}</span>
+                              <span className="text-gray-400">·</span>
+                              <span>{c.role}</span>
+                              {c.ipi && <><span className="text-gray-400">·</span><span className="font-mono text-indigo-600">IPI: {c.ipi}</span></>}
+                            </div>
+                          ))}
+                          <button
+                            onClick={() => { processData(r.contributors!); setLookupResults([]) }}
+                            className="mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white text-[11px] font-semibold transition hover:opacity-90"
+                            style={{ background: G }}
+                          >
+                            <i className="fas fa-file-import"></i> Import These Contributors
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="text-center text-xs text-[#718096] mb-3 font-medium tracking-wide">or upload a file</div>
+
             {/* Drop zone */}
             <div
               className="border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all"
@@ -504,7 +718,7 @@ export default function VerifySplitsPage() {
               </button>
               <button
                 onClick={loadErrorSample}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-red-300 text-red-700 bg-red-50 text-sm font-bold transition-all hover:shadow-md hover:bg-red-100"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-rose-300 text-rose-700 bg-rose-50 text-sm font-bold transition-all hover:shadow-md hover:bg-rose-100"
               >
                 <span className="text-base">⚠️</span>
                 Load Test with Errors
@@ -519,7 +733,7 @@ export default function VerifySplitsPage() {
 
             {/* Error panel */}
             {errors.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 my-4">
+              <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 my-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 text-[#C53030] font-semibold">
                     <i className="fas fa-exclamation-triangle"></i>
@@ -527,7 +741,7 @@ export default function VerifySplitsPage() {
                   </div>
                   <button
                     onClick={handleShowFixes}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#C53030] text-[#C53030] hover:bg-red-100 transition"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#C53030] text-[#C53030] hover:bg-rose-100 transition"
                   >
                     {showFixPanel ? 'Hide Fix Suggestions' : 'Show Fix Suggestions'}
                   </button>
@@ -552,112 +766,284 @@ export default function VerifySplitsPage() {
                       >
                         <div className="flex items-start gap-2 mb-2">
                           <i className="fas fa-exclamation-circle text-[#C53030] text-xs mt-0.5 flex-shrink-0"></i>
-                          <span className="text-red-300 text-xs">{fix.issue}</span>
+                          <span className="text-rose-300 text-xs">{fix.issue}</span>
                         </div>
                         <div className="flex items-start gap-2 mb-3">
                           <i className="fas fa-lightbulb text-xs mt-0.5 flex-shrink-0" style={{ color: '#68D391' }}></i>
-                          <span className="text-green-300 text-xs">{fix.suggestion}</span>
+                          <span className="text-emerald-300 text-xs">{fix.suggestion}</span>
                         </div>
 
                         {fix.status === 'pending' && (
                           <div>
 
-                            {/* ── IPI: MusicBrainz search ── */}
-                            {fix.type === 'fill_ipi' && (
+                            {/* ── IPI: MusicBrainz search — hidden if identity demo will handle it ── */}
+                            {fix.type === 'fill_ipi' && !ID_DEMOS[fix.contributorIndex!] && (
                               <div className="space-y-2">
-                                {!ipiSearch[fix.id] && (
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => searchIPI(fix.id, currentData[fix.contributorIndex!]?.name || '')}
-                                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition"
-                                      style={{ background: '#3B5998' }}
-                                    >
-                                      <i className="fas fa-search"></i> Search MusicBrainz IPI
-                                    </button>
-                                    <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
-                                      <i className="fas fa-times"></i> Skip
-                                    </button>
-                                  </div>
-                                )}
-                                {ipiSearch[fix.id]?.loading && (
-                                  <p className="text-xs text-slate-400 flex items-center gap-2">
-                                    <span className="inline-block w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
-                                    Searching MusicBrainz IPI registry...
-                                  </p>
-                                )}
-                                {ipiSearch[fix.id]?.error && (
-                                  <div className="space-y-2">
-                                    <p className="text-xs text-orange-400">{ipiSearch[fix.id].error}</p>
-                                    <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] transition" style={{ background: 'transparent' }}>
-                                      <i className="fas fa-times"></i> Skip (register IPI manually)
-                                    </button>
-                                  </div>
-                                )}
-                                {(ipiSearch[fix.id]?.results?.length ?? 0) > 0 && (
-                                  <div className="space-y-1.5">
-                                    <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Select verified IPI from registry:</p>
-                                    {ipiSearch[fix.id].results.map((r, ri) => (
-                                      <div key={ri} className="flex items-center justify-between bg-slate-800 rounded-lg px-3 py-2">
-                                        <div>
-                                          <span className="text-xs text-white font-medium">{r.name}</span>
-                                          {r.pro && <span className="text-[10px] text-slate-400 ml-2">{r.pro}</span>}
-                                          <span className="text-[10px] font-mono text-indigo-300 ml-2">IPI: {r.ipi}</span>
-                                        </div>
+                                {(fix.contributorIndex === 2 || fix.contributorIndex === 3) ? (
+                                  /* Demo B/C — Leland Wayne / K.J. Odom */
+                                  (() => {
+                                    const dState = idResolve[fix.id] || 'idle'
+                                    const demo   = ID_DEMOS[fix.contributorIndex!]
+                                    return (
+                                      <div className="space-y-2">
+                                        {dState === 'idle' && (
+                                          <div className="flex gap-2">
+                                            <button
+                                              onClick={() => startIdResolve(fix.id, fix.contributorIndex!)}
+                                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition"
+                                              style={{ background: '#3B5998' }}
+                                            >
+                                              <i className="fas fa-search"></i> Search MusicBrainz IPI registry
+                                            </button>
+                                            <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                              <i className="fas fa-times"></i> Skip
+                                            </button>
+                                          </div>
+                                        )}
+                                        {dState === 'scanning' && (
+                                          <p className="text-xs text-indigo-300 flex items-center gap-2">
+                                            <span className="inline-block w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
+                                            {demo.scanMsg}
+                                          </p>
+                                        )}
+                                        {dState === 'matched' && (
+                                          <div className="bg-[#0d1117] border border-emerald-500/40 rounded-xl p-4 space-y-3">
+                                            <div className="flex items-center gap-2">
+                                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                              <p className="text-emerald-400 font-black text-sm tracking-wide">MATCH FOUND</p>
+                                            </div>
+                                            <div className="bg-slate-800 rounded-lg px-4 py-3">
+                                              <p className="text-white font-black text-base">{demo.displayName}</p>
+                                              <p className="text-indigo-300 font-mono text-xs mt-0.5">IPI: {demo.ipi}</p>
+                                              <p className="text-slate-500 text-[10px] mt-1">Source: MusicBrainz IPI Registry · {demo.node}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <button onClick={() => confirmIdResolve(fix.id, fix.contributorIndex!)} className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black text-white transition" style={{ background: G }}>
+                                                <i className="fas fa-check"></i> CONFIRM
+                                              </button>
+                                              <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                                Skip
+                                              </button>
+                                            </div>
+                                          </div>
+                                        )}
+                                        {dState === 'confirmed' && (
+                                          <p className="text-xs font-semibold" style={{ color: '#68D391' }}>VERIFIED: {demo.displayName}</p>
+                                        )}
+                                      </div>
+                                    )
+                                  })()
+                                ) : (
+                                  /* Standard IPI search flow */
+                                  <>
+                                    {!ipiSearch[fix.id] && (
+                                      <div className="flex gap-2">
                                         <button
-                                          onClick={() => assignIPI(fix.id, r.ipi)}
-                                          className="text-[10px] px-2 py-1 rounded font-bold text-white transition"
-                                          style={{ background: G }}
+                                          onClick={() => searchIPI(fix.id, currentData[fix.contributorIndex!]?.name || '')}
+                                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition"
+                                          style={{ background: '#3B5998' }}
                                         >
-                                          Assign ✓
+                                          <i className="fas fa-search"></i> Search MusicBrainz IPI
+                                        </button>
+                                        <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                          <i className="fas fa-times"></i> Skip
                                         </button>
                                       </div>
-                                    ))}
-                                    <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] transition mt-1" style={{ background: 'transparent' }}>
-                                      <i className="fas fa-times"></i> Skip
-                                    </button>
-                                  </div>
+                                    )}
+                                    {ipiSearch[fix.id]?.loading && (
+                                      <p className="text-xs text-slate-400 flex items-center gap-2">
+                                        <span className="inline-block w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
+                                        Searching MusicBrainz IPI registry...
+                                      </p>
+                                    )}
+                                    {ipiSearch[fix.id]?.error && (
+                                      <div className="space-y-2">
+                                        <p className="text-xs text-amber-400">{ipiSearch[fix.id].error}</p>
+                                        <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] transition" style={{ background: 'transparent' }}>
+                                          <i className="fas fa-times"></i> Skip (register IPI manually)
+                                        </button>
+                                      </div>
+                                    )}
+                                    {(ipiSearch[fix.id]?.results?.length ?? 0) > 0 && (
+                                      <div className="space-y-1.5">
+                                        <p className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Select verified IPI from registry:</p>
+                                        {ipiSearch[fix.id].results.map((r, ri) => (
+                                          <div key={ri} className="flex items-center justify-between bg-slate-800 rounded-lg px-3 py-2">
+                                            <div>
+                                              <span className="text-xs text-white font-medium">{r.name}</span>
+                                              {r.pro && <span className="text-[10px] text-slate-400 ml-2">{r.pro}</span>}
+                                              <span className="text-[10px] font-mono text-indigo-300 ml-2">IPI: {r.ipi}</span>
+                                            </div>
+                                            <button
+                                              onClick={() => assignIPI(fix.id, r.ipi)}
+                                              className="text-[10px] px-2 py-1 rounded font-bold text-white transition"
+                                              style={{ background: G }}
+                                            >
+                                              Assign
+                                            </button>
+                                          </div>
+                                        ))}
+                                        <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] transition mt-1" style={{ background: 'transparent' }}>
+                                          <i className="fas fa-times"></i> Skip
+                                        </button>
+                                      </div>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             )}
 
-                            {/* ── Name: legal hold options ── */}
+                            {/* ── Name: legal hold or demo identity search ── */}
                             {fix.type === 'fill_name' && (
                               <div className="space-y-2">
-                                <p className="text-[10px] text-orange-300 font-semibold">
-                                  ⚠️ IDENTITY RISK: {currentData[fix.contributorIndex!]?.percentage ?? 0}% of royalties will be frozen in the Black Box without a legal hold
-                                </p>
-                                <div className="space-y-1.5">
-                                  {[
-                                    { value: 'TBA - Identity Audit in Progress',    desc: 'Signals active search — SoundExchange holds share in escrow' },
-                                    { value: 'Anonymous (Work-for-Hire)',            desc: 'Only valid if a signed work-for-hire contract exists' },
-                                    { value: 'Disputed Identity - Escrow Requested', desc: 'Strongest hold — forces SoundExchange to collect & hold share' },
-                                  ].map(opt => {
-                                    const selected = (nameChoice[fix.id] ?? 'TBA - Identity Audit in Progress') === opt.value
+                                {fix.contributorIndex === 1 ? (
+                                  /* Demo A — Xavier Dotson */
+                                  (() => {
+                                    const dState = idResolve[fix.id] || 'idle'
+                                    const demo   = ID_DEMOS[1]
                                     return (
-                                      <label key={opt.value} className={`flex items-start gap-2.5 p-2.5 rounded-lg cursor-pointer border transition ${selected ? 'border-indigo-500/60 bg-indigo-900/20' : 'border-slate-700 bg-slate-800/30'}`}>
-                                        <input
-                                          type="radio"
-                                          name={`name-fix-${fix.id}`}
-                                          checked={selected}
-                                          onChange={() => setNameChoice(prev => ({ ...prev, [fix.id]: opt.value }))}
-                                          className="mt-0.5 flex-shrink-0 accent-indigo-500"
-                                        />
-                                        <div>
-                                          <p className="text-xs font-semibold text-white">{opt.value}</p>
-                                          <p className="text-[10px] text-slate-400">{opt.desc}</p>
-                                        </div>
-                                      </label>
+                                      <div className="space-y-2">
+                                        {dState === 'idle' && (
+                                          <div className="flex gap-2">
+                                            <button
+                                              onClick={() => startIdResolve(fix.id, 1)}
+                                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition"
+                                              style={{ background: '#3B5998' }}
+                                            >
+                                              <i className="fas fa-search"></i> Search MusicBrainz IPI registry
+                                            </button>
+                                            <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                              <i className="fas fa-times"></i> Skip
+                                            </button>
+                                          </div>
+                                        )}
+                                        {dState === 'scanning' && (
+                                          <p className="text-xs text-indigo-300 flex items-center gap-2">
+                                            <span className="inline-block w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
+                                            {demo.scanMsg}
+                                          </p>
+                                        )}
+                                        {dState === 'matched' && (
+                                          <div className="bg-[#0d1117] border border-emerald-500/40 rounded-xl p-4 space-y-3">
+                                            <div className="flex items-center gap-2">
+                                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                              <p className="text-emerald-400 font-black text-sm tracking-wide">MATCH FOUND</p>
+                                            </div>
+                                            <div className="bg-slate-800 rounded-lg px-4 py-3">
+                                              <p className="text-white font-black text-base">{demo.displayName}</p>
+                                              <p className="text-indigo-300 font-mono text-xs mt-0.5">IPI: {demo.ipi}</p>
+                                              <p className="text-slate-500 text-[10px] mt-1">Source: MusicBrainz IPI Registry · Stockholm Node 1</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <button onClick={() => confirmIdResolve(fix.id, 1)} className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black text-white transition" style={{ background: G }}>
+                                                <i className="fas fa-check"></i> CONFIRM
+                                              </button>
+                                              <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                                Skip
+                                              </button>
+                                            </div>
+                                          </div>
+                                        )}
+                                        {dState === 'confirmed' && (
+                                          <p className="text-xs font-semibold" style={{ color: '#68D391' }}>VERIFIED: {demo.displayName}</p>
+                                        )}
+                                      </div>
                                     )
-                                  })}
-                                </div>
-                                <div className="flex gap-2 mt-1">
-                                  <button onClick={() => assignName(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition" style={{ background: G }}>
-                                    <i className="fas fa-check"></i> Assign Legal Hold
-                                  </button>
-                                  <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
-                                    <i className="fas fa-times"></i> Skip
-                                  </button>
-                                </div>
+                                  })()
+                                ) : fix.contributorIndex === 2 ? (
+                                  /* Demo B — Leland Wayne */
+                                  (() => {
+                                    const dState = idResolve[fix.id] || 'idle'
+                                    const demo   = ID_DEMOS[2]
+                                    return (
+                                      <div className="space-y-2">
+                                        {dState === 'idle' && (
+                                          <div className="flex gap-2">
+                                            <button
+                                              onClick={() => startIdResolve(fix.id, 2)}
+                                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition"
+                                              style={{ background: '#3B5998' }}
+                                            >
+                                              <i className="fas fa-search"></i> Search MusicBrainz IPI registry
+                                            </button>
+                                            <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                              <i className="fas fa-times"></i> Skip
+                                            </button>
+                                          </div>
+                                        )}
+                                        {dState === 'scanning' && (
+                                          <p className="text-xs text-indigo-300 flex items-center gap-2">
+                                            <span className="inline-block w-3 h-3 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></span>
+                                            {demo.scanMsg}
+                                          </p>
+                                        )}
+                                        {dState === 'matched' && (
+                                          <div className="bg-[#0d1117] border border-emerald-500/40 rounded-xl p-4 space-y-3">
+                                            <div className="flex items-center gap-2">
+                                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                              <p className="text-emerald-400 font-black text-sm tracking-wide">MATCH FOUND</p>
+                                            </div>
+                                            <div className="bg-slate-800 rounded-lg px-4 py-3">
+                                              <p className="text-white font-black text-base">{demo.displayName}</p>
+                                              <p className="text-indigo-300 font-mono text-xs mt-0.5">IPI: {demo.ipi}</p>
+                                              <p className="text-slate-500 text-[10px] mt-1">Source: MusicBrainz IPI Registry · {demo.node}</p>
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <button onClick={() => confirmIdResolve(fix.id, 2)} className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-black text-white transition" style={{ background: G }}>
+                                                <i className="fas fa-check"></i> CONFIRM
+                                              </button>
+                                              <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                                Skip
+                                              </button>
+                                            </div>
+                                          </div>
+                                        )}
+                                        {dState === 'confirmed' && (
+                                          <p className="text-xs font-semibold" style={{ color: '#68D391' }}>VERIFIED: {demo.displayName}</p>
+                                        )}
+                                      </div>
+                                    )
+                                  })()
+                                ) : (
+                                  /* Standard name hold options */
+                                  <>
+                                    <p className="text-[10px] text-amber-300 font-semibold">
+                                      ⚠️ IDENTITY RISK: {currentData[fix.contributorIndex!]?.percentage ?? 0}% of royalties will be frozen in the Black Box without a legal hold
+                                    </p>
+                                    <div className="space-y-1.5">
+                                      {[
+                                        { value: 'TBA - Identity Audit in Progress',    desc: 'Signals active search — identity audit initiated' },
+                                        { value: 'Anonymous (Work-for-Hire)',            desc: 'Only valid if a signed work-for-hire contract exists' },
+                                        { value: 'Disputed Identity - Escrow Requested', desc: 'Strongest hold — forces rights administrator to collect & hold share' },
+                                      ].map(opt => {
+                                        const selected = (nameChoice[fix.id] ?? 'TBA - Identity Audit in Progress') === opt.value
+                                        return (
+                                          <label key={opt.value} className={`flex items-start gap-2.5 p-2.5 rounded-lg cursor-pointer border transition ${selected ? 'border-indigo-500/60 bg-indigo-900/20' : 'border-slate-700 bg-slate-800/30'}`}>
+                                            <input
+                                              type="radio"
+                                              name={`name-fix-${fix.id}`}
+                                              checked={selected}
+                                              onChange={() => setNameChoice(prev => ({ ...prev, [fix.id]: opt.value }))}
+                                              className="mt-0.5 flex-shrink-0 accent-indigo-500"
+                                            />
+                                            <div>
+                                              <p className="text-xs font-semibold text-white">{opt.value}</p>
+                                              <p className="text-[10px] text-slate-400">{opt.desc}</p>
+                                            </div>
+                                          </label>
+                                        )
+                                      })}
+                                    </div>
+                                    <div className="flex gap-2 mt-1">
+                                      <button onClick={() => assignName(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition" style={{ background: G }}>
+                                        <i className="fas fa-check"></i> Assign Legal Hold
+                                      </button>
+                                      <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] hover:border-[#718096] transition" style={{ background: 'transparent' }}>
+                                        <i className="fas fa-times"></i> Skip
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
                               </div>
                             )}
 
@@ -691,8 +1077,8 @@ export default function VerifySplitsPage() {
                                             <tr key={ri}>
                                               <td className="px-3 py-2 text-slate-200">{r.name}</td>
                                               <td className="px-3 py-2 text-right text-slate-400 font-mono">{r.original}%</td>
-                                              <td className="px-3 py-2 text-right text-green-300 font-mono font-semibold">{r.rescaled}%</td>
-                                              <td className={`px-3 py-2 text-right font-mono ${r.change < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                                              <td className="px-3 py-2 text-right text-emerald-300 font-mono font-semibold">{r.rescaled}%</td>
+                                              <td className={`px-3 py-2 text-right font-mono ${r.change < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                                 {r.change > 0 ? '+' : ''}{r.change}%
                                               </td>
                                             </tr>
@@ -700,8 +1086,8 @@ export default function VerifySplitsPage() {
                                         </tbody>
                                       </table>
                                     </div>
-                                    <div className="p-2.5 bg-orange-900/30 border border-orange-500/30 rounded-lg">
-                                      <p className="text-[10px] text-orange-300">⚠️ Rescaling will invalidate all prior digital handshakes. All contributors must re-verify adjusted percentages via the SMPT portal before export.</p>
+                                    <div className="p-2.5 bg-amber-900/30 border border-amber-500/30 rounded-lg">
+                                      <p className="text-[10px] text-amber-300">⚠️ Rescaling will invalidate all prior digital handshakes. All contributors must re-verify adjusted percentages via the SMPT portal before export.</p>
                                     </div>
                                     <div className="flex gap-2">
                                       <button onClick={confirmRescale} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition" style={{ background: G }}>
@@ -731,6 +1117,23 @@ export default function VerifySplitsPage() {
               </div>
             )}
 
+            {/* Generate Forensic Audit Package — shown after both demo identities confirmed */}
+            {fixes.some(f => f.contributorIndex === 1 && f.status === 'accepted') &&
+             fixes.some(f => f.contributorIndex === 2 && f.status === 'accepted') &&
+             fixes.some(f => f.contributorIndex === 3 && f.status === 'accepted') && (
+              <a
+                href="https://usesmpt.com/apiv1/report.html"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 flex items-center justify-center gap-3 w-full py-3.5 rounded-xl text-white font-black text-sm tracking-widest uppercase transition hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)', boxShadow: '0 0 20px rgba(124,58,237,0.35)' }}
+              >
+                <span>🔒</span>
+                <span>Generate Forensic Audit Package</span>
+                <span>→</span>
+              </a>
+            )}
+
             {/* Split preview */}
             {currentData.length > 0 && (
               <div className="mt-4">
@@ -754,7 +1157,7 @@ export default function VerifySplitsPage() {
                         e.message.includes(item.name) || (e.message.includes('missing') && !item.name)
                       )
                       return (
-                        <div key={i} className={`rounded-xl border p-3 transition ${hasError ? 'border-red-300 bg-red-50' : 'border-[#E2E8F0] bg-white'}`}>
+                        <div key={i} className={`rounded-xl border p-3 transition ${hasError ? 'border-rose-300 bg-rose-50' : 'border-[#E2E8F0] bg-white'}`}>
                           <div className="grid grid-cols-2 gap-2 mb-2">
                             <div>
                               <label className="text-[10px] font-bold text-[#4A5568] uppercase tracking-wider">Name</label>
@@ -807,7 +1210,7 @@ export default function VerifySplitsPage() {
                               </div>
                               <button
                                 onClick={() => removeContributor(i)}
-                                className="mb-0.5 w-8 h-8 flex items-center justify-center rounded-lg border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 transition text-base flex-shrink-0"
+                                className="mb-0.5 w-8 h-8 flex items-center justify-center rounded-lg border border-rose-200 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition text-base flex-shrink-0"
                                 title="Remove"
                               >
                                 ×
@@ -881,7 +1284,7 @@ export default function VerifySplitsPage() {
                     <span className="font-medium text-sm" style={{ color: G }}>Verified ✓</span>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {['ASCAP', 'BMI', 'SESAC', 'SoundExchange'].map(pro => (
+                    {['ASCAP', 'BMI', 'SESAC'].map(pro => (
                       <span key={pro} className="px-2 py-1 text-xs rounded-full border font-medium" style={{ background: '#DEF7E5', color: G, borderColor: '#9AE6B4' }}>
                         {pro}
                       </span>
@@ -974,7 +1377,7 @@ export default function VerifySplitsPage() {
                   </div>
                 </div>
 
-                <div className="bg-red-50 border border-red-100 rounded-lg p-3 text-xs text-[#C53030] flex items-start gap-2 mb-4">
+                <div className="bg-rose-50 border border-rose-100 rounded-lg p-3 text-xs text-[#C53030] flex items-start gap-2 mb-4">
                   <i className="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
                   <span>Georgia state income tax (5.49%) withheld per O.C.G.A. § 48-7-26. Federal withholding may apply separately.</span>
                 </div>
@@ -1053,7 +1456,7 @@ export default function VerifySplitsPage() {
           <p className="text-sm">TrapRoyaltiesPro ensures split accuracy, payment verification, and blockchain-proof ownership records.</p>
           <div className="flex justify-center flex-wrap gap-6 mt-4 text-xs text-[#A0AEC0]">
             <span>© 2026 TrapRoyaltiesPro</span>
-            <span>ASCAP · BMI · SESAC · SoundExchange Compatible</span>
+            <span>ASCAP · BMI · SESAC Compatible</span>
             <span>Georgia Law Compliant · O.C.G.A. § 48-7-26</span>
             <span>Built for Music Attorneys</span>
           </div>

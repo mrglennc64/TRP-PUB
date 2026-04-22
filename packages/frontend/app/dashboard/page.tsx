@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -56,7 +56,7 @@ function uid() { return Math.random().toString(36).slice(2, 10); }
 interface Leak { severity: "critical" | "warning" | "info"; msg: string; fix: string; }
 function scanLeaks(t: Track, store: Store): Leak[] {
   const leaks: Leak[] = [];
-  if (!t.isrc)                    leaks.push({ severity: "critical", msg: "Missing ISRC — cannot register with PROs or SoundExchange", fix: "Use ISRC Search to find or register" });
+  if (!t.isrc)                    leaks.push({ severity: "critical", msg: "Missing ISRC — cannot register with PROs or Rights Administrator", fix: "Use ISRC Search to find or register" });
   if (!t.upc)                     leaks.push({ severity: "warning",  msg: "Missing UPC — distribution may fail on some DSPs", fix: "Get UPC from distributor" });
   if (!t.releaseDate)             leaks.push({ severity: "warning",  msg: "No release date — DDEX package incomplete", fix: "Enter release date" });
   if (!t.songwriters)             leaks.push({ severity: "critical", msg: "No songwriters — mechanical royalties going uncollected", fix: "Add songwriter credits" });
@@ -81,7 +81,7 @@ function riskScore(leaks: Leak[]): number {
 // ─── Multi-source search via backend ─────────────────────────────────────────
 
 const SOURCE_COLORS: Record<string, string> = {
-  MusicBrainz: "text-blue-400 bg-blue-500/10",
+  MusicBrainz: "text-indigo-400 bg-indigo-500/10",
   Deezer:      "text-purple-400 bg-purple-500/10",
   Discogs:     "text-indigo-400 bg-indigo-500/10",
 };
@@ -198,11 +198,11 @@ export default function Dashboard() {
           </div>
           <div className="flex justify-between text-xs">
             <span className="text-slate-500">Money Leaks</span>
-            <span className={`font-black mono ${totalLeaks > 0 ? "text-red-400" : "text-green-400"}`}>{totalLeaks}</span>
+            <span className={`font-black mono ${totalLeaks > 0 ? "text-rose-400" : "text-emerald-400"}`}>{totalLeaks}</span>
           </div>
           <div className="flex justify-between text-xs">
             <span className="text-slate-500">Unpaid</span>
-            <span className={`font-black mono ${totalOwed > 0 ? "text-yellow-400" : "text-green-400"}`}>
+            <span className={`font-black mono ${totalOwed > 0 ? "text-yellow-400" : "text-emerald-400"}`}>
               ${totalOwed.toLocaleString()}
             </span>
           </div>
@@ -247,7 +247,7 @@ export default function Dashboard() {
               setFixTrackId(worst?.id ?? null);
               setSection("workspace");
             }}
-              className="ml-2 flex items-center gap-1.5 bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full text-xs font-bold hover:bg-red-500/30 transition">
+              className="ml-2 flex items-center gap-1.5 bg-rose-500/20 border border-rose-500/40 text-rose-300 px-3 py-1 rounded-full text-xs font-bold hover:bg-rose-500/30 transition">
               ⚠ {totalLeaks} critical leak{totalLeaks !== 1 ? "s" : ""} detected — fix now
             </button>
           )}
@@ -258,7 +258,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-6 py-4 border-b border-white/10 bg-[#0a0f1e]/40">
           <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Unclaimed Royalties</p>
-            <p className={`text-2xl font-black mono ${totalOwed > 0 ? "text-yellow-400" : "text-green-400"}`}>${totalOwed.toLocaleString()}</p>
+            <p className={`text-2xl font-black mono ${totalOwed > 0 ? "text-yellow-400" : "text-emerald-400"}`}>${totalOwed.toLocaleString()}</p>
             <p className="text-xs text-slate-600 mt-0.5">{totalOwed > 0 ? "awaiting payment" : "all clear"}</p>
           </div>
           <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
@@ -270,12 +270,12 @@ export default function Dashboard() {
           </div>
           <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Money Leaks Found</p>
-            <p className={`text-2xl font-black mono ${totalLeaks > 0 ? "text-red-400" : "text-green-400"}`}>{totalLeaks}</p>
+            <p className={`text-2xl font-black mono ${totalLeaks > 0 ? "text-rose-400" : "text-emerald-400"}`}>{totalLeaks}</p>
             <p className="text-xs text-slate-600 mt-0.5">{totalLeaks > 0 ? "critical — fix now" : "catalog is clean"}</p>
           </div>
           <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Catalog Health Score</p>
-            <p className={`text-2xl font-black mono ${store.tracks.length === 0 ? "text-slate-500" : totalLeaks === 0 ? "text-green-400" : totalLeaks < 3 ? "text-yellow-400" : "text-red-400"}`}>
+            <p className={`text-2xl font-black mono ${store.tracks.length === 0 ? "text-slate-500" : totalLeaks === 0 ? "text-emerald-400" : totalLeaks < 3 ? "text-yellow-400" : "text-rose-400"}`}>
               {store.tracks.length === 0 ? "—" : Math.max(0, 100 - totalLeaks * 12) + "/100"}
             </p>
             <p className="text-xs text-slate-600 mt-0.5">{store.tracks.length === 0 ? "add tracks to score" : totalLeaks === 0 ? "excellent" : totalLeaks < 3 ? "needs attention" : "urgent fixes needed"}</p>
@@ -297,7 +297,7 @@ export default function Dashboard() {
       {/* Toast */}
       {toast && (
         <div className={`fixed bottom-6 right-6 px-5 py-3 rounded-xl shadow-2xl font-semibold text-sm z-50 fade ${
-          toast.ok ? "bg-green-600 text-white" : "bg-red-600 text-white"
+          toast.ok ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
         }`}>
           {toast.ok ? "✓" : "✗"} {toast.msg}
         </div>
@@ -387,7 +387,7 @@ function ISRCSearchSection({ store, save, flash, setSection }: {
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-lg">🔎</span>
           )}
         </div>
-        {error && <div className="mt-2 text-red-400 text-xs">{error}</div>}
+        {error && <div className="mt-2 text-rose-400 text-xs">{error}</div>}
         {!loading && query.length > 2 && results.length === 0 && !error && (
           <div className="mt-2 text-slate-500 text-xs">No results. Try different spelling or search by ISRC directly.</div>
         )}
@@ -415,7 +415,7 @@ function ISRCSearchSection({ store, save, flash, setSection }: {
               }`}>
               <div className="flex items-start gap-3">
                 <div className={`text-xs font-black px-2 py-0.5 rounded mono flex-shrink-0 mt-0.5 ${
-                  r.score >= 80 ? "bg-green-500/20 text-green-400" : r.score >= 60 ? "bg-yellow-500/20 text-yellow-400" : "bg-slate-700 text-slate-400"
+                  r.score >= 80 ? "bg-emerald-500/20 text-emerald-400" : r.score >= 60 ? "bg-yellow-500/20 text-yellow-400" : "bg-slate-700 text-slate-400"
                 }`}>{r.score}%</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-sm truncate">{r.title}</div>
@@ -423,9 +423,9 @@ function ISRCSearchSection({ store, save, flash, setSection }: {
                   {r.album && <div className="text-xs text-slate-500 truncate">{r.album}</div>}
                   <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                     {r.isrc ? (
-                      <span className="mono text-xs text-green-400 bg-green-500/10 px-2 py-0.5 rounded">{r.isrc}</span>
+                      <span className="mono text-xs text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">{r.isrc}</span>
                     ) : (
-                      <span className="mono text-xs text-red-400 bg-red-500/10 px-2 py-0.5 rounded">No ISRC</span>
+                      <span className="mono text-xs text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">No ISRC</span>
                     )}
                     {r.source && (
                       <span className={`text-xs px-2 py-0.5 rounded font-semibold ${SOURCE_COLORS[r.source] || "text-slate-400 bg-slate-700"}`}>
@@ -456,7 +456,7 @@ function ISRCSearchSection({ store, save, flash, setSection }: {
               <F label="Track Title"><input className={S.inp} value={form.title || ""} onChange={f("title")} /></F>
               <div className="grid grid-cols-2 gap-3">
                 <F label="ISRC">
-                  <input className={`${S.inp} ${form.isrc ? "text-green-400" : "text-red-400"}`}
+                  <input className={`${S.inp} ${form.isrc ? "text-emerald-400" : "text-rose-400"}`}
                     value={form.isrc || ""} onChange={f("isrc")} placeholder="CC-XXX-YY-NNNNN" />
                 </F>
                 <F label="UPC"><input className={S.inp} value={form.upc || ""} onChange={f("upc")} placeholder="00602557685328" /></F>
@@ -481,7 +481,7 @@ function ISRCSearchSection({ store, save, flash, setSection }: {
               <F label="Label"><input className={S.inp} value={form.label || ""} onChange={f("label")} placeholder={store.label.name || "Label name"} /></F>
 
               {!form.isrc && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-xs text-red-300">
+                <div className="bg-rose-500/10 border border-rose-500/30 rounded-lg p-3 text-xs text-rose-300">
                   ⚠ This recording has no ISRC in MusicBrainz. You can enter one manually above, or apply for one through your PRO/distributor.
                 </div>
               )}
@@ -530,7 +530,7 @@ function LeakPanel({ leaks, onAutoFix }: { leaks: Leak[]; onAutoFix?: () => void
 
   if (leaks.length === 0) {
     return (
-      <div className="mb-4 bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-xs text-green-400">
+      <div className="mb-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 text-xs text-emerald-400">
         ✓ No money leaks detected — this track is clean
       </div>
     );
@@ -542,18 +542,18 @@ function LeakPanel({ leaks, onAutoFix }: { leaks: Leak[]; onAutoFix?: () => void
         <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Money Leaks Detected</div>
         {onAutoFix && !fixed && (
           <button onClick={runAutoFix} disabled={fixing}
-            className="flex items-center gap-1.5 px-3 py-1 bg-red-600/20 border border-red-500/30 text-red-300 text-xs font-black rounded-lg hover:bg-red-600/40 transition disabled:opacity-50">
+            className="flex items-center gap-1.5 px-3 py-1 bg-rose-600/20 border border-rose-500/30 text-rose-300 text-xs font-black rounded-lg hover:bg-rose-600/40 transition disabled:opacity-50">
             {fixing ? <><span className="inline-block animate-spin">⟳</span> Fixing...</> : "⚡ Auto-Fix All"}
           </button>
         )}
-        {fixed && <span className="text-xs text-green-400 font-bold">✓ Fixed — review & save</span>}
+        {fixed && <span className="text-xs text-emerald-400 font-bold">✓ Fixed — review & save</span>}
       </div>
 
       {/* Animated fix log */}
       {log.length > 0 && (
         <div className="bg-[#0a0f1e] border border-indigo-500/20 rounded-lg p-3 font-mono text-[10px] space-y-0.5 mb-2">
           {log.map((l, i) => (
-            <div key={i} className={l.startsWith('✓') ? 'text-green-400' : 'text-indigo-300'}>
+            <div key={i} className={l.startsWith('✓') ? 'text-emerald-400' : 'text-indigo-300'}>
               {l.startsWith('✓') ? l : '> ' + l}
             </div>
           ))}
@@ -562,9 +562,9 @@ function LeakPanel({ leaks, onAutoFix }: { leaks: Leak[]; onAutoFix?: () => void
 
       {leaks.map((l, i) => (
         <div key={i} className={`p-3 bg-[#0f172a] rounded-lg text-xs border-l-2 ${
-          l.severity === "critical" ? "border-red-500" : l.severity === "warning" ? "border-yellow-500" : "border-blue-500"
+          l.severity === "critical" ? "border-rose-500" : l.severity === "warning" ? "border-yellow-500" : "border-indigo-500"
         } ${fixed ? "opacity-50 line-through-partial" : ""}`}>
-          <div className={`font-bold ${l.severity === "critical" ? "text-red-400" : l.severity === "warning" ? "text-yellow-400" : "text-blue-400"}`}>
+          <div className={`font-bold ${l.severity === "critical" ? "text-rose-400" : l.severity === "warning" ? "text-yellow-400" : "text-indigo-400"}`}>
             {l.severity === "critical" ? "⚠ CRITICAL:" : l.severity === "warning" ? "⚡ WARNING:" : "ℹ INFO:"} {l.msg}
           </div>
           <div className="text-slate-500 mt-0.5">Fix: {l.fix}</div>
@@ -613,9 +613,9 @@ function WorkspaceSection({ store, save, flash, fixTrackId }: { store: Store; sa
       <div className="grid grid-cols-4 gap-4">
         {[
           { label: "Total Tracks",    val: store.tracks.length,        color: "text-white",        icon: "🎵" },
-          { label: "Total Revenue",   val: `$${totalRevenue.toLocaleString()}`, color: "text-green-400", icon: "💵" },
-          { label: "Unpaid Royalties",val: `$${unpaid.toLocaleString()}`, color: unpaid>0?"text-red-400":"text-green-400", icon: "⚠" },
-          { label: "Critical Issues", val: critTracks.length,           color: critTracks.length>0?"text-red-400":"text-green-400", icon: "🔥" },
+          { label: "Total Revenue",   val: `$${totalRevenue.toLocaleString()}`, color: "text-emerald-400", icon: "💵" },
+          { label: "Unpaid Royalties",val: `$${unpaid.toLocaleString()}`, color: unpaid>0?"text-rose-400":"text-emerald-400", icon: "⚠" },
+          { label: "Critical Issues", val: critTracks.length,           color: critTracks.length>0?"text-rose-400":"text-emerald-400", icon: "🔥" },
         ].map(k => (
           <div key={k.label} className={`${S.panel} p-4`}>
             <div className="flex items-center gap-2 mb-2">
@@ -647,22 +647,22 @@ function WorkspaceSection({ store, save, flash, fixTrackId }: { store: Store; sa
                 <button key={t.id} onClick={() => startEdit(t)}
                   className={`w-full text-left p-4 rounded-xl border transition-all ${
                     selected?.id === t.id ? "border-indigo-500 bg-indigo-600/20"
-                    : crits > 0 ? "border-red-500/30 bg-red-500/5 hover:border-red-500/50"
+                    : crits > 0 ? "border-rose-500/30 bg-rose-500/5 hover:border-rose-500/50"
                     : warns > 0 ? "border-yellow-500/30 bg-yellow-500/5 hover:border-yellow-500/50"
                     : "border-white/10 bg-[#1e293b]/50 hover:border-white/20"
                   }`}>
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-black flex-shrink-0 ${
-                      score >= 66 ? "bg-red-500/20 text-red-400" : score >= 30 ? "bg-yellow-500/20 text-yellow-400" : "bg-green-500/20 text-green-400"
+                      score >= 66 ? "bg-rose-500/20 text-rose-400" : score >= 30 ? "bg-yellow-500/20 text-yellow-400" : "bg-emerald-500/20 text-emerald-400"
                     }`}>{score}</div>
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-sm truncate">{t.title}</div>
-                      <div className="mono text-xs text-slate-500">{t.isrc || <span className="text-red-400">NO ISRC</span>}</div>
+                      <div className="mono text-xs text-slate-500">{t.isrc || <span className="text-rose-400">NO ISRC</span>}</div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      {crits > 0 && <div className="text-xs text-red-400 font-bold">{crits} critical</div>}
+                      {crits > 0 && <div className="text-xs text-rose-400 font-bold">{crits} critical</div>}
                       {warns > 0 && <div className="text-xs text-yellow-400">{warns} warning</div>}
-                      {leaks.length === 0 && <div className="text-xs text-green-400">Clean ✓</div>}
+                      {leaks.length === 0 && <div className="text-xs text-emerald-400">Clean ✓</div>}
                     </div>
                   </div>
                 </button>
@@ -708,7 +708,7 @@ function WorkspaceSection({ store, save, flash, fixTrackId }: { store: Store; sa
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <F label="ISRC">
-                      <input className={`${S.inp} ${editForm.isrc ? "text-green-400" : "text-red-400"}`}
+                      <input className={`${S.inp} ${editForm.isrc ? "text-emerald-400" : "text-rose-400"}`}
                         value={editForm.isrc || ""} onChange={ef("isrc")} />
                     </F>
                     <F label="UPC"><input className={S.inp} value={editForm.upc || ""} onChange={ef("upc")} /></F>
@@ -779,7 +779,7 @@ function CatalogSection({ store, save, flash, setSection }: {
         <div className={`${S.panel} p-5 space-y-3`}>
           <F label="Track Title *"><input className={S.inp} value={form.title} onChange={f("title")} placeholder="God's Plan" /></F>
           <div className="grid grid-cols-2 gap-3">
-            <F label="ISRC"><input className={`${S.inp} ${form.isrc?"text-green-400":"text-red-300"}`} value={form.isrc} onChange={f("isrc")} placeholder="CC-XXX-YY-NNNNN" /></F>
+            <F label="ISRC"><input className={`${S.inp} ${form.isrc?"text-emerald-400":"text-rose-300"}`} value={form.isrc} onChange={f("isrc")} placeholder="CC-XXX-YY-NNNNN" /></F>
             <F label="UPC"><input className={S.inp} value={form.upc} onChange={f("upc")} placeholder="00602557685328" /></F>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -822,17 +822,17 @@ function CatalogSection({ store, save, flash, setSection }: {
               const leaks=scanLeaks(t,store);
               const crits=leaks.filter(l=>l.severity==="critical").length;
               return (
-                <div key={t.id} className={`${S.panel} p-3 flex items-center gap-3 ${crits>0?"border-red-500/30":""}`}>
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${crits>0?"bg-red-500/20 text-red-400":"bg-green-500/20 text-green-400"}`}>
+                <div key={t.id} className={`${S.panel} p-3 flex items-center gap-3 ${crits>0?"border-rose-500/30":""}`}>
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${crits>0?"bg-rose-500/20 text-rose-400":"bg-emerald-500/20 text-emerald-400"}`}>
                     {crits>0?crits:"✓"}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-sm truncate">{t.title}</div>
-                    <div className="mono text-xs text-slate-500">{t.isrc||<span className="text-red-400">NO ISRC</span>}</div>
+                    <div className="mono text-xs text-slate-500">{t.isrc||<span className="text-rose-400">NO ISRC</span>}</div>
                   </div>
                   <div className="flex gap-1.5">
                     <button onClick={()=>edit(t)} className="text-xs px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded transition">Edit</button>
-                    <button onClick={()=>del(t.id)} className="text-xs px-2 py-1 bg-red-900/50 text-red-300 hover:bg-red-800 rounded transition">Del</button>
+                    <button onClick={()=>del(t.id)} className="text-xs px-2 py-1 bg-rose-900/50 text-rose-300 hover:bg-rose-800 rounded transition">Del</button>
                   </div>
                 </div>
               );
@@ -910,7 +910,7 @@ function DDEXSection({ store, flash }: { store: Store; flash: (m: string, ok?: b
               </F>
               {track&&(
                 <div className="bg-stone-900/50 rounded-xl p-4 space-y-1 text-xs mono">
-                  <div><span className="text-slate-500">ISRC:</span> <span className={track.isrc?"text-green-400":"text-red-400"}>{track.isrc||"MISSING"}</span></div>
+                  <div><span className="text-slate-500">ISRC:</span> <span className={track.isrc?"text-emerald-400":"text-rose-400"}>{track.isrc||"MISSING"}</span></div>
                   <div><span className="text-slate-500">Artist:</span> <span className="text-white">{artist?.name||"—"}</span></div>
                   <div><span className="text-slate-500">Label:</span> <span className="text-white">{track.label||store.label.name||"—"}</span></div>
                   <div><span className="text-slate-500">Producers:</span> <span className="text-white">{track.producers||"—"}</span></div>
@@ -948,8 +948,8 @@ function DDEXSection({ store, flash }: { store: Store; flash: (m: string, ok?: b
           </div>
         ):(
           <div className="space-y-4">
-            <div className={`${S.panel} p-5 border-green-500/30`}>
-              <div className="flex items-center gap-2 text-green-400 font-bold mb-4">
+            <div className={`${S.panel} p-5 border-emerald-500/30`}>
+              <div className="flex items-center gap-2 text-emerald-400 font-bold mb-4">
                 <span className="text-xl">✓</span> DDEX ERN Generated
               </div>
               <div className="space-y-3 text-xs">
@@ -963,7 +963,7 @@ function DDEXSection({ store, flash }: { store: Store; flash: (m: string, ok?: b
                 </div>
               </div>
               <button onClick={()=>window.open(`/api/ddex/releases/${result.releaseId}/xml`,"_blank")}
-                className="w-full mt-4 py-3 bg-green-600 hover:bg-green-500 font-bold rounded-xl transition text-sm">
+                className="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl transition text-sm">
                 ⬇ Download ERN XML Package
               </button>
             </div>
@@ -1100,7 +1100,7 @@ function ArtistsSection({ store, save, flash }: { store: Store; save:(s:Store)=>
           <div className="grid grid-cols-2 gap-3">
             <F label="PRO">
               <select className={S.inp} value={form.pro} onChange={f("pro")}>
-                {["ASCAP","BMI","SESAC","GMR","SoundExchange","None"].map(p=><option key={p}>{p}</option>)}
+                {["ASCAP","BMI","SESAC","GMR","Rights Administrator","None"].map(p=><option key={p}>{p}</option>)}
               </select>
             </F>
             <F label="Split %"><input className={S.inp} type="number" min="0" max="100" value={form.splitPct||""} onChange={f("splitPct")} placeholder="20" /></F>
@@ -1132,7 +1132,7 @@ function ArtistsSection({ store, save, flash }: { store: Store; save:(s:Store)=>
                 </div>
                 <div className="flex gap-2">
                   <button onClick={()=>edit(a)} className="text-xs px-2 py-1 bg-slate-700 hover:bg-slate-600 rounded transition">Edit</button>
-                  <button onClick={()=>del(a.id)} className="text-xs px-2 py-1 bg-red-900/50 text-red-300 hover:bg-red-800 rounded transition">Del</button>
+                  <button onClick={()=>del(a.id)} className="text-xs px-2 py-1 bg-rose-900/50 text-rose-300 hover:bg-rose-800 rounded transition">Del</button>
                 </div>
               </div>
             ))}
@@ -1187,11 +1187,11 @@ function RoyaltiesSection({ store, save, flash, setSection }: { store: Store; sa
         ) : (
         <div className={`${S.panel} p-5 space-y-3`}>
           <F label="Track *">
-            <select className={`${S.inp} ${errors.trackId ? 'ring-2 ring-red-500' : ''}`} value={form.trackId} onChange={f("trackId")}>
+            <select className={`${S.inp} ${errors.trackId ? 'ring-2 ring-rose-500' : ''}`} value={form.trackId} onChange={f("trackId")}>
               <option value="">— select track —</option>
               {store.tracks.map(t=><option key={t.id} value={t.id}>{t.title}</option>)}
             </select>
-            {errors.trackId && <p className="text-red-400 text-xs mt-1">{errors.trackId}</p>}
+            {errors.trackId && <p className="text-rose-400 text-xs mt-1">{errors.trackId}</p>}
           </F>
           <div className="grid grid-cols-2 gap-3">
             <F label="DSP">
@@ -1200,8 +1200,8 @@ function RoyaltiesSection({ store, save, flash, setSection }: { store: Store; sa
               </select>
             </F>
             <F label="Period">
-              <input className={`${S.inp} ${errors.period ? 'ring-2 ring-red-500' : ''}`} value={form.period} onChange={f("period")} placeholder="2025-Q4" />
-              {errors.period && <p className="text-red-400 text-xs mt-1">{errors.period}</p>}
+              <input className={`${S.inp} ${errors.period ? 'ring-2 ring-rose-500' : ''}`} value={form.period} onChange={f("period")} placeholder="2025-Q4" />
+              {errors.period && <p className="text-rose-400 text-xs mt-1">{errors.period}</p>}
             </F>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -1212,19 +1212,19 @@ function RoyaltiesSection({ store, save, flash, setSection }: { store: Store; sa
             <input type="checkbox" checked={form.paid} onChange={f("paid")} className="w-4 h-4 accent-indigo-500" />
             <span className="text-sm text-slate-300">Marked as Paid</span>
           </label>
-          <button onClick={submit} className="w-full py-2.5 bg-green-600 hover:bg-green-500 font-bold rounded-xl transition text-sm">
+          <button onClick={submit} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 font-bold rounded-xl transition text-sm">
             + Add Entry
           </button>
         </div>
         )}
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <div className={`${S.panel} p-4 text-center border-green-500/20`}>
-            <div className="text-2xl font-black text-green-400 mono">${totalPaid.toLocaleString()}</div>
-            <div className="text-xs text-green-300 mt-1">Paid</div>
+          <div className={`${S.panel} p-4 text-center border-emerald-500/20`}>
+            <div className="text-2xl font-black text-emerald-400 mono">${totalPaid.toLocaleString()}</div>
+            <div className="text-xs text-emerald-300 mt-1">Paid</div>
           </div>
-          <div className={`${S.panel} p-4 text-center border-red-500/20`}>
-            <div className="text-2xl font-black text-red-400 mono">${totalUnpaid.toLocaleString()}</div>
-            <div className="text-xs text-red-300 mt-1">Owed / Unpaid</div>
+          <div className={`${S.panel} p-4 text-center border-rose-500/20`}>
+            <div className="text-2xl font-black text-rose-400 mono">${totalUnpaid.toLocaleString()}</div>
+            <div className="text-xs text-rose-300 mt-1">Owed / Unpaid</div>
           </div>
         </div>
       </div>
@@ -1239,16 +1239,16 @@ function RoyaltiesSection({ store, save, flash, setSection }: { store: Store; sa
               const track=store.tracks.find(t=>t.id===r.trackId);
               return (
                 <div key={r.id} className={`${S.panel} p-3 flex items-center gap-3`}>
-                  <div className={`w-2 h-10 rounded-full flex-shrink-0 ${r.paid?"bg-green-500":"bg-red-500"}`}/>
+                  <div className={`w-2 h-10 rounded-full flex-shrink-0 ${r.paid?"bg-emerald-500":"bg-rose-500"}`}/>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-sm truncate">{track?.title||"Unknown"}</div>
                     <div className="text-xs text-slate-400">{r.dsp} · {r.period} · {r.streams.toLocaleString()} streams</div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <div className={`font-black mono ${r.paid?"text-green-400":"text-red-400"}`}>${r.amount.toLocaleString()}</div>
+                    <div className={`font-black mono ${r.paid?"text-emerald-400":"text-rose-400"}`}>${r.amount.toLocaleString()}</div>
                     <div className="text-xs text-slate-500">{r.paid?"PAID":"OWED"}</div>
                   </div>
-                  <button onClick={()=>del(r.id)} className="text-xs text-red-400 hover:text-red-300">✕</button>
+                  <button onClick={()=>del(r.id)} className="text-xs text-rose-400 hover:text-rose-300">✕</button>
                 </div>
               );
             })}
@@ -1307,7 +1307,7 @@ function SettingsSection({ store, save, flash }: { store: Store; save:(s:Store)=
         <button onClick={exportData} className="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-sm rounded-xl transition">
           ⬇ Export All Data (JSON)
         </button>
-        <button onClick={clearData} className="w-full py-2.5 bg-red-900/50 hover:bg-red-800 text-red-300 text-sm rounded-xl transition">
+        <button onClick={clearData} className="w-full py-2.5 bg-rose-900/50 hover:bg-rose-800 text-rose-300 text-sm rounded-xl transition">
           🗑 Clear All Data
         </button>
         <div className="text-xs text-slate-600 mt-1">All data is stored in your browser's localStorage — no server required.</div>

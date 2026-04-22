@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>For Publishers – Clean Metadata & Faster Royalties | HeyRoya</title>
+    <meta name="description" content="30-dagars pilot for musikforlag: HeyRoya validerar metadata infor PRO, minskar avvisningar och paskyndar royaltyfloden. Ingen integration kravs.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.45;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+        .publisher-pilot { max-width: 1300px; margin: 0 auto; }
+        .hero-card {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 2rem;
+            padding: 3rem 2.5rem;
+            color: #e0e0e0;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.5);
+        }
+        .hero-card h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 1rem; color: #e0e0e0; }
+        .hero-card .lead { font-size: 1.2rem; color: #9ca3af; max-width: 80%; margin-bottom: 1rem; border-left: 3px solid #22d3ee; padding-left: 1.2rem; }
+        .grid-2cols { display: flex; flex-wrap: wrap; gap: 2rem; margin: 2rem 0 2.5rem; }
+        .info-card {
+            flex: 1;
+            background: #111;
+            border-radius: 1.8rem;
+            padding: 1.8rem 2rem;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+            border: 1px solid #2a2a2a;
+        }
+        .info-card h2 { font-size: 1.6rem; font-weight: 700; color: #e0e0e0; margin-bottom: 1rem; border-left: 4px solid #22d3ee; padding-left: 0.9rem; }
+        .info-card h3 { font-size: 1.2rem; font-weight: 600; margin: 1.4rem 0 0.8rem; color: #22d3ee; }
+        .list-check { list-style: none; padding: 0; }
+        .list-check li { margin-bottom: 0.75rem; padding-left: 1.8rem; position: relative; color: #9ca3af; }
+        .list-check li::before { content: "\2713"; color: #22d3ee; font-weight: bold; font-size: 1.1rem; position: absolute; left: 0; top: -1px; }
+        .steps-row { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.8rem 0 1rem; }
+        .step { flex: 1; background: #1a1a1a; border-radius: 1.5rem; padding: 1.2rem; text-align: center; border: 1px solid #2a2a2a; color: #e0e0e0; }
+        .step-number { background: #22d3ee; color: #000; width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 60px; font-weight: 800; margin-bottom: 0.8rem; }
+        .badge-free { background: rgba(34,211,238,0.1); color: #22d3ee; display: inline-block; padding: 0.2rem 1rem; border-radius: 60px; font-size: 0.75rem; font-weight: 700; margin-bottom: 1rem; border: 1px solid rgba(34,211,238,0.3); }
+        .two-list-side { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.2rem 0; }
+        .two-list-side > div { flex: 1; }
+        .cta-area { background: #111; border: 1px solid #2a2a2a; border-radius: 1.8rem; padding: 2.2rem 2rem; text-align: center; margin-top: 1rem; }
+        .cta-area h2 { color: #e0e0e0 !important; }
+        .cta-area p { color: #9ca3af; }
+        .btn-pilot { background: #22d3ee; color: #000; border: none; padding: 0.9rem 2.5rem; font-size: 1rem; font-weight: 600; border-radius: 60px; cursor: pointer; display: inline-block; text-decoration: none; margin: 0.5rem 0; }
+        .btn-pilot:hover { background: #06b6d4; }
+        hr { margin: 1.2rem 0; border: none; border-top: 1px solid #2a2a2a; }
+        .micro-meta { font-size: 0.7rem; color: #6b7280; text-align: center; margin-top: 2rem; }
+        @media (max-width: 800px) {
+            .hero-card { padding: 2rem; }
+            .hero-card h1 { font-size: 2rem; }
+            .hero-card .lead { max-width: 100%; }
+            .info-card { padding: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="publisher-pilot">
+    <nav style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+        <a href="/" style="text-decoration:none;display:inline-block;"><span style="font-size:1.8rem;font-weight:800;color:#22d3ee;letter-spacing:-0.03em;cursor:pointer;">ROYA</span></a>
+        <div class="flex items-center gap-4" style="display:flex;align-items:center;gap:12px;"></div>
+    </nav>
+    <div class="hero-card">
+        <h1>For Publishers &#8212; Clean Metadata.<br>Faster Royalties.</h1>
+        <div class="lead">
+            HeyRoya&#8482; helps publishers submit clean, verified metadata to PRO and other CMOs.
+            Our 30&#8209;day pilot improves metadata hygiene, reduces rejected works, and speeds up royalty processing &#8212; with <strong style="color:#e0e0e0;">no integration required</strong>.
+        </div>
+    </div>
+
+    <div class="info-card">
+        <h2>&#128203; How It Works</h2>
+        <div class="steps-row">
+            <div class="step"><div class="step-number">1</div> <strong>Upload your works</strong><br>CWR, DDEX, Excel or split sheets</div>
+            <div class="step"><div class="step-number">2</div> <strong>Roya validates</strong><br>splits &amp; metadata</div>
+            <div class="step"><div class="step-number">3</div> <strong>You approve</strong><br>any corrections</div>
+            <div class="step"><div class="step-number">4</div> <strong>Export PRO&#8209;ready</strong><br>files</div>
+            <div class="step"><div class="step-number">5</div> <strong>Receive cryptographic</strong><br>Rights Verification Report</div>
+        </div>
+    </div>
+
+    <div class="grid-2cols">
+        <div class="info-card">
+            <div class="badge-free">&#127919; 30 days &#8212; free pilot</div>
+            <h2>Why Join the Pilot</h2>
+            <ul class="list-check">
+                <li>Fewer rejected works</li>
+                <li>Faster royalty payouts</li>
+                <li>Less admin</li>
+                <li>Immutable proof of submitted splits</li>
+                <li><strong style="color:#22d3ee;">Free for 30 days</strong></li>
+            </ul>
+        </div>
+        <div class="info-card">
+            <h2>What You Need</h2>
+            <ul class="list-check">
+                <li>20&#8211;50 recent works</li>
+                <li>A willingness to review flagged issues</li>
+            </ul>
+            <h3>&#128230; What You Get</h3>
+            <ul class="list-check">
+                <li>Clean metadata package</li>
+                <li>Verification reports (SHA&#8209;256 notarised)</li>
+                <li>PRO&#8209;ready export (CWR/Excel)</li>
+                <li>A Pilot Impact Report with error reduction %</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="info-card">
+        <div class="two-list-side">
+            <div>
+                <h3>&#9989; What we guarantee</h3>
+                <ul class="list-check">
+                    <li>No automatic changes &#8211; you control corrections</li>
+                    <li>Full GDPR compliance, no raw data on blockchain</li>
+                    <li>Dedicated support during pilot</li>
+                </ul>
+            </div>
+            <div>
+                <h3>&#128269; Your commitment</h3>
+                <ul class="list-check">
+                    <li>Upload 20&#8211;50 works within one week</li>
+                    <li>Review flagged conflicts (missing IPI, sum errors)</li>
+                    <li>Share anonymised metrics: time saved, rejection rate</li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <div style="text-align: center; margin-top: 0.6rem;">
+            <span style="background: #1a1a1a; border: 1px solid #2a2a2a; padding: 0.3rem 1rem; border-radius: 30px; font-size: 0.75rem; color: #9ca3af;">&#9889; No integration required &#183; Works with PRO, TONO, Koda, Teosto</span>
+        </div>
+    </div>
+
+    <div class="cta-area">
+        <h2 style="font-size: 1.8rem; font-weight: 700;">Join the Pilot</h2>
+        <p style="margin: 0.8rem auto; max-width: 450px;">Start your 30&#8209;day pilot today &#8211; get cleaner metadata and faster royalty flows.</p>
+        <a href="mailto:hello@heyroya.se" class="btn-pilot">&#128231; hello@heyroya.se</a>
+        <p style="margin-top: 1rem; font-size: 0.8rem;">&#128274; Confidential &#183; No commercial commitment after pilot</p>
+    </div>
+
+    <div class="micro-meta">
+        HeyRoya&#8482; &#8211; Clean splits for PRO &amp; rights organizations. Publisher pilot version 1.0 (30 days).
+    </div>
+</div>
+<script>
+window.TRANSLATIONS = {
+  "For Publishers – Clean Metadata & Faster Royalties | HeyRoya": "För musikförlag – Strukturerad metadata & effektivare royaltyhantering | HeyRoya",
+  "For Publishers \u2014 Clean Metadata.": "För musikförlag \u2014 strukturerad metadata",
+  "Faster Royalties.": "och effektivare royaltyhantering",
+  "HeyRoya\u2122 helps publishers submit clean, verified metadata to PRO and other CMOs.\n            Our 30\u2011day pilot improves metadata hygiene, reduces rejected works, and speeds up royalty processing \u2014 with": "Roya hjälper musikförlag att säkerställa korrekt och verifierad metadata inför registrering hos PRO och andra rättighetsorganisationer.\n            Genom en 30-dagars pilot förbättras datakvaliteten, antalet avvisade verk minskar och hanteringen effektiviseras \u2014",
+  "no integration required": "utan behov av integration",
+  "\ud83d\udccb How It Works": "\ud83d\udccb Så fungerar det",
+  "Upload your works": "Ladda upp verk",
+  "CWR, DDEX, Excel or split sheets": "CWR, DDEX, Excel eller fördelningsunderlag",
+  "Roya validates": "Roya analyserar",
+  "splits & metadata": "Validerar fördelningar och metadata",
+  "You approve": "Granska och godkänn",
+  "any corrections": "Ni beslutar om eventuella justeringar",
+  "Export PRO\u2011ready": "Exportera underlag",
+  "files": "Anpassat för registrering hos PRO",
+  "Receive cryptographic": "Ta del av verifieringsrapport",
+  "Rights Verification Report": "Strukturerad dokumentation av genomförd validering",
+  "\ud83c\udfaf 30 days \u2014 free pilot": "\ud83c\udfaf 30 dagar \u2014 kostnadsfri pilot",
+  "Why Join the Pilot": "Varför delta",
+  "Fewer rejected works": "Färre avvisade verk",
+  "Faster royalty payouts": "Effektivare royaltyhantering",
+  "Less admin": "Minskad administrativ belastning",
+  "Immutable proof of submitted splits": "Spårbar dokumentation av fördelningar",
+  "Free for 30 days": "Kostnadsfri pilotperiod",
+  "What You Need": "Förutsättningar",
+  "20\u201350 recent works": "20\u201350 nyligen registrerade verk",
+  "A willingness to review flagged issues": "Möjlighet att granska identifierade avvikelser",
+  "\ud83d\udce6 What You Get": "\ud83d\udce6 Detta ingår",
+  "Clean metadata package": "Strukturerat metadataunderlag",
+  "Verification reports (SHA\u2011256 notarised)": "Valideringsrapporter (kryptografiskt signerade)",
+  "PRO\u2011ready export (CWR/Excel)": "Exportfiler anpassade för PRO (CWR/Excel)",
+  "A Pilot Impact Report with error reduction %": "Sammanställning av pilotens resultat, inklusive identifierade avvikelser",
+  "\u2705 What we guarantee": "\u2705 Viktiga utgångspunkter",
+  "No automatic changes \u2013 you control corrections": "Inga automatiska ändringar \u2014 ni har full kontroll",
+  "Full GDPR compliance, no raw data on blockchain": "GDPR-anpassad hantering av data. Ingen lagring av rådata i externa distribuerade system",
+  "Dedicated support during pilot": "Löpande stöd under pilotperioden",
+  "\ud83d\udd0d Your commitment": "\ud83d\udd0d Er medverkan",
+  "Upload 20\u201350 works within one week": "Uppladdning av 20\u201350 verk inom en vecka",
+  "Review flagged conflicts (missing IPI, sum errors)": "Genomgång av identifierade avvikelser (t.ex. saknade IPI-nummer eller summeringsfel)",
+  "Share anonymised metrics: time saved, rejection rate": "Delning av övergripande, anonymiserad feedback (t.ex. tidsbesparing och hanteringseffektivitet)",
+  "\u26a1 No integration required \u00b7 Works with PRO, TONO, Koda, Teosto": "\u26a1 Ingen integration krävs \u00b7 Fungerar med PRO samt andra nordiska rättighetsorganisationer som TONO, Koda och Teosto",
+  "Join the Pilot": "Ansök till pilot",
+  "Start your 30\u2011day pilot today \u2013 get cleaner metadata and faster royalty flows.": "Starta en 30-dagars pilot och utvärdera hur strukturerad metadata kan förbättra er hantering av rättigheter och royaltyflöden.",
+  "\ud83d\udce7 hello@heyroya.se": "\ud83d\udce7 hello@heyroya.se",
+  "\ud83d\udd12 Confidential \u00b7 No commercial commitment after pilot": "\ud83d\udd12 Konfidentiellt \u00b7 Ingen kommersiell förpliktelse efter pilot",
+  "HeyRoya\u2122 \u2013 Clean splits for PRO & rights organizations. Publisher pilot version 1.0 (30 days).": "Roya \u2014 Validering av metadata för musikrättigheter. Utvecklat för musikförlag och rättighetsorganisationer. Pilotversion 1.0 (30 dagar)."
+};
+</script>
+<script src="/lang.js"></script>
+</body>
+</html>

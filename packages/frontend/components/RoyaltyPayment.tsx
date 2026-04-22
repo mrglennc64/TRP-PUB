@@ -124,8 +124,8 @@ export default function RoyaltyPayment({ track, onPaymentComplete }: RoyaltyPaym
               <div className="flex items-center space-x-2">
                 <span className={`text-xs px-2 py-1 rounded-full ${
                   split.role === 'artist' ? 'bg-purple-100 text-purple-600' :
-                  split.role === 'producer' ? 'bg-blue-100 text-blue-600' :
-                  split.role === 'label' ? 'bg-green-100 text-green-600' :
+                  split.role === 'producer' ? 'bg-indigo-100 text-indigo-600' :
+                  split.role === 'label' ? 'bg-emerald-100 text-emerald-600' :
                   'bg-gray-100 text-gray-600'
                 }`}>
                   {split.role}
@@ -158,7 +158,7 @@ export default function RoyaltyPayment({ track, onPaymentComplete }: RoyaltyPaym
           isProcessing
             ? 'bg-gray-400 cursor-not-allowed'
             : balance && parseFloat(balance.formatted) < track.totalEarned
-            ? 'bg-red-500 text-white cursor-not-allowed'
+            ? 'bg-rose-500 text-white cursor-not-allowed'
             : 'bg-purple-600 hover:bg-purple-700 text-white'
         }`}
       >
@@ -178,12 +178,12 @@ export default function RoyaltyPayment({ track, onPaymentComplete }: RoyaltyPaym
       </button>
 
       {txHash && (
-        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+        <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
           <div className="flex items-start space-x-2">
-            <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-green-700">Payment Successful!</p>
-              <p className="text-xs text-green-600 mt-1">Transaction Hash:</p>
+              <p className="text-sm font-medium text-emerald-700">Payment Successful!</p>
+              <p className="text-xs text-emerald-600 mt-1">Transaction Hash:</p>
               <code className="text-xs bg-white px-2 py-1 rounded block mt-1 font-mono">
                 {txHash}
               </code>
@@ -202,9 +202,9 @@ export default function RoyaltyPayment({ track, onPaymentComplete }: RoyaltyPaym
       )}
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-2">
-          <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-lg flex items-start space-x-2">
+          <AlertCircle className="h-5 w-5 text-rose-500 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-rose-600">{error}</p>
         </div>
       )}
     </div>

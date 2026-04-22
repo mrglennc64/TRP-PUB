@@ -4,15 +4,10 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Footer from '../components/Footer';
-import { useDemoMode } from '../lib/DemoModeProvider';
 
 export default function ForensicLanding() {
   const [query, setQuery] = useState('');
   const router = useRouter();
-  const { setDemoMode } = useDemoMode();
-
-  const enterDemo = () => { setDemoMode(true); router.push('/gap-finder'); };
-
   const handleScan = (e: React.FormEvent) => {
     e.preventDefault();
     const q = query.trim();
@@ -83,27 +78,6 @@ export default function ForensicLanding() {
             No account required — queries SMPT global registry
           </p>
 
-          {/* Two text links — no giant buttons */}
-          <div className="flex flex-wrap gap-6 text-sm border-t border-slate-800 pt-6">
-            <Link href="/free-audit" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-4 transition">
-              Run full catalog audit
-            </Link>
-            <Link href="/for-attorneys" className="text-amber-400 hover:text-amber-300 underline underline-offset-4 transition">
-              Attorney access and documentation
-            </Link>
-            <Link href="/publisher-portal" className="text-emerald-400 hover:text-emerald-300 underline underline-offset-4 transition">
-              Publishing companies portal
-            </Link>
-            <Link href="/label" className="text-slate-400 hover:text-slate-300 underline underline-offset-4 transition">
-              Label and roster management
-            </Link>
-            <button
-              onClick={enterDemo}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-sm rounded-xl transition"
-            >
-              🎬 Try Demo Mode
-            </button>
-          </div>
         </div>
       </section>
 
@@ -155,16 +129,16 @@ export default function ForensicLanding() {
             <div className="flex-shrink-0 self-start">
               <Link
                 href="/for-attorneys"
-                className="group flex flex-col items-center gap-1 px-5 py-4 rounded bg-[#0f1623] border border-slate-600 hover:border-violet-500/60 transition-all duration-300 shadow-lg hover:shadow-violet-900/30 text-center min-w-[220px]"
+                className="group flex flex-col items-center gap-1 px-5 py-4 rounded bg-[#0f1623] border border-slate-600 hover:border-indigo-500/60 transition-all duration-300 shadow-lg hover:shadow-indigo-900/30 text-center min-w-[220px]"
               >
                 <div className="flex items-center gap-2 text-slate-200 text-sm font-semibold group-hover:text-white transition">
                   {/* PDF + shield icon */}
-                  <svg className="w-4 h-4 text-slate-400 group-hover:text-violet-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <svg className="w-4 h-4 text-slate-400 group-hover:text-indigo-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
                   View Sample Evidence Package
                 </div>
-                <span className="text-[10px] text-slate-500 group-hover:text-violet-400/70 font-mono tracking-wide transition">
+                <span className="text-[10px] text-slate-500 group-hover:text-indigo-400/70 font-mono tracking-wide transition">
                   SHA-256 · Hash Verified · PDF
                 </span>
               </Link>
@@ -222,12 +196,12 @@ export default function ForensicLanding() {
                 Run free audit →
               </Link>
             </div>
-            <div className="border-l-2 border-blue-600 pl-4">
+            <div className="border-l-2 border-indigo-600 pl-4">
               <p className="text-sm font-semibold text-slate-200 mb-1">Labels &amp; Managers</p>
               <p className="text-xs text-slate-500 mb-3 leading-relaxed">
                 Roster catalog management, bulk audit processing, and split verification across artists.
               </p>
-              <Link href="/label" className="text-xs text-blue-400 hover:text-blue-300 transition">
+              <Link href="/label" className="text-xs text-indigo-400 hover:text-indigo-300 transition">
                 Label portal →
               </Link>
             </div>

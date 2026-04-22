@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function RoyaltyFinderPage() {
   const [title, setTitle] = useState("");
@@ -70,7 +70,7 @@ export default function RoyaltyFinderPage() {
       </form>
 
       {error && (
-        <div className="text-red-600 text-sm mb-4">
+        <div className="text-rose-600 text-sm mb-4">
           Error: {error}
         </div>
       )}

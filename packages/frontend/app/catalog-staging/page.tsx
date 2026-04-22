@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 
 /* ─── Types ──────────────────────────────────────────────────── */
@@ -76,7 +76,7 @@ const MOCK_RECORDS: CatalogRecord[] = [
   {
     id: "r5", title: "Drip Too Hard", artist: "Lil Baby & Gunna", isrc: "USSM11804672",
     splits: "50/50", distributor: "Quality Control / Capitol",
-    source: "SoundExchange Q4",
+    source: "Rights Administrator Q4",
     changeType: "modified", status: "pending",
     liveValue: { splits: "60/40", digital_performance: "unclaimed" },
     shadowValue: { splits: "50/50", digital_performance: "$12,400 pending" },
@@ -112,10 +112,10 @@ const MOCK_RECORDS: CatalogRecord[] = [
 ];
 
 const CHANGE_META: Record<ChangeType, { label: string; color: string; bg: string; border: string }> = {
-  new:      { label: "New",      color: "text-green-400",  bg: "bg-green-500/10",  border: "border-green-500/30" },
+  new:      { label: "New",      color: "text-emerald-400",  bg: "bg-emerald-500/10",  border: "border-emerald-500/30" },
   modified: { label: "Modified", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/30" },
   conflict: { label: "Conflict", color: "text-rose-400",   bg: "bg-rose-500/10",   border: "border-rose-500/30" },
-  deleted:  { label: "Remove",   color: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/30" },
+  deleted:  { label: "Remove",   color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30" },
 };
 
 function fmtMoney(n: number) {
@@ -202,13 +202,13 @@ function parseCSVToRecords(text: string): CatalogRecord[] {
 }
 
 function RiskBar({ score }: { score: number }) {
-  const color = score >= 70 ? "bg-rose-500" : score >= 40 ? "bg-yellow-500" : "bg-green-500";
+  const color = score >= 70 ? "bg-rose-500" : score >= 40 ? "bg-yellow-500" : "bg-emerald-500";
   return (
     <div className="flex items-center gap-2">
       <div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
       </div>
-      <span className={`text-xs font-semibold ${score >= 70 ? "text-rose-400" : score >= 40 ? "text-yellow-400" : "text-green-400"}`}>
+      <span className={`text-xs font-semibold ${score >= 70 ? "text-rose-400" : score >= 40 ? "text-yellow-400" : "text-emerald-400"}`}>
         {score}
       </span>
     </div>
@@ -319,12 +319,12 @@ export default function CatalogStagingPage() {
               <span className="text-2xl">🔄</span>
               <h1 className="text-xl font-black text-white tracking-tight">Mock → Live Catalog Swap</h1>
               {swapPhase === "done" && !rolledBack && (
-                <span className="ml-2 px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">
+                <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/30">
                   LIVE
                 </span>
               )}
               {rolledBack && (
-                <span className="ml-2 px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs font-bold rounded-full border border-orange-500/30">
+                <span className="ml-2 px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-bold rounded-full border border-amber-500/30">
                   ROLLED BACK
                 </span>
               )}
@@ -371,10 +371,10 @@ export default function CatalogStagingPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
           {[
             { label: "Shadow Records", value: summary.totalShadow, color: "text-white" },
-            { label: "Approved", value: summary.approved, color: "text-green-400" },
+            { label: "Approved", value: summary.approved, color: "text-emerald-400" },
             { label: "Rejected", value: summary.rejected, color: "text-rose-400" },
             { label: "Pending Review", value: summary.pending, color: "text-yellow-400" },
-            { label: "Conflicts", value: summary.conflicts, color: "text-orange-400" },
+            { label: "Conflicts", value: summary.conflicts, color: "text-amber-400" },
             { label: "Est. Recovery", value: fmtMoney(summary.estimatedRecovery), color: "text-indigo-400 text-sm font-black" },
           ].map((c) => (
             <div key={c.label} className="bg-[#0f172a] border border-white/10 rounded-xl p-3">
@@ -407,7 +407,7 @@ export default function CatalogStagingPage() {
             ))}
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <button onClick={approveAll} className="px-3 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 border border-green-500/30 rounded-lg text-xs font-semibold transition">
+            <button onClick={approveAll} className="px-3 py-1.5 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-lg text-xs font-semibold transition">
               Approve All Clean
             </button>
             <button onClick={rejectAll} className="px-3 py-1.5 bg-rose-600/20 text-rose-400 hover:bg-rose-600/30 border border-rose-500/30 rounded-lg text-xs font-semibold transition">
@@ -469,7 +469,7 @@ export default function CatalogStagingPage() {
                         <button
                           onClick={() => setStatus(r.id, "approved")}
                           disabled={r.changeType === "conflict"}
-                          className="px-2.5 py-1 bg-green-600/20 hover:bg-green-600/40 text-green-400 border border-green-500/30 rounded-lg text-xs font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-500/30 rounded-lg text-xs font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           Approve
                         </button>
@@ -482,7 +482,7 @@ export default function CatalogStagingPage() {
                       </>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs font-bold ${r.status === "approved" ? "text-green-400" : "text-rose-400"}`}>
+                        <span className={`text-xs font-bold ${r.status === "approved" ? "text-emerald-400" : "text-rose-400"}`}>
                           {r.status === "approved" ? "✓ Approved" : "✗ Rejected"}
                         </span>
                         <button
@@ -504,7 +504,7 @@ export default function CatalogStagingPage() {
                       <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Changes in Shadow</div>
                       <ul className="space-y-1.5">
                         {r.diff.map((d, i) => (
-                          <li key={i} className={`flex items-start gap-2 text-xs ${d.startsWith("CONFLICT") ? "text-rose-400" : d.startsWith("DUPLICATE") ? "text-orange-400" : "text-green-400"}`}>
+                          <li key={i} className={`flex items-start gap-2 text-xs ${d.startsWith("CONFLICT") ? "text-rose-400" : d.startsWith("DUPLICATE") ? "text-amber-400" : "text-emerald-400"}`}>
                             <span className="flex-shrink-0 mt-0.5">{d.startsWith("CONFLICT") || d.startsWith("DUPLICATE") ? "⚠" : "+"}</span>
                             {d}
                           </li>
@@ -523,24 +523,24 @@ export default function CatalogStagingPage() {
                             </div>
                           ))}
                         </div>
-                        <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-3">
-                          <div className="text-xs font-bold text-green-400 mb-2">SHADOW (incoming)</div>
+                        <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3">
+                          <div className="text-xs font-bold text-emerald-400 mb-2">SHADOW (incoming)</div>
                           {Object.entries(r.shadowValue).map(([k, v]) => (
                             <div key={k} className="text-xs mb-1">
                               <span className="text-slate-500">{k}:</span>{" "}
-                              <span className="text-green-300">{v}</span>
+                              <span className="text-emerald-300">{v}</span>
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
                     {!r.liveValue && (
-                      <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-3">
-                        <div className="text-xs font-bold text-green-400 mb-2">SHADOW VALUES</div>
+                      <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-3">
+                        <div className="text-xs font-bold text-emerald-400 mb-2">SHADOW VALUES</div>
                         {Object.entries(r.shadowValue).map(([k, v]) => (
                           <div key={k} className="text-xs mb-1">
                             <span className="text-slate-500">{k}:</span>{" "}
-                            <span className="text-green-300">{v}</span>
+                            <span className="text-emerald-300">{v}</span>
                           </div>
                         ))}
                       </div>
@@ -584,7 +584,7 @@ export default function CatalogStagingPage() {
               <button
                 onClick={() => setSwapPhase("confirming")}
                 disabled={summary.approved === 0}
-                className="px-6 py-3 bg-green-600 hover:bg-green-500 disabled:bg-white/10 disabled:text-slate-600 text-white font-bold rounded-xl text-sm transition flex-shrink-0"
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-white/10 disabled:text-slate-600 text-white font-bold rounded-xl text-sm transition flex-shrink-0"
               >
                 Execute Swap ({summary.approved} records)
               </button>
@@ -604,7 +604,7 @@ export default function CatalogStagingPage() {
                   <span className="text-rose-400"> This cannot be undone without the rollback tool.</span>
                 </p>
                 <div className="flex gap-3">
-                  <button onClick={execSwap} className="px-5 py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-sm transition">
+                  <button onClick={execSwap} className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm transition">
                     Confirm Swap
                   </button>
                   <button onClick={() => setSwapPhase("idle")} className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-slate-300 font-semibold rounded-xl text-sm border border-white/10 transition">
@@ -620,7 +620,7 @@ export default function CatalogStagingPage() {
           <div className="bg-[#0f172a] border border-white/10 rounded-2xl overflow-hidden">
             <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${swapPhase === "swapping" ? "bg-blue-400 animate-pulse" : rolledBack ? "bg-orange-400" : "bg-green-400"}`} />
+                <div className={`w-2 h-2 rounded-full ${swapPhase === "swapping" ? "bg-indigo-400 animate-pulse" : rolledBack ? "bg-amber-400" : "bg-emerald-400"}`} />
                 <span className="text-sm font-bold text-white">
                   {swapPhase === "swapping" ? "Swap in progress…" : rolledBack ? "Rolled back" : "Swap complete"}
                 </span>
@@ -628,7 +628,7 @@ export default function CatalogStagingPage() {
               {swapPhase === "done" && rollbackAvail && !rolledBack && (
                 <button
                   onClick={execRollback}
-                  className="px-3 py-1.5 bg-orange-500/20 hover:bg-orange-500/30 text-orange-400 border border-orange-500/30 rounded-lg text-xs font-semibold transition"
+                  className="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/30 rounded-lg text-xs font-semibold transition"
                 >
                   Rollback (24h window)
                 </button>
@@ -642,19 +642,19 @@ export default function CatalogStagingPage() {
                   <span>{swapPct}%</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden mb-4">
-                  <div className="h-full bg-green-500 transition-all duration-100 rounded-full" style={{ width: `${swapPct}%` }} />
+                  <div className="h-full bg-emerald-500 transition-all duration-100 rounded-full" style={{ width: `${swapPct}%` }} />
                 </div>
               </div>
             )}
 
-            <div className="bg-black/40 p-4 font-mono text-xs text-green-400 space-y-0.5 max-h-48 overflow-y-auto">
+            <div className="bg-black/40 p-4 font-mono text-xs text-emerald-400 space-y-0.5 max-h-48 overflow-y-auto">
               {swapLog.map((l, i) => <div key={i}>{l}</div>)}
               {swapPhase === "swapping" && <div className="animate-pulse">▊</div>}
             </div>
 
             {swapPhase === "done" && !rolledBack && (
               <div className="px-5 py-4 flex items-center gap-4 flex-wrap">
-                <div className="text-sm font-semibold text-green-400">
+                <div className="text-sm font-semibold text-emerald-400">
                   ✅ {summary.approved} records live
                 </div>
                 <Link href="/label" className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition">

@@ -1,787 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roya · Documents</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TrapRoyaltiesPro · Metadata Pre-Validation & Royalty Integrity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background: #f8fafc;
-            font-family: 'Inter', sans-serif;
-            color: #0f172a;
-        }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #fafcff;
+      color: #0b2b2f;
+      line-height: 1.45;
+    }
 
-        .nav {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 24px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #e2e8f0;
-            background: white;
-        }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 1.2rem 2rem 4rem;
+    }
 
-        .logo {
-            font-weight: 800;
-            font-size: 26px;
-            background: linear-gradient(135deg, #1e1b4b, #4f46e5);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-        }
+    /* header / nav */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #e2edf2;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #0b4f3c, #1b7e5e);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.6rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #2c5f6e;
+    }
+    .demo-badge {
+      background: #eef2f5;
+      padding: 0.3rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 0 2px #dcfce7;
+    }
 
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
+    /* hero section */
+    .hero {
+      background: linear-gradient(105deg, #ffffff 0%, #f6fbfd 100%);
+      border-radius: 2rem;
+      padding: 2.8rem 2.5rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid #dde9ef;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .hero h1 {
+      font-size: 3.1rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .hero .accent {
+      color: #1a7e5e;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #2c5a64;
+      max-width: 80%;
+      margin-bottom: 1.8rem;
+    }
+    .hero-badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .trust-badge {
+      background: #f1f9f6;
+      border-radius: 60px;
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #1b6e54;
+    }
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+    .btn-primary {
+      background: #0f5c48;
+      color: white;
+      padding: 0.8rem 2rem;
+      border-radius: 60px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-primary:hover {
+      background: #0a4637;
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      border: 1px solid #bdd7df;
+      background: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 600;
+      text-decoration: none;
+      color: #1a5f6e;
+    }
 
-        .nav-links a {
-            color: #334155;
-            text-decoration: none;
-            font-weight: 500;
-        }
+    /* sections grid */
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 2rem 0 1rem;
+      letter-spacing: -0.3px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+      margin: 1.5rem 0;
+    }
+    .card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.6rem 1.8rem;
+      border: 1px solid #e5eef2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: all 0.2s;
+    }
+    .card h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card p, .card li {
+      font-size: 0.9rem;
+      color: #365f6b;
+    }
+    .card ul {
+      margin-top: 0.6rem;
+      padding-left: 1.2rem;
+    }
+    .card li {
+      margin: 0.5rem 0;
+    }
 
-        .nav-links a:hover {
-            color: #4f46e5;
-        }
+    .benefits-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+    .benefit-pill {
+      background: #f0f6f9;
+      border-radius: 60px;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #146b54;
+    }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 48px 32px;
-        }
+    .howit-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      justify-content: space-between;
+      margin: 1rem 0 1.8rem;
+    }
+    .step {
+      flex: 1;
+      background: #ffffff;
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      text-align: center;
+      border: 1px solid #e0edf2;
+    }
+    .step .step-num {
+      background: #daf1ea;
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 60px;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+      color: #0f5c48;
+    }
 
-        /* Header */
-        .page-header {
-            margin-bottom: 48px;
-        }
+    .pilot-highlight {
+      background: #eef7f3;
+      border-left: 5px solid #2c9b7a;
+      border-radius: 1.2rem;
+      padding: 1.5rem;
+      margin: 1.8rem 0;
+    }
 
-        .page-header h1 {
-            font-size: 48px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 16px;
-        }
+    .footer-contact {
+      margin-top: 3rem;
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid #dce8ed;
+      font-size: 0.8rem;
+      color: #3c7482;
+    }
 
-        .lead {
-            font-size: 18px;
-            color: #475569;
-        }
+    @media (max-width: 780px) {
+      .container { padding: 1rem 1.2rem 2rem; }
+      .hero h1 { font-size: 2rem; }
+      .hero p { max-width: 100%; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .howit-row { flex-direction: column; }
+      .navbar { flex-direction: column; align-items: stretch; }
+    }
 
-        /* Document Tabs / Navigation */
-        .doc-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 40px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 16px;
-        }
-
-        .tab-link {
-            padding: 10px 20px;
-            border-radius: 40px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-            font-weight: 500;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .tab-link:hover,
-        .tab-link.active {
-            background: #eef2ff;
-            border-color: #4f46e5;
-            color: #4f46e5;
-        }
-
-        /* Document Sections */
-        .doc-section {
-            background: white;
-            border-radius: 28px;
-            padding: 40px;
-            margin-bottom: 32px;
-            border: 1px solid #e2e8f0;
-            scroll-margin-top: 80px;
-        }
-
-        .doc-section h2 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .doc-section h2 i {
-            color: #4f46e5;
-            font-size: 28px;
-        }
-
-        .section-meta {
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 32px;
-            display: flex;
-            gap: 24px;
-        }
-
-        /* Two Column Layout (for What We Store) */
-        .storage-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin: 32px 0;
-        }
-
-        .storage-box {
-            background: #f8fafc;
-            border-radius: 20px;
-            padding: 28px;
-        }
-
-        .storage-box.blockchain {
-            background: #0f172a;
-            color: white;
-        }
-
-        .storage-box h3 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            font-size: 20px;
-        }
-
-        .checklist {
-            list-style: none;
-        }
-
-        .checklist li {
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .check-yes {
-            color: #10b981;
-            width: 24px;
-        }
-
-        .check-no {
-            color: #ef4444;
-            width: 24px;
-        }
-
-        /* Table Styles */
-        .table-container {
-            overflow-x: auto;
-            margin: 32px 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #f8fafc;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        th {
-            background: #eef2ff;
-            padding: 16px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        td {
-            padding: 16px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .check-yes-table {
-            color: #10b981;
-            font-weight: 600;
-        }
-
-        .check-no-table {
-            color: #94a3b8;
-        }
-
-        .footnote {
-            font-size: 14px;
-            color: #64748b;
-            margin-top: 16px;
-            font-style: italic;
-        }
-
-        /* Contact Box */
-        .contact-box {
-            background: #eef2ff;
-            border-radius: 24px;
-            padding: 32px;
-            margin: 48px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-
-        .contact-box a {
-            background: white;
-            color: #4f46e5;
-            padding: 14px 32px;
-            border-radius: 60px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid #c7d2fe;
-        }
-
-        .footer {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            gap: 32px;
-            color: #64748b;
-            flex-wrap: wrap;
-        }
-
-        .footer a {
-            color: #334155;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: #4f46e5;
-        }
-
-        /* Site color scheme overrides (matches landing page) */
-        :root {
-            --bg-main: #0a0a0a;
-            --bg-elev: #111111;
-            --bg-soft: #151515;
-            --text-main: #e0e0e0;
-            --text-dim: #9ca3af;
-            --line: rgba(34, 211, 238, 0.25);
-            --accent: #22d3ee;
-            --accent-2: #22d3ee;
-        }
-
-        body {
-            background: var(--bg-main);
-            color: var(--text-main);
-        }
-
-        .nav {
-            background: #000000;
-            border-bottom-color: var(--line);
-        }
-
-        .logo {
-            background: none;
-            -webkit-text-fill-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .nav-links a,
-        .lead,
-        .section-meta,
-        td,
-        .footnote,
-        .footer,
-        .footer a {
-            color: var(--text-dim);
-        }
-
-        .nav-links a:hover,
-        .tab-link:hover,
-        .tab-link.active,
-        .doc-section h2 i,
-        .contact-box a {
-            color: var(--accent-2);
-        }
-
-        .tab-link,
-        .doc-section,
-        .table-container table,
-        .contact-box,
-        .footer,
-        .storage-box,
-        .compliance-item,
-        .access-table-wrap,
-        .footnote,
-        .contact-block {
-            background: var(--bg-elev);
-            border-color: var(--line);
-        }
-
-        .storage-box,
-        th,
-        .doc-tabs,
-        .tab-link {
-            background: var(--bg-soft);
-            border-color: var(--line);
-            color: var(--text-main);
-        }
-
-        .doc-section h2,
-        .storage-box h3,
-        .principle-card h3,
-        .compliance-item h4,
-        th,
-        .page-header h1 {
-            color: var(--text-main);
-        }
-
-        .page-header h1 {
-            background: none;
-            -webkit-text-fill-color: initial;
-        }
-
-        .contact-box a {
-            background: rgba(34, 211, 238, 0.1);
-            border-color: rgba(34, 211, 238, 0.45);
-        }
-
-        .doc-section,
-        .principle-card,
-        .compliance-item,
-        .storage-box,
-        .access-table-wrap,
-        .contact-box {
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
-        }
-
-        .nav-links a:hover,
-        .footer a:hover {
-            color: var(--accent-2);
-        }
-
-        .contact-box a:hover {
-            background: #22d3ee;
-            color: #000000;
-            border-color: transparent;
-        }
-
-        [style*="background: #f1f5f9"],
-        [style*="background:#f1f5f9"],
-        [style*="background: #f8fafc"],
-        [style*="background:#f8fafc"],
-        [style*="background: #ffffff"],
-        [style*="background:#ffffff"],
-        [style*="background: white"],
-        [style*="background:white"] {
-            background: var(--bg-soft) !important;
-            border: 1px solid var(--line) !important;
-            color: var(--text-main) !important;
-        }
-
-        [style*="color: #334155"],
-        [style*="color:#334155"],
-        [style*="color: #475569"],
-        [style*="color:#475569"],
-        [style*="color: #64748b"],
-        [style*="color:#64748b"],
-        [style*="color: #0f172a"],
-        [style*="color:#0f172a"] {
-            color: var(--text-dim) !important;
-        }
-
-        [style*="color: #10b981"],
-        [style*="color:#10b981"],
-        [style*="color: #4f46e5"],
-        [style*="color:#4f46e5"],
-        [style*="color: #a5b4fc"],
-        [style*="color:#a5b4fc"] {
-            color: var(--accent) !important;
-        }
-
-        [style*="border: 1px solid #e2e8f0"],
-        [style*="border:1px solid #e2e8f0"],
-        [style*="border: 1px solid #c7d2fe"],
-        [style*="border:1px solid #c7d2fe"] {
-            border-color: var(--line) !important;
-        }
-
-        @media (max-width: 700px) {
-            .storage-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    /* inline heroicon-style SVGs */
+    .icon {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: -0.15em;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .icon-check {
+      width: 0.9em;
+      height: 0.9em;
+      margin-right: 0.2em;
+    }
+  </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="/" class="logo">Roya</a>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/documents.html" style="color: #22d3ee; font-weight: 600;">Documents</a>
-        </div>
+<div class="container">
+  <!-- Navigation -->
+  <div class="navbar">
+    <a href="/publisher-portal" style="text-decoration:none;"><div class="logo">TrapRoyaltiesPro</div></a>
+    <div class="nav-links">
+      <a href="/publisher-portal/pages/how-it-works.html">How it Works</a>
+      <a href="/publisher-portal/split-verification.html">Split Verification</a>
+      <a href="/publisher-portal/pages/cleaning-wizard.html">Cleaning Wizard</a>
+      <a href="/publisher-portal/pages/publisher.html">For Publishers</a>
+      <a href="/publisher-portal/FAQ.html">FAQ</a>
+      <a href="/publisher-portal/documents.html">Documents</a>
+      <a href="/publisher-portal/pages/preview.html" class="demo-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20M7 6l-2 4M12 6l-2 4M17 6l-2 4"/></svg> Preview</a>
+      <span class="demo-badge"><span class="live-dot"></span> Live</span>
     </div>
+  </div>
 
-    <div class="container">
-        <!-- Header -->
-        <div class="page-header">
-            <h1>Documents</h1>
-            <p class="lead">All Roya policies, guides, and legal information in one place.</p>
-        </div>
-
-        <!-- Quick Navigation Tabs -->
-        <div class="doc-tabs">
-            <a href="#terms" class="tab-link">📄 Terms</a>
-            <a href="#privacy-security" class="tab-link">🔒 Privacy & Security</a>
-            <a href="#gdpr" class="tab-link">🇪🇺 GDPR</a>
-            <a href="#how-it-works" class="tab-link">⚙️ How It Works</a>
-            <a href="#what-we-store" class="tab-link">📦 What We Store</a>
-            <a href="#security" class="tab-link">🛡️ Security</a>
-            <a href="#dispute" class="tab-link">⚖️ Dispute</a>
-        </div>
-
-        <!-- 1. TERMS OF SERVICE -->
-        <section id="terms" class="doc-section">
-            <h2><i class="fas fa-file-contract"></i> Terms of Service</h2>
-            <div class="section-meta">
-                <span><i class="fas fa-calendar"></i> Last updated: 15 Feb 2026 · v2.1</span>
-                <span><i class="fas fa-globe"></i> Swedish law</span>
-            </div>
-            <div style="max-height: 400px; overflow-y: auto; padding-right: 16px;">
-                <h3>1. Definitions</h3>
-                <p>"Roya" refers to Roya AB, a Swedish company. "Service" means the Roya verification platform. "Publisher" means the entity using the Service.</p>
-                
-                <h3>2. Eligibility</h3>
-                <p>You must be at least 18 years old and have authority to bind your organization.</p>
-                
-                <h3>3. Verification Service</h3>
-                <p>Roya provides a cryptographic verification layer for music publishing splits. We store only hashes on-chain; all personal data remains with you.</p>
-                
-                <h3>4. Data Ownership</h3>
-                <p>You retain full ownership of all split sheets. Roya claims no intellectual property over your content.</p>
-                
-                <h3>5. Acceptable Use</h3>
-                <p>You agree not to use the Service for illegal purposes or to infringe third-party rights.</p>
-                
-                <h3>6. Fees</h3>
-                <p>Currently free during testnet evaluation. Future fees will be announced with 30 days notice.</p>
-                
-                <h3>7. Limitation of Liability</h3>
-                <p>The Service is provided "AS IS". Roya's total liability is limited to €50 for free users.</p>
-                
-                <h3>8. Governing Law</h3>
-                <p>These Terms are governed by the laws of Sweden. Disputes shall be resolved in Stockholm courts.</p>
-            </div>
-        </section>
-
-        <!-- 2. PRIVACY & SECURITY (Your Full Content) -->
-        <section id="privacy-security" class="doc-section">
-            <h2><i class="fas fa-shield-alt"></i> Privacy & Security</h2>
-            <div class="section-meta">
-                <span><i class="fas fa-check-circle"></i> GDPR compliant · by design, by default</span>
-            </div>
-            
-            <p style="font-size: 18px; margin-bottom: 32px;">Roya is built with privacy-first architecture that separates verification proof from personal data.</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 40px;">
-                <div style="background: #f1f5f9; padding: 20px; border-radius: 16px;">
-                    <h4><i class="fas fa-chart-line" style="color: #4f46e5;"></i> Data minimisation</h4>
-                    <p style="color: #334155;">Only verification metadata is stored; all personal data remains with publishers.</p>
-                </div>
-                <div style="background: #f1f5f9; padding: 20px; border-radius: 16px;">
-                    <h4><i class="fas fa-trash-alt" style="color: #4f46e5;"></i> Right to erasure (Art. 17)</h4>
-                    <p style="color: #334155;">Publishers can delete contributor data; anonymous proof remains as audit trail.</p>
-                </div>
-                <div style="background: #f1f5f9; padding: 20px; border-radius: 16px;">
-                    <h4><i class="fas fa-user-tie" style="color: #4f46e5;"></i> Data controller</h4>
-                    <p style="color: #334155;">Publishers remain controller. Roya acts as processor for verification only.</p>
-                </div>
-                <div style="background: #f1f5f9; padding: 20px; border-radius: 16px;">
-                    <h4><i class="fas fa-bullseye" style="color: #4f46e5;"></i> Purpose limitation</h4>
-                    <p style="color: #334155;">Data used solely for split verification, not marketing or other purposes.</p>
-                </div>
-            </div>
-
-            <h3 style="margin: 40px 0 20px;">What we store (and where)</h3>
-            
-            <div class="storage-grid">
-                <!-- Blockchain column -->
-                <div class="storage-box blockchain">
-                    <h3><i class="fas fa-cube"></i> Blockchain (Monad testnet)</h3>
-                    <ul class="checklist">
-                        <li><span class="check-yes"><i class="fas fa-check-circle"></i></span> Verification timestamp</li>
-                        <li><span class="check-yes"><i class="fas fa-check-circle"></i></span> Content hash (cryptographic fingerprint)</li>
-                        <li><span class="check-yes"><i class="fas fa-check-circle"></i></span> Basic statistics (contributor count, total %)</li>
-                        <li style="opacity: 0.6;"><span class="check-no"><i class="fas fa-times-circle"></i></span> NO personal information</li>
-                        <li style="opacity: 0.6;"><span class="check-no"><i class="fas fa-times-circle"></i></span> NO names or payment details</li>
-                    </ul>
-                    <p style="margin-top: 20px; font-size: 14px; color: #a5b4fc;"><i class="fas fa-eye"></i> public but anonymous</p>
-                </div>
-                
-                <!-- Your systems column -->
-                <div class="storage-box" style="background: #f1f5f9;">
-                    <h3><i class="fas fa-server"></i> Your systems (your control)</h3>
-                    <ul class="checklist">
-                        <li><span style="color: #10b981;"><i class="fas fa-check-circle"></i></span> All contributor details</li>
-                        <li><span style="color: #10b981;"><i class="fas fa-check-circle"></i></span> Split percentages per person</li>
-                        <li><span style="color: #10b981;"><i class="fas fa-check-circle"></i></span> Payment calculations</li>
-                        <li><span style="color: #10b981;"><i class="fas fa-check-circle"></i></span> Under your complete control</li>
-                    </ul>
-                    <p style="margin-top: 20px; font-size: 14px; color: #475569;"><i class="fas fa-lock"></i> never shared with Roya</p>
-                </div>
-            </div>
-
-            <h3 style="margin: 40px 0 20px;">🇪🇺 GDPR compliance built‑in</h3>
-            
-            <div style="background: #f8fafc; border-radius: 16px; padding: 28px; margin-bottom: 32px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                    <div>
-                        <strong>Data minimization</strong><br>
-                        <span style="color: #475569;">Only verification metadata stored</span>
-                    </div>
-                    <div>
-                        <strong>Right to erasure</strong><br>
-                        <span style="color: #475569;">Delete contributor data, keep proof</span>
-                    </div>
-                    <div>
-                        <strong>Data controller</strong><br>
-                        <span style="color: #475569;">Publishers control, Roya processes</span>
-                    </div>
-                    <div>
-                        <strong>Purpose limitation</strong><br>
-                        <span style="color: #475569;">Verification only, no marketing</span>
-                    </div>
-                    <div>
-                        <strong>Secure processing</strong><br>
-                        <span style="color: #475569;">Isolated, encrypted environments</span>
-                    </div>
-                </div>
-            </div>
-
-            <h3 style="margin: 40px 0 20px;">Audit trail · without privacy risk</h3>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px;">
-                <div style="background: #f1f5f9; padding: 24px; border-radius: 16px;">
-                    <h4 style="color: #10b981; margin-bottom: 16px;">✓ The blockchain proves:</h4>
-                    <ul style="list-style: none;">
-                        <li style="margin-bottom: 12px;"><i class="fas fa-check-circle" style="color: #10b981;"></i> A split was verified</li>
-                        <li style="margin-bottom: 12px;"><i class="fas fa-check-circle" style="color: #10b981;"></i> At a specific time</li>
-                        <li style="margin-bottom: 12px;"><i class="fas fa-check-circle" style="color: #10b981;"></i> With specific characteristics (4 people, 100% total)</li>
-                    </ul>
-                </div>
-                <div style="background: #f1f5f9; padding: 24px; border-radius: 16px;">
-                    <h4 style="color: #64748b; margin-bottom: 16px;">❌ But reveals nothing about:</h4>
-                    <ul style="list-style: none;">
-                        <li style="margin-bottom: 12px;"><i class="fas fa-ban" style="color: #94a3b8;"></i> Who the contributors are</li>
-                        <li style="margin-bottom: 12px;"><i class="fas fa-ban" style="color: #94a3b8;"></i> How much they're receiving</li>
-                        <li style="margin-bottom: 12px;"><i class="fas fa-ban" style="color: #94a3b8;"></i> Which work this relates to</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <p style="font-size: 18px; color: #0f172a; margin-bottom: 40px;">✅ This allows independent verification without compromising privacy.</p>
-
-            <h3 style="margin: 40px 0 20px;">Access control – who can see what</h3>
-            
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Data type</th>
-                            <th>Publishers</th>
-                            <th>PRO*</th>
-                            <th>Roya</th>
-                            <th>Public</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Contributor names</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓*</td><td class="check-no-table">❌</td><td class="check-no-table">❌</td></tr>
-                        <tr><td>Split percentages</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓*</td><td class="check-no-table">❌</td><td class="check-no-table">❌</td></tr>
-                        <tr><td>Payment amounts</td><td class="check-yes-table">✓</td><td class="check-no-table">❌</td><td class="check-no-table">❌</td><td class="check-no-table">❌</td></tr>
-                        <tr><td>Verification timestamp</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓</td></tr>
-                        <tr><td>Content hash</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓</td><td class="check-yes-table">✓</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p class="footnote">* Only when publisher submits registration to PRO through normal process. PRO does not have direct access to Roya data. The table indicates what could be shared during standard royalty reporting.</p>
-
-            <h3 style="margin: 40px 0 20px;">Secure processing & isolation</h3>
-            <p style="background: #f1f5f9; padding: 20px; border-radius: 16px;">All verification happens in isolated, encrypted environments. No data shared between publishers. Every tenant isolated.</p>
-        </section>
-
-        <!-- 3. GDPR COMPLIANCE -->
-        <section id="gdpr" class="doc-section">
-            <h2><i class="fas fa-gavel"></i> GDPR Compliance</h2>
-            <div class="section-meta">
-                <span><i class="fas fa-check-circle"></i> Articles 5, 17, 24, 28</span>
-            </div>
-            <p>Roya is designed to help publishers meet their GDPR obligations. Key principles:</p>
-            <ul style="margin: 20px 0 20px 20px;">
-                <li><strong>Article 5:</strong> Data minimization – only hashes stored</li>
-                <li><strong>Article 17:</strong> Right to erasure – delete personal data, keep proof</li>
-                <li><strong>Article 24:</strong> Controller responsibility – you control data</li>
-                <li><strong>Article 28:</strong> Processor obligations – Roya acts as processor</li>
-            </ul>
-            <p>For full details, see <a href="#privacy-security" style="color: #4f46e5;">Privacy & Security</a> section above.</p>
-        </section>
-
-        <!-- 4. HOW VERIFICATION WORKS -->
-        <section id="how-it-works" class="doc-section">
-            <h2><i class="fas fa-check-circle"></i> How Verification Works</h2>
-            <div class="section-meta">
-                <span><i class="fas fa-cube"></i> Monad testnet · Digital notary stamp</span>
-            </div>
-            
-            <div style="background: #f1f5f9; border-radius: 20px; padding: 32px; margin-bottom: 32px; text-align: center;">
-                <i class="fas fa-certificate" style="font-size: 48px; color: #4f46e5; margin-bottom: 16px;"></i>
-                <h3 style="margin-bottom: 8px;">Digital Notary Stamp</h3>
-                <p style="color: #475569;">The blockchain stores only a mathematical proof—like a digital notary stamp. All sensitive data stays with you.</p>
-            </div>
-
-            <h4 style="margin: 32px 0 16px;">In a dispute:</h4>
-            
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px;">
-                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-                    <span style="background: #4f46e5; color: white; padding: 4px 16px; border-radius: 40px; font-weight: 600;">You</span>
-                    <span>"We verified this split on February 15, 2026"</span>
-                </div>
-                <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-                    <span style="background: #e4e4e7; padding: 4px 16px; border-radius: 40px; font-weight: 600;">Other</span>
-                    <span>"No you didn't, we never agreed"</span>
-                </div>
-                <div style="display: flex; gap: 16px;">
-                    <span style="background: #0f172a; color: #a5f3fc; padding: 4px 16px; border-radius: 40px; font-weight: 600;">Blockchain</span>
-                    <span><strong>Verification ID QmXoy...6uco</strong> confirms 4-person split at 100% total, verified at 14:32 UTC</span>
-                </div>
-            </div>
-            
-            <div style="background: #0f172a; color: white; border-radius: 12px; padding: 16px; margin: 24px 0; font-family: monospace;">
-                <i class="fas fa-fingerprint" style="color: #a5f4ff; margin-right: 8px;"></i> QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco
-            </div>
-            
-            <p>You provide your private records showing the actual names/percentages. Blockchain proves it hasn't been altered since verification.</p>
-        </section>
-
-        <!-- 5. WHAT ROYA STORES -->
-        <section id="what-we-store" class="doc-section">
-            <h2><i class="fas fa-database"></i> What Roya Stores</h2>
-            <div class="storage-grid">
-                <div class="storage-box blockchain">
-                    <h3><i class="fas fa-cube"></i> Blockchain (public)</h3>
-                    <ul class="checklist">
-                        <li>✓ Verification timestamp</li>
-                        <li>✓ Content hash</li>
-                        <li>✓ Contributor count</li>
-                        <li>✓ Total % (100%)</li>
-                        <li>❌ No names</li>
-                        <li>❌ No payment amounts</li>
-                    </ul>
-                </div>
-                <div class="storage-box" style="background: #f1f5f9;">
-                    <h3><i class="fas fa-server"></i> Your system (private)</h3>
-                    <ul class="checklist">
-                        <li>✓ All contributor names</li>
-                        <li>✓ Split percentages</li>
-                        <li>✓ Wallet addresses</li>
-                        <li>✓ Payment amounts</li>
-                        <li>✓ You control access</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- 6. SECURITY OVERVIEW -->
-        <section id="security" class="doc-section">
-            <h2><i class="fas fa-lock"></i> Security Overview</h2>
-            <ul style="margin: 20px 0;">
-                <li><strong>Encryption:</strong> All data encrypted at rest and in transit</li>
-                <li><strong>Isolation:</strong> Multi-tenant isolation, no cross-publisher data access</li>
-                <li><strong>Access control:</strong> Role-based permissions, MFA recommended</li>
-                <li><strong>Audit logging:</strong> All verification attempts recorded</li>
-                <li><strong>Blockchain:</strong> Immutable, tamper-evident storage</li>
-            </ul>
-        </section>
-
-        <!-- 7. DISPUTE RESOLUTION -->
-        <section id="dispute" class="doc-section">
-            <h2><i class="fas fa-scale-balanced"></i> Dispute Resolution</h2>
-            <p>In case of a royalty dispute, Roya provides:</p>
-            <ol style="margin: 20px 0 20px 20px;">
-                <li>On-chain timestamp proving when verification occurred</li>
-                <li>Cryptographic hash matching the original split sheet</li>
-                <li>Immutable record that cannot be altered by any party</li>
-            </ol>
-            <p>The blockchain acts as a neutral third party—no trust required.</p>
-        </section>
-
-        <!-- Contact Box -->
-        <div class="contact-box">
-            <div>
-                <h3 style="margin-bottom: 8px;">Questions?</h3>
-                <p style="color: #1e293b;">We're happy to discuss data processing agreements, sub-processors, or security audits.</p>
-            </div>
-            <a href="mailto:security@roya.se">
-                <i class="fas fa-envelope"></i> security@roya.se
-            </a>
-        </div>
+  <!-- Hero Section -->
+  <div class="hero">
+    <h1><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg> <span class="accent">Fix Metadata. Recover Royalties.</span><br>Before They're Lost in the System.</h1>
+    <p>TRP helps publishers identify metadata gaps, ownership conflicts, and registration issues across global rights systems — before they result in delayed or unclaimed royalties.</p>
+    <div class="hero-badge-group">
+      <span class="trust-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 2v6M15 2v6M7 8h10v4a5 5 0 01-10 0z"/><path d="M12 17v5"/></svg> No integration required</span>
+      <span class="trust-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18 11V6a2 2 0 00-4 0M14 10V4a2 2 0 00-4 0v2"/><path d="M10 10.5V6a2 2 0 00-4 0v8"/><path d="M18 8a2 2 0 014 0v6a8 8 0 01-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 012.83-2.82L7 15"/></svg> No automatic changes</span>
+      <span class="trust-badge"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg> You stay in control</span>
     </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <span>© Roya AB 2026</span>
-        <a href="/documents.html">Documents</a>
-        <a href="#privacy-security">Privacy</a>
-        <a href="#terms">Terms</a>
-        <span>Monad Testnet · Chain ID: 10143</span>
+    <div class="cta-group">
+      <a href="/publisher-portal/split-verification.html" class="btn-outline"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Scan Your Catalog</a>
     </div>
+  </div>
 
-    <script>
-        // Highlight active tab on scroll
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('.doc-section');
-            const tabs = document.querySelectorAll('.tab-link');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 100;
-                if (pageYOffset >= sectionTop) {
-                    current = section.getAttribute('id');
-                }
-            });
+  <!-- For Publishers + Why this matters -->
+  <div class="grid-2">
+    <div class="card">
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> For Publishers — Clean Data. Faster Money.</h3>
+      <p>TRP helps publishers submit accurate, consistent metadata across global collection societies and platforms such as ASCAP, BMI, SoundExchange, and PRS for Music.</p>
+      <p style="margin-top: 0.8rem;"><strong>Join our 30-day pilot</strong> to reduce rejected works, eliminate manual correction cycles, and accelerate royalty flows.</p>
+    </div>
+    <div class="card">
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 000 4h4a2 2 0 010 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg> Why this matters</h3>
+      <p>Most catalogs contain <strong>10–30% metadata-related revenue leakage</strong> due to:</p>
+      <ul>
+        <li>Missing or incorrect ISRCs</li>
+        <li>Split inconsistencies</li>
+        <li>Unregistered works</li>
+        <li>Cross-territory metadata mismatches</li>
+      </ul>
+      <p style="margin-top: 0.5rem;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> TRP identifies these issues before they impact your revenue.</p>
+    </div>
+  </div>
 
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('href') === `#${current}`) {
-                    tab.classList.add('active');
-                }
-            });
-        });
+  <!-- Benefits for Publishers + What you provide / receive -->
+  <div class="grid-2">
+    <div class="card">
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg> Benefits for Publishers</h3>
+      <div class="benefits-list">
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Fewer rejected registrations</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Faster royalty payouts</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Reduced manual workload</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Clear chain-of-title across territories</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Consistent writer &amp; publisher identifiers (IPI/CAE)</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Full audit trail of all changes</span>
+        <span class="benefit-pill"><svg class="icon icon-check" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><polyline points="5 12 10 17 19 8"/></svg>Free 30-day pilot</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> What you provide</h3>
+      <p>20–50 recent works in:</p>
+      <ul>
+        <li>CWR</li>
+        <li>DDEX</li>
+        <li>Excel</li>
+        <li>Split sheets</li>
+      </ul>
+      <h3 style="margin-top: 1rem;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><polyline points="3 8 12 13 21 8"/><line x1="12" y1="13" x2="12" y2="23"/></svg> What you receive</h3>
+      <ul>
+        <li>Pre-validated, registration-ready metadata</li>
+        <li>Metadata & Royalty Risk Report (before/after)</li>
+        <li>Identified gaps (missing registrations, ISRC issues, conflicts)</li>
+        <li>Clean CWR / Excel export files</li>
+        <li>Audit-ready verification reports</li>
+      </ul>
+    </div>
+  </div>
 
-        // Smooth scroll for tabs
-        document.querySelectorAll('.tab-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector(link.getAttribute('href'));
-                target.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-    </script>
+  <!-- The #1 Problem We Solve -->
+  <div class="card" style="background: #fefaf0; border-color: #f7e3af;">
+    <h3><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> The #1 Problem We Solve</h3>
+    <p>Fragmented and inconsistent metadata across systems leads to: delayed payments, unmatched works, royalty leakage, increased operational overhead.</p>
+    <p style="margin-top: 0.8rem;"><strong>TRP detects and resolves these issues before submission and across systems.</strong></p>
+  </div>
+
+  <!-- How TRP Works (4 steps) -->
+  <h2 class="section-title"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> How TRP Works</h2>
+  <div class="howit-row">
+    <div class="step"><div class="step-num">1</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload Once</strong><br>CWR, DDEX, Excel — no workflow changes</div>
+    <div class="step"><div class="step-num">2</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Automatic Validation</strong><br>Checks splits, identifiers, roles, and registration gaps</div>
+    <div class="step"><div class="step-num">3</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 000 4h4a2 2 0 010 4H8"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg> Identify Revenue Risk</strong><br>Surfaces unclaimed royalties and metadata issues</div>
+    <div class="step"><div class="step-num">4</div><strong><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg> Export Clean Data</strong><br>Ready for submission across global rights systems</div>
+  </div>
+
+  <!-- 30-Day Publisher Pilot + outcomes -->
+  <div class="pilot-highlight">
+    <h3 style="font-size: 1.5rem; font-weight: 800;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg> 30-Day Publisher Pilot</h3>
+    <p>We run Roya on your real catalog and deliver measurable results.<br><strong>No cost. No integration. Confidential.</strong></p>
+    <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1rem 0;">
+      <div style="background: white; border-radius: 1rem; padding: 0.8rem 1rem; flex: 1; min-width: 160px;">
+        <div style="font-weight:800;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg> Typical pilot outcomes</div>
+        <ul style="margin-top: 0.4rem;">
+          <li>10–30% metadata issues identified</li>
+          <li>€ / $10k–$100k+ revenue exposure uncovered</li>
+          <li>Significant reduction in manual correction time</li>
+        </ul>
+      </div>
+    </div>
+    <a href="/publisher-portal/pages/demo-dry-cleaning-v2.html" class="btn-primary" style="background: #1b6e54; margin-top: 0.4rem;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg> Start Your Catalog Evaluation</a>
+    <div style="margin-top: 1rem; font-size: 0.8rem;">hello@heyroya.se · Confidential · No commitment</div>
+  </div>
+
+  <!-- Final CTA block: Ready to see what your catalog is missing -->
+  <div style="background: linear-gradient(115deg, #eef4f7, white); border-radius: 1.8rem; padding: 2rem; margin: 2rem 0 1.5rem; text-align: center; border: 1px solid #cfe2ea;">
+    <h2 style="font-size: 1.6rem; font-weight: 800;"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12.74V17a2 2 0 002 2h4a2 2 0 002-2v-2.26A7 7 0 0012 2z"/></svg> Ready to see what your catalog is missing?</h2>
+    <p style="margin: 0.6rem 0 1rem;">We'll analyze your metadata, identify risks, and show where revenue may be delayed or lost.<br><strong>30-minute live walkthrough • Real data • No obligation</strong></p>
+    <a href="mailto:Glenn@traproyaltiespro.com" class="btn-primary" style="background: #0f5c48;">Contact: Glenn@traproyaltiespro.com →</a>
+  </div>
+
+  <!-- footer tagline -->
+  <div class="footer-contact">
+    <div style="font-weight: 700; margin-bottom: 0.5rem;">TrapRoyaltiesPro</div>
+    <div>Metadata Pre-Validation & Royalty Integrity Layer<br>Built for global publishing and rights management</div>
+    <div style="margin-top: 1rem;">© TRP — Fix metadata. Recover royalties.</div>
+  </div>
+</div>
 </body>
 </html>

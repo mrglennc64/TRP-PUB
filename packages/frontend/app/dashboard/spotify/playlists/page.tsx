@@ -19,7 +19,7 @@ export default function PlaylistTracker() {
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">
-          <span className="text-green-400">📋</span> Playlist Tracker
+          <span className="text-emerald-400">📋</span> Playlist Tracker
         </h1>
 
         {loading ? (
@@ -44,7 +44,7 @@ export default function PlaylistTracker() {
                     <td className="p-4">
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         p.type === 'editorial' ? 'bg-purple-600/20 text-purple-400' :
-                        p.type === 'algorithmic' ? 'bg-blue-600/20 text-blue-400' :
+                        p.type === 'algorithmic' ? 'bg-indigo-600/20 text-indigo-400' :
                         'bg-gray-600/20 text-gray-400'
                       }`}>
                         {p.type}
@@ -54,7 +54,7 @@ export default function PlaylistTracker() {
                     <td className="p-4">{p.track_count || 0}</td>
                     <td className="p-4">{p.last_seen || 'N/A'}</td>
                     <td className="p-4">
-                      <span className="bg-green-600/20 text-green-400 px-2 py-1 rounded-full text-xs">
+                      <span className="bg-emerald-600/20 text-emerald-400 px-2 py-1 rounded-full text-xs">
                         Active
                       </span>
                     </td>

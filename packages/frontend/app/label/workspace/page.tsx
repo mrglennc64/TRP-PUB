@@ -39,7 +39,7 @@ const TRACKS: Track[] = [
 
 function scanLeaks(t: Track): Leak[] {
   const leaks: Leak[] = [];
-  if (!t.isrc)          leaks.push({ severity: 'critical', msg: 'Missing ISRC — cannot register with PROs or SoundExchange', fix: 'Use ISRC Search or register at usisrc.org' });
+  if (!t.isrc)          leaks.push({ severity: 'critical', msg: 'Missing ISRC — cannot register with PROs or Rights Administrator', fix: 'Use ISRC Search or register at usisrc.org' });
   if (!t.upc)           leaks.push({ severity: 'warning',  msg: 'Missing UPC — distribution may reject this release', fix: 'Get UPC from your distributor' });
   if (!t.releaseDate)   leaks.push({ severity: 'warning',  msg: 'No release date — DDEX package will be incomplete', fix: 'Enter release date' });
   if (!t.songwriters)   leaks.push({ severity: 'critical', msg: 'No songwriters — mechanical royalties uncollected', fix: 'Add songwriter credits' });
@@ -192,9 +192,9 @@ export default function LabelWorkspace() {
                         onDragStart={e => e.dataTransfer.setData('trackId', t.id)}
                         onClick={() => selectTrack(t)}
                         className={`w-full flex items-center gap-2 pl-8 pr-3 py-1.5 text-xs hover:bg-purple-600/10 transition text-left group ${auditing?.id === t.id ? 'bg-purple-600/20 text-indigo-300' : 'text-slate-400'}`}>
-                        <span className={crit > 0 ? 'text-red-400' : 'text-slate-500'}>🎵</span>
+                        <span className={crit > 0 ? 'text-rose-400' : 'text-slate-500'}>🎵</span>
                         <span className="truncate flex-1">{t.title}</span>
-                        {crit > 0 && <span className="text-red-400 text-[9px] font-black">{crit}</span>}
+                        {crit > 0 && <span className="text-rose-400 text-[9px] font-black">{crit}</span>}
                       </button>
                     );
                   })}
@@ -236,7 +236,7 @@ export default function LabelWorkspace() {
                   <p className="text-xs text-slate-400 mt-0.5">{ARTISTS.find(a=>a.id===auditing.artistId)?.name} · {auditing.genre}</p>
                 </div>
                 <div className="text-right">
-                  <div className={`text-3xl font-black ${score >= 60 ? 'text-red-400' : score >= 30 ? 'text-yellow-400' : 'text-green-400'}`}>{score}</div>
+                  <div className={`text-3xl font-black ${score >= 60 ? 'text-rose-400' : score >= 30 ? 'text-yellow-400' : 'text-emerald-400'}`}>{score}</div>
                   <div className="text-[10px] text-slate-500 uppercase">Risk Score</div>
                 </div>
               </div>
@@ -249,11 +249,11 @@ export default function LabelWorkspace() {
                 </div>
                 <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-3 text-center">
                   <p className="text-xs text-slate-500 mb-1">Revenue</p>
-                  <p className="text-lg font-black text-green-400">${auditing.revenue.toLocaleString()}</p>
+                  <p className="text-lg font-black text-emerald-400">${auditing.revenue.toLocaleString()}</p>
                 </div>
                 <div className="bg-[#1e293b]/60 border border-white/10 rounded-xl p-3 text-center">
                   <p className="text-xs text-slate-500 mb-1">Leaks</p>
-                  <p className={`text-lg font-black ${leaks.length > 0 ? 'text-red-400' : 'text-green-400'}`}>{leaks.length}</p>
+                  <p className={`text-lg font-black ${leaks.length > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>{leaks.length}</p>
                 </div>
               </div>
 
@@ -268,7 +268,7 @@ export default function LabelWorkspace() {
                 ].map(([k, v]) => (
                   <div key={k} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0 last:pb-0">
                     <span className="text-slate-500">{k}</span>
-                    <span className={v.toString().startsWith('⚠') ? 'text-red-400 font-bold' : 'text-slate-200'}>{v}</span>
+                    <span className={v.toString().startsWith('⚠') ? 'text-rose-400 font-bold' : 'text-slate-200'}>{v}</span>
                   </div>
                 ))}
               </div>
@@ -297,13 +297,13 @@ export default function LabelWorkspace() {
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Money Leaks</p>
                     <button onClick={runAutoFix} disabled={fixing || !!fixedTrack}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600/20 border border-red-500/30 text-red-300 text-xs font-black rounded-lg hover:bg-red-600/40 transition disabled:opacity-50">
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-600/20 border border-rose-500/30 text-rose-300 text-xs font-black rounded-lg hover:bg-rose-600/40 transition disabled:opacity-50">
                       {fixing ? <><span className="animate-spin inline-block">⟳</span> Fixing...</> : fixedTrack ? '✓ Fixed' : '⚡ Auto-Fix All'}
                     </button>
                   </div>
                   {leaks.map((l, i) => (
-                    <div key={i} className={`p-3 rounded-lg text-xs border-l-2 ${l.severity==='critical'?'border-red-500 bg-red-500/5':l.severity==='warning'?'border-yellow-500 bg-yellow-500/5':'border-blue-500 bg-blue-500/5'}`}>
-                      <p className={`font-bold ${l.severity==='critical'?'text-red-400':l.severity==='warning'?'text-yellow-400':'text-blue-400'}`}>
+                    <div key={i} className={`p-3 rounded-lg text-xs border-l-2 ${l.severity==='critical'?'border-rose-500 bg-rose-500/5':l.severity==='warning'?'border-yellow-500 bg-yellow-500/5':'border-indigo-500 bg-indigo-500/5'}`}>
+                      <p className={`font-bold ${l.severity==='critical'?'text-rose-400':l.severity==='warning'?'text-yellow-400':'text-indigo-400'}`}>
                         {l.severity==='critical'?'⚠ CRITICAL:':l.severity==='warning'?'⚡ WARNING:':'ℹ INFO:'} {l.msg}
                       </p>
                       <p className="text-slate-500 mt-0.5">Fix: {l.fix}</p>
@@ -313,7 +313,7 @@ export default function LabelWorkspace() {
               )}
 
               {leaks.length === 0 && (
-                <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-xs text-green-400 font-bold text-center">
+                <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-xs text-emerald-400 font-bold text-center">
                   ✓ No metadata leaks — this track is clean
                 </div>
               )}
@@ -369,7 +369,7 @@ export default function LabelWorkspace() {
                   setFixedTrack(null);
                   setFixLog([]);
                 }}
-                  className="px-2 py-1 bg-green-600/20 border border-green-500/30 text-green-300 text-[10px] font-black rounded-lg hover:bg-green-600/40 transition">
+                  className="px-2 py-1 bg-emerald-600/20 border border-emerald-500/30 text-emerald-300 text-[10px] font-black rounded-lg hover:bg-emerald-600/40 transition">
                   Push →
                 </button>
               )}
@@ -381,7 +381,7 @@ export default function LabelWorkspace() {
               {fixLog.length > 0 && (
                 <div className="space-y-1 font-mono text-[10px]">
                   {fixLog.map((l, i) => (
-                    <div key={i} className={l.startsWith('✓') ? 'text-green-400' : 'text-indigo-300'}>
+                    <div key={i} className={l.startsWith('✓') ? 'text-emerald-400' : 'text-indigo-300'}>
                       {l.startsWith('✓') ? l : '> ' + l}
                     </div>
                   ))}
@@ -390,27 +390,27 @@ export default function LabelWorkspace() {
               {fixedTrack && (
                 <div className="mt-3 space-y-1.5 font-mono text-[10px]">
                   {fixedTrack.isrc && fixedTrack.isrc !== auditing?.isrc && (
-                    <div className="flex justify-between bg-green-500/10 rounded px-2 py-1">
+                    <div className="flex justify-between bg-emerald-500/10 rounded px-2 py-1">
                       <span className="text-slate-500">ISRC</span>
-                      <span className="text-green-400">{fixedTrack.isrc}</span>
+                      <span className="text-emerald-400">{fixedTrack.isrc}</span>
                     </div>
                   )}
                   {fixedTrack.upc && fixedTrack.upc !== auditing?.upc && (
-                    <div className="flex justify-between bg-green-500/10 rounded px-2 py-1">
+                    <div className="flex justify-between bg-emerald-500/10 rounded px-2 py-1">
                       <span className="text-slate-500">UPC</span>
-                      <span className="text-green-400">{fixedTrack.upc}</span>
+                      <span className="text-emerald-400">{fixedTrack.upc}</span>
                     </div>
                   )}
                   {fixedTrack.releaseDate && fixedTrack.releaseDate !== auditing?.releaseDate && (
-                    <div className="flex justify-between bg-green-500/10 rounded px-2 py-1">
+                    <div className="flex justify-between bg-emerald-500/10 rounded px-2 py-1">
                       <span className="text-slate-500">Release Date</span>
-                      <span className="text-green-400">{fixedTrack.releaseDate}</span>
+                      <span className="text-emerald-400">{fixedTrack.releaseDate}</span>
                     </div>
                   )}
                   {fixedTrack.splits.length > 0 && auditing?.splits.length === 0 && (
-                    <div className="bg-green-500/10 rounded px-2 py-1">
+                    <div className="bg-emerald-500/10 rounded px-2 py-1">
                       <span className="text-slate-500">Splits added: </span>
-                      <span className="text-green-400">{fixedTrack.splits.map(s=>`${s.name} ${s.pct}%`).join(', ')}</span>
+                      <span className="text-emerald-400">{fixedTrack.splits.map(s=>`${s.name} ${s.pct}%`).join(', ')}</span>
                     </div>
                   )}
                 </div>
@@ -486,7 +486,7 @@ function LabelPortalView({ onBack }: { onBack: () => void }) {
                         <div className="w-8 h-8 rounded-full bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-xs font-black text-indigo-300">{a.stage[0]}</div>
                         <div><p className="font-bold text-sm">{a.stage}</p><p className="text-xs text-slate-500">{a.genre}</p></div>
                       </div>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-green-500/20 text-green-300':'bg-yellow-500/20 text-yellow-300'}`}>{a.recouped?'RECOUPED':'UNRECOUPED'}</span>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${a.recouped?'bg-emerald-500/20 text-emerald-300':'bg-yellow-500/20 text-yellow-300'}`}>{a.recouped?'RECOUPED':'UNRECOUPED'}</span>
                     </div>
                   ))}
                 </div>

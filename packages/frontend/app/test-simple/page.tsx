@@ -33,8 +33,8 @@ export default function SimpleTest() {
           {loading ? 'Testing...' : 'Run Test'}
         </button>
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">{error}</p>
+          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-6">
+            <p className="text-rose-700">{error}</p>
           </div>
         )}
         {results && (
@@ -46,8 +46,8 @@ export default function SimpleTest() {
               </pre>
             </div>
             {results.working && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                <h2 className="font-semibold text-green-800 mb-4">✅ Working Endpoint Found</h2>
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6">
+                <h2 className="font-semibold text-emerald-800 mb-4">✅ Working Endpoint Found</h2>
                 <pre className="bg-white p-4 rounded text-sm">
                   {JSON.stringify(results.working, null, 2)}
                 </pre>
@@ -58,14 +58,14 @@ export default function SimpleTest() {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {results.allTests.map((test: any, i: number) => (
                   <div key={i} className={`p-4 rounded ${
-                    test.ok ? 'bg-green-50' : 'bg-red-50'
+                    test.ok ? 'bg-emerald-50' : 'bg-rose-50'
                   }`}>
                     <p className="font-mono text-sm break-all">{test.url}</p>
                     <p className="text-sm mt-1">
                       Status: {test.status || 'Error'} - {test.ok ? 'OK' : 'Failed'}
                     </p>
                     {test.error && (
-                      <p className="text-sm text-red-600 mt-1">Error: {test.error}</p>
+                      <p className="text-sm text-rose-600 mt-1">Error: {test.error}</p>
                     )}
                     {test.sample && (
                       <pre className="text-xs mt-2 bg-white/50 p-2 rounded overflow-x-auto">

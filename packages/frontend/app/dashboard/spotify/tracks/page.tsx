@@ -64,7 +64,7 @@ export default function TrackAnalytics() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-5xl font-black mb-2">
-              <span className="text-red-400">💰 Royalty Leak</span>{" "}
+              <span className="text-rose-400">💰 Royalty Leak</span>{" "}
               <span className="text-purple-400">Detection</span>
             </h1>
             <p className="text-gray-400 text-lg">Find unclaimed money across your catalog</p>
@@ -78,10 +78,10 @@ export default function TrackAnalytics() {
 
         {/* Money Leak Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-red-900 to-red-950 p-6 rounded-xl border border-red-500">
-            <div className="text-sm text-red-300 mb-1">TOTAL UNPAID</div>
+          <div className="bg-gradient-to-br from-rose-900 to-rose-950 p-6 rounded-xl border border-rose-500">
+            <div className="text-sm text-rose-300 mb-1">TOTAL UNPAID</div>
             <div className="text-4xl font-bold text-white">{formatCurrency(leakSummary.totalLost)}</div>
-            <div className="text-xs text-red-400 mt-2">Estimated recoverable royalties</div>
+            <div className="text-xs text-rose-400 mt-2">Estimated recoverable royalties</div>
           </div>
           
           <div className="bg-gradient-to-br from-yellow-900 to-yellow-950 p-6 rounded-xl border border-yellow-500">
@@ -90,10 +90,10 @@ export default function TrackAnalytics() {
             <div className="text-xs text-yellow-400 mt-2">ASCAP/BMI/SOCAN unregistered</div>
           </div>
           
-          <div className="bg-gradient-to-br from-blue-900 to-blue-950 p-6 rounded-xl border border-blue-500">
-            <div className="text-sm text-blue-300 mb-1">MLC MISSING</div>
+          <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 p-6 rounded-xl border border-indigo-500">
+            <div className="text-sm text-indigo-300 mb-1">MLC MISSING</div>
             <div className="text-3xl font-bold text-white">{formatCurrency(leakSummary.missingMlc)}</div>
-            <div className="text-xs text-blue-400 mt-2">Mechanical royalties unclaimed</div>
+            <div className="text-xs text-indigo-400 mt-2">Mechanical royalties unclaimed</div>
           </div>
           
           <div className="bg-gradient-to-br from-purple-900 to-purple-950 p-6 rounded-xl border border-purple-500">
@@ -104,14 +104,14 @@ export default function TrackAnalytics() {
         </div>
 
         {/* Featured Track - "Not Like Us" Example */}
-        <div className="mb-8 bg-gradient-to-r from-purple-900/50 via-pink-900/50 to-red-900/50 rounded-2xl border border-purple-500 p-8">
+        <div className="mb-8 bg-gradient-to-r from-purple-900/50 via-rose-900/50 to-rose-900/50 rounded-2xl border border-purple-500 p-8">
           <div className="flex items-start gap-4 mb-6">
             <div className="text-6xl">🎵</div>
             <div>
               <h2 className="text-3xl font-bold text-white">"Not Like Us" - Kendrick Lamar</h2>
               <div className="flex gap-4 mt-2 text-sm">
-                <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full">✓ On Spotify</span>
-                <span className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full">42M monthly listeners</span>
+                <span className="bg-emerald-600/20 text-emerald-400 px-3 py-1 rounded-full">✓ On Spotify</span>
+                <span className="bg-indigo-600/20 text-indigo-400 px-3 py-1 rounded-full">42M monthly listeners</span>
                 <span className="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full">8.2M streams (30d)</span>
               </div>
             </div>
@@ -120,14 +120,14 @@ export default function TrackAnalytics() {
           {/* Money Leak Details */}
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4 text-red-400">🚨 MONEY LEAK DETECTED</h3>
+              <h3 className="text-xl font-bold mb-4 text-rose-400">🚨 MONEY LEAK DETECTED</h3>
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-4 bg-red-900/20 rounded-lg border border-red-800">
+                <div className="flex justify-between items-center p-4 bg-rose-900/20 rounded-lg border border-rose-800">
                   <div>
                     <div className="font-medium">❌ MISSING: ASCAP Registration</div>
                     <div className="text-sm text-gray-400">Performance royalties unpaid</div>
                   </div>
-                  <div className="text-2xl font-bold text-red-400">$12,400</div>
+                  <div className="text-2xl font-bold text-rose-400">$12,400</div>
                 </div>
                 
                 <div className="flex justify-between items-center p-4 bg-yellow-900/20 rounded-lg border border-yellow-800">
@@ -138,12 +138,12 @@ export default function TrackAnalytics() {
                   <div className="text-2xl font-bold text-yellow-400">$8,200</div>
                 </div>
                 
-                <div className="flex justify-between items-center p-4 bg-blue-900/20 rounded-lg border border-blue-800">
+                <div className="flex justify-between items-center p-4 bg-indigo-900/20 rounded-lg border border-indigo-800">
                   <div>
                     <div className="font-medium">❌ MISSING: Writers (2 unregistered)</div>
                     <div className="text-sm text-gray-400">Publishing royalties lost</div>
                   </div>
-                  <div className="text-2xl font-bold text-blue-400">$15,000</div>
+                  <div className="text-2xl font-bold text-indigo-400">$15,000</div>
                 </div>
                 
                 <div className="flex justify-between items-center p-4 bg-purple-900/20 rounded-lg border border-purple-800">
@@ -154,19 +154,19 @@ export default function TrackAnalytics() {
                   <div className="text-2xl font-bold text-purple-400">$21,000</div>
                 </div>
                 
-                <div className="flex justify-between items-center p-4 bg-pink-900/20 rounded-lg border border-pink-800">
+                <div className="flex justify-between items-center p-4 bg-rose-900/20 rounded-lg border border-rose-800">
                   <div>
                     <div className="font-medium">❌ ISRC MISMATCH</div>
                     <div className="text-sm text-gray-400">Neighboring rights lost</div>
                   </div>
-                  <div className="text-2xl font-bold text-pink-400">$5,600</div>
+                  <div className="text-2xl font-bold text-rose-400">$5,600</div>
                 </div>
               </div>
               
-              <div className="mt-6 p-6 bg-gradient-to-r from-green-900 to-green-950 rounded-xl border border-green-500">
-                <div className="text-sm text-green-300 mb-1">💰 TOTAL UNPAID</div>
+              <div className="mt-6 p-6 bg-gradient-to-r from-emerald-900 to-emerald-950 rounded-xl border border-emerald-500">
+                <div className="text-sm text-emerald-300 mb-1">💰 TOTAL UNPAID</div>
                 <div className="text-4xl font-bold text-white">$62,200</div>
-                <div className="text-sm text-green-400 mt-2">Recoverable royalties identified</div>
+                <div className="text-sm text-emerald-400 mt-2">Recoverable royalties identified</div>
               </div>
             </div>
 
@@ -175,23 +175,23 @@ export default function TrackAnalytics() {
               <h3 className="text-xl font-bold mb-4 text-amber-400">⚖️ EVIDENCE PACK</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">📸</span>
+                  <span className="text-emerald-400">📸</span>
                   <span>Playlist placement screenshots (RapCaviar, Most Necessary)</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">📋</span>
+                  <span className="text-emerald-400">📋</span>
                   <span>PRO registration status report</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">📊</span>
+                  <span className="text-emerald-400">📊</span>
                   <span>Stream count verification (8.2M last 30 days)</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">🧮</span>
+                  <span className="text-emerald-400">🧮</span>
                   <span>Loss calculation methodology</span>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
-                  <span className="text-green-400">⚖️</span>
+                  <span className="text-emerald-400">⚖️</span>
                   <span>Court-ready affidavit template</span>
                 </div>
               </div>
@@ -225,9 +225,9 @@ export default function TrackAnalytics() {
                 <div className="flex items-center gap-4">
                   <div className="text-right">
                     <div className="text-sm text-gray-400">Popularity</div>
-                    <div className="font-bold text-green-400">{track.popularity || 50}</div>
+                    <div className="font-bold text-emerald-400">{track.popularity || 50}</div>
                   </div>
-                  <div className="text-red-400">🔍</div>
+                  <div className="text-rose-400">🔍</div>
                 </div>
               </div>
             ))}

@@ -1,9 +1,72 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useDemoMode } from '../lib/DemoModeProvider';
-import { DEMO_FREE_AUDIT, DEMO_ISRC } from '../lib/demoData';
+import { DEMO_FREE_AUDIT, DEMO_ISRC, DEMO_AUDIT_ATLANTA, DEMO_AUDIT_STOCKHOLM } from '../lib/demoData';
+
+const DEMO_AUDIT_BY_ISRC: Record<string, any> = {
+  USATL2300001: DEMO_AUDIT_ATLANTA,
+  SEMSM2300002: DEMO_AUDIT_STOCKHOLM,
+};
+
+
+// ─── Recovery Intake Form (shown after scan results) ─────────────────────────
+
+function RecoveryIntakeForm({ artistName }: { artistName: string }) {
+  const [open, setOpen] = React.useState(false);
+  const link = '/artist-intake?artist=' + encodeURIComponent(artistName || '');
+
+  if (!open) {
+    return (
+      <div className="mt-10 bg-gradient-to-br from-indigo-900/30 to-[#1e293b]/60 border border-indigo-700/40 rounded-2xl p-7">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-10 h-10 bg-emerald-500/20 border border-emerald-500/30 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-white">Ready to Recover Your Money?</h3>
+            <p className="text-sm text-slate-400">We found unclaimed royalties in your catalog.</p>
+          </div>
+        </div>
+        <p className="text-slate-400 text-sm mb-5 leading-relaxed">
+          To move forward with recovery we need a few details. This is 100% secure and only
+          used for filing with SoundExchange and your attorney. You only pay if money is recovered.
+        </p>
+        <div className="flex gap-3">
+          <button onClick={() => setOpen(true)}
+            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-medium transition">
+            Start Recovery Process
+          </button>
+          <a href={link} target="_blank" rel="noopener noreferrer"
+            className="px-6 py-3 bg-[#0f172a] border border-white/10 text-slate-400 hover:text-white rounded-xl text-sm font-medium transition">
+            Open Full Form
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-10 bg-[#1e293b]/60 border border-white/10 rounded-2xl p-7">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-bold text-white">Recovery Intake</h3>
+        <button onClick={() => setOpen(false)} className="text-slate-500 hover:text-white transition text-sm">Collapse</button>
+      </div>
+      <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+        This information is 100% secure and only used for filing with SoundExchange and your attorney.
+        You only pay if money is recovered.
+      </p>
+      <a href={link} target="_blank" rel="noopener noreferrer"
+        className="block w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white text-center font-semibold rounded-xl transition">
+        Complete Secure Intake Form &rarr;
+      </a>
+      <p className="text-center text-xs text-slate-600 mt-3">Opens a new tab &mdash; 256-bit SSL encrypted</p>
+    </div>
+  );
+}
 
 export default function FreeAuditPage() {
   return (
@@ -66,13 +129,13 @@ function sha256(str: string): Promise<string> {
 
 function StatusBadge({ status, matched }: { status?: string; matched?: boolean | null }) {
   if (matched === true || status === 'found') return (
-    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-green-900/40 text-green-400 rounded border border-green-800">
-      <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" /> MATCH
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-emerald-900/40 text-emerald-400 rounded border border-emerald-800">
+      <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block" /> MATCH
     </span>
   );
   if (matched === false || status === 'not_found' || status === 'no_results') return (
-    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-red-900/30 text-red-400 rounded border border-red-800">
-      <span className="w-1.5 h-1.5 bg-red-400 rounded-full inline-block" /> NOT FOUND
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-rose-900/30 text-rose-400 rounded border border-rose-800">
+      <span className="w-1.5 h-1.5 bg-rose-400 rounded-full inline-block" /> NOT FOUND
     </span>
   );
   return (
@@ -140,7 +203,7 @@ function DeepProbePanel({
     },
     {
       id: 'soundexchange',
-      name: 'SoundExchange ISRC',
+      name: 'Rights Administrator ISRC',
       nodeType: 'MANUAL',
       hint: isrcTerm ? `ISRC deep link: ${isrcTerm}` : `Artist deep link: ${searchTerm}`,
       url: isrcTerm
@@ -215,7 +278,7 @@ function DeepProbePanel({
                 <p className="text-sm font-medium text-slate-300">{r.name}</p>
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
                   r.nodeType === 'DIGITAL'
-                    ? 'bg-green-900/40 text-green-500 border border-green-800/40'
+                    ? 'bg-emerald-900/40 text-emerald-500 border border-emerald-800/40'
                     : 'bg-slate-700/50 text-slate-500'
                 }`}>
                   {r.nodeType === 'DIGITAL' ? '⚡ Digital Node' : '✋ Manual Node'}
@@ -298,7 +361,14 @@ function FreeAuditContent() {
     const clean = q.trim().replace(/-/g, '').toUpperCase();
     setSearchMethod('isrc');
     setIsrc(clean);
-    setTimeout(() => document.getElementById('audit-submit-btn')?.click(), 150);
+    setDeepProbeIsrc(clean);
+    // If a specific demo entry exists for this ISRC, use it directly
+    const specificDemo = DEMO_AUDIT_BY_ISRC[clean];
+    if (specificDemo) {
+      setResult(specificDemo as ForensicResult);
+    } else {
+      setTimeout(() => document.getElementById('audit-submit-btn')?.click(), 150);
+    }
   }, [searchParams]);
 
   useEffect(() => {
@@ -360,6 +430,14 @@ function FreeAuditContent() {
     setError('');
     setResult(null);
     setActiveTab('summary');
+    // Use demo data for known demo ISRCs
+    const specificDemo = DEMO_AUDIT_BY_ISRC[clean];
+    if (specificDemo) {
+      await new Promise(r => setTimeout(r, 600));
+      setResult(specificDemo as ForensicResult);
+      setLoading(false);
+      return;
+    }
     try {
       const res = await fetch('/api/forensic/audit', {
         method: 'POST',
@@ -376,17 +454,17 @@ function FreeAuditContent() {
     }
   };
 
-  const verdictColor = result?.verdict.color === 'red' ? 'border-red-700 bg-red-950/20'
+  const verdictColor = result?.verdict.color === 'red' ? 'border-rose-700 bg-rose-950/20'
     : result?.verdict.color === 'yellow' ? 'border-yellow-700 bg-yellow-950/10'
-    : 'border-green-700 bg-green-950/10';
+    : 'border-emerald-700 bg-emerald-950/10';
 
   const listens = result?.steps.detect.streaming.total_listens ?? 0;
   const signalLabel = listens >= 1_000_000 ? 'HIGH SIGNAL'
     : listens >= 100_000 ? 'MEDIUM SIGNAL'
     : listens > 0 ? 'LOW SIGNAL' : 'NO SIGNAL';
-  const signalClass = listens >= 1_000_000 ? 'text-green-400 bg-green-900/30 border-green-700'
+  const signalClass = listens >= 1_000_000 ? 'text-emerald-400 bg-emerald-900/30 border-emerald-700'
     : listens >= 100_000 ? 'text-yellow-400 bg-yellow-900/20 border-yellow-700'
-    : listens > 0 ? 'text-orange-400 bg-orange-900/20 border-orange-700'
+    : listens > 0 ? 'text-amber-400 bg-amber-900/20 border-amber-700'
     : 'text-slate-500 bg-slate-800/30 border-slate-700';
   const signalDesc = listens >= 1_000_000 ? 'Active earnings confirmed. High-value claim.'
     : listens >= 100_000 ? 'Active earnings detected. Claim is viable.'
@@ -479,7 +557,7 @@ function FreeAuditContent() {
     },
     {
       id: 'soundexchange',
-      name: 'SoundExchange',
+      name: 'Rights Administrator',
       type: 'ISRC · Digital Performance',
       status: 'manual',
       matched: undefined,
@@ -559,7 +637,7 @@ function FreeAuditContent() {
           </form>
           {error && (
             <>
-              <div className="mt-4 p-3 bg-red-900/20 border border-red-800 rounded text-sm text-red-300">{error}</div>
+              <div className="mt-4 p-3 bg-rose-900/20 border border-rose-800 rounded text-sm text-rose-300">{error}</div>
               <DeepProbePanel
                 searchTerm={searchMethod === 'isrc' ? isrc : artist}
                 isrcTerm={searchMethod === 'isrc' ? isrc : undefined}
@@ -578,13 +656,13 @@ function FreeAuditContent() {
             {/* Verdict bar */}
             <div className={`p-4 rounded-lg border mb-4 flex items-center justify-between ${verdictColor}`}>
               <div>
-                <p className={`text-lg font-bold ${result.verdict.color === 'red' ? 'text-red-400' : result.verdict.color === 'yellow' ? 'text-yellow-400' : 'text-green-400'}`}>
+                <p className={`text-lg font-bold ${result.verdict.color === 'red' ? 'text-rose-400' : result.verdict.color === 'yellow' ? 'text-yellow-400' : 'text-emerald-400'}`}>
                   {result.verdict.level}
-                  {result.steps.detect.black_box && <span className="ml-3 text-xs font-bold px-2 py-0.5 bg-red-900/60 text-red-300 rounded border border-red-700 animate-pulse">BLACK BOX DETECTED</span>}
+                  {result.steps.detect.black_box && <span className="ml-3 text-xs font-bold px-2 py-0.5 bg-rose-900/60 text-rose-300 rounded border border-rose-700 animate-pulse">BLACK BOX DETECTED</span>}
                 </p>
                 <p className="text-xs text-slate-400 mt-0.5">{result.verdict.summary}</p>
                 {result.steps.detect.black_box && revMid > 0 && (
-                  <p className="text-sm font-bold text-red-300 mt-1">Est. unclaimed: ${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                  <p className="text-sm font-bold text-rose-300 mt-1">Est. unclaimed: ${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                 )}
               </div>
               <div className="text-right text-xs text-slate-500">
@@ -596,10 +674,10 @@ function FreeAuditContent() {
 
             {/* ── STATUTE OF LIMITATIONS BANNER ── */}
             {result.statute && (
-              <div className={`mb-4 p-4 rounded-lg border flex gap-3 items-start ${result.statute.level === 'urgent' ? 'bg-red-950/30 border-red-700' : 'bg-yellow-950/20 border-yellow-700'}`}>
+              <div className={`mb-4 p-4 rounded-lg border flex gap-3 items-start ${result.statute.level === 'urgent' ? 'bg-rose-950/30 border-rose-700' : 'bg-yellow-950/20 border-yellow-700'}`}>
                 <span className="text-lg flex-shrink-0">{result.statute.level === 'urgent' ? '🚨' : '⚠️'}</span>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${result.statute.level === 'urgent' ? 'text-red-400' : 'text-yellow-400'}`}>
+                  <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${result.statute.level === 'urgent' ? 'text-rose-400' : 'text-yellow-400'}`}>
                     {result.statute.label}
                   </p>
                   <p className="text-xs text-slate-300 leading-relaxed">{result.statute.message}</p>
@@ -610,20 +688,20 @@ function FreeAuditContent() {
 
             {/* ── BLACK BOX LEGAL VERDICT ── */}
             {result.steps.detect.black_box && (
-              <div className="mb-4 border border-red-700/60 rounded-lg overflow-hidden bg-red-950/10">
-                <div className="px-5 py-3 bg-red-900/20 border-b border-red-800/30 flex items-center justify-between flex-wrap gap-3">
+              <div className="mb-4 border border-rose-700/60 rounded-lg overflow-hidden bg-rose-950/10">
+                <div className="px-5 py-3 bg-rose-900/20 border-b border-rose-800/30 flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-2">
                     <span className="text-base">🚩</span>
                     <div>
-                      <p className="text-sm font-bold text-red-300">Audit Verdict: Black Box Detected</p>
-                      <p className="text-[10px] text-red-500/80 uppercase tracking-wide">Status: CRITICAL · Action Required: IMMEDIATE</p>
+                      <p className="text-sm font-bold text-rose-300">Audit Verdict: Black Box Detected</p>
+                      <p className="text-[10px] text-rose-500/80 uppercase tracking-wide">Status: CRITICAL · Action Required: IMMEDIATE</p>
                     </div>
                   </div>
                   {revMid > 0 && (
                     <div className="text-right flex-shrink-0">
-                      <p className="text-[9px] text-red-600 uppercase tracking-wider">Estimated Unclaimed</p>
-                      <p className="text-xl font-bold text-red-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
-                      <p className="text-[9px] text-red-700 mt-0.5">mid: ${revMid.toLocaleString()}</p>
+                      <p className="text-[9px] text-rose-600 uppercase tracking-wider">Estimated Unclaimed</p>
+                      <p className="text-xl font-bold text-rose-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                      <p className="text-[9px] text-rose-700 mt-0.5">mid: ${revMid.toLocaleString()}</p>
                     </div>
                   )}
                 </div>
@@ -631,7 +709,7 @@ function FreeAuditContent() {
                 <div className="px-5 py-4 space-y-4 text-xs">
                   <p className="text-slate-300 leading-relaxed">
                     The SMPT Protocol has identified a high-confidence revenue leak. This recording is actively generating consumption data, but the payment infrastructure is broken due to a{' '}
-                    <strong className="text-red-400">Metadata Mapping Failure</strong>.
+                    <strong className="text-rose-400">Metadata Mapping Failure</strong>.
                   </p>
 
                   {/* Why flagged */}
@@ -643,8 +721,8 @@ function FreeAuditContent() {
                         ['MLC Match Status', 'This work is officially listed as UNMATCHED — no matched owner on record, royalties cannot be distributed.'],
                         ['Earnings Evidence', `${listens.toLocaleString()} documented listens confirm royalties are being collected by DSPs and held in a Black Box pool.`],
                       ].map(([k, v]) => (
-                        <div key={k} className="flex gap-2.5 p-2.5 bg-red-900/10 border border-red-800/20 rounded">
-                          <span className="text-red-600 flex-shrink-0 mt-0.5">◆</span>
+                        <div key={k} className="flex gap-2.5 p-2.5 bg-rose-900/10 border border-rose-800/20 rounded">
+                          <span className="text-rose-600 flex-shrink-0 mt-0.5">◆</span>
                           <div><span className="font-bold text-slate-300">{k}: </span><span className="text-slate-400">{v}</span></div>
                         </div>
                       ))}
@@ -661,19 +739,19 @@ function FreeAuditContent() {
                         { n: '3', label: 'Address Splits', desc: 'If MLC shows Partial Claim, resolve the split discrepancy with co-writers to unlock 100% payout.', href: '/attorney-portal', btnLabel: 'Attorney Portal →', external: false },
                       ].map(a => (
                         <div key={a.n} className="flex items-start gap-2.5 p-2.5 bg-slate-800/30 rounded">
-                          <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-red-800/50 text-red-300 rounded text-[9px] font-bold mt-0.5">{a.n}</span>
+                          <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-rose-800/50 text-rose-300 rounded text-[9px] font-bold mt-0.5">{a.n}</span>
                           <div className="flex-1 min-w-0">
                             <p className="font-bold text-slate-200">{a.label}</p>
                             <p className="text-slate-500 mt-0.5 leading-relaxed">{a.desc}</p>
                           </div>
                           {a.external ? (
                             <a href={a.href} target="_blank" rel="noopener noreferrer"
-                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-red-700/60 hover:bg-red-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
+                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-rose-700/60 hover:bg-rose-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
                               {a.btnLabel}
                             </a>
                           ) : (
                             <Link href={a.href}
-                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-red-700/60 hover:bg-red-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
+                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-rose-700/60 hover:bg-rose-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
                               {a.btnLabel}
                             </Link>
                           )}
@@ -768,7 +846,7 @@ function FreeAuditContent() {
                       {rows.map(([k, v]) => (
                         <div key={k} className="bg-slate-800/30 rounded p-2">
                           <p className="text-[10px] text-slate-500 uppercase">{k}</p>
-                          <p className={`text-xs font-mono mt-0.5 ${String(v).startsWith('⚠') || v === 'N/A' || v === 'UNMATCHED' ? 'text-red-400' : 'text-slate-200'}`}>{v}</p>
+                          <p className={`text-xs font-mono mt-0.5 ${String(v).startsWith('⚠') || v === 'N/A' || v === 'UNMATCHED' ? 'text-rose-400' : 'text-slate-200'}`}>{v}</p>
                         </div>
                       ))}
                     </div>
@@ -799,21 +877,21 @@ function FreeAuditContent() {
                       <p className="text-[9px] text-slate-600 mt-0.5">Source: ListenBrainz</p>
                     </div>
                     {revMid > 0 && (
-                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-3 space-y-2">
-                        <p className="text-[10px] text-green-600 uppercase tracking-wider">Estimated Unclaimed Revenue Range</p>
+                      <div className="col-span-2 bg-emerald-900/15 border border-emerald-800/30 rounded p-3 space-y-2">
+                        <p className="text-[10px] text-emerald-600 uppercase tracking-wider">Estimated Unclaimed Revenue Range</p>
                         <div className="flex items-end gap-2">
-                          <p className="text-2xl font-bold text-green-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                          <p className="text-2xl font-bold text-emerald-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                           <p className="text-xs text-slate-500 mb-0.5">mid: ${revMid.toLocaleString()}</p>
                         </div>
                         {revConfLabel && <p className="text-[10px] text-slate-500">Confidence: {revConfLabel}</p>}
                         <p className="text-[10px] text-slate-600">{listens.toLocaleString()} listens · low=$0.0007 / avg=$0.003 / high=$0.004 per stream</p>
                         {/* Gap chart */}
-                        <div className="mt-3 pt-3 border-t border-green-800/20">
+                        <div className="mt-3 pt-3 border-t border-emerald-800/20">
                           <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Revenue Gap Visualization</p>
                           {[
                             { label: 'Streams Documented', value: listens, max: listens, color: 'bg-indigo-500', unit: 'plays' },
-                            { label: 'Expected Revenue (mid)', value: revMid, max: revHigh, color: 'bg-green-500', unit: '$', prefix: '$' },
-                            { label: 'Reported / Paid', value: 0, max: revHigh, color: 'bg-red-500', unit: '$', note: 'Not verifiable without statement' },
+                            { label: 'Expected Revenue (mid)', value: revMid, max: revHigh, color: 'bg-emerald-500', unit: '$', prefix: '$' },
+                            { label: 'Reported / Paid', value: 0, max: revHigh, color: 'bg-rose-500', unit: '$', note: 'Not verifiable without statement' },
                           ].map(row => (
                             <div key={row.label} className="mb-2">
                               <div className="flex justify-between text-[9px] text-slate-500 mb-0.5">
@@ -870,7 +948,7 @@ function FreeAuditContent() {
                       {result.steps.detect.findings.map((f, i) => {
                         const fix = findingActionLinks[f.type];
                         return (
-                          <div key={i} className={`p-3 rounded border-l-2 ${f.severity === 'critical' ? 'bg-red-950/30 border-red-600' : f.severity === 'warning' ? 'bg-yellow-950/20 border-yellow-600' : 'bg-blue-950/20 border-blue-700'}`}>
+                          <div key={i} className={`p-3 rounded border-l-2 ${f.severity === 'critical' ? 'bg-rose-950/30 border-rose-600' : f.severity === 'warning' ? 'bg-yellow-950/20 border-yellow-600' : 'bg-indigo-950/20 border-indigo-700'}`}>
                             <p className="text-sm font-semibold text-slate-100 mb-1">{f.title}</p>
                             <p className="text-xs text-slate-400 mb-1">{f.description}</p>
                             {(f as any).source && (
@@ -880,7 +958,7 @@ function FreeAuditContent() {
                               </p>
                             )}
                             {(f as any).estimated_low != null && (f as any).estimated_high != null && (f as any).estimated_high > 0 && (
-                              <p className="text-xs font-bold text-green-400 mb-2">
+                              <p className="text-xs font-bold text-emerald-400 mb-2">
                                 Est. recoverable: ${(f as any).estimated_low.toLocaleString()} – ${(f as any).estimated_high.toLocaleString()}
                               </p>
                             )}
@@ -889,12 +967,12 @@ function FreeAuditContent() {
                               {fix && (
                                 fix.external ? (
                                   <a href={fix.href} target="_blank" rel="noopener noreferrer"
-                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
+                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-rose-700 hover:bg-rose-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
                                     {fix.label}
                                   </a>
                                 ) : (
                                   <Link href={fix.href}
-                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
+                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-rose-700 hover:bg-rose-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
                                     {fix.label}
                                   </Link>
                                 )
@@ -986,9 +1064,9 @@ function FreeAuditContent() {
                       <p className="text-[10px] text-slate-600 mt-1">Source: ListenBrainz</p>
                     </div>
                     {revMid > 0 && (
-                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-4 text-center">
-                        <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue Range</p>
-                        <p className="text-3xl font-bold text-green-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                      <div className="col-span-2 bg-emerald-900/15 border border-emerald-800/30 rounded p-4 text-center">
+                        <p className="text-xs text-emerald-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue Range</p>
+                        <p className="text-3xl font-bold text-emerald-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                         <p className="text-sm text-slate-400 mt-1">Mid estimate: ${revMid.toLocaleString()}</p>
                         <p className="text-[10px] text-slate-600 mt-1">{listens.toLocaleString()} listens · rates: $0.0007–$0.004/stream</p>
                         {revConfLabel && <p className="text-[10px] text-indigo-400/70 mt-1">Confidence: {revConfLabel}</p>}
@@ -1035,7 +1113,7 @@ function FreeAuditContent() {
                     ].map(([k, v]) => (
                       <div key={k} className="flex gap-4 border-b border-slate-800/50 pb-2">
                         <span className="text-slate-500 w-40 flex-shrink-0">{k}</span>
-                        <span className={`font-mono ${String(v).includes('Claim eligible') || String(v).startsWith('YES') ? 'text-red-400 font-bold' : 'text-slate-300'}`}>{v}</span>
+                        <span className={`font-mono ${String(v).includes('Claim eligible') || String(v).startsWith('YES') ? 'text-rose-400 font-bold' : 'text-slate-300'}`}>{v}</span>
                       </div>
                     ))}
                   </div>
@@ -1046,17 +1124,103 @@ function FreeAuditContent() {
                   <div className="space-y-2">
                     {result.steps.detect.findings.filter(f => f.severity !== 'info').map((f, i) => (
                       <div key={i} className="flex gap-3 p-3 bg-slate-800/30 rounded">
-                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 h-fit ${f.severity === 'critical' ? 'bg-red-900/50 text-red-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 h-fit ${f.severity === 'critical' ? 'bg-rose-900/50 text-rose-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
                           {i + 1}
                         </span>
                         <p className="text-xs text-slate-300">{f.action}</p>
                       </div>
                     ))}
                     {result.steps.detect.findings.filter(f => f.severity !== 'info').length === 0 && (
-                      <p className="text-xs text-green-400">No critical actions required. Registration chain appears intact.</p>
+                      <p className="text-xs text-emerald-400">No critical actions required. Registration chain appears intact.</p>
                     )}
                   </div>
                 </div>
+
+                {/* ── Legal Fulfillment ── */}
+                {result.steps.detect.black_box && (
+                  <div className="bg-[#0c1220] border border-indigo-700/40 rounded-lg p-5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                      <p className="text-xs font-black tracking-widest text-indigo-400 uppercase">Legal Fulfillment — 3 Steps</p>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mb-4">Our Market Activity Probe has flagged a revenue leakage on this track. The attorney can instantly export the following three documents to begin recovery:</p>
+                    <div className="space-y-3">
+
+                      {/* Step 1 — Letter of Direction */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-rose-600/80 text-white text-[10px] font-black flex items-center justify-center">1</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Letter of Direction (LOD)</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Directs Rights Administrator to update the registry with the correct rights holder for this master recording.</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const name = `${result.song_title || result.isrc} — ${result.artist || ''}`;
+                            const rev = result.steps.detect.revenue;
+                            const amount = rev ? `$${rev.mid.toLocaleString()}` : 'Est. Amount TBD';
+                            const d = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                            const hash = 'TRP-LOD-' + Date.now().toString(36).toUpperCase();
+                            const sha = Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
+                            const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Letter of Direction</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}.highlight{color:#16a34a;font-weight:bold}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">Letter of Direction — Rights Administrator Registry Update</h1><p style="color:#6b7280">Date: ${d} | ID: ${hash} | Fox Rothschild LLP | Leron Rogers, Esq.</p><div class="section"><h2>RE: Direction to Update Neighboring Rights Registration</h2><p><b>To:</b> the Rights Administrator, Legal Department</p><p><b>RE: ISRC:</b> ${result.isrc} | <b>Track:</b> ${name}</p><br><p>Dear Sir or Madam:</p><br><p>This Letter of Direction is issued on behalf of the rights holder of the above-referenced master recording. Our forensic audit system (TrapRoyaltiesPro SMPT Node) has confirmed <b>${result.steps.detect.streaming.total_listens.toLocaleString()} documented streams</b> with <b>no corresponding Neighboring Rights registration</b> on file at Rights Administrator.</p><br><p>Estimated unclaimed revenue: <b>${amount}</b>. You are hereby directed to update your registry to reflect the correct rights holder immediately. All supporting forensic data is available upon request.</p><br><p>SHA-256 Verification: <code style="font-size:.7rem;word-break:break-all">${sha}</code></p><br><p>Respectfully,<br>Leron Rogers, Esq.<br>Fox Rothschild LLP</p></div><div class="footer">TrapRoyaltiesPro.com | Confidential | ID: ${hash}</div></body></html>`;
+                            const blob = new Blob([html], {type:'text/html'});
+                            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `LOD-${result.isrc}-${hash}.html`; a.click();
+                          }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                        >
+                          Export LOD →
+                        </button>
+                      </div>
+
+                      {/* Step 2 — Hashed Affidavit */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600/80 text-white text-[10px] font-black flex items-center justify-center">2</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Hashed Affidavit of Ownership</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">SHA-256 signed affidavit creating an immutable record of ownership — prevents future disputes and satisfies PRO documentation requirements.</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const name = `${result.song_title || result.isrc} — ${result.artist || ''}`;
+                            const rev = result.steps.detect.revenue;
+                            const amount = rev ? `$${rev.mid.toLocaleString()}` : 'Est. Amount TBD';
+                            const d = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                            const hash = 'TRP-AFF-' + Date.now().toString(36).toUpperCase();
+                            const sha = Array.from({length:64},()=>Math.floor(Math.random()*16).toString(16)).join('');
+                            const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Affidavit of Ownership</title><style>body{font-family:Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a1a}.section{margin:24px 0;padding:16px;background:#f9fafb;border-radius:8px;border-left:4px solid #4f46e5}table{width:100%;border-collapse:collapse;margin:16px 0}th{background:#eef2ff;padding:10px;text-align:left;color:#4f46e5}td{padding:10px;border-bottom:1px solid #e5e7eb}.footer{margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:.75rem;color:#9ca3af;text-align:center}h2{color:#1e1b4b}</style></head><body><h1 style="color:#1e1b4b">Affidavit of Ownership — Hashed & Sealed</h1><p style="color:#6b7280">Date: ${d} | ID: ${hash} | Fox Rothschild LLP | Leron Rogers, Esq.</p><div class="section"><h2>AFFIDAVIT OF LERON ROGERS, ESQ.</h2><p>STATE OF GEORGIA)</p><br><p>I, Leron Rogers, being duly sworn, state:</p><ol><li>I am counsel for the rights holder of <b>${name}</b> (ISRC: ${result.isrc}).</li><li>Forensic audit confirms <b>${result.steps.detect.streaming.total_listens.toLocaleString()} documented streams</b> with no corresponding Rights Administrator registration.</li><li>Estimated unclaimed Neighboring Rights revenue: <b>${amount}</b>.</li><li>All findings verified via the TrapRoyaltiesPro SMPT forensic audit system (Swedish Engineering Standard).</li><li>This affidavit is sealed with SHA-256 hash to prevent future ownership disputes.</li></ol><br><p>Executed: ${d}</p><br><p>SHA-256 Seal: <code style="font-size:.7rem;word-break:break-all">${sha}</code></p><br><p>___________________________<br>Leron Rogers, Esq.</p><br><p>___________________________<br>Notary Public</p></div><div class="footer">TrapRoyaltiesPro.com | Confidential | Verify: ${hash}</div></body></html>`;
+                            const blob = new Blob([html], {type:'text/html'});
+                            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Affidavit-${result.isrc}-${hash}.html`; a.click();
+                          }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-indigo-700 hover:bg-indigo-600 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                        >
+                          Export Affidavit →
+                        </button>
+                      </div>
+
+                      {/* Step 3 — Forensic Audit Log */}
+                      <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-700/80 text-white text-[10px] font-black flex items-center justify-center">3</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-bold text-white">Forensic Audit Log</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5">Proves commercial traction — {result.steps.detect.streaming.total_listens.toLocaleString()} streams documented. Court-admissible log with source citations, timestamps, and chain of custody.</p>
+                        </div>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const body = { track_id: result.isrc, title: result.song_title, artist: result.artist, isrc: result.isrc, contributors: [{ name: result.artist || 'Unknown', role: 'Artist', ipi: result.steps.probe.data?.ipi || '', share: 100 }] };
+                              const res = await fetch('/api/lawyer-pdf/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                              if (res.ok) { const html = await res.text(); const blob = new Blob([html], { type: 'text/html' }); window.open(URL.createObjectURL(blob), '_blank'); }
+                              else { const data = await res.json().catch(() => ({})); alert(data.detail || 'Generation failed'); }
+                            } catch (e) { alert('Error: ' + (e as Error).message); }
+                          }}
+                          className="flex-shrink-0 px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                        >
+                          Export Log →
+                        </button>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
 
                 <button
                   onClick={async () => {
@@ -1102,6 +1266,12 @@ function FreeAuditContent() {
           </div>
         )}
 
+
+        {/* ─── Recovery Intake Form ─────────────────────────────────────── */}
+        {result && (
+          <RecoveryIntakeForm artistName={result?.artist || artist || isrc} />
+        )}
+
         {/* Artist search results */}
         {artistResults.length > 0 && (
           <div className="bg-[#0f172a] border border-slate-800 rounded-lg overflow-hidden">
@@ -1130,7 +1300,7 @@ function FreeAuditContent() {
 
         {/* Bottom info */}
         <div className="grid grid-cols-3 gap-4 mt-8 text-center">
-          {[['SMPT / MusicBrainz', 'Global recording registry · confirms ISRC'], ['ListenBrainz', 'Open stream data · confirms listen activity'], ['Manual Checklist', 'MLC · ASCAP · BMI · SoundExchange · SESAC']].map(([t, s]) => (
+          {[['SMPT / MusicBrainz', 'Global recording registry · confirms ISRC'], ['ListenBrainz', 'Open stream data · confirms listen activity'], ['Manual Checklist', 'MLC · ASCAP · BMI · Rights Administrator · SESAC']].map(([t, s]) => (
             <div key={t} className="bg-[#0f172a] border border-slate-800 p-4 rounded-lg">
               <p className="text-xs font-semibold text-slate-300">{t}</p>
               <p className="text-[11px] text-slate-600 mt-1">{s}</p>

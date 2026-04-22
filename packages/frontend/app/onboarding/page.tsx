@@ -53,7 +53,7 @@ const FEATURES = [
     path: "/dashboard",
     section: "isrc",
     desc: "Search any track by title + artist across MusicBrainz and Deezer. Pulls ISRC, label, release date, and credits automatically. No ISRC? We find it or register one.",
-    detail: "Every track needs an ISRC to collect from PROs, SoundExchange, and international societies. Missing one = money left behind.",
+    detail: "Every track needs an ISRC to collect from PROs, Rights Administrator, and international societies. Missing one = money left behind.",
   },
   {
     icon: "🎵",
@@ -114,7 +114,7 @@ const FEATURES = [
 ];
 
 const LEAKS = [
-  { emoji: "❌", title: "Missing ISRC", impact: "Cannot collect from SoundExchange, PROs, or international societies", freq: "68% of indie catalogs" },
+  { emoji: "❌", title: "Missing ISRC", impact: "Cannot collect from Rights Administrator, PROs, or international societies", freq: "68% of indie catalogs" },
   { emoji: "❌", title: "No Songwriter Credits", impact: "Mechanical royalties go unclaimed — 9.1¢/stream stays at publisher", freq: "54% of tracks" },
   { emoji: "⚠️", title: "Splits Don't Add to 100%", impact: "Disputed ownership = frozen payments, potential lawsuit", freq: "31% of multi-artist tracks" },
   { emoji: "⚠️", title: "Wrong Label Code", impact: "Streaming payouts go to wrong entity, requires dispute to recover", freq: "22% of catalog transfers" },
@@ -124,9 +124,9 @@ const LEAKS = [
 
 const COLOR = {
   indigo: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
-  blue:   "bg-blue-500/10 border-blue-500/30 text-blue-400",
+  blue:   "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
   purple: "bg-purple-500/10 border-purple-500/30 text-purple-400",
-  green:  "bg-green-500/10 border-green-500/30 text-green-400",
+  green:  "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
   orange: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
 } as const;
 
@@ -224,7 +224,7 @@ export default function OnboardingPage() {
         </div>
         <div className="mt-8 text-center">
           <Link href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-red-500/20 border border-red-500/30 text-red-300 font-bold rounded-xl hover:bg-red-500/30 transition">
+            className="inline-flex items-center gap-2 px-6 py-3 bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold rounded-xl hover:bg-rose-500/30 transition">
             Scan your catalog for leaks →
           </Link>
         </div>
@@ -306,7 +306,7 @@ export default function OnboardingPage() {
                 <ul className="space-y-2">
                   {STEPS[activeStep].actions.map((a, j) => (
                     <li key={j} className="flex items-center gap-2 text-sm">
-                      <span className="text-green-400 flex-shrink-0">✓</span>
+                      <span className="text-emerald-400 flex-shrink-0">✓</span>
                       <span className="text-slate-300">{a}</span>
                     </li>
                   ))}

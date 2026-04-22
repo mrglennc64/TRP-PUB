@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   CheckCircle, 
   AlertCircle, 
@@ -93,11 +93,11 @@ export default function SplitValidator() {
   const getStatusIcon = (status: string) => {
     switch(status) {
       case 'complete':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return <CheckCircle className="h-5 w-5 text-emerald-500" />;
       case 'incomplete':
         return <AlertCircle className="h-5 w-5 text-yellow-500" />;
       case 'disputed':
-        return <XCircle className="h-5 w-5 text-red-500" />;
+        return <XCircle className="h-5 w-5 text-rose-500" />;
       default:
         return <Clock className="h-5 w-5 text-gray-400" />;
     }
@@ -107,11 +107,11 @@ export default function SplitValidator() {
   const getStatusBadgeClass = (status: string) => {
     switch(status) {
       case 'complete':
-        return 'bg-green-100 text-green-700 border-green-200';
+        return 'bg-emerald-100 text-emerald-700 border-emerald-200';
       case 'incomplete':
         return 'bg-yellow-100 text-yellow-700 border-yellow-200';
       case 'disputed':
-        return 'bg-red-100 text-red-700 border-red-200';
+        return 'bg-rose-100 text-rose-700 border-rose-200';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-200';
     }
@@ -201,7 +201,7 @@ export default function SplitValidator() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-6 text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-white/20 rounded-lg">
@@ -236,7 +236,7 @@ export default function SplitValidator() {
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-gray-500">Complete</p>
-          <p className="text-2xl font-bold text-green-600">{completeTracks}</p>
+          <p className="text-2xl font-bold text-emerald-600">{completeTracks}</p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-gray-500">Incomplete</p>
@@ -244,7 +244,7 @@ export default function SplitValidator() {
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <p className="text-sm text-gray-500">Disputed</p>
-          <p className="text-2xl font-bold text-red-600">{disputedTracks}</p>
+          <p className="text-2xl font-bold text-rose-600">{disputedTracks}</p>
         </div>
       </div>
 
@@ -306,10 +306,10 @@ export default function SplitValidator() {
                                     className={`h-full ${
                                       split.verified ? 'opacity-100' : 'opacity-50'
                                     } ${
-                                      idx === 0 ? 'bg-blue-500' :
-                                      idx === 1 ? 'bg-green-500' :
+                                      idx === 0 ? 'bg-indigo-500' :
+                                      idx === 1 ? 'bg-emerald-500' :
                                       idx === 2 ? 'bg-purple-500' :
-                                      'bg-orange-500'
+                                      'bg-amber-500'
                                     }`}
                                     style={{ width: `${split.percentage || 0}%` }}
                                     title={`${split.name || 'Unknown'}: ${split.percentage || 0}%`}
@@ -338,7 +338,7 @@ export default function SplitValidator() {
                                       <span className="text-xs text-gray-400 ml-1">• {split.pro}</span>
                                     )}
                                     {split.verified && (
-                                      <CheckCircle className="h-3 w-3 text-green-500 inline ml-1" />
+                                      <CheckCircle className="h-3 w-3 text-emerald-500 inline ml-1" />
                                     )}
                                   </div>
                                   <span className="font-semibold">{split.percentage || 0}%</span>
@@ -398,7 +398,7 @@ export default function SplitValidator() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-md w-full">
             <div className="flex items-center space-x-3 mb-4">
-              <Shield className="h-6 w-6 text-green-600" />
+              <Shield className="h-6 w-6 text-emerald-600" />
               <h3 className="text-lg font-semibold">Verification Proof Generated</h3>
             </div>
             
@@ -481,12 +481,12 @@ export default function SplitValidator() {
       )}
 
       {/* 100% Rule Enforcement Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
         <div className="flex items-start space-x-3">
-          <Lock className="h-5 w-5 text-blue-600 mt-0.5" />
+          <Lock className="h-5 w-5 text-indigo-600 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-blue-800">The 100% Rule</p>
-            <p className="text-sm text-blue-600">
+            <p className="text-sm font-medium text-indigo-800">The 100% Rule</p>
+            <p className="text-sm text-indigo-600">
               Splits cannot be locked until they total exactly 100%. Incomplete or disputed tracks
               will prevent final verification. This creates an immutable, tamper-evident record.
             </p>

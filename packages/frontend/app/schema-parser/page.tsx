@@ -177,17 +177,17 @@ const CATALOG_FIELDS: CatalogField[] = [
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 function confColor(c: number) {
-  if (c >= 90) return "text-green-400";
+  if (c >= 90) return "text-emerald-400";
   if (c >= 70) return "text-yellow-400";
   return "text-rose-400";
 }
 function confBg(c: number) {
-  if (c >= 90) return "bg-green-500";
+  if (c >= 90) return "bg-emerald-500";
   if (c >= 70) return "bg-yellow-500";
   return "bg-rose-500";
 }
 function statusIcon(s: ValidationResult["status"]) {
-  if (s === "pass") return { icon: "✓", color: "text-green-400", bg: "bg-green-500/10 border-green-500/20" };
+  if (s === "pass") return { icon: "✓", color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" };
   if (s === "warn") return { icon: "⚠", color: "text-yellow-400", bg: "bg-yellow-500/10 border-yellow-500/20" };
   return { icon: "✗", color: "text-rose-400", bg: "bg-rose-500/10 border-rose-500/20" };
 }
@@ -345,8 +345,8 @@ export default function SchemaParserPage() {
                       } ${st === "idle" ? "opacity-40" : ""}`}
                     >
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 ${
-                        st === "done"    ? "bg-green-500/20 text-green-400 border border-green-500/40" :
-                        st === "running" ? "bg-blue-500/20 text-blue-400 border border-blue-500/40 animate-pulse" :
+                        st === "done"    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40" :
+                        st === "running" ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/40 animate-pulse" :
                         st === "error"   ? "bg-rose-500/20 text-rose-400 border border-rose-500/40" :
                         "bg-white/5 text-slate-600 border border-white/10"
                       }`}>
@@ -373,7 +373,7 @@ export default function SchemaParserPage() {
               <div className="bg-[#0f172a] border border-white/10 rounded-2xl p-6">
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Format Detection</div>
                 {stageStatus.detect === "running" ? (
-                  <div className="flex items-center gap-3 text-sm text-blue-400 animate-pulse">
+                  <div className="flex items-center gap-3 text-sm text-indigo-400 animate-pulse">
                     <span>Analyzing file structure…</span>
                   </div>
                 ) : (
@@ -392,10 +392,10 @@ export default function SchemaParserPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="flex flex-col items-center justify-center bg-green-500/10 border border-green-500/20 rounded-xl p-6">
-                      <div className="text-5xl font-black text-green-400 mb-1">{preset.schema.confidence}%</div>
+                    <div className="flex flex-col items-center justify-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-6">
+                      <div className="text-5xl font-black text-emerald-400 mb-1">{preset.schema.confidence}%</div>
                       <div className="text-xs text-slate-400">Schema Match Confidence</div>
-                      <div className="mt-3 text-xs text-green-400 font-semibold">✓ Known schema — using optimized mapping</div>
+                      <div className="mt-3 text-xs text-emerald-400 font-semibold">✓ Known schema — using optimized mapping</div>
                     </div>
                   </div>
                 )}
@@ -410,15 +410,15 @@ export default function SchemaParserPage() {
                     <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Data Cleaning Rules Applied</div>
                     <div className="text-sm text-slate-400">{preset.cleaning.length} transformations applied across {preset.schema.totalRows.toLocaleString("en-US")} rows</div>
                   </div>
-                  <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30">
+                  <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/30">
                     All passed
                   </span>
                 </div>
                 <div className="divide-y divide-white/5">
                   {preset.cleaning.map((rule) => (
                     <div key={rule.id} className="grid grid-cols-[auto_1fr_auto_auto] gap-4 px-6 py-3 items-center">
-                      <div className="w-6 h-6 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center">
-                        <span className="text-green-400 text-xs">✓</span>
+                      <div className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center">
+                        <span className="text-emerald-400 text-xs">✓</span>
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-white">{rule.rule}</div>
@@ -428,7 +428,7 @@ export default function SchemaParserPage() {
                         <div className="text-xs text-rose-400 font-mono bg-rose-500/10 px-2 py-0.5 rounded line-through">{rule.before}</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xs text-green-400 font-mono bg-green-500/10 px-2 py-0.5 rounded">{rule.after}</div>
+                        <div className="text-xs text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded">{rule.after}</div>
                       </div>
                     </div>
                   ))}
@@ -446,7 +446,7 @@ export default function SchemaParserPage() {
                   </div>
                   <div className="ml-auto flex items-center gap-4 text-xs">
                     <span className="text-slate-400">Mapped: <span className="text-white font-bold">{mappedCount}/{totalCols}</span></span>
-                    <span className="text-slate-400">Required: <span className={requiredMapped === requiredTotal ? "text-green-400 font-bold" : "text-rose-400 font-bold"}>{requiredMapped}/{requiredTotal}</span></span>
+                    <span className="text-slate-400">Required: <span className={requiredMapped === requiredTotal ? "text-emerald-400 font-bold" : "text-rose-400 font-bold"}>{requiredMapped}/{requiredTotal}</span></span>
                   </div>
                 </div>
 
@@ -517,7 +517,7 @@ export default function SchemaParserPage() {
                             onDrop={(e) => { e.preventDefault(); if (dragSource) handleDrop(dragSource, field.id); }}
                             className={`px-4 py-3 transition-all ${
                               isTarget ? "bg-indigo-500/20 border-l-2 border-indigo-400" :
-                              field.mapped ? "bg-green-500/5" : "hover:bg-white/5"
+                              field.mapped ? "bg-emerald-500/5" : "hover:bg-white/5"
                             }`}
                           >
                             <div className="flex items-center justify-between gap-2">
@@ -530,7 +530,7 @@ export default function SchemaParserPage() {
                               </div>
                               {mappedCol ? (
                                 <div className="text-right flex-shrink-0">
-                                  <div className="text-xs font-semibold text-green-400">✓ {mappedCol.rawName}</div>
+                                  <div className="text-xs font-semibold text-emerald-400">✓ {mappedCol.rawName}</div>
                                   <div className={`text-xs ${confColor(mappedCol.confidence)}`}>{mappedCol.confidence}% conf.</div>
                                 </div>
                               ) : (
@@ -564,7 +564,7 @@ export default function SchemaParserPage() {
                     <div className="flex gap-2">
                       <Link
                         href="/catalog-staging"
-                        className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded-lg transition"
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition"
                       >
                         Send to Staging →
                       </Link>
@@ -582,7 +582,7 @@ export default function SchemaParserPage() {
                     const m = statusIcon(v.status);
                     return (
                       <div key={i} className={`flex items-start gap-4 px-6 py-4 border-l-2 ${
-                        v.status === "pass" ? "border-green-500/30" : v.status === "warn" ? "border-yellow-500/30" : "border-rose-500/30"
+                        v.status === "pass" ? "border-emerald-500/30" : v.status === "warn" ? "border-yellow-500/30" : "border-rose-500/30"
                       }`}>
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 border ${m.bg} ${m.color}`}>
                           {m.icon}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrapRoyaltiesPro Login</title>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <style>
+    #particles-js {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    body {
+      background: #0f172a;
+      color: #f1f5f9;
+      font-family: 'Satoshi', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: #181c2f;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(124, 58, 237, 0.18);
+      padding: 48px 36px 36px 36px;
+      min-width: 340px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #a78bfa;
+      margin-bottom: 18px;
+      letter-spacing: 1px;
+    }
+    h2 {
+      margin: 0 0 18px 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #a78bfa;
+    }
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    input[type="email"], input[type="password"] {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #7c3aed;
+      background: #23263a;
+      color: #f1f5f9;
+      font-size: 1rem;
+    }
+    input[type="submit"] {
+      background: linear-gradient(90deg, #a78bfa, #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    input[type="submit"]:hover {
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+    }
+    .tagline {
+      color: #c4b5fd;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="login-container" style="position:relative;z-index:1;">
+    <div class="logo">TrapRoyaltiesPro</div>
+    <h2>Sign in to TrapRoyaltiesPro</h2>
+    <div class="tagline">Forensic audits. Unclaimed royalties. Secure access.</div>
+    <form id="login-form">
+      <input id="email" type="email" placeholder="Email" required>
+      <input id="password" type="password" placeholder="Password" required>
+      <input type="submit" value="Sign In">
+      <div id="login-error" style="color:#f87171;margin-top:8px;"></div>
+    </form>
+    <script type="module">
+      import { supabase } from "./supabaseClient.js";
+      const form = document.getElementById("login-form");
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const errorBox = document.getElementById("login-error");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorBox.textContent = "";
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        if (email !== "admin" && email !== "admin@admin.com") {
+          errorBox.textContent = "Only admin access allowed.";
+          return;
+        }
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorBox.textContent = error.message;
+          return;
+        }
+        window.location.href = "traproyaltiespro.html";
+      });
+    </script>
+    <script>
+      particlesJS('particles-js', {
+        "particles": {
+          "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+          "color": { "value": "#A855F7" },
+          "shape": { "type": "circle" },
+          "opacity": { "value": 0.5, "random": false },
+          "size": { "value": 3, "random": true },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#A855F7",
+            "opacity": 0.6,
+            "width": 1.2
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out"
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": { "enable": true, "mode": "grab" },
+            "onclick": { "enable": true, "mode": "push" },
+            "resize": true
+          },
+          "modes": {
+            "grab": { "distance": 140, "line_linked": { "opacity": 1 } },
+            "push": { "particles_nb": 4 }
+          }
+        },
+        "retina_detect": true
+      });
+    </script>
+  </div>
+</body>
+</html>
