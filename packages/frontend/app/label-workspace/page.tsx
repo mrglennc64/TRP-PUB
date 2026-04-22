@@ -234,7 +234,7 @@ export default function LabelWorkspacePage() {
                   >
                     <span className="text-xs">🎵</span>
                     <span className="flex-1 truncate">{track.name}</span>
-                    {!track.isrc && <span className="text-red-400 text-xs opacity-0 group-hover:opacity-100">!</span>}
+                    {!track.isrc && <span className="text-rose-400 text-xs opacity-0 group-hover:opacity-100">!</span>}
                   </div>
                 ))}
               </div>
@@ -254,12 +254,12 @@ export default function LabelWorkspacePage() {
                 key={entry.id}
                 onClick={() => { setActiveEntry(entry); setPushed(false); }}
                 className={`h-full flex items-center gap-2 px-4 cursor-pointer border-r border-[#3c3c3c] ${
-                  activeEntry?.id === entry.id ? 'bg-[#1e1e1e] text-white border-t-2 border-t-blue-500' : 'text-gray-400 hover:bg-[#252526]'
+                  activeEntry?.id === entry.id ? 'bg-[#1e1e1e] text-white border-t-2 border-t-indigo-500' : 'text-gray-400 hover:bg-[#252526]'
                 }`}
               >
                 🎵 {entry.name}
                 {entry.issues.some(i => i.severity === 'error' && !i.fixed) && (
-                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
+                  <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
                 )}
               </div>
             ))}
@@ -287,7 +287,7 @@ export default function LabelWorkspacePage() {
                     {activeEntry.isrc && <p className="text-xs text-gray-500 font-mono mt-1">ISRC: {activeEntry.isrc}</p>}
                   </div>
                   <div className="flex items-center gap-2">
-                    {errorCount > 0 && <span className="px-3 py-1 bg-red-900/60 text-red-300 rounded-full text-xs font-bold">{errorCount} errors</span>}
+                    {errorCount > 0 && <span className="px-3 py-1 bg-rose-900/60 text-rose-300 rounded-full text-xs font-bold">{errorCount} errors</span>}
                     {warnCount > 0 && <span className="px-3 py-1 bg-yellow-900/60 text-yellow-300 rounded-full text-xs font-bold">{warnCount} warnings</span>}
                   </div>
                 </div>
@@ -295,9 +295,9 @@ export default function LabelWorkspacePage() {
                 {/* PRO status */}
                 <div className="grid grid-cols-4 gap-3 mb-6">
                   {Object.entries(activeEntry.proStatus).map(([pro, reg]) => (
-                    <div key={pro} className={`p-3 rounded-xl text-center border ${reg ? 'border-green-700/50 bg-green-900/20' : 'border-red-700/50 bg-red-900/20'}`}>
+                    <div key={pro} className={`p-3 rounded-xl text-center border ${reg ? 'border-emerald-700/50 bg-emerald-900/20' : 'border-rose-700/50 bg-rose-900/20'}`}>
                       <p className="text-xs font-bold text-gray-300 uppercase">{pro}</p>
-                      <p className={`text-xl ${reg ? 'text-green-400' : 'text-red-400'}`}>{reg ? '✓' : '✗'}</p>
+                      <p className={`text-xl ${reg ? 'text-emerald-400' : 'text-rose-400'}`}>{reg ? '✓' : '✗'}</p>
                     </div>
                   ))}
                 </div>
@@ -306,10 +306,10 @@ export default function LabelWorkspacePage() {
                 <div className="space-y-2 mb-6">
                   {activeEntry.issues.map((issue, i) => (
                     <div key={i} className={`flex items-start gap-3 p-3 rounded-lg border ${
-                      issue.fixed ? 'border-green-700/30 bg-green-900/20 opacity-60' :
-                      issue.severity === 'error' ? 'border-red-700/40 bg-red-900/20' :
+                      issue.fixed ? 'border-emerald-700/30 bg-emerald-900/20 opacity-60' :
+                      issue.severity === 'error' ? 'border-rose-700/40 bg-rose-900/20' :
                       issue.severity === 'warning' ? 'border-yellow-700/40 bg-yellow-900/20' :
-                      'border-blue-700/40 bg-blue-900/20'
+                      'border-indigo-700/40 bg-indigo-900/20'
                     }`}>
                       <span className="shrink-0 mt-0.5">
                         {issue.fixed ? '✅' : issue.severity === 'error' ? '❌' : issue.severity === 'warning' ? '⚠️' : 'ℹ️'}
@@ -317,7 +317,7 @@ export default function LabelWorkspacePage() {
                       <div>
                         <span className="text-xs font-bold text-gray-400 uppercase mr-2">{issue.field}</span>
                         <span className={`text-sm ${issue.fixed ? 'line-through text-gray-500' : 'text-gray-200'}`}>{issue.message}</span>
-                        {issue.fixed && <span className="ml-2 text-xs text-green-400">Fixed</span>}
+                        {issue.fixed && <span className="ml-2 text-xs text-emerald-400">Fixed</span>}
                       </div>
                     </div>
                   ))}
@@ -327,7 +327,7 @@ export default function LabelWorkspacePage() {
                 {!autoFixing && activeEntry.issues.some(i => i.severity !== 'info' && !i.fixed) && (
                   <button
                     onClick={runAutoFix}
-                    className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-700 to-pink-700 hover:from-purple-600 hover:to-pink-600 rounded-xl font-bold transition mb-4"
+                    className="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-700 to-rose-700 hover:from-purple-600 hover:to-rose-600 rounded-xl font-bold transition mb-4"
                   >
                     <span className="text-xl">⚡</span>
                     Auto Fix All Issues
@@ -341,7 +341,7 @@ export default function LabelWorkspacePage() {
                       <span className="text-purple-300 font-medium">Applying fixes... {fixProgress}%</span>
                     </div>
                     <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-100 rounded-full" style={{ width: `${fixProgress}%` }}></div>
+                      <div className="h-full bg-gradient-to-r from-purple-500 to-rose-500 transition-all duration-100 rounded-full" style={{ width: `${fixProgress}%` }}></div>
                     </div>
                   </div>
                 )}
@@ -358,7 +358,7 @@ export default function LabelWorkspacePage() {
 
                 {/* Hash info */}
                 {activeEntry.hash && (
-                  <div className="bg-[#0d1117] border border-green-700/30 rounded-xl p-4 mt-4 font-mono text-xs text-green-400">
+                  <div className="bg-[#0d1117] border border-emerald-700/30 rounded-xl p-4 mt-4 font-mono text-xs text-emerald-400">
                     <div className="mb-1">HASH: {activeEntry.hash}</div>
                     <div className="text-gray-500">TIMESTAMP: {activeEntry.timestamp}</div>
                   </div>
@@ -406,8 +406,8 @@ export default function LabelWorkspacePage() {
 
           {pushed && activeEntry ? (
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              <div className="bg-[#1e1e1e] rounded-xl p-4 border border-green-700/30">
-                <h3 className="font-bold text-green-400 mb-3">✅ Fixed & Verified</h3>
+              <div className="bg-[#1e1e1e] rounded-xl p-4 border border-emerald-700/30">
+                <h3 className="font-bold text-emerald-400 mb-3">✅ Fixed & Verified</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-400">Track</span>
@@ -419,23 +419,23 @@ export default function LabelWorkspacePage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">ISRC</span>
-                    <span className="text-green-400 font-mono text-xs">{activeEntry.isrc}</span>
+                    <span className="text-emerald-400 font-mono text-xs">{activeEntry.isrc}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">ASCAP</span>
-                    <span className="text-green-400">✓</span>
+                    <span className="text-emerald-400">✓</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">BMI</span>
-                    <span className="text-green-400">✓</span>
+                    <span className="text-emerald-400">✓</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">SOCAN</span>
-                    <span className="text-green-400">✓</span>
+                    <span className="text-emerald-400">✓</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-400">PRS</span>
-                    <span className="text-green-400">✓</span>
+                    <span className="text-emerald-400">✓</span>
                   </div>
                 </div>
               </div>
@@ -458,7 +458,7 @@ export default function LabelWorkspacePage() {
 
               <Link
                 href="/attorney-portal#generate-court-report"
-                className="block w-full py-3 bg-gradient-to-r from-purple-700 to-pink-700 hover:from-purple-600 hover:to-pink-600 rounded-xl font-bold text-center text-sm transition"
+                className="block w-full py-3 bg-gradient-to-r from-purple-700 to-rose-700 hover:from-purple-600 hover:to-rose-600 rounded-xl font-bold text-center text-sm transition"
               >
                 📄 View & Download PDF
               </Link>

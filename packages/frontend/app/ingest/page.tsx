@@ -72,15 +72,15 @@ type ZoneId = (typeof ZONE_DEFS)[number]["id"];
 
 const colorMap: Record<string, string> = {
   indigo: "border-indigo-500/50 bg-indigo-500/10 hover:bg-indigo-500/20",
-  violet: "border-violet-500/50 bg-violet-500/10 hover:bg-violet-500/20",
-  sky: "border-sky-500/50 bg-sky-500/10 hover:bg-sky-500/20",
+  violet: "border-indigo-500/50 bg-indigo-500/10 hover:bg-indigo-500/20",
+  sky: "border-indigo-500/50 bg-indigo-500/10 hover:bg-indigo-500/20",
   rose: "border-rose-500/50 bg-rose-500/10 hover:bg-rose-500/20",
 };
 
 const iconColor: Record<string, string> = {
   indigo: "text-indigo-400",
-  violet: "text-violet-400",
-  sky: "text-sky-400",
+  violet: "text-indigo-400",
+  sky: "text-indigo-400",
   rose: "text-rose-400",
 };
 
@@ -376,7 +376,7 @@ export default function IngestPage() {
               <span className="text-2xl">📂</span>
               <h1 className="text-xl font-black text-white tracking-tight">Bulk Folder Ingestion Engine</h1>
               {liveMode && (
-                <span className="ml-2 px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-bold rounded-full border border-green-500/30 animate-pulse">
+                <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-bold rounded-full border border-emerald-500/30 animate-pulse">
                   LIVE
                 </span>
               )}
@@ -402,7 +402,7 @@ export default function IngestPage() {
         {phase !== "idle" && (
           <div className="bg-[#0f172a] border border-white/10 rounded-xl p-4 flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${phase === "scanning" ? "bg-yellow-400 animate-pulse" : phase === "pipeline" ? "bg-blue-400 animate-pulse" : phase === "committed" ? "bg-green-400" : "bg-indigo-400"}`} />
+              <div className={`w-2 h-2 rounded-full ${phase === "scanning" ? "bg-yellow-400 animate-pulse" : phase === "pipeline" ? "bg-indigo-400 animate-pulse" : phase === "committed" ? "bg-emerald-400" : "bg-indigo-400"}`} />
               <span className="text-sm font-semibold text-slate-200">
                 {phase === "scanning" && "Hashing files…"}
                 {phase === "pipeline" && "Running parse pipeline…"}
@@ -419,7 +419,7 @@ export default function IngestPage() {
               </div>
             )}
             {phase === "committed" && summary && (
-              <span className="ml-auto text-xs text-green-400 font-semibold">
+              <span className="ml-auto text-xs text-emerald-400 font-semibold">
                 {fmtNum(summary.readyToCommit)} tracks live
               </span>
             )}
@@ -552,10 +552,10 @@ export default function IngestPage() {
                           </div>
                         </div>
                       )}
-                      {f.status === "parsing" && <span className="text-xs text-blue-400">Parsing…</span>}
+                      {f.status === "parsing" && <span className="text-xs text-indigo-400">Parsing…</span>}
                       {f.status === "mapped" && (
                         <div className="text-right">
-                          <span className="text-xs text-green-400 font-semibold">Mapped</span>
+                          <span className="text-xs text-emerald-400 font-semibold">Mapped</span>
                           {f.issues && f.issues.length > 0 && (
                             <div className="mt-0.5 flex flex-col items-end gap-0.5">
                               {f.issues.map((iss) => (
@@ -578,7 +578,7 @@ export default function IngestPage() {
             {activeTab === "log" && (
               <div
                 ref={logRef}
-                className="h-96 overflow-y-auto bg-black/40 p-4 font-mono text-xs text-green-400 space-y-0.5"
+                className="h-96 overflow-y-auto bg-black/40 p-4 font-mono text-xs text-emerald-400 space-y-0.5"
               >
                 {log.length === 0 && <div className="text-slate-600">No activity yet.</div>}
                 {log.map((line, i) => (
@@ -599,15 +599,15 @@ export default function IngestPage() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {pipeline.map((stage) => (
                       <div key={stage.id} className={`rounded-xl p-3 border ${
-                        stage.status === "done" ? "border-green-500/30 bg-green-500/10" :
-                        stage.status === "running" ? "border-blue-500/30 bg-blue-500/10 animate-pulse" :
+                        stage.status === "done" ? "border-emerald-500/30 bg-emerald-500/10" :
+                        stage.status === "running" ? "border-indigo-500/30 bg-indigo-500/10 animate-pulse" :
                         stage.status === "error" ? "border-rose-500/30 bg-rose-500/10" :
                         "border-white/10 bg-white/5"
                       }`}>
                         <div className="flex items-center gap-1.5 mb-1">
                           <div className={`w-2 h-2 rounded-full ${
-                            stage.status === "done" ? "bg-green-400" :
-                            stage.status === "running" ? "bg-blue-400 animate-pulse" :
+                            stage.status === "done" ? "bg-emerald-400" :
+                            stage.status === "running" ? "bg-indigo-400 animate-pulse" :
                             stage.status === "error" ? "bg-rose-400" : "bg-slate-600"
                           }`} />
                           <span className="text-xs font-semibold text-slate-200">{stage.label}</span>
@@ -628,8 +628,8 @@ export default function IngestPage() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
                       {[
                         { label: "Total Tracks", value: fmtNum(summary.totalTracks), color: "text-white" },
-                        { label: "ISRC Mapped", value: `${((summary.mappedISRC / summary.totalTracks) * 100).toFixed(1)}%`, color: "text-green-400" },
-                        { label: "IPI Mapped", value: `${((summary.mappedIPI / summary.totalTracks) * 100).toFixed(1)}%`, color: "text-sky-400" },
+                        { label: "ISRC Mapped", value: `${((summary.mappedISRC / summary.totalTracks) * 100).toFixed(1)}%`, color: "text-emerald-400" },
+                        { label: "IPI Mapped", value: `${((summary.mappedIPI / summary.totalTracks) * 100).toFixed(1)}%`, color: "text-indigo-400" },
                         { label: "Split Conflicts", value: fmtNum(summary.splitConflicts), color: "text-rose-400" },
                         { label: "Unclaimed PRO", value: fmtNum(summary.unclaimedSocieties), color: "text-yellow-400" },
                         { label: "Est. Leakage", value: fmtMoney(summary.estimatedLeakage), color: "text-rose-400 text-sm" },
@@ -655,7 +655,7 @@ export default function IngestPage() {
                             </p>
                             <div className="flex gap-4 mt-3">
                               <span className="text-xs text-slate-400">
-                                <span className="text-green-400 font-semibold">{fmtNum(summary.readyToCommit)}</span> clean
+                                <span className="text-emerald-400 font-semibold">{fmtNum(summary.readyToCommit)}</span> clean
                               </span>
                               <span className="text-xs text-slate-400">
                                 <span className="text-rose-400 font-semibold">{fmtNum(summary.splitConflicts)}</span> flagged
@@ -664,7 +664,7 @@ export default function IngestPage() {
                           </div>
                           <button
                             onClick={commitToLive}
-                            className="px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-sm transition flex-shrink-0"
+                            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm transition flex-shrink-0"
                           >
                             Commit to Master Catalog
                           </button>
@@ -676,16 +676,16 @@ export default function IngestPage() {
                               <span>{commitPct}%</span>
                             </div>
                             <div className="h-2 bg-white/10 rounded-full overflow-hidden">
-                              <div className="h-full bg-green-500 transition-all duration-100" style={{ width: `${commitPct}%` }} />
+                              <div className="h-full bg-emerald-500 transition-all duration-100" style={{ width: `${commitPct}%` }} />
                             </div>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-5 flex items-center gap-4">
+                      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 flex items-center gap-4">
                         <div className="text-4xl">✅</div>
                         <div>
-                          <div className="text-sm font-bold text-green-400 mb-1">Master Catalog Updated</div>
+                          <div className="text-sm font-bold text-emerald-400 mb-1">Master Catalog Updated</div>
                           <p className="text-xs text-slate-400">
                             {fmtNum(summary.readyToCommit)} tracks are now live. Flagged conflicts saved for attorney review.
                             Rollback available for 24 hours.

@@ -9,7 +9,7 @@ export default function Footer() {
 
         {/* Brand row */}
         <div className="mb-10">
-          <h3 className="text-white font-bold text-lg mb-1">TrapRoyalties Pro</h3>
+          <h3 className="text-white font-bold text-lg mb-1">VerseIQ</h3>
           <p className="text-sm max-w-xs">The protocol that powers transparent music royalties.</p>
           <a
             href="https://usesmpt.com"
@@ -43,9 +43,6 @@ export default function Footer() {
               <li><Link href="/attorney-portal" className="hover:text-purple-400 transition">Attorney Portal</Link></li>
               <li><Link href="/attorney-portal/command-center" className="hover:text-purple-400 transition">Firm View</Link></li>
               <li><Link href="/cwr-generator" className="hover:text-purple-400 transition">CWR Generator</Link></li>
-              <li><Link href="/forensic-audit" className="hover:text-purple-400 transition">Audit PDF</Link></li>
-              <li><Link href="/lod-generator" className="hover:text-purple-400 transition">LOD Generator</Link></li>
-              <li><Link href="/master-catalog" className="hover:text-purple-400 transition">Master Catalog</Link></li>
             </ul>
           </div>
 
@@ -58,20 +55,29 @@ export default function Footer() {
                   SMPT Protocol Specs ↗
                 </a>
               </li>
-              <li><Link href="/free-audit" className="hover:text-purple-400 transition">Free Royalty Audit</Link></li>
               <li><Link href="/api-docs" className="hover:text-purple-400 transition">API Documentation</Link></li>
               <li><Link href="/help" className="hover:text-purple-400 transition">Help Center</Link></li>
               <li><Link href="/contact" className="hover:text-purple-400 transition">Contact Support</Link></li>
+              <li>
+                <a href="https://traproyalties.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">
+                  traproyalties.com ↗
+                </a>
+              </li>
             </ul>
           </div>
 
         </div>
 
         <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-gray-600">
-          <p>© 2026 TrapRoyalties Pro. All rights reserved.</p>
-          <a href="https://usesmpt.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">
-            usesmpt.com
-          </a>
+          <p>© 2026 VerseIQ. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link href="/about" className="hover:text-purple-400 transition">About Us</Link>
+            <Link href="/privacy" className="hover:text-purple-400 transition">Privacy</Link>
+            <Link href="/terms" className="hover:text-purple-400 transition">Terms</Link>
+            <a href="https://usesmpt.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition">
+              usesmpt.com
+            </a>
+          </div>
         </div>
 
       </div>

@@ -154,7 +154,7 @@ const CASES = [
   },
 ];
 
-const VALID_KEYS = ['TRP-ATT-2026', 'Lerae'];
+const VALID_KEYS = ['TRP-ATT-2026'];
 
 async function logEvent(type: string, key: string, detail?: string) {
   try {

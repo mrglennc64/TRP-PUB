@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Service Agreement · TrapRoyaltiesPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:#fafcff; color:#0b2b2f; line-height:1.6; }
+.container { max-width:1180px; margin:0 auto; padding:1.2rem 2rem 4rem; }
+a { color:#0b4f3c; }
+.navbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem; padding-bottom:0.75rem; border-bottom:1px solid #e2edf2; }
+.logo { font-weight:800; font-size:1.6rem; letter-spacing:-0.02em; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); background-clip:text; -webkit-background-clip:text; color:transparent; }
+.nav-links { display:flex; flex-wrap:wrap; gap:1.6rem; font-weight:500; font-size:0.9rem; align-items:center; }
+.nav-links a { text-decoration:none; color:#2c5f6e; }
+.nav-links a:hover { color:#0b4f3c; }
+.demo-badge { background:#eef2f5; padding:0.3rem 0.9rem; border-radius:40px; font-size:0.8rem; font-weight:600; color:#2c5f6e; display:inline-flex; align-items:center; gap:6px; }
+.live-dot { display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin-right:6px; box-shadow:0 0 0 2px #dcfce7; }
+
+.breadcrumb { font-size:0.82rem; color:#6b8b96; margin-bottom:1rem; }
+.breadcrumb a { color:#2c5f6e; text-decoration:none; }
+
+.hero-block { background:linear-gradient(135deg,#0b2b2f 0%,#0b4f3c 100%); color:#fff; border-radius:1.6rem; padding:2.8rem 2.6rem; margin-bottom:1.8rem; position:relative; overflow:hidden; }
+.hero-block::before { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; background:radial-gradient(circle,rgba(27,126,94,0.4) 0%,transparent 70%); border-radius:50%; pointer-events:none; }
+.hero-block .hb-inner { position:relative; max-width:760px; }
+.hero-block .eye { display:inline-block; font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#86efac; background:rgba(134,239,172,0.1); border:1px solid rgba(134,239,172,0.3); padding:0.35rem 0.85rem; border-radius:99px; margin-bottom:1.1rem; }
+.hero-block h1 { font-size:2.2rem; font-weight:800; letter-spacing:-0.02em; line-height:1.15; margin-bottom:0.9rem; }
+.hero-block p.sub { font-size:1.02rem; color:#e2edf2; max-width:680px; }
+
+.section { background:#fff; border:1px solid #e2edf2; border-radius:1.2rem; padding:1.8rem 2.2rem; margin-bottom:1.2rem; box-shadow:0 1px 2px rgba(11,43,47,0.03); }
+.section h2 { font-size:0.78rem; font-weight:800; margin-bottom:1rem; letter-spacing:0.1em; text-transform:uppercase; color:#0b4f3c; }
+.section h2.lg { font-size:1.2rem; text-transform:none; letter-spacing:-0.01em; color:#0b2b2f; }
+.section p { font-size:0.95rem; color:#2c4650; margin-bottom:0.6rem; }
+.section ul { list-style:none; padding:0; margin:0.4rem 0 0; }
+.section ul li { padding:0.55rem 0 0.55rem 1.8rem; position:relative; font-size:0.95rem; color:#2c4650; border-bottom:1px dashed #e2edf2; }
+.section ul li:last-child { border-bottom:0; }
+.section ul li::before { content:''; position:absolute; left:0; top:1rem; width:0.9rem; height:0.45rem; border-left:2.2px solid #0b4f3c; border-bottom:2.2px solid #0b4f3c; transform:rotate(-45deg); }
+.section ul.excl li::before { border-left-color:#b45309; border-bottom-color:#b45309; transform:rotate(45deg); width:0.8rem; height:0.8rem; top:0.85rem; border-right:2.2px solid #b45309; border-top:2.2px solid #b45309; border-left:0; border-bottom:0; content:'×'; color:#b45309; font-weight:800; font-size:1.1rem; line-height:0.9; display:flex; align-items:center; justify-content:center; }
+
+.kv { display:grid; grid-template-columns:180px 1fr; gap:0.6rem 1.2rem; font-size:0.93rem; }
+.kv dt { font-weight:700; color:#0b2b2f; }
+.kv dd { color:#2c4650; }
+
+.cta-block { background:#f6fbfd; border:1px solid #e2edf2; border-radius:1.2rem; padding:1.8rem 2.2rem; margin-bottom:1.4rem; text-align:center; }
+.cta-block h3 { font-size:1.15rem; font-weight:800; margin-bottom:0.5rem; }
+.cta-block p { font-size:0.9rem; color:#4a6370; margin-bottom:1.2rem; max-width:620px; margin-left:auto; margin-right:auto; }
+.btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; padding:0.9rem 1.6rem; border-radius:99px; font-weight:800; text-decoration:none; font-size:0.95rem; border:none; cursor:pointer; }
+.btn-primary svg { width:16px; height:16px; }
+
+.footer { margin-top:3rem; padding-top:2rem; border-top:1px solid #e2edf2; font-size:0.82rem; color:#6b8b96; text-align:center; }
+
+.fineprint { font-size:0.8rem; color:#6b8b96; margin-top:0.8rem; }
+
+@media (max-width:860px){ .hero-block { padding:2rem 1.4rem; } .hero-block h1 { font-size:1.6rem; } .section { padding:1.4rem; } .kv { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="navbar">
+    <a href="/publisher-portal" style="text-decoration:none;"><div class="logo">TrapRoyaltiesPro</div></a>
+    <div class="nav-links">
+      <a href="/publisher-portal/pages/how-it-works.html">How it Works</a>
+      <a href="/publisher-portal/split-verification.html">Split Verification</a>
+      <a href="/publisher-portal/pages/cleaning-wizard.html">Metadata Cleaning</a>
+      <a href="/publisher-portal/pages/publisher.html">For Publishers</a>
+      <a href="/publisher-portal/FAQ.html">FAQ</a>
+      <a href="/publisher-portal/documents.html">Documents</a>
+      <span class="demo-badge"><span class="live-dot"></span> Live</span>
+    </div>
+  </div>
+  <div class="breadcrumb"><a href="/publisher-portal">Publisher Portal</a> &middot; Service Agreement</div>
+
+  <div class="hero-block">
+    <div class="hb-inner">
+      <span class="eye">Service Agreement</span>
+      <h1>Full-Service Metadata Cleaning</h1>
+      <p class="sub">The scope, deliverables, and turnaround for our professional catalog-cleaning engagement. This page summarizes the terms that govern every cleaning project.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>1. Scope of Work</h2>
+    <p>Upon engagement, our team performs a full professional cleaning pass across every work in your submitted catalog. The engagement includes:</p>
+    <ul>
+      <li>Review of all works and metadata issue types surfaced during the scan</li>
+      <li>Correction of missing or inconsistent identifiers (ISWC, ISRC, IPI, CAE)</li>
+      <li>Resolution of broken splits, incomplete contributor data, and ownership gaps</li>
+      <li>Validation of publisher and writer information against society-accepted formats</li>
+      <li>Structural normalization to align with CWR v2.1 and society-specific submission rules</li>
+      <li>Preparation of clean, submission-ready registration files</li>
+      <li>Generation of a Publishing Health Report summarizing all corrections applied</li>
+      <li>Delivery of a Fix-Later Task Summary for any optional enhancements</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>2. What We Don't Do</h2>
+    <p>To keep the engagement focused and defensible, the following are explicitly outside scope:</p>
+    <ul class="excl">
+      <li>We do not submit works directly to PROs, MLC, SoundExchange, or foreign societies on your behalf unless a separate filing engagement is signed</li>
+      <li>We do not negotiate or alter ownership, royalty splits, or publishing agreements — corrections are applied only where supporting documentation is provided or verifiable</li>
+      <li>We do not pursue royalty claims, disputes, or black-box recovery on your behalf</li>
+      <li>We do not provide legal advice — for contested ownership, please engage qualified counsel</li>
+      <li>We do not modify or re-sign master recording metadata beyond the composition-level scope</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>3. Deliverables</h2>
+    <ul>
+      <li>A fully cleaned, submission-ready catalog package</li>
+      <li>Clean CWR v2.1 file(s) aligned to your primary society's submission requirements</li>
+      <li>A detailed Publishing Health Report documenting every correction and its rationale</li>
+      <li>A Fix-Later Task Summary listing any items outside the cleaning scope that require publisher attention</li>
+      <li>Secure, confidential delivery via encrypted download link</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>4. Turnaround Time</h2>
+    <dl class="kv">
+      <dt>Standard engagement</dt>
+      <dd>5&ndash;10 business days from payment confirmation, depending on catalog size and issue density.</dd>
+      <dt>Large catalogs</dt>
+      <dd>Catalogs exceeding 5,000 works are scoped individually; timelines are agreed in writing before work begins.</dd>
+      <dt>Priority delivery</dt>
+      <dd>Available by request. Priority engagements are confirmed before cleaning begins and may carry additional fees.</dd>
+    </dl>
+  </div>
+
+  <div class="section">
+    <h2>5. Confidentiality &amp; Data Handling</h2>
+    <p>All catalog data submitted for cleaning is handled confidentially, processed in secure environments, and deleted from active workspaces once delivery is confirmed. Retained working copies are encrypted and used only for internal quality assurance and audit purposes.</p>
+  </div>
+
+  <div class="section">
+    <h2>6. Acceptance</h2>
+    <p>By completing payment on the Full-Service Cleaning page, the publisher acknowledges and accepts the terms summarized above. A detailed engagement record is generated for every cleaning project and is available on request.</p>
+    <p class="fineprint">This page is a plain-language summary. For the complete legal terms, see our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+  </div>
+
+  <div class="cta-block">
+    <h3>Ready to begin?</h3>
+    <p>Review the scan findings, then hand your catalog to our specialists for a clean, submission-ready result.</p>
+    <a href="/publisher-portal/pages/upgrade.html" class="btn-primary">Begin Full-Service Cleaning <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 TrapRoyaltiesPro &middot; Professional metadata cleaning for music publishers &middot; <a href="mailto:hello@traproyaltiespro.com">hello@traproyaltiespro.com</a>
+  </div>
+</div>
+</body>
+</html>

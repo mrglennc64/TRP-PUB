@@ -41,22 +41,22 @@ const RiskAuditDisplay: React.FC<RiskAuditDisplayProps> = ({ auditResult }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const getScoreColor = () => {
-    if (auditResult.score >= 90) return 'text-green-600 bg-green-50 border-green-200';
+    if (auditResult.score >= 90) return 'text-emerald-600 bg-emerald-50 border-emerald-200';
     if (auditResult.score >= 70) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    return 'text-red-600 bg-red-50 border-red-200';
+    return 'text-rose-600 bg-rose-50 border-rose-200';
   };
 
   const getScoreBg = () => {
-    if (auditResult.score >= 90) return 'bg-green-600';
+    if (auditResult.score >= 90) return 'bg-emerald-600';
     if (auditResult.score >= 70) return 'bg-yellow-600';
-    return 'bg-red-600';
+    return 'bg-rose-600';
   };
 
   const getRiskBadgeColor = () => {
     switch(auditResult.risk_color) {
-      case 'green': return 'bg-green-100 text-green-800 border-green-200';
+      case 'green': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
       case 'yellow': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'red': return 'bg-red-100 text-red-800 border-red-200';
+      case 'red': return 'bg-rose-100 text-rose-800 border-rose-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
@@ -124,7 +124,7 @@ const RiskAuditDisplay: React.FC<RiskAuditDisplayProps> = ({ auditResult }) => {
               <div className="w-24 text-sm font-medium text-gray-600">Streaming</div>
               <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-blue-600" 
+                  className="h-full bg-indigo-600" 
                   style={{ width: `${auditResult.revenue_impact.streaming}%` }}
                 ></div>
               </div>
@@ -144,7 +144,7 @@ const RiskAuditDisplay: React.FC<RiskAuditDisplayProps> = ({ auditResult }) => {
               <div className="w-24 text-sm font-medium text-gray-600">Performance</div>
               <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-green-600" 
+                  className="h-full bg-emerald-600" 
                   style={{ width: `${auditResult.revenue_impact.performance}%` }}
                 ></div>
               </div>
@@ -154,7 +154,7 @@ const RiskAuditDisplay: React.FC<RiskAuditDisplayProps> = ({ auditResult }) => {
               <div className="w-24 text-sm font-medium text-gray-600">Sync</div>
               <div className="flex-1 h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-orange-600" 
+                  className="h-full bg-amber-600" 
                   style={{ width: `${auditResult.revenue_impact.sync}%` }}
                 ></div>
               </div>
@@ -175,10 +175,10 @@ const RiskAuditDisplay: React.FC<RiskAuditDisplayProps> = ({ auditResult }) => {
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="font-semibold text-gray-900">{flag.title}</h4>
                   <span className={`text-sm font-medium px-2 py-1 rounded ${
-                    flag.type === 'critical' ? 'bg-red-100 text-red-700' :
+                    flag.type === 'critical' ? 'bg-rose-100 text-rose-700' :
                     flag.type === 'warning' ? 'bg-yellow-100 text-yellow-700' :
-                    flag.type === 'success' ? 'bg-green-100 text-green-700' :
-                    'bg-blue-100 text-blue-700'
+                    flag.type === 'success' ? 'bg-emerald-100 text-emerald-700' :
+                    'bg-indigo-100 text-indigo-700'
                   }`}>
                     {flag.impact}
                   </span>

@@ -89,9 +89,9 @@ export default function SettlementRailsPage() {
                     </td>
                     <td className="py-4 text-purple-400 underline underline-offset-4 cursor-pointer">Metro Boomin</td>
                     <td className="py-4">
-                      <span className="px-2 py-0.5 bg-green-900/20 text-green-500 border border-green-900/50 rounded uppercase text-[9px] font-bold">Disbursed</span>
+                      <span className="px-2 py-0.5 bg-emerald-900/20 text-emerald-500 border border-emerald-900/50 rounded uppercase text-[9px] font-bold">Disbursed</span>
                     </td>
-                    <td className="py-4 text-right text-green-400 font-bold">+$24,150.00</td>
+                    <td className="py-4 text-right text-emerald-400 font-bold">+$24,150.00</td>
                   </tr>
                   <tr className="border-b border-slate-800 hover:bg-slate-800 transition">
                     <td className="py-4 font-bold text-white">
@@ -111,7 +111,7 @@ export default function SettlementRailsPage() {
                     </td>
                     <td className="py-4 text-purple-400 underline underline-offset-4 cursor-pointer">Future</td>
                     <td className="py-4">
-                      <span className="px-2 py-0.5 bg-blue-900/20 text-blue-400 border border-blue-900/50 rounded uppercase text-[9px] font-bold">In Review</span>
+                      <span className="px-2 py-0.5 bg-indigo-900/20 text-indigo-400 border border-indigo-900/50 rounded uppercase text-[9px] font-bold">In Review</span>
                     </td>
                     <td className="py-4 text-right text-slate-400 font-bold">+$9,100.00</td>
                   </tr>
@@ -127,7 +127,7 @@ export default function SettlementRailsPage() {
               <div className="text-5xl font-black text-purple-400 mb-2 mono">5.0%</div>
               <p className="text-xs text-slate-400 leading-relaxed italic">
                 &ldquo;Your label is currently retaining{' '}
-                <span className="text-green-400 font-bold">95.0%</span> of master royalties by bypassing traditional 50% admin fee structures.&rdquo;
+                <span className="text-emerald-400 font-bold">95.0%</span> of master royalties by bypassing traditional 50% admin fee structures.&rdquo;
               </p>
             </div>
 
@@ -185,7 +185,7 @@ export default function SettlementRailsPage() {
               <div className="bg-[#0f172a] p-6 rounded-2xl border border-slate-800">
                 <div className="flex justify-between mb-2">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">Accrued Digital Balance</span>
-                  <span className="text-[10px] text-green-400 mono">Verified</span>
+                  <span className="text-[10px] text-emerald-400 mono">Verified</span>
                 </div>
                 <div className="text-3xl font-black mono">$112,400.18</div>
               </div>

@@ -129,13 +129,13 @@ function sha256(str: string): Promise<string> {
 
 function StatusBadge({ status, matched }: { status?: string; matched?: boolean | null }) {
   if (matched === true || status === 'found') return (
-    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-green-900/40 text-green-400 rounded border border-green-800">
-      <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" /> MATCH
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-emerald-900/40 text-emerald-400 rounded border border-emerald-800">
+      <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block" /> MATCH
     </span>
   );
   if (matched === false || status === 'not_found' || status === 'no_results') return (
-    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-red-900/30 text-red-400 rounded border border-red-800">
-      <span className="w-1.5 h-1.5 bg-red-400 rounded-full inline-block" /> NOT FOUND
+    <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 bg-rose-900/30 text-rose-400 rounded border border-rose-800">
+      <span className="w-1.5 h-1.5 bg-rose-400 rounded-full inline-block" /> NOT FOUND
     </span>
   );
   return (
@@ -278,7 +278,7 @@ function DeepProbePanel({
                 <p className="text-sm font-medium text-slate-300">{r.name}</p>
                 <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${
                   r.nodeType === 'DIGITAL'
-                    ? 'bg-green-900/40 text-green-500 border border-green-800/40'
+                    ? 'bg-emerald-900/40 text-emerald-500 border border-emerald-800/40'
                     : 'bg-slate-700/50 text-slate-500'
                 }`}>
                   {r.nodeType === 'DIGITAL' ? '⚡ Digital Node' : '✋ Manual Node'}
@@ -454,17 +454,17 @@ function FreeAuditContent() {
     }
   };
 
-  const verdictColor = result?.verdict.color === 'red' ? 'border-red-700 bg-red-950/20'
+  const verdictColor = result?.verdict.color === 'red' ? 'border-rose-700 bg-rose-950/20'
     : result?.verdict.color === 'yellow' ? 'border-yellow-700 bg-yellow-950/10'
-    : 'border-green-700 bg-green-950/10';
+    : 'border-emerald-700 bg-emerald-950/10';
 
   const listens = result?.steps.detect.streaming.total_listens ?? 0;
   const signalLabel = listens >= 1_000_000 ? 'HIGH SIGNAL'
     : listens >= 100_000 ? 'MEDIUM SIGNAL'
     : listens > 0 ? 'LOW SIGNAL' : 'NO SIGNAL';
-  const signalClass = listens >= 1_000_000 ? 'text-green-400 bg-green-900/30 border-green-700'
+  const signalClass = listens >= 1_000_000 ? 'text-emerald-400 bg-emerald-900/30 border-emerald-700'
     : listens >= 100_000 ? 'text-yellow-400 bg-yellow-900/20 border-yellow-700'
-    : listens > 0 ? 'text-orange-400 bg-orange-900/20 border-orange-700'
+    : listens > 0 ? 'text-amber-400 bg-amber-900/20 border-amber-700'
     : 'text-slate-500 bg-slate-800/30 border-slate-700';
   const signalDesc = listens >= 1_000_000 ? 'Active earnings confirmed. High-value claim.'
     : listens >= 100_000 ? 'Active earnings detected. Claim is viable.'
@@ -637,7 +637,7 @@ function FreeAuditContent() {
           </form>
           {error && (
             <>
-              <div className="mt-4 p-3 bg-red-900/20 border border-red-800 rounded text-sm text-red-300">{error}</div>
+              <div className="mt-4 p-3 bg-rose-900/20 border border-rose-800 rounded text-sm text-rose-300">{error}</div>
               <DeepProbePanel
                 searchTerm={searchMethod === 'isrc' ? isrc : artist}
                 isrcTerm={searchMethod === 'isrc' ? isrc : undefined}
@@ -656,13 +656,13 @@ function FreeAuditContent() {
             {/* Verdict bar */}
             <div className={`p-4 rounded-lg border mb-4 flex items-center justify-between ${verdictColor}`}>
               <div>
-                <p className={`text-lg font-bold ${result.verdict.color === 'red' ? 'text-red-400' : result.verdict.color === 'yellow' ? 'text-yellow-400' : 'text-green-400'}`}>
+                <p className={`text-lg font-bold ${result.verdict.color === 'red' ? 'text-rose-400' : result.verdict.color === 'yellow' ? 'text-yellow-400' : 'text-emerald-400'}`}>
                   {result.verdict.level}
-                  {result.steps.detect.black_box && <span className="ml-3 text-xs font-bold px-2 py-0.5 bg-red-900/60 text-red-300 rounded border border-red-700 animate-pulse">BLACK BOX DETECTED</span>}
+                  {result.steps.detect.black_box && <span className="ml-3 text-xs font-bold px-2 py-0.5 bg-rose-900/60 text-rose-300 rounded border border-rose-700 animate-pulse">BLACK BOX DETECTED</span>}
                 </p>
                 <p className="text-xs text-slate-400 mt-0.5">{result.verdict.summary}</p>
                 {result.steps.detect.black_box && revMid > 0 && (
-                  <p className="text-sm font-bold text-red-300 mt-1">Est. unclaimed: ${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                  <p className="text-sm font-bold text-rose-300 mt-1">Est. unclaimed: ${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                 )}
               </div>
               <div className="text-right text-xs text-slate-500">
@@ -674,10 +674,10 @@ function FreeAuditContent() {
 
             {/* ── STATUTE OF LIMITATIONS BANNER ── */}
             {result.statute && (
-              <div className={`mb-4 p-4 rounded-lg border flex gap-3 items-start ${result.statute.level === 'urgent' ? 'bg-red-950/30 border-red-700' : 'bg-yellow-950/20 border-yellow-700'}`}>
+              <div className={`mb-4 p-4 rounded-lg border flex gap-3 items-start ${result.statute.level === 'urgent' ? 'bg-rose-950/30 border-rose-700' : 'bg-yellow-950/20 border-yellow-700'}`}>
                 <span className="text-lg flex-shrink-0">{result.statute.level === 'urgent' ? '🚨' : '⚠️'}</span>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${result.statute.level === 'urgent' ? 'text-red-400' : 'text-yellow-400'}`}>
+                  <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${result.statute.level === 'urgent' ? 'text-rose-400' : 'text-yellow-400'}`}>
                     {result.statute.label}
                   </p>
                   <p className="text-xs text-slate-300 leading-relaxed">{result.statute.message}</p>
@@ -688,20 +688,20 @@ function FreeAuditContent() {
 
             {/* ── BLACK BOX LEGAL VERDICT ── */}
             {result.steps.detect.black_box && (
-              <div className="mb-4 border border-red-700/60 rounded-lg overflow-hidden bg-red-950/10">
-                <div className="px-5 py-3 bg-red-900/20 border-b border-red-800/30 flex items-center justify-between flex-wrap gap-3">
+              <div className="mb-4 border border-rose-700/60 rounded-lg overflow-hidden bg-rose-950/10">
+                <div className="px-5 py-3 bg-rose-900/20 border-b border-rose-800/30 flex items-center justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-2">
                     <span className="text-base">🚩</span>
                     <div>
-                      <p className="text-sm font-bold text-red-300">Audit Verdict: Black Box Detected</p>
-                      <p className="text-[10px] text-red-500/80 uppercase tracking-wide">Status: CRITICAL · Action Required: IMMEDIATE</p>
+                      <p className="text-sm font-bold text-rose-300">Audit Verdict: Black Box Detected</p>
+                      <p className="text-[10px] text-rose-500/80 uppercase tracking-wide">Status: CRITICAL · Action Required: IMMEDIATE</p>
                     </div>
                   </div>
                   {revMid > 0 && (
                     <div className="text-right flex-shrink-0">
-                      <p className="text-[9px] text-red-600 uppercase tracking-wider">Estimated Unclaimed</p>
-                      <p className="text-xl font-bold text-red-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
-                      <p className="text-[9px] text-red-700 mt-0.5">mid: ${revMid.toLocaleString()}</p>
+                      <p className="text-[9px] text-rose-600 uppercase tracking-wider">Estimated Unclaimed</p>
+                      <p className="text-xl font-bold text-rose-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                      <p className="text-[9px] text-rose-700 mt-0.5">mid: ${revMid.toLocaleString()}</p>
                     </div>
                   )}
                 </div>
@@ -709,7 +709,7 @@ function FreeAuditContent() {
                 <div className="px-5 py-4 space-y-4 text-xs">
                   <p className="text-slate-300 leading-relaxed">
                     The SMPT Protocol has identified a high-confidence revenue leak. This recording is actively generating consumption data, but the payment infrastructure is broken due to a{' '}
-                    <strong className="text-red-400">Metadata Mapping Failure</strong>.
+                    <strong className="text-rose-400">Metadata Mapping Failure</strong>.
                   </p>
 
                   {/* Why flagged */}
@@ -721,8 +721,8 @@ function FreeAuditContent() {
                         ['MLC Match Status', 'This work is officially listed as UNMATCHED — no matched owner on record, royalties cannot be distributed.'],
                         ['Earnings Evidence', `${listens.toLocaleString()} documented listens confirm royalties are being collected by DSPs and held in a Black Box pool.`],
                       ].map(([k, v]) => (
-                        <div key={k} className="flex gap-2.5 p-2.5 bg-red-900/10 border border-red-800/20 rounded">
-                          <span className="text-red-600 flex-shrink-0 mt-0.5">◆</span>
+                        <div key={k} className="flex gap-2.5 p-2.5 bg-rose-900/10 border border-rose-800/20 rounded">
+                          <span className="text-rose-600 flex-shrink-0 mt-0.5">◆</span>
                           <div><span className="font-bold text-slate-300">{k}: </span><span className="text-slate-400">{v}</span></div>
                         </div>
                       ))}
@@ -739,19 +739,19 @@ function FreeAuditContent() {
                         { n: '3', label: 'Address Splits', desc: 'If MLC shows Partial Claim, resolve the split discrepancy with co-writers to unlock 100% payout.', href: '/attorney-portal', btnLabel: 'Attorney Portal →', external: false },
                       ].map(a => (
                         <div key={a.n} className="flex items-start gap-2.5 p-2.5 bg-slate-800/30 rounded">
-                          <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-red-800/50 text-red-300 rounded text-[9px] font-bold mt-0.5">{a.n}</span>
+                          <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-rose-800/50 text-rose-300 rounded text-[9px] font-bold mt-0.5">{a.n}</span>
                           <div className="flex-1 min-w-0">
                             <p className="font-bold text-slate-200">{a.label}</p>
                             <p className="text-slate-500 mt-0.5 leading-relaxed">{a.desc}</p>
                           </div>
                           {a.external ? (
                             <a href={a.href} target="_blank" rel="noopener noreferrer"
-                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-red-700/60 hover:bg-red-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
+                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-rose-700/60 hover:bg-rose-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
                               {a.btnLabel}
                             </a>
                           ) : (
                             <Link href={a.href}
-                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-red-700/60 hover:bg-red-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
+                              className="flex-shrink-0 ml-2 px-2.5 py-1 bg-rose-700/60 hover:bg-rose-700 text-white text-[10px] font-bold rounded transition whitespace-nowrap">
                               {a.btnLabel}
                             </Link>
                           )}
@@ -846,7 +846,7 @@ function FreeAuditContent() {
                       {rows.map(([k, v]) => (
                         <div key={k} className="bg-slate-800/30 rounded p-2">
                           <p className="text-[10px] text-slate-500 uppercase">{k}</p>
-                          <p className={`text-xs font-mono mt-0.5 ${String(v).startsWith('⚠') || v === 'N/A' || v === 'UNMATCHED' ? 'text-red-400' : 'text-slate-200'}`}>{v}</p>
+                          <p className={`text-xs font-mono mt-0.5 ${String(v).startsWith('⚠') || v === 'N/A' || v === 'UNMATCHED' ? 'text-rose-400' : 'text-slate-200'}`}>{v}</p>
                         </div>
                       ))}
                     </div>
@@ -877,21 +877,21 @@ function FreeAuditContent() {
                       <p className="text-[9px] text-slate-600 mt-0.5">Source: ListenBrainz</p>
                     </div>
                     {revMid > 0 && (
-                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-3 space-y-2">
-                        <p className="text-[10px] text-green-600 uppercase tracking-wider">Estimated Unclaimed Revenue Range</p>
+                      <div className="col-span-2 bg-emerald-900/15 border border-emerald-800/30 rounded p-3 space-y-2">
+                        <p className="text-[10px] text-emerald-600 uppercase tracking-wider">Estimated Unclaimed Revenue Range</p>
                         <div className="flex items-end gap-2">
-                          <p className="text-2xl font-bold text-green-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                          <p className="text-2xl font-bold text-emerald-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                           <p className="text-xs text-slate-500 mb-0.5">mid: ${revMid.toLocaleString()}</p>
                         </div>
                         {revConfLabel && <p className="text-[10px] text-slate-500">Confidence: {revConfLabel}</p>}
                         <p className="text-[10px] text-slate-600">{listens.toLocaleString()} listens · low=$0.0007 / avg=$0.003 / high=$0.004 per stream</p>
                         {/* Gap chart */}
-                        <div className="mt-3 pt-3 border-t border-green-800/20">
+                        <div className="mt-3 pt-3 border-t border-emerald-800/20">
                           <p className="text-[10px] text-slate-500 uppercase tracking-wider mb-2">Revenue Gap Visualization</p>
                           {[
                             { label: 'Streams Documented', value: listens, max: listens, color: 'bg-indigo-500', unit: 'plays' },
-                            { label: 'Expected Revenue (mid)', value: revMid, max: revHigh, color: 'bg-green-500', unit: '$', prefix: '$' },
-                            { label: 'Reported / Paid', value: 0, max: revHigh, color: 'bg-red-500', unit: '$', note: 'Not verifiable without statement' },
+                            { label: 'Expected Revenue (mid)', value: revMid, max: revHigh, color: 'bg-emerald-500', unit: '$', prefix: '$' },
+                            { label: 'Reported / Paid', value: 0, max: revHigh, color: 'bg-rose-500', unit: '$', note: 'Not verifiable without statement' },
                           ].map(row => (
                             <div key={row.label} className="mb-2">
                               <div className="flex justify-between text-[9px] text-slate-500 mb-0.5">
@@ -948,7 +948,7 @@ function FreeAuditContent() {
                       {result.steps.detect.findings.map((f, i) => {
                         const fix = findingActionLinks[f.type];
                         return (
-                          <div key={i} className={`p-3 rounded border-l-2 ${f.severity === 'critical' ? 'bg-red-950/30 border-red-600' : f.severity === 'warning' ? 'bg-yellow-950/20 border-yellow-600' : 'bg-blue-950/20 border-blue-700'}`}>
+                          <div key={i} className={`p-3 rounded border-l-2 ${f.severity === 'critical' ? 'bg-rose-950/30 border-rose-600' : f.severity === 'warning' ? 'bg-yellow-950/20 border-yellow-600' : 'bg-indigo-950/20 border-indigo-700'}`}>
                             <p className="text-sm font-semibold text-slate-100 mb-1">{f.title}</p>
                             <p className="text-xs text-slate-400 mb-1">{f.description}</p>
                             {(f as any).source && (
@@ -958,7 +958,7 @@ function FreeAuditContent() {
                               </p>
                             )}
                             {(f as any).estimated_low != null && (f as any).estimated_high != null && (f as any).estimated_high > 0 && (
-                              <p className="text-xs font-bold text-green-400 mb-2">
+                              <p className="text-xs font-bold text-emerald-400 mb-2">
                                 Est. recoverable: ${(f as any).estimated_low.toLocaleString()} – ${(f as any).estimated_high.toLocaleString()}
                               </p>
                             )}
@@ -967,12 +967,12 @@ function FreeAuditContent() {
                               {fix && (
                                 fix.external ? (
                                   <a href={fix.href} target="_blank" rel="noopener noreferrer"
-                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
+                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-rose-700 hover:bg-rose-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
                                     {fix.label}
                                   </a>
                                 ) : (
                                   <Link href={fix.href}
-                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-red-700 hover:bg-red-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
+                                    className={`flex-shrink-0 px-3 py-1 text-xs font-bold rounded transition ${f.severity === 'critical' ? 'bg-rose-700 hover:bg-rose-600 text-white' : 'bg-indigo-700 hover:bg-indigo-600 text-white'}`}>
                                     {fix.label}
                                   </Link>
                                 )
@@ -1064,9 +1064,9 @@ function FreeAuditContent() {
                       <p className="text-[10px] text-slate-600 mt-1">Source: ListenBrainz</p>
                     </div>
                     {revMid > 0 && (
-                      <div className="col-span-2 bg-green-900/15 border border-green-800/30 rounded p-4 text-center">
-                        <p className="text-xs text-green-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue Range</p>
-                        <p className="text-3xl font-bold text-green-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
+                      <div className="col-span-2 bg-emerald-900/15 border border-emerald-800/30 rounded p-4 text-center">
+                        <p className="text-xs text-emerald-600 uppercase tracking-wider mb-2">Estimated Unclaimed Revenue Range</p>
+                        <p className="text-3xl font-bold text-emerald-400">${revLow.toLocaleString()} – ${revHigh.toLocaleString()}</p>
                         <p className="text-sm text-slate-400 mt-1">Mid estimate: ${revMid.toLocaleString()}</p>
                         <p className="text-[10px] text-slate-600 mt-1">{listens.toLocaleString()} listens · rates: $0.0007–$0.004/stream</p>
                         {revConfLabel && <p className="text-[10px] text-indigo-400/70 mt-1">Confidence: {revConfLabel}</p>}
@@ -1113,7 +1113,7 @@ function FreeAuditContent() {
                     ].map(([k, v]) => (
                       <div key={k} className="flex gap-4 border-b border-slate-800/50 pb-2">
                         <span className="text-slate-500 w-40 flex-shrink-0">{k}</span>
-                        <span className={`font-mono ${String(v).includes('Claim eligible') || String(v).startsWith('YES') ? 'text-red-400 font-bold' : 'text-slate-300'}`}>{v}</span>
+                        <span className={`font-mono ${String(v).includes('Claim eligible') || String(v).startsWith('YES') ? 'text-rose-400 font-bold' : 'text-slate-300'}`}>{v}</span>
                       </div>
                     ))}
                   </div>
@@ -1124,14 +1124,14 @@ function FreeAuditContent() {
                   <div className="space-y-2">
                     {result.steps.detect.findings.filter(f => f.severity !== 'info').map((f, i) => (
                       <div key={i} className="flex gap-3 p-3 bg-slate-800/30 rounded">
-                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 h-fit ${f.severity === 'critical' ? 'bg-red-900/50 text-red-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
+                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 h-fit ${f.severity === 'critical' ? 'bg-rose-900/50 text-rose-400' : 'bg-yellow-900/30 text-yellow-400'}`}>
                           {i + 1}
                         </span>
                         <p className="text-xs text-slate-300">{f.action}</p>
                       </div>
                     ))}
                     {result.steps.detect.findings.filter(f => f.severity !== 'info').length === 0 && (
-                      <p className="text-xs text-green-400">No critical actions required. Registration chain appears intact.</p>
+                      <p className="text-xs text-emerald-400">No critical actions required. Registration chain appears intact.</p>
                     )}
                   </div>
                 </div>
@@ -1148,7 +1148,7 @@ function FreeAuditContent() {
 
                       {/* Step 1 — Letter of Direction */}
                       <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
-                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-red-600/80 text-white text-[10px] font-black flex items-center justify-center">1</span>
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-rose-600/80 text-white text-[10px] font-black flex items-center justify-center">1</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-bold text-white">Letter of Direction (LOD)</p>
                           <p className="text-[11px] text-slate-400 mt-0.5">Directs Rights Administrator to update the registry with the correct rights holder for this master recording.</p>
@@ -1165,7 +1165,7 @@ function FreeAuditContent() {
                             const blob = new Blob([html], {type:'text/html'});
                             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `LOD-${result.isrc}-${hash}.html`; a.click();
                           }}
-                          className="flex-shrink-0 px-3 py-1.5 bg-red-700 hover:bg-red-600 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                          className="flex-shrink-0 px-3 py-1.5 bg-rose-700 hover:bg-rose-600 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
                         >
                           Export LOD →
                         </button>
@@ -1198,7 +1198,7 @@ function FreeAuditContent() {
 
                       {/* Step 3 — Forensic Audit Log */}
                       <div className="flex items-start gap-3 p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
-                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-700/80 text-white text-[10px] font-black flex items-center justify-center">3</span>
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-700/80 text-white text-[10px] font-black flex items-center justify-center">3</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-bold text-white">Forensic Audit Log</p>
                           <p className="text-[11px] text-slate-400 mt-0.5">Proves commercial traction — {result.steps.detect.streaming.total_listens.toLocaleString()} streams documented. Court-admissible log with source citations, timestamps, and chain of custody.</p>
@@ -1212,7 +1212,7 @@ function FreeAuditContent() {
                               else { const data = await res.json().catch(() => ({})); alert(data.detail || 'Generation failed'); }
                             } catch (e) { alert('Error: ' + (e as Error).message); }
                           }}
-                          className="flex-shrink-0 px-3 py-1.5 bg-green-800 hover:bg-green-700 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
+                          className="flex-shrink-0 px-3 py-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-[11px] font-bold rounded transition whitespace-nowrap"
                         >
                           Export Log →
                         </button>

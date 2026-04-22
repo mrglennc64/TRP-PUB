@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Metadata Cleaning · TrapRoyaltiesPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:#fafcff; color:#0b2b2f; line-height:1.55; }
+.container { max-width:1180px; margin:0 auto; padding:1.2rem 2rem 4rem; }
+a { color:#0b4f3c; }
+.navbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem; padding-bottom:0.75rem; border-bottom:1px solid #e2edf2; }
+.logo { font-weight:800; font-size:1.6rem; letter-spacing:-0.02em; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); background-clip:text; -webkit-background-clip:text; color:transparent; }
+.nav-links { display:flex; flex-wrap:wrap; gap:1.6rem; font-weight:500; font-size:0.9rem; align-items:center; }
+.nav-links a { text-decoration:none; color:#2c5f6e; }
+.nav-links a:hover { color:#0b4f3c; }
+.nav-links a.active { color:#0b4f3c; font-weight:700; }
+.demo-badge { background:#eef2f5; padding:0.3rem 0.9rem; border-radius:40px; font-size:0.8rem; font-weight:600; text-decoration:none; color:#2c5f6e; display:inline-flex; align-items:center; gap:6px; }
+.live-dot { display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin-right:6px; box-shadow:0 0 0 2px #dcfce7; }
+.icon { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; vertical-align:-4px; }
+.icon-lg { width:28px; height:28px; }
+.page-hero { background:linear-gradient(105deg,#ffffff 0%,#f6fbfd 100%); border-radius:1.6rem; padding:2.6rem 2.4rem; border:1px solid #e2edf2; margin-bottom:2rem; }
+.page-hero h1 { font-size:2.2rem; font-weight:800; letter-spacing:-0.02em; line-height:1.15; margin-bottom:0.85rem; }
+.page-hero h1 .accent { background:linear-gradient(135deg,#0b4f3c,#1b7e5e); background-clip:text; -webkit-background-clip:text; color:transparent; }
+.page-hero p.lead { font-size:1.05rem; color:#3a5a66; max-width:780px; }
+.breadcrumb { font-size:0.82rem; color:#6b8b96; margin-bottom:1rem; }
+.breadcrumb a { color:#2c5f6e; text-decoration:none; }
+.section { background:#fff; border:1px solid #e2edf2; border-radius:1.2rem; padding:2rem 2.2rem; margin-bottom:1.4rem; box-shadow:0 1px 2px rgba(11,43,47,0.03); }
+.section h2 { font-size:1.35rem; font-weight:800; margin-bottom:0.55rem; letter-spacing:-0.01em; }
+.section h3 { font-size:1.02rem; font-weight:700; margin:1.2rem 0 0.4rem; color:#0b4f3c; }
+.section p, .section li { font-size:0.95rem; color:#2c4650; margin-bottom:0.5rem; }
+.eyebrow { display:inline-block; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#0b4f3c; background:#e6f4ef; padding:0.3rem 0.75rem; border-radius:99px; margin-bottom:0.9rem; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.card { border:1px solid #e2edf2; border-radius:0.9rem; padding:1.2rem 1.3rem; background:#fbfdff; }
+.card .card-icon { width:38px; height:38px; border-radius:10px; background:#e6f4ef; color:#0b4f3c; display:inline-flex; align-items:center; justify-content:center; margin-bottom:0.6rem; }
+.card h4 { font-size:1rem; font-weight:700; margin-bottom:0.35rem; }
+.card p { font-size:0.88rem; color:#4a6370; }
+.btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; padding:0.85rem 1.5rem; border-radius:99px; font-weight:700; text-decoration:none; font-size:0.95rem; border:none; cursor:pointer; }
+.btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+.btn-outline { display:inline-flex; align-items:center; gap:0.5rem; border:1.5px solid #0b4f3c; color:#0b4f3c; padding:0.8rem 1.4rem; border-radius:99px; font-weight:700; text-decoration:none; font-size:0.95rem; background:#fff; cursor:pointer; }
+.footer { margin-top:3rem; padding-top:2rem; border-top:1px solid #e2edf2; font-size:0.82rem; color:#6b8b96; text-align:center; }
+
+/* Scan widget */
+.scan-widget { background:#fff; border:1px solid #e2edf2; border-radius:1.2rem; padding:2rem 2.2rem; margin-bottom:1.4rem; box-shadow:0 1px 2px rgba(11,43,47,0.03); }
+.scan-widget h2 { font-size:1.35rem; font-weight:800; margin-bottom:0.4rem; }
+.scan-widget > p { font-size:0.95rem; color:#4a6370; margin-bottom:1.2rem; }
+.tab-row { display:flex; gap:0.8rem; margin-bottom:1.5rem; }
+.tab-row button { flex:1; padding:0.9rem 1rem; border:1px solid #e2edf2; border-radius:0.8rem; background:#fbfdff; color:#4a6370; font-weight:600; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:all 0.15s; }
+.tab-row button.active { background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; border-color:#0b4f3c; box-shadow:0 4px 12px rgba(11,79,60,0.15); }
+.dropzone { border:2px dashed #c5d9e0; border-radius:1rem; padding:2.5rem 1.5rem; text-align:center; transition:border-color 0.2s,background 0.2s; }
+.dropzone.drag { border-color:#0b4f3c; background:#f0faf5; }
+.dropzone .dz-icon { width:56px; height:56px; margin:0 auto 0.9rem; color:#6b8b96; }
+.dropzone .dz-icon svg { width:100%; height:100%; }
+.dropzone h3 { font-size:1.05rem; font-weight:700; margin-bottom:0.3rem; }
+.dropzone p { font-size:0.88rem; color:#6b8b96; margin-bottom:1rem; }
+.dropzone input[type=file] { display:none; }
+.dropzone label.file-btn { display:inline-block; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; padding:0.7rem 1.4rem; border-radius:99px; font-weight:700; font-size:0.9rem; cursor:pointer; }
+.sample-link { font-size:0.85rem; color:#6b8b96; text-align:center; margin-top:1rem; }
+.sample-link button { background:none; border:none; color:#0b4f3c; font-weight:700; cursor:pointer; text-decoration:underline; font-size:0.85rem; }
+
+.scanning-wrap { text-align:center; padding:2rem 0; }
+.scan-ring { width:128px; height:128px; margin:0 auto 1.5rem; position:relative; }
+.scan-ring svg { transform:rotate(-90deg); width:100%; height:100%; }
+.scan-ring .bg { stroke:#e2edf2; }
+.scan-ring .fg { stroke:url(#g1); stroke-linecap:round; transition:stroke-dashoffset 0.3s ease; }
+.scan-ring .pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:800; color:#0b4f3c; }
+.scan-msg { color:#4a6370; font-size:0.95rem; margin-bottom:0.3rem; }
+.scan-sub { color:#6b8b96; font-size:0.82rem; }
+
+/* Dashboard-style health report */
+.readiness-banner { background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; border-radius:1rem; padding:1.2rem 1.6rem; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; }
+.readiness-banner .rb-main { font-size:1.1rem; font-weight:800; }
+.readiness-banner .rb-main .pct { font-size:1.6rem; }
+.readiness-banner .rb-sub { font-size:0.85rem; opacity:0.9; }
+.risk-strip { background:#fffbeb; border:1px solid #fde68a; border-left:4px solid #f59e0b; color:#78350f; padding:0.9rem 1.2rem; border-radius:0.7rem; margin-bottom:1.4rem; font-size:0.9rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; }
+.risk-strip strong { color:#78350f; }
+
+.health-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:1rem; margin-bottom:1.2rem; }
+.health-card { border:1px solid #e2edf2; border-radius:0.9rem; padding:1.3rem 1.4rem; background:#fff; }
+.health-card h4 { font-size:0.72rem; font-weight:800; letter-spacing:0.1em; color:#6b8b96; text-transform:uppercase; margin-bottom:0.9rem; }
+.hc-main { display:flex; align-items:center; gap:1.2rem; }
+.score-ring-lg { width:90px; height:90px; position:relative; flex-shrink:0; }
+.score-ring-lg svg { transform:rotate(-90deg); width:100%; height:100%; }
+.score-ring-lg .bg { stroke:#e2edf2; }
+.score-ring-lg .num { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.score-ring-lg .num strong { font-size:1.4rem; font-weight:800; color:#0b2b2f; line-height:1; }
+.score-ring-lg .num small { font-size:0.65rem; color:#6b8b96; font-weight:600; }
+.hc-band { flex:1; }
+.hc-band .band-title { font-size:1.05rem; font-weight:800; color:#0b4f3c; margin-bottom:0.3rem; }
+.hc-band .band-desc { font-size:0.82rem; color:#6b8b96; margin-bottom:0.6rem; }
+.hc-band .band-list { font-size:0.78rem; color:#4a6370; }
+.hc-band .band-list div { padding:0.12rem 0; }
+.hc-band .band-list .current { font-weight:700; color:#0b4f3c; }
+
+.scan-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; margin-bottom:0.8rem; }
+.ss { border:1px solid #e2edf2; border-radius:0.7rem; padding:0.9rem 0.7rem; text-align:center; background:#fbfdff; }
+.ss-label { font-size:0.65rem; font-weight:800; letter-spacing:0.08em; color:#6b8b96; text-transform:uppercase; margin-bottom:0.3rem; }
+.ss-value { font-size:1.5rem; font-weight:800; color:#0b2b2f; }
+.ss.issues .ss-value { color:#b91c1c; }
+.ss.clean .ss-value { color:#16a34a; }
+.cwr-readiness { display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-top:0.3rem; }
+.cwr-r { border:1px solid #e2edf2; border-radius:0.7rem; padding:0.7rem 0.9rem; background:#fbfdff; }
+.cwr-r-label { font-size:0.65rem; font-weight:800; letter-spacing:0.08em; color:#6b8b96; text-transform:uppercase; margin-bottom:0.25rem; }
+.cwr-r-value { font-size:1.2rem; font-weight:800; }
+.cwr-r.ready .cwr-r-value { color:#16a34a; }
+.cwr-r.fix .cwr-r-value { color:#b91c1c; }
+
+.breakdown-card { border:1px solid #e2edf2; border-radius:0.9rem; padding:1.3rem 1.4rem; background:#fff; margin-bottom:1.2rem; }
+.breakdown-card h4 { font-size:0.72rem; font-weight:800; letter-spacing:0.1em; color:#6b8b96; text-transform:uppercase; margin-bottom:0.9rem; }
+.bar-row { display:flex; align-items:center; gap:0.7rem; padding:0.5rem 0; border-bottom:1px dashed #e2edf2; }
+.bar-row:last-child { border-bottom:0; }
+.bar-label { flex:0 0 160px; font-size:0.88rem; color:#2c4650; font-weight:600; }
+.bar-track { flex:1; height:10px; background:#f1f5f9; border-radius:99px; position:relative; overflow:hidden; }
+.bar-fill { position:absolute; left:0; top:0; bottom:0; border-radius:99px; }
+.bar-fill.high { background:#dc2626; }
+.bar-fill.medium { background:#f59e0b; }
+.bar-fill.low { background:#8b5cf6; }
+.bar-count { flex:0 0 32px; text-align:right; font-weight:800; font-size:0.92rem; color:#0b2b2f; }
+
+.detail-table { width:100%; border-collapse:collapse; border:1px solid #e2edf2; border-radius:0.9rem; overflow:hidden; background:#fff; margin-bottom:1.2rem; }
+.detail-table th { background:#f6fbfd; font-size:0.7rem; font-weight:800; letter-spacing:0.06em; color:#6b8b96; text-transform:uppercase; padding:0.7rem 0.9rem; text-align:left; border-bottom:1px solid #e2edf2; }
+.detail-table td { padding:0.75rem 0.9rem; font-size:0.88rem; color:#2c4650; border-bottom:1px solid #f0f4f7; }
+.detail-table tr:last-child td { border-bottom:0; }
+.detail-table .dt-title { font-weight:700; color:#0b2b2f; }
+.detail-table .tag-missing { color:#b91c1c; font-weight:700; font-size:0.78rem; text-transform:uppercase; }
+.detail-table .tag-invalid { color:#f59e0b; font-weight:700; font-size:0.78rem; text-transform:uppercase; }
+.detail-table .tag-ok { color:#16a34a; font-family:ui-monospace,monospace; font-size:0.82rem; }
+.detail-table .score-pill { display:inline-block; padding:0.2rem 0.7rem; border-radius:99px; font-weight:800; font-size:0.82rem; background:#e2edf2; }
+.detail-table .score-pill.ok { background:#dcfce7; color:#166534; }
+.detail-table .score-pill.warn { background:#fef3c7; color:#854d0e; }
+.detail-table .score-pill.bad { background:#fee2e2; color:#991b1b; }
+
+.results-actions { display:flex; gap:0.7rem; margin-top:1.4rem; flex-wrap:wrap; }
+.error-msg { background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:0.9rem 1rem; border-radius:0.7rem; font-size:0.88rem; margin-top:1rem; }
+
+/* Paywall */
+.paywall { background:linear-gradient(135deg,#0b2b2f 0%,#0b4f3c 100%); color:#fff; border-radius:1.4rem; padding:2.4rem 2.4rem; margin:1.4rem 0; position:relative; overflow:hidden; }
+.paywall::before { content:''; position:absolute; top:-60px; right:-60px; width:220px; height:220px; background:radial-gradient(circle,rgba(27,126,94,0.4) 0%,transparent 70%); border-radius:50%; }
+.paywall .pw-inner { position:relative; }
+.paywall .pw-eyebrow { display:inline-block; font-size:0.72rem; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:#86efac; background:rgba(134,239,172,0.1); border:1px solid rgba(134,239,172,0.3); padding:0.35rem 0.85rem; border-radius:99px; margin-bottom:1rem; }
+.paywall h3 { font-size:1.9rem; font-weight:800; letter-spacing:-0.01em; margin-bottom:1rem; }
+.paywall ul { list-style:none; padding:0; margin:0 0 1.5rem 0; }
+.paywall ul li { padding:0.5rem 0 0.5rem 1.8rem; position:relative; font-size:1rem; color:#e2edf2; }
+.paywall ul li::before { content:''; position:absolute; left:0; top:0.8rem; width:1.1rem; height:0.6rem; border-left:2.5px solid #86efac; border-bottom:2.5px solid #86efac; transform:rotate(-45deg); }
+.paywall .pw-cta { display:inline-flex; align-items:center; gap:0.5rem; background:#fff; color:#0b4f3c; padding:1rem 1.8rem; border-radius:99px; font-weight:800; text-decoration:none; font-size:1rem; transition:transform 0.15s; }
+.paywall .pw-cta:hover { transform:translateY(-2px); }
+.paywall .pw-cta svg { width:18px; height:18px; }
+.paywall .pw-foot { font-size:0.8rem; color:#a0b4bd; margin-top:0.9rem; }
+
+@media (max-width:860px) { .grid-2, .grid-4, .health-grid, .scan-stats, .cwr-readiness { grid-template-columns:1fr; } .page-hero { padding:2rem 1.4rem; } .page-hero h1 { font-size:1.7rem; } .scan-widget, .section { padding:1.4rem; } .tab-row { flex-direction:column; } .paywall { padding:2rem 1.6rem; } .paywall h3 { font-size:1.5rem; } .bar-label { flex:0 0 120px; font-size:0.82rem; } }
+@media (max-width:560px) { .scan-stats { grid-template-columns:1fr; } .detail-table th,.detail-table td { padding:0.5rem 0.6rem; font-size:0.8rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="navbar">
+    <a href="/publisher-portal" style="text-decoration:none;"><div class="logo">TrapRoyaltiesPro</div></a>
+    <div class="nav-links">
+      <a href="/publisher-portal/pages/how-it-works.html">How it Works</a>
+      <a href="/publisher-portal/split-verification.html">Split Verification</a>
+      <a href="/publisher-portal/pages/cleaning-wizard.html" class="active">Metadata Cleaning</a>
+      <a href="/publisher-portal/pages/publisher.html">For Publishers</a>
+      <a href="/publisher-portal/FAQ.html">FAQ</a>
+      <a href="/publisher-portal/documents.html">Documents</a>
+      <a href="/publisher-portal/pages/preview.html" class="demo-badge">Preview</a>
+      <span class="demo-badge"><span class="live-dot"></span> Live</span>
+    </div>
+  </div>
+  <div class="breadcrumb"><a href="/publisher-portal">Publisher Portal</a> · Metadata Cleaning</div>
+
+  <div class="page-hero">
+    <div class="eyebrow">Free Scan · Health Report</div>
+    <h1><span class="accent">Metadata Dry-Cleaning</span><br>in under 60 seconds</h1>
+    <p class="lead">Upload your catalog. We scan every row for missing ISWCs, invalid IPI numbers, broken splits, and registration gaps — then hand you a full Publishing Health Report. Non-destructive. No signup required.</p>
+  </div>
+
+  <div class="section">
+    <h2>What our team detects and fixes</h2>
+    <div class="grid-4">
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><h4>Missing identifiers</h4><p>Absent or invalid ISWC, ISRC, IPI — flagged per row with format guidance.</p></div>
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div><h4>Broken splits</h4><p>Multi-writer works where shares don't total 100% are flagged for redistribution.</p></div>
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Registration holes</h4><p>Works missing a publisher, writers missing an IPI, role mismatches.</p></div>
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></div><h4>Duplicate conflicts</h4><p>Same title with conflicting ISRCs or ISWCs — merge or rename decisions surfaced.</p></div>
+    </div>
+  </div>
+
+  <div class="scan-widget" id="widget">
+    <h2>Run a free scan</h2>
+    <p>Drop a CSV or JSON export of your catalog. Required columns: <code>title, isrc, iswc, ipi, publisher, role, share_percent</code>. We never store your data.</p>
+
+    <!-- Step: Upload -->
+    <div id="step-upload">
+      <div class="tab-row">
+        <button class="tab-btn active" data-tab="label"><svg class="icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> <span>I'm a Label</span></button>
+        <button class="tab-btn" data-tab="artist"><svg class="icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> <span>I'm an Artist</span></button>
+      </div>
+      <div class="dropzone" id="dropzone">
+        <div class="dz-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <h3 id="dz-title">Upload your catalog (CSV or JSON)</h3>
+        <p id="dz-sub">Include title, ISRC, ISWC, IPI, publisher, role, share_percent</p>
+        <input type="file" id="file" accept=".csv,.json">
+        <label for="file" class="file-btn">Choose File</label>
+      </div>
+      <div class="sample-link">Or try with a <button id="sample-btn">sample catalog</button></div>
+      <div id="upload-err" class="error-msg" style="display:none;"></div>
+    </div>
+
+    <!-- Step: Scanning -->
+    <div id="step-scan" style="display:none;">
+      <div class="scanning-wrap">
+        <div class="scan-ring">
+          <svg viewBox="0 0 128 128">
+            <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0b4f3c"/><stop offset="100%" stop-color="#1b7e5e"/></linearGradient></defs>
+            <circle class="bg" cx="64" cy="64" r="56" fill="none" stroke-width="10"/>
+            <circle class="fg" id="ring-fg" cx="64" cy="64" r="56" fill="none" stroke-width="10" stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+          </svg>
+          <div class="pct" id="ring-pct">0%</div>
+        </div>
+        <div class="scan-msg" id="scan-msg">Parsing metadata…</div>
+        <div class="scan-sub">Running non-destructive analysis. Your data never leaves this scan.</div>
+      </div>
+    </div>
+
+    <!-- Step: Results (Health Report) -->
+    <div id="step-results" style="display:none;">
+      <div class="readiness-banner">
+        <div>
+          <div class="rb-main"><span class="pct" id="rb-pct">0%</span> Submission Readiness</div>
+          <div class="rb-sub" id="rb-sub">0 of 0 works CWR-ready</div>
+        </div>
+        <div style="font-size:0.82rem; opacity:0.9;">Generated <span id="rb-date"></span></div>
+      </div>
+      <div class="risk-strip" id="risk-strip" style="display:none;">
+        <div><svg style="width:16px;height:16px;vertical-align:-3px;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><strong id="risk-pct">0%</strong> of works risk delay, rejection, or revenue loss</div>
+        <div style="font-weight:700;" id="risk-count">0 works with critical issues</div>
+      </div>
+
+      <div class="health-grid">
+        <div class="health-card">
+          <h4>Overall Health Score</h4>
+          <div class="hc-main">
+            <div class="score-ring-lg">
+              <svg viewBox="0 0 90 90">
+                <circle class="bg" cx="45" cy="45" r="40" fill="none" stroke-width="7"/>
+                <circle id="score-ring-fg" cx="45" cy="45" r="40" fill="none" stroke-width="7" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round"/>
+              </svg>
+              <div class="num"><strong id="score-num">0</strong><small>/ 100</small></div>
+            </div>
+            <div class="hc-band">
+              <div class="band-title" id="band-title">—</div>
+              <div class="band-desc" id="band-desc">Scan a catalog to see your band</div>
+              <div class="band-list" id="band-list">
+                <div data-band="ok">90–100 · CWR-Ready</div>
+                <div data-band="minor">70–89 · Needs Minor Fixes</div>
+                <div data-band="major">40–69 · Needs Major Fixes</div>
+                <div data-band="reg">0–39 · Not Registrable</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="health-card">
+          <h4>Scan Results</h4>
+          <div class="scan-stats">
+            <div class="ss"><div class="ss-label">Scanned</div><div class="ss-value" id="sv-total">0</div></div>
+            <div class="ss issues"><div class="ss-label">Issues</div><div class="ss-value" id="sv-issues">0</div></div>
+            <div class="ss clean"><div class="ss-label">Clean</div><div class="ss-value" id="sv-clean">0</div></div>
+          </div>
+          <h4 style="margin-top:1rem;">CWR Readiness</h4>
+          <div class="cwr-readiness">
+            <div class="cwr-r ready"><div class="cwr-r-label">CWR-Ready</div><div class="cwr-r-value" id="cwr-ready">0</div></div>
+            <div class="cwr-r fix"><div class="cwr-r-label">Needs Fixes</div><div class="cwr-r-value" id="cwr-fix">0</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="breakdown-card">
+        <h4>Issue Breakdown (blocking submission)</h4>
+        <div id="breakdown-bars"></div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="detail-table" id="detail-table">
+          <thead><tr><th>Title</th><th>ISWC</th><th>Writers</th><th>Publisher</th><th>Score</th></tr></thead>
+          <tbody id="detail-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- UPGRADE CALL-OUT -->
+      <div class="paywall">
+        <div class="pw-inner">
+          <div class="pw-eyebrow">Full-Service Cleaning</div>
+          <h3>Unlock Professional Metadata Cleaning</h3>
+          <p style="font-size:1rem; color:#e2edf2; margin-bottom:1.1rem; max-width:640px;">
+            Our team completes all required metadata corrections for you &mdash; ensuring your catalog is clean, compliant, and ready for submission across PROs, MLC, SoundExchange, and foreign societies.
+          </p>
+          <ul>
+            <li>We correct all metadata issues across your catalog</li>
+            <li>We prepare clean, PRO-ready CWR files for submission</li>
+            <li>We resolve missing ISWC, broken splits, invalid IPIs, and contributor gaps</li>
+            <li>We deliver a fully cleaned catalog package back to you</li>
+            <li>Includes a detailed Publishing Health Report + Fix-Later Task Summary</li>
+          </ul>
+          <a href="/publisher-portal/pages/upgrade.html" class="pw-cta">Request Full Catalog Cleaning <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <div class="pw-foot">Service handled by specialists &middot; Your scan results stay with you</div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button class="btn-primary" id="export-csv">Download Scan Report (CSV)</button>
+        <a class="btn-outline" href="/publisher-portal/pages/upgrade.html">Begin Full-Service Cleaning <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <button class="btn-outline" id="rescan-btn">Scan Another Catalog</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2026 TrapRoyaltiesPro · Metadata integrity for music publishers · <a href="mailto:hello@traproyaltiespro.com">hello@traproyaltiespro.com</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var tabType = 'label';
+  var lastResults = null;
+
+  document.querySelectorAll('.tab-btn').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      tabType = b.dataset.tab;
+      $('dz-title').textContent = tabType === 'label' ? 'Upload your catalog (CSV or JSON)' : 'Upload your tracks (CSV or JSON)';
+    });
+  });
+
+  function parseCSV(text){
+    var lines = text.split(/\r?\n/).filter(function(l){ return l.trim(); });
+    if (lines.length < 2) return [];
+    var headers = splitLine(lines[0]).map(function(h){ return h.trim().toLowerCase().replace(/^"|"$/g,''); });
+    var rows = [];
+    for (var i=1; i<lines.length; i++){
+      var cols = splitLine(lines[i]);
+      var row = {};
+      headers.forEach(function(h, idx){ row[h] = (cols[idx] || '').trim().replace(/^"|"$/g,''); });
+      rows.push(row);
+    }
+    return rows;
+  }
+  function splitLine(line){
+    var out = [], cur = '', inQ = false;
+    for (var i=0; i<line.length; i++){
+      var c = line[i];
+      if (c === '"'){ inQ = !inQ; cur += c; continue; }
+      if (c === ',' && !inQ){ out.push(cur); cur = ''; continue; }
+      cur += c;
+    }
+    out.push(cur);
+    return out;
+  }
+
+  var SAMPLE = [
+    { title:'Midnight Sun',  isrc:'SE6I12345678', iswc:'',               ipi:'',            publisher:'Nordic Music AB', role:'composer', share_percent:50 },
+    { title:'Midnight Sun',  isrc:'SE6I12345678', iswc:'',               ipi:'00234567890', publisher:'Nordic Music AB', role:'composer', share_percent:40 },
+    { title:'Vinterljus',    isrc:'SE6I12345679', iswc:'T-345678901-2',  ipi:'00123456789', publisher:'Nordic Music AB', role:'composer', share_percent:50 },
+    { title:'Vinterljus',    isrc:'SE6I12345679', iswc:'T-345678901-2',  ipi:'00988777101', publisher:'Nordic Music AB', role:'publisher', share_percent:50 },
+    { title:'Aurora',        isrc:'SE6I12345680', iswc:'',               ipi:'00345678901', publisher:'',                role:'composer', share_percent:100 },
+    { title:'Nattljus',      isrc:'SE6I12345681', iswc:'T-998877665-4',  ipi:'00445566778', publisher:'Polar Publishing', role:'composer', share_percent:50 },
+    { title:'Nattljus',      isrc:'SE6I12345681', iswc:'T-998877665-4',  ipi:'00445566778', publisher:'Polar Publishing', role:'publisher', share_percent:50 },
+    { title:'Glass River',   isrc:'SE6I12345682', iswc:'T-111222333-1',  ipi:'00555666777', publisher:'Glass Music',      role:'composer', share_percent:60 },
+    { title:'Glass River',   isrc:'SE6I12345683', iswc:'T-111222333-1',  ipi:'00111222333', publisher:'Glass Music',      role:'composer', share_percent:50 },
+    { title:'Silver Lake',   isrc:'SE6I12345684', iswc:'',               ipi:'12345',       publisher:'',                role:'composer', share_percent:100 },
+    { title:'Neon Skyline',  isrc:'SE6I12345685', iswc:'',               ipi:'',            publisher:'',                role:'composer', share_percent:100 },
+    { title:'Midnight Echo', isrc:'SE6I12345686', iswc:'',               ipi:'00778899001', publisher:'',                role:'composer', share_percent:100 }
+  ];
+
+  var dz = $('dropzone');
+  var fileInput = $('file');
+  ['dragenter','dragover'].forEach(function(e){ dz.addEventListener(e, function(ev){ ev.preventDefault(); dz.classList.add('drag'); }); });
+  ['dragleave','drop'].forEach(function(e){ dz.addEventListener(e, function(ev){ ev.preventDefault(); dz.classList.remove('drag'); }); });
+  dz.addEventListener('drop', function(ev){
+    var f = ev.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+  fileInput.addEventListener('change', function(e){
+    var f = e.target.files[0];
+    if (f) handleFile(f);
+  });
+
+  function handleFile(f){
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      try {
+        var text = ev.target.result;
+        var rows;
+        if (f.name.toLowerCase().endsWith('.json')){
+          var p = JSON.parse(text);
+          rows = Array.isArray(p) ? p : (p.rows || []);
+        } else {
+          rows = parseCSV(text);
+        }
+        if (!rows || rows.length === 0){
+          showError('No rows found in file. Check your headers: title, isrc, iswc, ipi, publisher, role, share_percent.');
+          return;
+        }
+        runScan(rows);
+      } catch(e){
+        showError('Failed to parse file: ' + e.message);
+      }
+    };
+    reader.readAsText(f);
+  }
+
+  $('sample-btn').addEventListener('click', function(){ runScan(SAMPLE); });
+
+  function showError(msg){
+    var e = $('upload-err');
+    e.textContent = msg;
+    e.style.display = 'block';
+  }
+
+  function showStep(name){
+    $('step-upload').style.display  = name === 'upload'  ? 'block' : 'none';
+    $('step-scan').style.display    = name === 'scan'    ? 'block' : 'none';
+    $('step-results').style.display = name === 'results' ? 'block' : 'none';
+  }
+
+  var SCAN_MSGS = ['Parsing metadata…', 'Checking identifiers…', 'Validating splits…', 'Detecting duplicates…', 'Scoring catalog health…'];
+
+  function runScan(rows){
+    $('upload-err').style.display = 'none';
+    showStep('scan');
+    var pct = 0, msgIdx = 0;
+    $('scan-msg').textContent = SCAN_MSGS[0];
+    var msgTimer = setInterval(function(){
+      msgIdx = (msgIdx + 1) % SCAN_MSGS.length;
+      $('scan-msg').textContent = SCAN_MSGS[msgIdx];
+    }, 700);
+    var pctTimer = setInterval(function(){
+      pct = Math.min(95, pct + 8);
+      $('ring-pct').textContent = pct + '%';
+      $('ring-fg').setAttribute('stroke-dashoffset', String(351.86 * (1 - pct/100)));
+    }, 180);
+
+    fetch('/api/analyze-all', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({rows: rows})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      clearInterval(msgTimer); clearInterval(pctTimer);
+      $('ring-pct').textContent = '100%';
+      $('ring-fg').setAttribute('stroke-dashoffset', '0');
+      setTimeout(function(){ renderResults(data); showStep('results'); }, 300);
+    })
+    .catch(function(e){
+      clearInterval(msgTimer); clearInterval(pctTimer);
+      showStep('upload');
+      showError('Scan failed: ' + e.message);
+    });
+  }
+
+  // Group issues by work title to derive per-work state
+  function groupByWork(rows, issues){
+    var byTitle = {};
+    rows.forEach(function(r, i){
+      var t = (r.title || r.Title || ('Row ' + (i+1))).trim() || ('Row ' + (i+1));
+      if (!byTitle[t]) byTitle[t] = { title:t, rows:[], issues:[], iswc:'', writers:0, writerTotal:0, publisher:'' };
+      byTitle[t].rows.push({ idx:i, row:r });
+      if ((r.iswc || r.ISWC) && !byTitle[t].iswc) byTitle[t].iswc = r.iswc || r.ISWC;
+      if (r.publisher && !byTitle[t].publisher) byTitle[t].publisher = r.publisher;
+      var role = String(r.role || '').toLowerCase();
+      if (role === 'composer' || role === 'lyricist' || role === 'writer' || (!role && (r.writer || r.composer))) byTitle[t].writerTotal++;
+    });
+    issues.forEach(function(iss){
+      var t = (iss.work || '').trim();
+      if (t && byTitle[t]) byTitle[t].issues.push(iss);
+    });
+    return byTitle;
+  }
+
+  function workScore(w){
+    // Per-work score: start at 100, subtract 8 per high, 4 per medium, 2 per low
+    var s = 100;
+    w.issues.forEach(function(i){ s -= (i.severity === 'high' ? 16 : i.severity === 'medium' ? 8 : 4); });
+    return Math.max(0, Math.min(100, s));
+  }
+
+  function bandOf(score){
+    if (score >= 90) return { key:'ok',    title:'CWR-Ready',         desc:'Fully submission-ready. Export and ship.' };
+    if (score >= 70) return { key:'minor', title:'Needs Minor Fixes', desc:'Ready after a few fields are filled in.' };
+    if (score >= 40) return { key:'major', title:'Needs Major Fixes', desc:'Multiple registration blockers detected.' };
+    return              { key:'reg',   title:'Not Registrable',    desc:'Most works missing required identifiers.' };
+  }
+
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; });
+  }
+
+  function renderResults(data){
+    lastResults = data;
+    var score = data.score || 0;
+    var total = data.total_tracks || 0;
+    var healthy = data.healthy_tracks || 0;
+    var issues = data.issues || [];
+    var rows = data.rows || [];
+    var withIssues = Math.max(0, total - healthy);
+
+    // Submission readiness banner
+    var readinessPct = total > 0 ? Math.round((healthy / total) * 100) : 0;
+    $('rb-pct').textContent = readinessPct + '%';
+    $('rb-sub').textContent = healthy + ' of ' + total + ' works CWR-ready';
+    var d = new Date();
+    $('rb-date').textContent = d.toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+
+    // Risk strip
+    var high = issues.filter(function(i){ return i.severity === 'high'; }).length;
+    var riskPctNum = total > 0 ? Math.round((withIssues / total) * 100) : 0;
+    if (withIssues > 0){
+      $('risk-strip').style.display = 'flex';
+      $('risk-pct').textContent = riskPctNum + '%';
+      $('risk-count').textContent = withIssues + ' works with critical issues';
+    } else {
+      $('risk-strip').style.display = 'none';
+    }
+
+    // Health score ring
+    var color = score >= 80 ? '#16a34a' : score >= 50 ? '#f59e0b' : '#dc2626';
+    var ring = $('score-ring-fg');
+    ring.setAttribute('stroke', color);
+    ring.setAttribute('stroke-dashoffset', String(251.3 * (1 - score/100)));
+    $('score-num').textContent = score;
+    var band = bandOf(score);
+    $('band-title').textContent = band.title;
+    $('band-desc').textContent = band.desc;
+    document.querySelectorAll('#band-list [data-band]').forEach(function(el){
+      el.classList.toggle('current', el.getAttribute('data-band') === band.key);
+    });
+
+    // Scan stats
+    $('sv-total').textContent = total;
+    $('sv-issues').textContent = issues.length;
+    $('sv-clean').textContent = healthy;
+    $('cwr-ready').textContent = healthy;
+    $('cwr-fix').textContent = withIssues;
+
+    // Issue breakdown by field
+    var labels = {
+      iswc:'Missing/Invalid ISWC',
+      publisher:'Missing Publishers',
+      ipi:'Missing/Invalid IPIs',
+      split_total:'Broken Shares',
+      duplicate:'Duplicate Works',
+      isrc:'Invalid ISRC'
+    };
+    var severityByField = { iswc:'high', publisher:'high', ipi:'medium', split_total:'high', duplicate:'low', isrc:'medium' };
+    var counts = {};
+    issues.forEach(function(iss){
+      var f = iss.field || 'other';
+      counts[f] = (counts[f] || 0) + 1;
+    });
+    var order = Object.keys(counts).sort(function(a,b){ return counts[b] - counts[a]; });
+    var maxCount = Math.max.apply(null, [1].concat(order.map(function(k){ return counts[k]; })));
+    var bars = $('breakdown-bars');
+    bars.innerHTML = '';
+    if (order.length === 0){
+      bars.innerHTML = '<div style="padding:0.6rem 0; color:#16a34a; font-weight:600; font-size:0.9rem;">No issues detected — every row passed validation.</div>';
+    } else {
+      order.forEach(function(f){
+        var label = labels[f] || f;
+        var sev = severityByField[f] || 'medium';
+        var n = counts[f];
+        var pct = (n / maxCount) * 100;
+        var row = document.createElement('div');
+        row.className = 'bar-row';
+        row.innerHTML = '<div class="bar-label">' + escapeHtml(label) + '</div>' +
+                        '<div class="bar-track"><div class="bar-fill ' + sev + '" style="width:' + pct + '%;"></div></div>' +
+                        '<div class="bar-count">' + n + '</div>';
+        bars.appendChild(row);
+      });
+    }
+
+    // Work-level detail table (first 6)
+    var byTitle = groupByWork(rows, issues);
+    var titles = Object.keys(byTitle);
+    var rowsToShow = titles.slice(0, 6);
+    var tbody = $('detail-tbody');
+    tbody.innerHTML = '';
+    if (titles.length === 0){
+      tbody.innerHTML = '<tr><td colspan="5" style="padding:1rem; text-align:center; color:#6b8b96;">No rows to display.</td></tr>';
+    }
+    rowsToShow.forEach(function(t){
+      var w = byTitle[t];
+      var wsMatches = w.rows.length;
+      var writerMatches = w.writerTotal;
+      var s = workScore(w);
+      var sevCls = s >= 80 ? 'ok' : s >= 50 ? 'warn' : 'bad';
+      var iswcCell = w.iswc ? '<span class="tag-ok">' + escapeHtml(w.iswc) + '</span>' : '<span class="tag-missing">Missing</span>';
+      var pubCell = w.publisher ? escapeHtml(w.publisher) : '<span class="tag-missing">Missing</span>';
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="dt-title">' + escapeHtml(t) + '</td>' +
+        '<td>' + iswcCell + '</td>' +
+        '<td>' + writerMatches + ' of ' + Math.max(writerMatches, wsMatches) + '</td>' +
+        '<td>' + pubCell + '</td>' +
+        '<td><span class="score-pill ' + sevCls + '">' + s + '</span></td>';
+      tbody.appendChild(tr);
+    });
+    if (titles.length > 6){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="5" style="padding:0.8rem; text-align:center; color:#6b8b96; font-size:0.85rem;">+ ' + (titles.length - 6) + ' more works &mdash; request full-service cleaning for the complete dashboard.</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Export CSV
+  $('export-csv').addEventListener('click', function(){
+    if (!lastResults || !lastResults.issues) return;
+    var rows = [['severity','work','field','problem','suggested_fix','current_value','row_index']];
+    lastResults.issues.forEach(function(iss){
+      rows.push([iss.severity||'', iss.work||'', iss.field||'', iss.problem||'', iss.suggested_fix||'', iss.current_value==null?'':iss.current_value, iss.row_index==null?'':iss.row_index]);
+    });
+    var csv = rows.map(function(r){
+      return r.map(function(c){
+        var s = String(c); if (/[,"\n]/.test(s)) s = '"' + s.replace(/"/g,'""') + '"'; return s;
+      }).join(',');
+    }).join('\n');
+    var blob = new Blob([csv], {type:'text/csv'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'trappro-health-report.csv'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  });
+
+  $('rescan-btn').addEventListener('click', function(){
+    lastResults = null;
+    fileInput.value = '';
+    $('upload-err').style.display = 'none';
+    showStep('upload');
+  });
+})();
+</script>
+</body>
+</html>

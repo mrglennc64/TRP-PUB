@@ -3,9 +3,9 @@ import { useState } from 'react';
 
 const RiskLevelBadge = ({ score, status }) => {
   const getColor = () => {
-    if (score >= 90) return 'bg-green-100 text-green-800 border-green-200';
+    if (score >= 90) return 'bg-emerald-100 text-emerald-800 border-emerald-200';
     if (score >= 70) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    return 'bg-red-100 text-red-800 border-red-200';
+    return 'bg-rose-100 text-rose-800 border-rose-200';
   };
 
   return (
@@ -18,7 +18,7 @@ const RiskLevelBadge = ({ score, status }) => {
 
 const RiskFlag = ({ flag, index }) => (
   <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-100 hover:shadow-sm transition">
-    <div className="text-red-500 mt-0.5">⚠️</div>
+    <div className="text-rose-500 mt-0.5">⚠️</div>
     <p className="text-sm text-gray-700">{flag}</p>
   </div>
 );
@@ -29,9 +29,9 @@ export default function RiskAuditDisplay({ auditResult }) {
   if (!auditResult) return null;
 
   const getScoreColor = () => {
-    if (auditResult.score >= 90) return 'text-green-600';
+    if (auditResult.score >= 90) return 'text-emerald-600';
     if (auditResult.score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    return 'text-rose-600';
   };
 
   return (
@@ -79,16 +79,16 @@ export default function RiskAuditDisplay({ auditResult }) {
         </div>
 
         {/* Call to Action */}
-        <div className={`p-4 rounded-lg ${auditResult.score < 70 ? 'bg-red-50 border border-red-200' : 'bg-indigo-50 border border-indigo-200'}`}>
+        <div className={`p-4 rounded-lg ${auditResult.score < 70 ? 'bg-rose-50 border border-rose-200' : 'bg-indigo-50 border border-indigo-200'}`}>
           <div className="flex items-start gap-3">
             <span className="text-2xl">{auditResult.score < 70 ? '🚨' : '💡'}</span>
             <div>
-              <p className={`font-medium ${auditResult.score < 70 ? 'text-red-800' : 'text-indigo-800'}`}>
+              <p className={`font-medium ${auditResult.score < 70 ? 'text-rose-800' : 'text-indigo-800'}`}>
                 {auditResult.score < 70 
                   ? 'You are currently losing money on every play.'
                   : 'Your metadata looks good, but we can help you track every dollar.'}
               </p>
-              <p className={`text-sm mt-1 ${auditResult.score < 70 ? 'text-red-600' : 'text-indigo-600'}`}>
+              <p className={`text-sm mt-1 ${auditResult.score < 70 ? 'text-rose-600' : 'text-indigo-600'}`}>
                 Upgrade to the Pro Portal to fix these issues and recover lost revenue.
               </p>
               <button className="mt-3 px-4 py-2 bg-indigo-900 text-white rounded-lg hover:bg-indigo-800 text-sm transition">

@@ -15,7 +15,7 @@ export default function AdminSpotify() {
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">
-          <span className="text-red-400">⚙️</span> Spotify Admin
+          <span className="text-rose-400">⚙️</span> Spotify Admin
         </h1>
         
         <div className="bg-gray-900/50 rounded-xl border border-gray-800 p-6">

@@ -72,9 +72,9 @@ export default function MP3TestPage() {
             </ul>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-green-100">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <svg className="w-6 h-6 text-green-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-emerald-100">
+            <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+              <svg className="w-6 h-6 text-emerald-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -166,22 +166,22 @@ export default function MP3TestPage() {
           </form>
 
           {error && (
-            <div className="mt-6 bg-red-50 border border-red-200 p-6 rounded-xl">
-              <h3 className="font-bold text-red-800 text-lg mb-2">❌ Upload Failed</h3>
-              <p className="text-red-700">{error}</p>
-              <p className="text-sm text-red-600 mt-2">Check your IDrive credentials in the backend .env file</p>
+            <div className="mt-6 bg-rose-50 border border-rose-200 p-6 rounded-xl">
+              <h3 className="font-bold text-rose-800 text-lg mb-2">❌ Upload Failed</h3>
+              <p className="text-rose-700">{error}</p>
+              <p className="text-sm text-rose-600 mt-2">Check your IDrive credentials in the backend .env file</p>
             </div>
           )}
 
           {result && (
-            <div className="mt-8 bg-green-50 border border-green-200 p-6 rounded-xl">
+            <div className="mt-8 bg-emerald-50 border border-emerald-200 p-6 rounded-xl">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-emerald-200 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-emerald-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="font-bold text-green-800 text-xl">Digital Handshake Created!</h3>
+                <h3 className="font-bold text-emerald-800 text-xl">Digital Handshake Created!</h3>
               </div>
               
               <div className="grid md:grid-cols-2 gap-6">
@@ -226,7 +226,7 @@ export default function MP3TestPage() {
                     
                     <Link 
                       href={`/attorney-portal/digital-handshake/verify?track_id=${result.track_id}`}
-                      className="text-green-600 hover:text-green-800 text-sm flex items-center gap-1"
+                      className="text-emerald-600 hover:text-emerald-800 text-sm flex items-center gap-1"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -249,15 +249,15 @@ export default function MP3TestPage() {
               <h3 className="font-semibold text-indigo-900 mb-3">⚖️ Legal Protection</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-emerald-600">✓</span>
                   <span>SHA-256 hash creates court-admissible evidence of ownership</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-emerald-600">✓</span>
                   <span>Private bucket storage with timestamped metadata</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-emerald-600">✓</span>
                   <span>Digital Handshake verification for attorneys</span>
                 </li>
               </ul>
@@ -267,15 +267,15 @@ export default function MP3TestPage() {
               <h3 className="font-semibold text-indigo-900 mb-3">🎵 Streaming Ready</h3>
               <ul className="space-y-2 text-gray-700">
                 <li className="flex gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-emerald-600">✓</span>
                   <span>Public bucket URL for instant streaming</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-emerald-600">✓</span>
                   <span>Can be embedded in any audio player</span>
                 </li>
                 <li className="flex gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-emerald-600">✓</span>
                   <span>Share preview links with clients</span>
                 </li>
               </ul>

@@ -47,7 +47,7 @@ export default function AuditPage() {
       </form>
 
       {error && (
-        <div className="text-red-600 text-sm mb-4">
+        <div className="text-rose-600 text-sm mb-4">
           Error: {error}
         </div>
       )}

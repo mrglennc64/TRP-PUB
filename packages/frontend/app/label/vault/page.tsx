@@ -179,21 +179,21 @@ export default function VaultPage() {
 
           <Link href="/label/conflict" className="glass p-6 rounded-2xl hover:border-purple-500/50 transition cursor-pointer block group">
             <div className="text-2xl mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <h3 className="font-bold text-sm group-hover:text-red-400 transition">Active Conflicts</h3>
+            <h3 className="font-bold text-sm group-hover:text-rose-400 transition">Active Conflicts</h3>
             <p className="text-[10px] text-slate-500 mono mt-1 uppercase">2 Open Cases</p>
           </Link>
 
           <Link href="/label/settlement" className="glass p-6 rounded-2xl hover:border-purple-500/50 transition cursor-pointer block group">
             <div className="text-2xl mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="font-bold text-sm group-hover:text-green-400 transition">Settlement Records</h3>
+            <h3 className="font-bold text-sm group-hover:text-emerald-400 transition">Settlement Records</h3>
             <p className="text-[10px] text-slate-500 mono mt-1 uppercase">$142,850 Identified</p>
           </Link>
         </div>

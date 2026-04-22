@@ -43,8 +43,8 @@ export default function TestSoundcharts() {
         
         {status === 'success' && (
           <div className="bg-white rounded-xl p-6">
-            <div className="flex items-center space-x-2 text-green-600 mb-4">
-              <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+            <div className="flex items-center space-x-2 text-emerald-600 mb-4">
+              <div className="w-3 h-3 bg-emerald-600 rounded-full"></div>
               <span className="font-medium">Connected Successfully</span>
             </div>
             
@@ -69,10 +69,10 @@ export default function TestSoundcharts() {
         )}
         
         {status === 'error' && (
-          <div className="bg-white rounded-xl p-6 border-l-4 border-red-500">
-            <h2 className="text-red-600 font-semibold mb-2">Connection Failed</h2>
+          <div className="bg-white rounded-xl p-6 border-l-4 border-rose-500">
+            <h2 className="text-rose-600 font-semibold mb-2">Connection Failed</h2>
             <p className="text-gray-700 mb-4">{error}</p>
-            <div className="bg-red-50 p-4 rounded text-sm">
+            <div className="bg-rose-50 p-4 rounded text-sm">
               <p className="font-medium mb-2">Troubleshooting:</p>
               <ul className="list-disc list-inside space-y-1 text-gray-600">
                 <li>Check that SOUNDCHARTS_APP_ID is set correctly</li>

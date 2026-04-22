@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roya • Så fungerar det</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F8FAFC;
+            color: #1A202C;
+            line-height: 1.5;
+        }
+
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #E2E8F0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            background: #2B6F4B;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1A202C;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #4A5568;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #2B6F4B;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #E2E8F0;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #1A202C;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            border-color: #2B6F4B;
+            color: #2B6F4B;
+        }
+
+        /* Page Header */
+        .page-header {
+            padding: 60px 0 30px;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 16px;
+        }
+
+        .page-header p {
+            color: #4A5568;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Trust Bar */
+        .trust-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+            margin: 30px 0 50px;
+            padding: 20px 0;
+            border-top: 1px solid #E2E8F0;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2B6F4B;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        /* Comparison Grid - REVISED */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .comparison-card {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .comparison-card.before {
+            border-top: 4px solid #C53030;
+        }
+
+        .comparison-card.after {
+            border-top: 4px solid #2B6F4B;
+        }
+
+        .comparison-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .flow-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 15px;
+            background: #F8FAFC;
+            border-radius: 60px;
+        }
+
+        .flow-item {
+            background: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid #E2E8F0;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .flow-item.highlight {
+            background: #DEF7E5;
+            border-color: #9AE6B4;
+            color: #1E4F36;
+        }
+
+        .flow-item.issue {
+            background: #FEE2E2;
+            border-color: #FECACA;
+            color: #C53030;
+        }
+
+        .flow-arrow {
+            color: #CBD5E0;
+            font-size: 16px;
+        }
+
+        .comparison-note {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #E2E8F0;
+        }
+
+        /* Steps */
+        .steps-container {
+            margin: 60px 0;
+        }
+
+        .step-row {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 60px;
+            align-items: center;
+        }
+
+        .step-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: #2B6F4B;
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            border-radius: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(43, 111, 75, 0.3);
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1A202C;
+            margin-bottom: 12px;
+        }
+
+        .step-content p {
+            color: #4A5568;
+            font-size: 16px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .step-visual {
+            background: white;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            flex: 1;
+            text-align: center;
+        }
+
+        .visual-icon {
+            font-size: 48px;
+            color: #2B6F4B;
+            margin-bottom: 16px;
+        }
+
+        /* Example Box */
+        .example-box {
+            background: #F8FAFC;
+            border-left: 4px solid #2B6F4B;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-box h4 {
+            font-weight: 600;
+            color: #1A202C;
+            margin-bottom: 8px;
+        }
+
+        .example-box ul {
+            margin-left: 20px;
+            color: #4A5568;
+        }
+
+        .example-box li {
+            margin-bottom: 4px;
+        }
+
+        /* FAQ Preview */
+        .faq-preview {
+            background: #F8FAFC;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px 0;
+            border: 1px solid #E2E8F0;
+        }
+
+        /* Site color scheme overrides */
+        :root {
+            --bg-main: #0a0a0a;
+            --bg-elev: #111111;
+            --bg-soft: #151515;
+            --text-main: #e0e0e0;
+            --text-dim: #9ca3af;
+            --line: rgba(34, 211, 238, 0.25);
+            --accent: #22d3ee;
+            --accent-2: #22d3ee;
+        }
+
+        body {
+            background: var(--bg-main);
+            color: var(--text-main);
+        }
+
+        nav {
+            border-bottom-color: var(--line);
+            background: #000000;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-top: 14px;
+        }
+
+        .logo-icon,
+        .step-number {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .logo-text,
+        .page-header h1,
+        .comparison-title,
+        .step-content h2,
+        .faq-q,
+        .faq-preview h3 {
+            color: var(--text-main);
+        }
+
+        .page-header p,
+        .nav-links a,
+        .step-content p,
+        .faq-a,
+        .comparison-note,
+        footer {
+            color: var(--text-dim);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active,
+        .trust-item,
+        .faq-a i,
+        .visual-icon {
+            color: var(--accent);
+        }
+
+        .comparison-card,
+        .step-visual,
+        .faq-preview,
+        .cta-section,
+        footer {
+            background: var(--bg-elev);
+            border-color: var(--line);
+        }
+
+        .flow-line,
+        .flow-item,
+        .example-box {
+            background: var(--bg-soft);
+            border-color: var(--line);
+            color: var(--text-main);
+        }
+
+        .example-box {
+            border-left-color: var(--accent);
+        }
+
+        .flow-item.highlight {
+            background: rgba(34, 211, 238, 0.16);
+            border-color: rgba(34, 211, 238, 0.45);
+            color: var(--text-main);
+        }
+
+        .flow-item.issue {
+            background: rgba(185, 28, 28, 0.16);
+            border-color: rgba(248, 113, 113, 0.55);
+            color: #fca5a5;
+        }
+
+        .comparison-note,
+        .faq-quick,
+        .trust-bar,
+        footer {
+            border-color: var(--line);
+        }
+
+        .btn-outline {
+            border-color: var(--line);
+            color: var(--text-main);
+            background: rgba(8, 20, 46, 0.45);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--text-main);
+        }
+
+        .comparison-card,
+        .step-visual,
+        .faq-preview,
+        .cta-section {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #06b6d4;
+        }
+
+        .faq-preview h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .faq-quick {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .faq-quick:last-child {
+            border-bottom: none;
+        }
+
+        .faq-q {
+            font-weight: 600;
+            color: var(--text-main);
+            width: 200px;
+            font-size: 15px;
+        }
+
+        .faq-a {
+            color: var(--text-dim);
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .faq-a i {
+            color: var(--accent);
+            margin-right: 4px;
+        }
+
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            margin: 60px 0;
+            padding: 50px;
+            background: var(--bg-elev);
+            border-radius: 24px;
+            border: 1px solid var(--line);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .cta-section h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            color: var(--text-dim);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+            box-shadow: 0 5px 15px rgba(34, 211, 238, 0.18);
+        }
+
+        .btn-primary:hover {
+            background: #06b6d4;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--line);
+            padding: 14px 36px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 40px 0;
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-dim);
+        }
+
+        footer span {
+            margin: 0 8px;
+        }
+
+        @media (max-width: 700px) {
+            .step-row {
+                flex-direction: column;
+            }
+            .step-row.reverse {
+                flex-direction: column;
+            }
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .faq-quick {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .faq-q {
+                width: auto;
+            }
+            .flow-line {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav>
+            <div class="logo" onclick="window.location.href='index.html'">
+                <div class="logo-icon">R</div>
+                <span class="logo-text">Roya</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Hem</a>
+                <a href="demo.html">Arbetsflöde</a>
+                <a href="pilot.html">Pilot</a>
+                <a href="FAQ.html">FAQ</a>
+            </div>
+            <button class="btn-outline" onclick="window.location.href='#'">
+                <i class="far fa-envelope"></i> Kontakt
+            </button>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Så fungerar Roya</h1>
+            <p>Ett enkelt verifieringslager före registrering för musikförlag</p>
+        </div>
+
+        <!-- Trust Bar -->
+        <div class="trust-bar">
+            <div class="trust-item"><i class="fas fa-check-circle"></i> Ingen integration krävs</div>
+            <div class="trust-item"><i class="fas fa-check-circle"></i> Ingen förändring av arbetsflödet</div>
+            <div class="trust-item"><i class="fas fa-check-circle"></i> PRO är fortsatt slutlig instans</div>
+            <div class="trust-item"><i class="fas fa-check-circle"></i> Pilotredo</div>
+        </div>
+
+        <!-- Before/After Comparison - REVISED with your improved flow -->
+        <div class="comparison-grid">
+            <!-- Before -->
+            <div class="comparison-card before">
+                <div class="comparison-title">
+                    <i class="fas fa-times-circle" style="color: #C53030;"></i>
+                    Före Roya
+                </div>
+                <div class="flow-line">
+                    <span class="flow-item">Musikförlag</span>
+                    <i class="fas fa-arrow-right flow-arrow"></i>
+                    <span class="flow-item issue">Problem</span>
+                    <i class="fas fa-arrow-right flow-arrow"></i>
+                    <span class="flow-item">PRO</span>
+                    <i class="fas fa-arrow-right flow-arrow"></i>
+                    <span class="flow-item issue">Fördröjd utbetalning</span>
+                </div>
+                <div class="comparison-note">
+                    <i class="fas fa-exclamation-triangle" style="color: #C53030;"></i>
+                    Dataproblem uppstår hos musikförlaget → PRO får bristfälligt underlag → förseningar sprids vidare
+                </div>
+            </div>
+
+            <!-- After -->
+            <div class="comparison-card after">
+                <div class="comparison-title">
+                    <i class="fas fa-check-circle" style="color: #2B6F4B;"></i>
+                    Med Roya
+                </div>
+                <div class="flow-line">
+                    <span class="flow-item">Musikförlag</span>
+                    <i class="fas fa-arrow-right flow-arrow"></i>
+                    <span class="flow-item highlight">Roya</span>
+                    <i class="fas fa-arrow-right flow-arrow"></i>
+                    <span class="flow-item">PRO</span>
+                    <i class="fas fa-arrow-right flow-arrow"></i>
+                    <span class="flow-item highlight">Snabbare utbetalning</span>
+                </div>
+                <div class="comparison-note">
+                    <i class="fas fa-check-circle" style="color: #2B6F4B;"></i>
+                    Problem fångas upp tidigt → rent underlag till PRO → utbetalningar kan hanteras utan onödiga förseningar
+                </div>
+            </div>
+        </div>
+
+        <!-- Step by Step -->
+        <div class="steps-container">
+            <!-- Step 1 -->
+            <div class="step-row">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h2>Musikförlaget laddar upp registreringsdata för PRO</h2>
+                    <p>Med sitt befintliga arbetsflöde exporterar musikförlaget sina PRO-CSV-filer, precis som idag, och laddar upp dem till Roya.</p>
+                    <div class="example-box">
+                        <h4>📤 Det som laddas upp:</h4>
+                        <ul>
+                            <li>PRO-CSV export från katalogsystemet</li>
+                            <li>Split sheets med upphovspersoner, roller och andelar</li>
+                            <li>IPI/ISWC-identifierare om de finns tillgängliga</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <p style="font-weight: 500;">PRO-CSV</p>
+                    <p style="color: #718096; font-size: 14px;">Samma format. Samma system. Inga ändringar.</p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-row reverse">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h2>Roya validerar och identifierar avvikelser</h2>
+                    <p>Roya kontrollerar automatiskt vanliga fel som leder till problem hos PRO: saknade IPI-nummer, andelar som inte summerar korrekt, ogiltiga format och möjliga rättighetskonflikter.</p>
+                    <div class="example-box">
+                        <h4>🔍 Det vi kontrollerar:</h4>
+                        <ul>
+                            <li>Att andelar summerar till 100 %</li>
+                            <li>Att IPI/ISWC-identifierare finns och är giltiga</li>
+                            <li>Att upphovspersoner inte saknas</li>
+                            <li>Att rolltyper är konsekventa</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-icon"><i class="fas fa-shield-alt"></i></div>
+                    <p style="font-weight: 500;">Identifierar fel automatiskt</p>
+                    <p style="color: #718096; font-size: 14px;">Returnerar en tydlig rapport över hittade avvikelser</p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-row">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h2>Automatisk korrigering och verifieringsspår</h2>
+                    <p>För vanliga fel kan Roya automatiskt rätta underlaget, till exempel normalisera andelar till 100 %. Alla verifieringar får dessutom ett tidsstämplat granskningsspår.</p>
+                    <div class="example-box">
+                        <h4>✨ Exempel på automatisk korrigering:</h4>
+                        <ul>
+                            <li>Normalisera andelar till 100 %</li>
+                            <li>Skapa platshållare för saknade IPI-nummer</li>
+                            <li>Flagga möjliga konflikter för granskning</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-icon"><i class="fas fa-magic"></i></div>
+                    <p style="font-weight: 500;">Verifieringsspår</p>
+                    <p style="color: #718096; font-size: 14px;">Tidsstämplad granskningshistorik</p>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-row reverse">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h2>Musikförlaget skickar rent underlag till PRO</h2>
+                    <p>När eventuella problem är åtgärdade laddar musikförlaget ner den verifierade filen och skickar den till PRO genom sin vanliga process, nu med större säkerhet att underlaget kan hanteras utan onödiga förseningar.</p>
+                    <div class="example-box">
+                        <h4>✅ Resultat:</h4>
+                        <ul>
+                            <li>Färre avvisningar</li>
+                            <li>Snabbare handläggning</li>
+                            <li>Granskningsspår vid tvister</li>
+                            <li>Samma PRO-process som idag</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="step-visual">
+                    <div class="visual-icon"><i class="fas fa-check-circle" style="color: #2B6F4B;"></i></div>
+                    <p style="font-weight: 500;">Redo för PRO</p>
+                    <p style="color: #718096; font-size: 14px;">Rent underlag, samma inlämningsprocess</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Preview (Addresses common questions) -->
+        <div class="faq-preview">
+            <h3>Snabba svar</h3>
+            <div class="faq-quick">
+                <span class="faq-q">Förändrar detta PRO:s arbetsflöde?</span>
+                <span class="faq-a"><i class="fas fa-check-circle" style="color: #2B6F4B;"></i> Nej — musikförlag skickar fortfarande in på samma sätt. Roya är en frivillig förkontroll.</span>
+            </div>
+            <div class="faq-quick">
+                <span class="faq-q">Vad händer om något missas?</span>
+                <span class="faq-a"><i class="fas fa-check-circle" style="color: #2B6F4B;"></i> PRO:s validering är fortfarande slutlig. Roya fångar bara upp problem tidigare.</span>
+            </div>
+            <div class="faq-quick">
+                <span class="faq-q">Måste musikförlag installera programvara?</span>
+                <span class="faq-a"><i class="fas fa-check-circle" style="color: #2B6F4B;"></i> Nej — det är ett webbaserat verktyg. Ladda upp, verifiera, ladda ner.</span>
+            </div>
+            <div class="faq-quick">
+                <span class="faq-q">Hur lång tid tar verifieringen?</span>
+                <span class="faq-a"><i class="fas fa-check-circle" style="color: #2B6F4B;"></i> Sekunder. Musikförlag får omedelbar återkoppling.</span>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section">
+            <h2>Se det i praktiken</h2>
+            <p>Testa arbetsflödesdemon med exempeldata — inget konto krävs.</p>
+            <div class="button-group">
+                <button class="btn-primary" onclick="window.location.href='workflow.html'">
+                    <i class="fas fa-play"></i>
+                    Testa live-demo
+                </button>
+                <button class="btn-secondary" onclick="window.location.href='pilot.html'">
+                    <i class="fas fa-comments"></i>
+                    Diskutera pilot
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Roya stödjer bättre datakvalitet och effektivare arbetsflöden i registrering av musikrättigheter.</p>
+            <div style="margin-top: 20px;">
+                <span>© 2026 Roya</span>
+                <span>|</span>
+                <span>Kompatibel med PRO</span>
+                <span>|</span>
+                <span>Utvecklad för svensk musikförlagsverksamhet</span>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>

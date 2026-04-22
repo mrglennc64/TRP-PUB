@@ -1,0 +1,39 @@
+Subject: Your catalog cleaning has started
+
+Hi {{firstName}},
+
+Our specialists have begun preparing your corrected, submission-ready catalog package. You'll receive a delivery notification when it's ready.
+
+ORDER DETAILS
+Order:              {{orderId}}
+Catalog:            {{catalogName}} ({{worksCount}} works)
+Estimated delivery: {{etaStart}} - {{etaEnd}}
+
+WHAT WE'RE DOING NOW
+- Reviewing all works and issue types
+- Resolving missing identifiers and contributor gaps
+- Validating publisher and writer information
+- Correcting structural metadata issues
+- Preparing clean CWR files
+- Generating your Publishing Health Report
+
+WHAT YOU'LL RECEIVE
+- A fully cleaned catalog package
+- A detailed report of all corrections
+- Submission-ready CWR files
+- A Fix-Later Task Summary for any optional enhancements
+
+View cleaning status: {{dashboardUrl}}
+
+This engagement is governed by our Service Agreement:
+https://traproyaltiespro.com/publisher-portal/pages/service-agreement.html
+
+Questions? Reply to this email or write to {{supportEmail}}.
+
+--
+TrapRoyaltiesPro
+Professional metadata cleaning for music publishers
+https://traproyaltiespro.com
+
+Privacy: https://traproyaltiespro.com/privacy
+Terms:   https://traproyaltiespro.com/terms

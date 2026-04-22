@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
-const VALID_KEYS = ['TRP-ATT-2026', 'Lerae'];
+const VALID_KEYS = ['TRP-ATT-2026'];
 const COOKIE_NAME = 'trp_cases_session';
 
 export async function GET(

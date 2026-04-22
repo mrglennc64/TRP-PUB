@@ -15,7 +15,7 @@ const PDFPreviewModal = ({ secureUrl, isOpen, onClose, documentTitle }) => {
           </div>
           <button 
             onClick={onClose} 
-            className="text-red-600 hover:text-red-800 font-bold text-xl px-3 py-1 hover:bg-red-50 rounded transition"
+            className="text-rose-600 hover:text-rose-800 font-bold text-xl px-3 py-1 hover:bg-rose-50 rounded transition"
           >
             ✕ Close
           </button>
@@ -173,7 +173,7 @@ export default function PDFContractViewer({ agreementId, trackData, participants
         </div>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded text-rose-700 text-sm">
             {error}
           </div>
         )}
@@ -206,7 +206,7 @@ export default function PDFContractViewer({ agreementId, trackData, participants
           <button
             onClick={getContract}
             disabled={loadingContracts}
-            className="flex-1 bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50 transition font-medium text-sm flex items-center justify-center gap-2"
+            className="flex-1 bg-emerald-600 text-white py-2.5 px-4 rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition font-medium text-sm flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -218,8 +218,8 @@ export default function PDFContractViewer({ agreementId, trackData, participants
         
         {/* Generated PDF Link (as backup) */}
         {pdfUrl && !showPreview && (
-          <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-sm text-green-800 mb-2">✓ Contract ready</p>
+          <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+            <p className="text-sm text-emerald-800 mb-2">✓ Contract ready</p>
             <button
               onClick={() => setShowPreview(true)}
               className="text-indigo-600 hover:text-indigo-800 text-sm flex items-center gap-1"

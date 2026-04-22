@@ -8,7 +8,7 @@ const ARTISTS = [
     name: 'METRO BOOMIN',
     initial: 'M',
     balance: '$12,840.42',
-    gradient: 'from-purple-600 to-blue-500',
+    gradient: 'from-purple-600 to-indigo-500',
     accruals: [
       { track: 'Jumpman', platform: 'Spotify', territory: 'US', amount: '+$142.10', status: 'live' },
       { track: 'Mask Off', platform: 'Apple Music', territory: 'UK', amount: '+$88.19', status: 'live' },
@@ -22,7 +22,7 @@ const ARTISTS = [
     name: 'FUTURE',
     initial: 'F',
     balance: '$31,200.00',
-    gradient: 'from-orange-500 to-red-600',
+    gradient: 'from-amber-500 to-rose-600',
     accruals: [
       { track: 'Mask Off', platform: 'Spotify', territory: 'Global', amount: '+$820.44', status: 'live' },
       { track: 'Low Life', platform: 'Apple Music', territory: 'US', amount: '+$210.11', status: 'live' },
@@ -83,7 +83,7 @@ export default function ArtistPortalPage() {
               <div>
                 <p className="text-xs font-bold text-white">{a.name}</p>
                 <p className="text-[10px] text-slate-500 mono">{a.balance}</p>
-                {!a.lodSigned && <p className="text-[9px] text-red-400 font-bold mt-0.5">LOD Unsigned</p>}
+                {!a.lodSigned && <p className="text-[9px] text-rose-400 font-bold mt-0.5">LOD Unsigned</p>}
               </div>
             </button>
           ))}
@@ -132,7 +132,7 @@ export default function ArtistPortalPage() {
                     <h2 className="text-4xl font-black mono mb-1" style={{ textShadow: '0 0 20px rgba(168,85,247,0.4)' }}>{artist.balance}</h2>
                     <p className="text-[9px] text-slate-500 uppercase tracking-tighter">Verified via TrapRoyalties Ledger</p>
                     {!artist.lodSigned && (
-                      <div className="mt-3 px-3 py-1.5 bg-red-900/20 border border-red-500/30 rounded-xl text-[10px] text-red-400 font-bold">
+                      <div className="mt-3 px-3 py-1.5 bg-rose-900/20 border border-rose-500/30 rounded-xl text-[10px] text-rose-400 font-bold">
                         LOD Unsigned — Payout on Hold
                       </div>
                     )}
@@ -148,13 +148,13 @@ export default function ArtistPortalPage() {
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-4 tracking-widest">Real-Time Accruals</h3>
                   <div className="space-y-3">
                     {artist.accruals.map((a, i) => (
-                      <div key={i} className={`p-4 rounded-2xl flex justify-between items-center border ${a.status === 'hold' ? 'border-red-500/20 bg-red-900/5' : 'border-white/5'}`}
+                      <div key={i} className={`p-4 rounded-2xl flex justify-between items-center border ${a.status === 'hold' ? 'border-rose-500/20 bg-rose-900/5' : 'border-white/5'}`}
                         style={{ background: a.status !== 'hold' ? 'rgba(30,41,59,0.5)' : undefined, backdropFilter: 'blur(20px)' }}>
                         <div>
                           <p className="text-xs font-bold uppercase tracking-tighter">{a.track}</p>
                           <p className="text-[9px] text-slate-500 font-mono">{a.platform} · {a.territory}</p>
                         </div>
-                        <p className={`text-xs font-bold ${a.status === 'live' ? 'text-green-400' : a.status === 'hold' ? 'text-red-400' : 'text-slate-400'}`}>{a.amount}</p>
+                        <p className={`text-xs font-bold ${a.status === 'live' ? 'text-emerald-400' : a.status === 'hold' ? 'text-rose-400' : 'text-slate-400'}`}>{a.amount}</p>
                       </div>
                     ))}
                   </div>
@@ -191,7 +191,7 @@ export default function ArtistPortalPage() {
                   <div className="space-y-3">
                     {['Split Sheet Agreement', 'LOD Authorization', 'Master Recording Contract', 'Publishing Deal'].map((doc, i) => (
                       <div key={i} className="flex items-center gap-3 p-4 rounded-2xl border border-white/5" style={{ background: 'rgba(30,41,59,0.5)' }}>
-                        <div className="h-9 w-9 bg-slate-800 rounded-lg flex items-center justify-center text-red-400 text-[10px] font-black">PDF</div>
+                        <div className="h-9 w-9 bg-slate-800 rounded-lg flex items-center justify-center text-rose-400 text-[10px] font-black">PDF</div>
                         <div className="flex-1">
                           <p className="text-xs font-bold">{doc}</p>
                           <p className="text-[9px] text-slate-500 mono">{i === 1 && !artist.lodSigned ? 'UNSIGNED' : '✓ Verified'}</p>

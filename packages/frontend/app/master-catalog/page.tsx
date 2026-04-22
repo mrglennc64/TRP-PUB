@@ -190,16 +190,16 @@ const CATALOG: CatalogTrack[] = [
 /* ─── Constants ──────────────────────────────────────────────── */
 const FLAG_META: Record<AuditFlag, { label: string; color: string; bg: string; border: string }> = {
   split_conflict:      { label: "Split Conflict",      color: "text-rose-400",   bg: "bg-rose-500/15",   border: "border-rose-500/30" },
-  missing_iswc:        { label: "Missing ISWC",        color: "text-orange-400", bg: "bg-orange-500/15", border: "border-orange-500/30" },
+  missing_iswc:        { label: "Missing ISWC",        color: "text-amber-400", bg: "bg-amber-500/15", border: "border-amber-500/30" },
   missing_ipi:         { label: "Missing IPI",         color: "text-yellow-400", bg: "bg-yellow-500/15", border: "border-yellow-500/30" },
   duplicate_isrc:      { label: "Duplicate ISRC",      color: "text-rose-400",   bg: "bg-rose-500/15",   border: "border-rose-500/30" },
   unclaimed_territory: { label: "Unclaimed Territory", color: "text-amber-400",  bg: "bg-amber-500/15",  border: "border-amber-500/30" },
   over_allocated:      { label: "Over-Allocated",      color: "text-rose-400",   bg: "bg-rose-500/15",   border: "border-rose-500/30" },
-  unregistered_pro:    { label: "Unregistered PRO",    color: "text-orange-400", bg: "bg-orange-500/15", border: "border-orange-500/30" },
+  unregistered_pro:    { label: "Unregistered PRO",    color: "text-amber-400", bg: "bg-amber-500/15", border: "border-amber-500/30" },
 };
 
 const STATUS_META: Record<CatalogTrack["status"], { label: string; color: string; dot: string }> = {
-  active:   { label: "Active",   color: "text-green-400",  dot: "bg-green-400" },
+  active:   { label: "Active",   color: "text-emerald-400",  dot: "bg-emerald-400" },
   dispute:  { label: "Dispute",  color: "text-rose-400",   dot: "bg-rose-400" },
   pending:  { label: "Pending",  color: "text-yellow-400", dot: "bg-yellow-400" },
   archived: { label: "Archived", color: "text-slate-500",  dot: "bg-slate-500" },
@@ -210,7 +210,7 @@ function fmtMoney(n: number) {
 }
 
 /* ─── JSON-style key-value component ────────────────────────── */
-function JsonField({ k, v, indent = 0, color = "text-sky-300" }: { k: string; v: React.ReactNode; indent?: number; color?: string }) {
+function JsonField({ k, v, indent = 0, color = "text-indigo-300" }: { k: string; v: React.ReactNode; indent?: number; color?: string }) {
   return (
     <div className="flex gap-1 leading-5" style={{ paddingLeft: indent * 16 }}>
       <span className="text-slate-500 flex-shrink-0">"{k}":</span>
@@ -243,8 +243,8 @@ function TrackDetail({ track }: { track: CatalogTrack }) {
         <div className="p-4 font-mono text-xs space-y-0.5 max-h-[520px] overflow-y-auto leading-5">
           <div className="text-slate-600">{"{"}</div>
           <JsonField k="id"              v={`"${track.id}"`}           indent={1} />
-          <JsonField k="title"           v={`"${track.title}"`}        indent={1} color="text-green-300" />
-          <JsonField k="artist"          v={`"${track.artist}"`}       indent={1} color="text-green-300" />
+          <JsonField k="title"           v={`"${track.title}"`}        indent={1} color="text-emerald-300" />
+          <JsonField k="artist"          v={`"${track.artist}"`}       indent={1} color="text-emerald-300" />
           <JsonField k="isrc"            v={`"${track.isrc}"`}         indent={1} color="text-yellow-300" />
           <JsonField k="iswc"            v={track.iswc ? `"${track.iswc}"` : <span className="text-rose-400">null</span>} indent={1} color="text-yellow-300" />
           <JsonField k="upc"             v={track.upc ? `"${track.upc}"` : <span className="text-slate-500">null</span>}  indent={1} color="text-yellow-300" />
@@ -256,22 +256,22 @@ function TrackDetail({ track }: { track: CatalogTrack }) {
           <JsonField k="status"          v={`"${track.status}"`}       indent={1} color={STATUS_META[track.status].color} />
           <JsonField k="source"          v={`"${track.source}"`}       indent={1} color="text-slate-400" />
           <JsonField k="last_updated"    v={`"${track.last_updated}"`} indent={1} color="text-slate-400" />
-          <div className="flex gap-1 pl-4"><span className="text-slate-500">"rights_types":</span> <span className="text-violet-300">[{track.rights_types.map(r => `"${r}"`).join(", ")}]</span></div>
-          <div className="flex gap-1 pl-4"><span className="text-slate-500">"territories_claimed":</span> <span className="text-sky-300">[{track.territories_claimed.map(t => `"${t}"`).join(", ")}]</span></div>
+          <div className="flex gap-1 pl-4"><span className="text-slate-500">"rights_types":</span> <span className="text-indigo-300">[{track.rights_types.map(r => `"${r}"`).join(", ")}]</span></div>
+          <div className="flex gap-1 pl-4"><span className="text-slate-500">"territories_claimed":</span> <span className="text-indigo-300">[{track.territories_claimed.map(t => `"${t}"`).join(", ")}]</span></div>
           <div className="flex gap-1 pl-4"><span className="text-slate-500">"territories_gap":</span> <span className="text-rose-300">[{track.territories_gap.map(t => `"${t}"`).join(", ")}]</span></div>
           <div className="flex gap-1 pl-4"><span className="text-slate-500">"audit_flags":</span> <span className="text-rose-300">[{track.audit_flags.map(f => `"${f}"`).join(", ")}]</span></div>
-          <JsonField k="revenue_ytd"       v={track.revenue_ytd}                indent={1} color="text-green-400" />
+          <JsonField k="revenue_ytd"       v={track.revenue_ytd}                indent={1} color="text-emerald-400" />
           <JsonField k="revenue_unclaimed" v={<span className={track.revenue_unclaimed > 0 ? "text-rose-400" : "text-slate-500"}>{track.revenue_unclaimed}</span>} indent={1} />
           <div className="pl-4 text-slate-500">"rights_holders": [</div>
           {track.rights_holders.map((rh, i) => (
             <div key={i} className="pl-8 space-y-0.5">
               <div className="text-slate-600">{"{"}</div>
-              <JsonField k="name"        v={`"${rh.name}"`}        indent={6} color="text-green-300" />
-              <JsonField k="role"        v={`"${rh.role}"`}        indent={6} color="text-violet-300" />
+              <JsonField k="name"        v={`"${rh.name}"`}        indent={6} color="text-emerald-300" />
+              <JsonField k="role"        v={`"${rh.role}"`}        indent={6} color="text-indigo-300" />
               {rh.ipi && <JsonField k="ipi"  v={`"${rh.ipi}"`}    indent={6} color="text-yellow-300" />}
-              <JsonField k="share"       v={`${rh.share}`}         indent={6} color="text-sky-300" />
+              <JsonField k="share"       v={`${rh.share}`}         indent={6} color="text-indigo-300" />
               {rh.pro && <JsonField k="pro"  v={`"${rh.pro}"`}     indent={6} />}
-              <JsonField k="controlled"  v={rh.controlled ? <span className="text-green-400">true</span> : <span className="text-slate-500">false</span>} indent={6} />
+              <JsonField k="controlled"  v={rh.controlled ? <span className="text-emerald-400">true</span> : <span className="text-slate-500">false</span>} indent={6} />
               <div className="text-slate-600 pl-[96px]">{i < track.rights_holders.length - 1 ? "}," : "}"}</div>
             </div>
           ))}
@@ -290,12 +290,12 @@ function TrackDetail({ track }: { track: CatalogTrack }) {
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="text-sm font-bold text-white">{rh.name}</span>
                     <span className={`px-2 py-0.5 text-xs font-bold rounded border capitalize ${
-                      rh.role === "writer"    ? "text-sky-400 border-sky-500/30 bg-sky-500/10" :
-                      rh.role === "publisher" ? "text-violet-400 border-violet-500/30 bg-violet-500/10" :
+                      rh.role === "writer"    ? "text-indigo-400 border-indigo-500/30 bg-indigo-500/10" :
+                      rh.role === "publisher" ? "text-indigo-400 border-indigo-500/30 bg-indigo-500/10" :
                       rh.role === "label"     ? "text-amber-400 border-amber-500/30 bg-amber-500/10" :
                       "text-slate-400 border-slate-500/30 bg-slate-500/10"
                     }`}>{rh.role}</span>
-                    <span className={`text-xs font-semibold ${rh.controlled ? "text-green-400" : "text-slate-500"}`}>
+                    <span className={`text-xs font-semibold ${rh.controlled ? "text-emerald-400" : "text-slate-500"}`}>
                       {rh.controlled ? "● Controlled" : "○ Uncontrolled"}
                     </span>
                   </div>
@@ -323,7 +323,7 @@ function TrackDetail({ track }: { track: CatalogTrack }) {
           {/* Split total */}
           <div className="px-5 py-3 flex items-center justify-between bg-white/5">
             <span className="text-xs text-slate-400">Total writer share</span>
-            <span className={`text-sm font-black ${Math.abs(track.rights_holders.filter(r => r.role === "writer").reduce((s, r) => s + r.share, 0) - 100) < 0.1 ? "text-green-400" : "text-rose-400"}`}>
+            <span className={`text-sm font-black ${Math.abs(track.rights_holders.filter(r => r.role === "writer").reduce((s, r) => s + r.share, 0) - 100) < 0.1 ? "text-emerald-400" : "text-rose-400"}`}>
               {track.rights_holders.filter(r => r.role === "writer").reduce((s, r) => s + r.share, 0).toFixed(2)}%
             </span>
           </div>
@@ -334,7 +334,7 @@ function TrackDetail({ track }: { track: CatalogTrack }) {
       {tab === "flags" && (
         <div className="p-5 space-y-3 max-h-[520px] overflow-y-auto">
           {track.audit_flags.length === 0 ? (
-            <div className="text-center py-10 text-green-400 font-semibold">
+            <div className="text-center py-10 text-emerald-400 font-semibold">
               ✓ No audit flags — this track is clean
             </div>
           ) : (
@@ -476,9 +476,9 @@ export default function MasterCatalogPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "Total Tracks",       value: CATALOG.length,              color: "text-white" },
-            { label: "Revenue YTD",        value: fmtMoney(totalRevenue),      color: "text-green-400" },
+            { label: "Revenue YTD",        value: fmtMoney(totalRevenue),      color: "text-emerald-400" },
             { label: "Unclaimed Revenue",  value: fmtMoney(totalUnclaimed),    color: "text-rose-400" },
-            { label: "Audit Flags",        value: `${totalFlags} flags · ${cleanCount} clean`, color: totalFlags > 0 ? "text-yellow-400" : "text-green-400" },
+            { label: "Audit Flags",        value: `${totalFlags} flags · ${cleanCount} clean`, color: totalFlags > 0 ? "text-yellow-400" : "text-emerald-400" },
           ].map((c) => (
             <div key={c.label} className="bg-[#0f172a] border border-white/10 rounded-xl p-4">
               <div className="text-xs text-slate-500 mb-1">{c.label}</div>
@@ -559,7 +559,7 @@ export default function MasterCatalogPage() {
                             <div className="text-sm font-semibold text-white truncate">{track.title}</div>
                             <div className="text-xs text-slate-400 truncate">{track.artist}</div>
                             <div className="text-xs text-slate-600 font-mono mt-0.5 truncate">
-                              {track.isrc} {track.iswc ? `· ${track.iswc}` : <span className="text-orange-400/70">· no ISWC</span>}
+                              {track.isrc} {track.iswc ? `· ${track.iswc}` : <span className="text-amber-400/70">· no ISWC</span>}
                             </div>
                             {/* Flags inline on mobile */}
                             {track.audit_flags.length > 0 && (
@@ -573,7 +573,7 @@ export default function MasterCatalogPage() {
                             )}
                           </div>
                           <div className="w-32 hidden sm:block text-xs text-slate-500">{track.last_updated}</div>
-                          <div className="w-28 hidden sm:block text-right text-sm font-semibold text-green-400">{fmtMoney(track.revenue_ytd)}</div>
+                          <div className="w-28 hidden sm:block text-right text-sm font-semibold text-emerald-400">{fmtMoney(track.revenue_ytd)}</div>
                           <div className={`w-24 hidden sm:block text-right text-sm font-semibold ${track.revenue_unclaimed > 0 ? "text-rose-400" : "text-slate-600"}`}>
                             {track.revenue_unclaimed > 0 ? fmtMoney(track.revenue_unclaimed) : "—"}
                           </div>
@@ -583,7 +583,7 @@ export default function MasterCatalogPage() {
                                 {track.audit_flags.length}
                               </span>
                             ) : (
-                              <span className="text-green-400 text-xs">✓</span>
+                              <span className="text-emerald-400 text-xs">✓</span>
                             )}
                           </div>
                           <div className="w-20 hidden sm:flex items-center justify-center gap-1.5">
@@ -620,12 +620,12 @@ export default function MasterCatalogPage() {
                       </div>
                       <div className="font-mono text-xs text-slate-600 mb-2">{track.isrc}</div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-bold text-green-400">{fmtMoney(track.revenue_ytd)}</span>
+                        <span className="text-sm font-bold text-emerald-400">{fmtMoney(track.revenue_ytd)}</span>
                         {track.audit_flags.length > 0 ? (
                           <span className="px-2 py-0.5 bg-rose-500/20 text-rose-400 text-xs font-bold rounded-full border border-rose-500/30">
                             {track.audit_flags.length} flag{track.audit_flags.length !== 1 ? "s" : ""}
                           </span>
-                        ) : <span className="text-green-400 text-xs">✓ clean</span>}
+                        ) : <span className="text-emerald-400 text-xs">✓ clean</span>}
                       </div>
                     </div>
                   );
@@ -640,7 +640,7 @@ export default function MasterCatalogPage() {
               <div className="flex items-center justify-between">
                 <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">{selectedTrack.title}</div>
                 <div className="flex items-center gap-2">
-                  <button onClick={copyJSON} className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition ${copied ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10"}`}>
+                  <button onClick={copyJSON} className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition ${copied ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10"}`}>
                     {copied ? "✓ Copied!" : "Copy JSON"}
                   </button>
                   <Link href="/cwr-generator" className="px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition">

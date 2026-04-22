@@ -46,8 +46,8 @@ const GAPS = [
 ];
 
 const gapColor = (color: string) => {
-  if (color === 'red') return { dot: 'bg-red-500', badge: 'bg-red-500/20 text-red-400 border-red-500/30', btn: 'bg-indigo-600/80 hover:bg-indigo-600 text-white' };
-  return { dot: 'bg-orange-400', badge: 'bg-orange-400/20 text-orange-400 border-orange-400/30', btn: 'bg-indigo-600/80 hover:bg-indigo-600 text-white' };
+  if (color === 'red') return { dot: 'bg-rose-500', badge: 'bg-rose-500/20 text-rose-400 border-rose-500/30', btn: 'bg-indigo-600/80 hover:bg-indigo-600 text-white' };
+  return { dot: 'bg-amber-400', badge: 'bg-amber-400/20 text-amber-400 border-amber-400/30', btn: 'bg-indigo-600/80 hover:bg-indigo-600 text-white' };
 };
 
 export default function GapFinder() {
@@ -86,14 +86,14 @@ export default function GapFinder() {
             <div className="flex items-start gap-4">
               {/* Status dots */}
               <div className="flex flex-col gap-1.5 mt-1.5">
-                <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />
+                <span className="w-3 h-3 rounded-full bg-rose-500 inline-block" />
                 <span className="w-3 h-3 rounded-full bg-slate-700 inline-block" />
                 <span className="w-3 h-3 rounded-full bg-slate-700 inline-block" />
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <h1 className="text-2xl font-black">{TRACK.title}</h1>
-                  <span className="px-2 py-0.5 bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-bold rounded">
+                  <span className="px-2 py-0.5 bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-bold rounded">
                     {TRACK.severity}
                   </span>
                 </div>
@@ -102,7 +102,7 @@ export default function GapFinder() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-black text-red-400">{TRACK.annualLoss}</p>
+              <p className="text-3xl font-black text-rose-400">{TRACK.annualLoss}</p>
               <p className="text-xs text-slate-500 uppercase tracking-wider mt-0.5">Est. Annual Loss</p>
               <div className="mt-2 flex items-center gap-1.5 justify-end px-3 py-1.5 bg-indigo-500/20 border border-indigo-500/40 rounded-lg text-indigo-300 text-xs font-bold">
                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,8 +114,8 @@ export default function GapFinder() {
           </div>
 
           {/* Gap count banner */}
-          <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2 mb-5">
-            <p className="text-xs font-bold text-red-400 uppercase tracking-widest">{GAPS.length} Gaps Detected</p>
+          <div className="bg-rose-500/10 border border-rose-500/20 rounded-lg px-4 py-2 mb-5">
+            <p className="text-xs font-bold text-rose-400 uppercase tracking-widest">{GAPS.length} Gaps Detected</p>
           </div>
 
           {/* Gaps */}
@@ -157,11 +157,11 @@ export default function GapFinder() {
           </div>
 
           {/* Revenue Recovery Dashboard */}
-          <div className="bg-[#0f172a] border border-red-500/20 rounded-2xl p-6 mb-6">
+          <div className="bg-[#0f172a] border border-rose-500/20 rounded-2xl p-6 mb-6">
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Revenue Recovery Dashboard</p>
             <div className="grid grid-cols-3 gap-6">
               <div>
-                <p className="text-3xl font-black text-red-400">{TRACK.projection}</p>
+                <p className="text-3xl font-black text-rose-400">{TRACK.projection}</p>
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider mt-1">Current Unclaimed Projection</p>
               </div>
               <div>
@@ -170,8 +170,8 @@ export default function GapFinder() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-2xl font-black text-red-400">{TRACK.leakageRate}</p>
-                  <span className="px-2 py-0.5 bg-red-500/20 border border-red-500/30 text-red-400 text-[10px] font-bold rounded">CRITICAL</span>
+                  <p className="text-2xl font-black text-rose-400">{TRACK.leakageRate}</p>
+                  <span className="px-2 py-0.5 bg-rose-500/20 border border-rose-500/30 text-rose-400 text-[10px] font-bold rounded">CRITICAL</span>
                 </div>
                 <p className="text-[10px] text-slate-500 uppercase tracking-wider mt-1">Leakage Rate</p>
               </div>
@@ -185,7 +185,7 @@ export default function GapFinder() {
               Conflict detected: 14% of digital performance assets are currently missing primary Producer IPI{' '}
               <span className="font-mono text-indigo-300">00658428135</span> in ingestion metadata.{' '}
               <span className="text-yellow-400 font-semibold">{TRACK.missingIswcCount} tracks</span> identified with missing ISWC links.
-              Leakage rate of <span className="text-red-400 font-semibold">{TRACK.leakageRate}</span> indicates unroutable publishing royalties
+              Leakage rate of <span className="text-rose-400 font-semibold">{TRACK.leakageRate}</span> indicates unroutable publishing royalties
               across PRO pipelines.
             </p>
           </div>
@@ -194,15 +194,15 @@ export default function GapFinder() {
           <button
             onClick={handleGenerate}
             disabled={generating || generated}
-            className="w-full py-4 bg-orange-500 hover:bg-orange-400 disabled:opacity-60 text-white font-black text-sm rounded-xl transition uppercase tracking-widest"
+            className="w-full py-4 bg-amber-500 hover:bg-amber-400 disabled:opacity-60 text-white font-black text-sm rounded-xl transition uppercase tracking-widest"
           >
             {generated ? '✓ Recovery Directive Generated' : generating ? 'Generating...' : 'Generate Recovery Directive →'}
           </button>
 
           {generated && (
-            <div className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-sm text-green-300">
+            <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-sm text-emerald-300">
               <p className="font-bold mb-1">Recovery Directive Ready</p>
-              <p className="text-xs text-green-400/80">
+              <p className="text-xs text-emerald-400/80">
                 3 action items queued: ISRC registration, IPI linkage for Wesley Glass (00658428135), CWR submission for {TRACK.missingIswcCount} unlinked works.
                 Est. recovery window: 60–90 days.
               </p>

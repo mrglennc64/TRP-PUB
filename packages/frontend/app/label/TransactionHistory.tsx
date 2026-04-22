@@ -108,8 +108,8 @@ export default function TransactionHistory() {
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg ${
                     tx.type === 'incoming' 
-                      ? 'bg-green-600/20 text-green-400' 
-                      : 'bg-red-600/20 text-red-400'
+                      ? 'bg-emerald-600/20 text-emerald-400' 
+                      : 'bg-rose-600/20 text-rose-400'
                   }`}>
                     {tx.type === 'incoming' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
                   </div>
@@ -131,7 +131,7 @@ export default function TransactionHistory() {
                   </div>
                 </div>
                 <div className={`font-medium ${
-                  tx.type === 'incoming' ? 'text-green-400' : 'text-red-400'
+                  tx.type === 'incoming' ? 'text-emerald-400' : 'text-rose-400'
                 }`}>
                   {tx.type === 'incoming' ? '+' : '-'}{tx.value} MON
                 </div>

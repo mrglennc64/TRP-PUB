@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cleaning Wizard – TrapRoyaltiesPro</title>
+    <script>
+    (function(){
+      document.addEventListener('contextmenu', function(e){e.preventDefault();});
+      document.addEventListener('keydown', function(e){
+        var k=(e.key||'').toUpperCase();
+        if(k==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C','K'].indexOf(k)!==-1)||(e.ctrlKey&&k==='U')){e.preventDefault();}
+      });
+      if(sessionStorage.getItem('roya_tool_auth')==='1'||/[?&]demo=1(?:&|$)/.test(location.search))return;
+      document.write('<style id="roya-gate-css">body>*{visibility:hidden!important}#roya-gate,#roya-gate *{visibility:visible!important}</style>');
+      document.addEventListener('DOMContentLoaded',function(){
+        var ov=document.createElement('div');
+        ov.id='roya-gate';
+        ov.style.cssText='position:fixed;inset:0;background:#000;z-index:2147483647;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;';
+        ov.innerHTML='<div style="background:#090d12;border:1px solid #00e6fb;border-radius:18px;padding:48px 36px;min-width:320px;text-align:center;box-shadow:0 8px 32px 0 rgba(0,255,255,0.08);">'
+          +'<div style="font-size:2rem;font-weight:700;color:#00e6fb;margin-bottom:18px;letter-spacing:1px;text-transform:uppercase;">TrapRoyaltiesPro</div>'
+          +'<div style="color:#00e6fb;margin-bottom:20px;">Enter password to access tool</div>'
+          +'<form id="roya-gate-form" style="display:flex;flex-direction:column;gap:12px;">'
+          +'<input id="roya-gate-pw" type="password" placeholder="Password" required autofocus style="padding:12px;border-radius:8px;border:1px solid #00e6fb;background:#11151c;color:#fff;font-size:1rem;outline:none;"/>'
+          +'<button type="submit" style="background:linear-gradient(90deg,#00e6fb,#00cfff);color:#000;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:600;cursor:pointer;">Enter</button>'
+          +'<div id="roya-gate-err" style="color:#f87171;font-size:0.9rem;min-height:1.2em;"></div>'
+          +'</form></div>';
+        document.body.appendChild(ov);
+        document.getElementById('roya-gate-form').addEventListener('submit',function(e){
+          e.preventDefault();
+          if(document.getElementById('roya-gate-pw').value.trim()==='trapro2026'){
+            sessionStorage.setItem('roya_tool_auth','1');
+            var css=document.getElementById('roya-gate-css');if(css)css.remove();
+            ov.remove();
+          }else{
+            document.getElementById('roya-gate-err').textContent='Incorrect password';
+          }
+        });
+      });
+    })();
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Inter, Arial, sans-serif; background: #0b1226; color: #e8edff; padding: 24px; }
+        .container { max-width: 860px; margin: 0 auto; }
+        .page-container { background: #111a36; border: 1px solid #253764; border-radius: 14px; padding: 28px; }
+        .back-link { color: #f0b429; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 18px; }
+        h1 { margin: 0 0 6px; font-size: 22px; }
+        .desc { color: #a8b5d9; margin-bottom: 20px; font-size: 14px; line-height: 1.6; }
+        .upload-area { border: 1.5px dashed #2c4073; border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; transition: border-color 0.2s; margin-bottom: 8px; }
+        .upload-area:hover { border-color: #5e6dff; }
+        .upload-area input[type="file"] { display: none; }
+        .upload-label { color: #7b8fc4; font-size: 14px; }
+        .file-name { color: #f0b429; font-size: 13px; margin-top: 5px; }
+        .sample-note { font-size: 12px; color: #5a6a9a; text-align: center; margin-bottom: 12px; }
+        .btn-analyze { background: linear-gradient(90deg,#5e6dff,#7c65ff); border: 0; color: white; padding: 11px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; font-size: 15px; margin-bottom: 4px; }
+        .btn-analyze:disabled { opacity: 0.6; cursor: not-allowed; }
+        .loading { text-align: center; color: #7b8fc4; padding: 24px; font-size: 14px; }
+        .error-msg { color: #f87171; background: rgba(239,68,68,0.1); border-radius: 8px; padding: 12px; font-size: 14px; margin-top: 12px; }
+
+        /* Score bar */
+        .score-row { display: flex; align-items: center; gap: 20px; background: #0f1834; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+        .score-circle { width: 72px; height: 72px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+        .sc-high { background: rgba(34,197,94,.12); border: 2px solid #22c55e; color: #22c55e; }
+        .sc-mid  { background: rgba(234,179,8,.12);  border: 2px solid #eab308; color: #eab308; }
+        .sc-low  { background: rgba(239,68,68,.12);  border: 2px solid #ef4444; color: #ef4444; }
+        .score-info { flex: 1; }
+        .score-info strong { font-size: 16px; display: block; margin-bottom: 4px; }
+        .score-info span { font-size: 13px; color: #a8b5d9; }
+        .action-bar { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .btn-export { background: #22c55e; border: 0; color: #0b1226; padding: 9px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; }
+        .btn-export:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-export-ddex { background: transparent; border: 1px solid #5e6dff; color: #a8b5d9; padding: 9px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+
+        /* Issue table */
+        .section-title { font-size: 12px; font-weight: 700; color: #7b8fc4; text-transform: uppercase; letter-spacing: 0.8px; margin: 20px 0 10px; }
+        .issue-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .issue-table th { text-align: left; padding: 8px 12px; color: #5a6a9a; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid #1e2d52; }
+        .issue-table td { padding: 10px 12px; border-bottom: 1px solid #111a36; vertical-align: top; }
+        .issue-table tr:hover td { background: rgba(94,109,255,0.04); }
+        .sev-high   { color: #f87171; font-size: 11px; font-weight: 700; }
+        .sev-medium { color: #eab308; font-size: 11px; font-weight: 700; }
+        .sev-low    { color: #7b8fc4; font-size: 11px; font-weight: 700; }
+        .work-name { color: #e8edff; font-weight: 600; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .problem-text { color: #a8b5d9; }
+        .suggested { color: #7b8fc4; font-size: 12px; margin-top: 2px; }
+        .btn-fix { background: rgba(94,109,255,0.15); border: 1px solid rgba(94,109,255,0.3); color: #8b9dff; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .btn-fix:hover { background: rgba(94,109,255,0.25); }
+        .btn-fixed { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #22c55e; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: default; }
+        .btn-accept { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.4); color: #22c55e; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .btn-accept:hover { background: rgba(34,197,94,0.28); }
+        .yesno-row { display: flex; align-items: flex-start; gap: 10px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.2); border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+        .yesno-row .yesno-text { flex: 1; font-size: 13px; color: #e8edff; }
+        .yesno-row .yesno-text small { display: block; color: #7b8fc4; font-size: 11px; margin-top: 3px; }
+        .yesno-btns { display: flex; gap: 6px; flex-shrink: 0; }
+        .btn-yn-yes { background: #22c55e; border: 0; color: #0b1226; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .btn-yn-no  { background: transparent; border: 1px solid #2c4073; color: #7b8fc4; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
+        .btn-yn-no:hover { border-color: #5e6dff; color: #a8b5d9; }
+        .no-issues { color: #22c55e; text-align: center; padding: 20px; font-size: 14px; }
+
+        /* Fix panel */
+        .fix-panel { background: #0a1020; border: 1px solid #2c4073; border-radius: 10px; padding: 16px; margin: 8px 0; display: none; }
+        .fix-panel.open { display: block; }
+        .fix-panel label { font-size: 12px; color: #7b8fc4; font-weight: 600; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .fix-input { background: #111a36; border: 1px solid #2c4073; border-radius: 6px; color: #e8edff; padding: 8px 12px; font-size: 14px; width: 100%; margin-bottom: 10px; }
+        .fix-input:focus { outline: none; border-color: #5e6dff; }
+        .fix-suggestion { background: rgba(94,109,255,0.1); border: 1px solid rgba(94,109,255,0.2); border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #a8b5d9; margin-bottom: 10px; cursor: pointer; }
+        .fix-suggestion:hover { border-color: #5e6dff; color: #e8edff; }
+        .fix-suggestion strong { color: #8b9dff; display: block; margin-bottom: 2px; font-size: 11px; text-transform: uppercase; }
+        .fix-actions { display: flex; gap: 8px; }
+        .btn-save { background: #5e6dff; border: 0; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+        .btn-cancel { background: transparent; border: 1px solid #2c4073; color: #7b8fc4; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+        .warning-note { background: rgba(234,179,8,0.08); border: 1px solid rgba(234,179,8,0.2); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #eab308; margin-bottom: 14px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="page-container">
+    <a href="/publisher-portal" class="back-link">← Back to Publisher Portal</a>
+    <h1>Cleaning Wizard</h1>
+    <p class="desc">TrapRoyaltiesPro's metadata dry-cleaner. Upload your catalog CSV — the Wizard scans splits, identifiers and completeness, lets you fix each issue individually, and exports a clean CWR packet ready for PRO.</p>
+
+    <div class="warning-note">
+        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:1em;height:1em;display:inline-block;vertical-align:-0.15em;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> TrapRoyaltiesPro detects and suggests fixes but <strong>never changes ownership data automatically</strong>. Every fix requires your explicit approval. This is required for compliance with ICE Services, PRO, and CISAC standards.
+    </div>
+
+    <div id="hr-wizard" style="background:#0a1230;border:1px solid #1e2d52;border-radius:12px;padding:20px;margin-bottom:18px;">
+        <div id="hr-stepbar" style="display:flex;gap:6px;margin-bottom:18px;font-size:11px;text-transform:uppercase;letter-spacing:0.7px;color:#5a6a9a;flex-wrap:wrap;">
+            <span class="hr-step" data-step="1">1 · Publisher</span>
+            <span class="hr-step" data-step="2">2 · Catalog</span>
+            <span class="hr-step" data-step="3">3 · Normalize</span>
+            <span class="hr-step" data-step="4">4 · CWR Packet</span>
+            <span class="hr-step" data-step="5">5 · Submit</span>
+            <span style="margin-left:auto;"><a href="#" onclick="hrResetWizard();return false;" style="color:#7b8fc4;text-decoration:underline;font-size:11px;">↻ Start over</a></span>
+        </div>
+        <div id="hr-body"></div>
+        <div id="hr-status" style="margin-top:14px;font-size:12px;color:#7b8fc4;min-height:1.2em;"></div>
+    </div>
+
+    <div id="errorMsg" class="error-msg" style="display:none"></div>
+    <div id="loadingDiv" style="display:none"></div>
+
+    <div id="mainResults" style="display:none">
+
+        <!-- Score -->
+        <div class="score-row" id="scoreRow"></div>
+
+        <!-- Action buttons -->
+        <div class="action-bar">
+            <button class="btn-export" id="exportCsvBtn" onclick="exportCSV()" disabled>⬇ Download Clean CSV</button>
+            <button class="btn-export" id="exportPdfBtn" onclick="exportPDF()" disabled style="background:#5e6dff;">📄 Download PDF Report</button>
+        </div>
+
+        <!-- Issue table -->
+        <div class="section-title" id="issueLabel"></div>
+        <div id="issueArea"></div>
+    </div>
+</div>
+</div>
+
+<script src="/publisher-portal/mb-lookup.js"></script>
+<script src="/publisher-portal/publishing-engine.js"></script>
+<script>
+    var SAMPLE = [
+        { title:'Midnight Sun', isrc:'SE6I12345678', iswc:'', ipi:'', publisher:'Nordic Music AB', role:'composer', share_percent:50 },
+        { title:'Midnight Sun', isrc:'SE6I12345678', iswc:'', ipi:'', publisher:'Nordic Music AB', role:'lyricist', share_percent:40 },
+        { title:'Vinterljus',   isrc:'',            iswc:'T-345678901-2', ipi:'00123456789', publisher:'', role:'composer', share_percent:50 },
+        { title:'Vinterljus',   isrc:'',            iswc:'T-345678901-2', ipi:'00123456789', publisher:'', role:'publisher', share_percent:50 },
+        { title:'Aurora',       isrc:'',            iswc:'', ipi:'', publisher:'', role:'composer', share_percent:100 },
+        { title:'Nattljus',     isrc:'SE6I99887766', iswc:'T-998877665-4', ipi:'00987654321', publisher:'Polar Publishing', role:'composer', share_percent:60 },
+        { title:'Nattljus',     isrc:'SE6I99887766', iswc:'T-998877665-4', ipi:'00111222333', publisher:'Polar Publishing', role:'lyricist', share_percent:30 }
+    ];
+
+    var currentRows = [];
+    var issueList   = [];
+    var fixedCount  = 0;
+
+    function onFileChange(input) {
+        document.getElementById('fileName').textContent = input.files[0] ? input.files[0].name : '';
+    }
+
+    function parseCSV(text) {
+        text = text.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+        var lines = text.split('\n').filter(l=>l.trim());
+        if (lines.length < 2) return [];
+        var first = lines[0];
+        var semis=(first.match(/;/g)||[]).length, commas=(first.match(/,/g)||[]).length, tabs=(first.match(/\t/g)||[]).length;
+        var delim=(tabs>semis&&tabs>commas)?'\t':(semis>commas?';':',');
+        var headers = first.split(delim).map(h=>h.trim().replace(/^"|"$/g,''));
+        return lines.slice(1).map(function(line){
+            var vals=line.split(delim).map(v=>v.trim().replace(/^"|"$/g,''));
+            return headers.reduce(function(obj,h,i){ obj[h]=vals[i]||''; return obj; },{});
+        });
+    }
+
+    async function getPayload() {
+        var file = document.getElementById('fileInput').files[0];
+        if (!file) return { rows: SAMPLE };
+        var text = await file.text();
+        if (file.name.toLowerCase().endsWith('.json')) {
+            var p = JSON.parse(text);
+            return { rows: Array.isArray(p) ? p : (p.rows||[]) };
+        }
+        return { rows: parseCSV(text) };
+    }
+
+    function animateLoading(div, msgs) {
+        var i=0; div.style.display='block'; div.innerHTML='<div class="loading">'+msgs[0]+'</div>';
+        var t=setInterval(function(){ i=(i+1)%msgs.length; div.innerHTML='<div class="loading">'+msgs[i]+'</div>'; },700);
+        return { stop: function(){ clearInterval(t); } };
+    }
+
+    async function runAnalysis() {
+        var btn      = document.getElementById('runBtn');
+        var loadDiv  = document.getElementById('loadingDiv');
+        var main     = document.getElementById('mainResults');
+        var err      = document.getElementById('errorMsg');
+        btn.disabled = true; err.style.display='none'; main.style.display='none';
+        var _anim = animateLoading(loadDiv, ['Parsing metadata…','Checking identifiers…','Validating splits…','Detecting duplicates…','Building issue report…']);
+        try {
+            var payload = await getPayload();
+            var resp = await fetch('/api/analyze-all', {
+                method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
+            });
+            var data = await resp.json();
+            _anim.stop(); loadDiv.style.display='none';
+            currentRows = data.rows || payload.rows;
+            issueList   = data.issues || [];
+            fixedCount  = 0;
+            main.style.display='block';
+            renderResults(data);
+        } catch(e) {
+            _anim.stop(); loadDiv.style.display='none';
+            err.style.display='block'; err.textContent='Error: '+e.message;
+        } finally { btn.disabled=false; }
+    }
+
+    function renderResults(data) {
+        var score = data.score || 0;
+        var sc = score>=80?'sc-high':score>=50?'sc-mid':'sc-low';
+        document.getElementById('scoreRow').innerHTML =
+            '<div class="score-circle '+sc+'"><div style="font-size:24px;line-height:1">'+score+'</div><div style="font-size:11px">/100</div></div>' +
+            '<div class="score-info"><strong>Metadata Health Score</strong>' +
+            '<span>'+data.healthy_tracks+' of '+data.total_tracks+' works have no issues</span></div>';
+
+        var issues = data.issues || [];
+        document.getElementById('issueLabel').textContent = 'Issues Detected ('+issues.length+')';
+
+        if (issues.length === 0) {
+            document.getElementById('issueArea').innerHTML = '<div class="no-issues">✓ No issues detected — your metadata is clean</div>';
+            document.getElementById('exportCsvBtn').disabled = false;
+            document.getElementById('exportPdfBtn').disabled = false;
+            return;
+        }
+
+        var rows = issues.map(function(issue, i) {
+            var sevClass = issue.severity==='high'?'sev-high':issue.severity==='medium'?'sev-medium':'sev-low';
+            var sevLabel = issue.severity.toUpperCase();
+            var autoFmt = isFormatAutoFix(issue);
+            var actionBtns = '<button class="btn-fix" id="fix-btn-'+i+'" onclick="openFix('+i+')">'+(autoFmt?'Edit':'Fix')+'</button>';
+            if (autoFmt) {
+                actionBtns = '<button class="btn-accept" id="fix-btn-'+i+'" onclick="acceptFormatFix('+i+')">Accept →</button>' +
+                             '<button class="btn-fix" style="margin-left:4px" onclick="openFix('+i+')" title="Edit manually">Edit</button>';
+            }
+            return '<tr id="issue-row-'+i+'">' +
+                '<td><span class="'+sevClass+'">'+sevLabel+'</span></td>' +
+                '<td><div class="work-name" title="'+esc(issue.work)+'">'+esc(issue.work)+'</div></td>' +
+                '<td><div class="problem-text">'+esc(issue.problem)+'</div>' +
+                    '<div class="suggested">→ '+esc(issue.suggested_fix)+'</div></td>' +
+                '<td style="white-space:nowrap">'+actionBtns+'</td>' +
+            '</tr>' +
+            '<tr><td colspan="4" style="padding:0 12px"><div class="fix-panel" id="fix-panel-'+i+'"></div></td></tr>';
+        }).join('');
+
+        document.getElementById('issueArea').innerHTML =
+            '<table class="issue-table">' +
+            '<thead><tr><th>Severity</th><th>Work</th><th>Problem & Suggested Fix</th><th></th></tr></thead>' +
+            '<tbody>'+rows+'</tbody></table>';
+
+        document.getElementById('exportCsvBtn').disabled = false;
+        document.getElementById('exportPdfBtn').disabled = false;
+    }
+
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    // Returns true when the system can compute the corrected value automatically
+    function isFormatAutoFix(issue) {
+        if (issue.field === 'split_total') return false; // split uses its own flow
+        if (!issue.suggested_fix) return false;
+        // If suggestion is instructional (no concrete value to apply), not auto-fixable
+        return !/^(enter|provide|add|register|obtain|contact|look up|check|update|fill)/i.test(issue.suggested_fix.trim());
+    }
+
+    // One-click accept for format/value corrections
+    function acceptFormatFix(i) {
+        var issue = issueList[i];
+        if (!issue.suggested_fix) return;
+        if (currentRows[issue.row_index]) currentRows[issue.row_index][issue.field] = issue.suggested_fix;
+        issue._fixed = true;
+        fixedCount++;
+        var btn = document.getElementById('fix-btn-'+i);
+        if (btn) { btn.outerHTML = '<button class="btn-fixed" disabled>Fixed ✓</button>'; }
+        // Also hide any sibling Edit button
+        var row = document.getElementById('issue-row-'+i);
+        if (row) { var editBtns = row.querySelectorAll('.btn-fix'); editBtns.forEach(function(b){ b.style.display='none'; }); }
+        closeFix(i);
+        updateFixedBadge();
+    }
+
+    var openPanelId = null;
+
+    function openFix(i) {
+        // Close any open panel
+        if (openPanelId !== null && openPanelId !== i) {
+            document.getElementById('fix-panel-'+openPanelId).classList.remove('open');
+            document.getElementById('fix-panel-'+openPanelId).innerHTML = '';
+        }
+        var panel = document.getElementById('fix-panel-'+i);
+        if (panel.classList.contains('open')) {
+            panel.classList.remove('open'); panel.innerHTML=''; openPanelId=null; return;
+        }
+        openPanelId = i;
+        panel.classList.add('open');
+        var issue = issueList[i];
+        var isSplit = issue.field === 'split_total';
+
+        if (isSplit) {
+            // Compute normalized values to show in the yes/no prompt
+            var indices = issue.affected_rows || [issue.row_index];
+            var total = indices.reduce(function(s, idx) {
+                var r = currentRows[idx] || {};
+                return s + parseFloat(r.share_percent || r.share_percentage || r.percentage || 0);
+            }, 0);
+            var normalizedList = '';
+            if (total > 0) {
+                normalizedList = indices.map(function(idx) {
+                    var r = currentRows[idx] || {};
+                    var name = r.name || r.writer || r.contributor || r.composer || ('Row '+(idx+1));
+                    var orig = parseFloat(r.share_percent || r.share_percentage || r.percentage || 0);
+                    var norm = Math.round(orig / total * 1000) / 10;
+                    return '<span style="color:#a8b5d9">'+esc(name)+'</span>: ' +
+                           '<span style="color:#f87171;text-decoration:line-through;font-size:11px">'+orig+'%</span> → ' +
+                           '<span style="color:#22c55e;font-weight:700">'+norm+'%</span>';
+                }).join(' &nbsp;·&nbsp; ');
+            }
+
+            panel.innerHTML =
+                '<div class="yesno-row">' +
+                  '<div class="yesno-text">' +
+                    '<strong>Normalize shares to 100%?</strong>' +
+                    (normalizedList ? '<small style="margin-top:6px;line-height:1.8">'+normalizedList+'</small>' : '') +
+                    '<small>⚠ Ownership data — your explicit approval required</small>' +
+                  '</div>' +
+                  '<div class="yesno-btns">' +
+                    '<button class="btn-yn-yes" onclick="acceptSplitNormalize('+i+')">Yes, apply</button>' +
+                    '<button class="btn-yn-no"  onclick="showSplitEditor('+i+')">Edit manually</button>' +
+                  '</div>' +
+                '</div>' +
+                '<div id="split-editor-'+i+'" style="display:none">' +
+                  renderSplitEditor(i) +
+                  '<div class="fix-actions" style="margin-top:10px">' +
+                    '<button class="btn-save" onclick="saveFix('+i+')">Save Fix</button>' +
+                    '<button class="btn-cancel" onclick="closeFix('+i+')">Cancel</button>' +
+                  '</div>' +
+                '</div>';
+        } else {
+            var suggestHtml = '';
+            if (isFormatAutoFix(issue)) {
+                var rowData = currentRows[issue.row_index] || {};
+                var current = rowData[issue.field] || issue.current_value || '(empty)';
+                suggestHtml =
+                    '<div class="yesno-row">' +
+                      '<div class="yesno-text">' +
+                        '<strong>Apply correction?</strong>' +
+                        '<small>' +
+                          '<span style="color:#f87171">'+esc(current)+'</span> → ' +
+                          '<span style="color:#22c55e;font-weight:700">'+esc(issue.suggested_fix)+'</span>' +
+                        '</small>' +
+                      '</div>' +
+                      '<div class="yesno-btns">' +
+                        '<button class="btn-yn-yes" onclick="acceptFormatFix('+i+')">Yes, apply</button>' +
+                        '<button class="btn-yn-no"  onclick="showFieldEditor('+i+')">Edit manually</button>' +
+                      '</div>' +
+                    '</div>' +
+                    '<div id="field-editor-'+i+'" style="display:none">' +
+                      renderFieldEditor(i) +
+                      '<div class="fix-actions" style="margin-top:10px">' +
+                        '<button class="btn-save" onclick="saveFix('+i+')">Save Fix</button>' +
+                        '<button class="btn-cancel" onclick="closeFix('+i+')">Cancel</button>' +
+                      '</div>' +
+                    '</div>';
+            } else {
+                suggestHtml =
+                    '<div class="fix-suggestion" onclick="useSuggested('+i+')">' +
+                        '<strong>Suggested Fix</strong>'+esc(issue.suggested_fix)+'</div>' +
+                    renderFieldEditor(i) +
+                    '<div class="fix-actions" style="margin-top:10px">' +
+                      '<button class="btn-save" onclick="saveFix('+i+')">Save Fix</button>' +
+                      '<button class="btn-cancel" onclick="closeFix('+i+')">Cancel</button>' +
+                    '</div>';
+            }
+            panel.innerHTML =
+                '<div style="margin-bottom:10px;font-size:13px;color:#e8edff;font-weight:600">Fix: '+esc(issue.problem)+'</div>' +
+                suggestHtml;
+        }
+    }
+
+    function showSplitEditor(i) {
+        var el = document.getElementById('split-editor-'+i);
+        if (el) el.style.display = 'block';
+    }
+
+    function showFieldEditor(i) {
+        var el = document.getElementById('field-editor-'+i);
+        if (el) el.style.display = 'block';
+    }
+
+    // Accept normalized split values computed from current data
+    function acceptSplitNormalize(i) {
+        var issue = issueList[i];
+        var indices = issue.affected_rows || [issue.row_index];
+        var shareField = 'share_percent';
+        var total = indices.reduce(function(s, idx) {
+            var r = currentRows[idx] || {};
+            return s + parseFloat(r[shareField] || r.share_percentage || r.percentage || 0);
+        }, 0);
+        if (total === 0) { showSplitEditor(i); return; }
+        indices.forEach(function(idx) {
+            var r = currentRows[idx];
+            if (!r) return;
+            var orig = parseFloat(r[shareField] || r.share_percentage || r.percentage || 0);
+            var norm = Math.round(orig / total * 1000) / 10;
+            r[shareField] = norm;
+            r.share_percentage = norm;
+            r.percentage = norm;
+        });
+        issue._fixed = true;
+        fixedCount++;
+        var btn = document.getElementById('fix-btn-'+i);
+        if (btn) { btn.className='btn-fixed'; btn.textContent='Fixed ✓'; btn.disabled=true; }
+        closeFix(i);
+        updateFixedBadge();
+    }
+
+    function renderFieldEditor(i) {
+        var issue = issueList[i];
+        var rowData = currentRows[issue.row_index] || {};
+        var current = rowData[issue.field] || issue.current_value || '';
+        return '<label>Current value</label>' +
+            '<input class="fix-input" id="fix-input-'+i+'" value="'+esc(current)+'" placeholder="'+esc(issue.suggested_fix)+'">';
+    }
+
+    function renderSplitEditor(i) {
+        var issue = issueList[i];
+        var indices = issue.affected_rows || [issue.row_index];
+        var html = '<label>Adjust shares for "'+esc(issue.work)+'" (must total 100%)</label>';
+        var shareField = 'share_percent';
+        indices.forEach(function(idx, n) {
+            var row = currentRows[idx] || {};
+            var name = row.name || row.writer || row.contributor || row.composer || ('Row '+(idx+1));
+            var val = parseFloat(row[shareField]||row.share_percentage||row.percentage||0);
+            html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">' +
+                '<span style="color:#a8b5d9;font-size:13px;flex:1">'+esc(name)+'</span>' +
+                '<input class="fix-input" id="split-input-'+i+'-'+n+'" data-row-idx="'+idx+'" type="number" min="0" max="100" step="0.1" value="'+val+'" style="width:90px;margin:0" oninput="updateSplitTotal('+i+')">' +
+                '<span style="color:#7b8fc4;font-size:12px">%</span></div>';
+        });
+        html += '<div style="font-size:13px;color:#7b8fc4;margin-top:4px">Total: <span id="split-total-'+i+'" style="font-weight:700">'+((issue.current_value||'?'))+'</span></div>';
+        return html;
+    }
+
+    function updateSplitTotal(i) {
+        var issue = issueList[i];
+        var indices = issue.affected_rows || [issue.row_index];
+        var total = 0;
+        indices.forEach(function(_,n){ total += parseFloat(document.getElementById('split-input-'+i+'-'+n).value||0); });
+        var el = document.getElementById('split-total-'+i);
+        el.textContent = total.toFixed(1)+'%';
+        el.style.color = Math.abs(total-100)<0.1 ? '#22c55e' : '#f87171';
+    }
+
+    function useSuggested(i) {
+        var input = document.getElementById('fix-input-'+i);
+        if (input) input.value = issueList[i].suggested_fix;
+    }
+
+    function applySplitNormalize(i) {
+        // Legacy: fill editor inputs with normalized values (used by manual editor)
+        var issue = issueList[i];
+        var indices = issue.affected_rows || [issue.row_index];
+        var shareField = 'share_percent';
+        var total = indices.reduce(function(s,idx){ var r=currentRows[idx]||{}; return s+parseFloat(r[shareField]||r.share_percentage||r.percentage||0); },0);
+        if (total === 0) return;
+        indices.forEach(function(idx,n){
+            var r = currentRows[idx]||{};
+            var orig = parseFloat(r[shareField]||r.share_percentage||r.percentage||0);
+            var normalized = Math.round(orig / total * 1000) / 10;
+            var inp = document.getElementById('split-input-'+i+'-'+n);
+            if (inp) inp.value = normalized;
+        });
+        updateSplitTotal(i);
+    }
+
+    function saveFix(i) {
+        var issue = issueList[i];
+        if (issue.field === 'split_total') {
+            var indices = issue.affected_rows || [issue.row_index];
+            var total = 0;
+            indices.forEach(function(_,n){ total += parseFloat(document.getElementById('split-input-'+i+'-'+n)?.value||0); });
+            if (Math.abs(total-100) > 0.1) {
+                alert('Total must equal 100% before saving. Current total: '+total.toFixed(1)+'%');
+                return;
+            }
+            var shareField = 'share_percent';
+            indices.forEach(function(idx,n){
+                var val = parseFloat(document.getElementById('split-input-'+i+'-'+n)?.value||0);
+                if (currentRows[idx]) {
+                    currentRows[idx][shareField] = val;
+                    currentRows[idx].share_percentage = val;
+                    currentRows[idx].percentage = val;
+                }
+            });
+        } else {
+            var input = document.getElementById('fix-input-'+i);
+            var val = input ? input.value.trim() : '';
+            if (!val) { alert('Please enter a value before saving.'); return; }
+            if (currentRows[issue.row_index]) currentRows[issue.row_index][issue.field] = val;
+        }
+
+        // Mark as fixed
+        issueList[i]._fixed = true;
+        fixedCount++;
+        var btn = document.getElementById('fix-btn-'+i);
+        if (btn) { btn.className='btn-fixed'; btn.textContent='Fixed ✓'; btn.disabled=true; }
+        closeFix(i);
+        updateFixedBadge();
+    }
+
+    function closeFix(i) {
+        var panel = document.getElementById('fix-panel-'+i);
+        if (panel) { panel.classList.remove('open'); panel.innerHTML=''; }
+        if (openPanelId === i) openPanelId = null;
+    }
+
+    function updateFixedBadge() {
+        var total = issueList.length;
+        var label = 'Issues Detected ('+total+') — '+fixedCount+' fixed';
+        document.getElementById('issueLabel').textContent = label;
+        if (fixedCount === total) document.getElementById('issueLabel').style.color = '#22c55e';
+    }
+
+    function exportCSV() {
+        if (!currentRows.length) return;
+        var headers = Object.keys(currentRows[0]);
+        var lines = [headers.join(',')];
+        currentRows.forEach(function(row){
+            lines.push(headers.map(function(h){
+                var v = String(row[h]||'');
+                return v.includes(',') ? '"'+v+'"' : v;
+            }).join(','));
+        });
+        var blob = new Blob([lines.join('\n')], { type:'text/csv' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href=url; a.download='trappro-clean-export.csv'; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // ── PDF Export — same logic as split-verification ──────────────────────
+    function exportPDF() {
+        if (!currentRows.length) return;
+        // Save data to localStorage for the PDF report page
+        var reportData = currentRows.map(function(r) {
+            return {
+                name: r.name || r.writer || r.contributor || r.composer || '',
+                role: r.role || 'contributor',
+                percentage: parseFloat(r.share_percent || r.share_percentage || r.percentage || 0),
+                ipi: r.ipi || ''
+            };
+        });
+        localStorage.setItem('royaReportData', JSON.stringify(reportData));
+        localStorage.setItem('royaFileName', 'MetadataReview_' + new Date().toISOString().slice(0,10) + '.csv');
+        localStorage.setItem('royaDocumentHash', 'RY-REVIEW-' + Date.now());
+        localStorage.setItem('royaReportTimestamp', new Date().toISOString());
+        window.open('/pdf-report.html', '_blank');
+    }
+
+</script>
+
+<style>
+    #hr-wizard .hr-step { padding:6px 10px; border-radius:14px; background:#0f1834; border:1px solid #1e2d52; }
+    #hr-wizard .hr-step.active { background:#22d3ee; color:#0b1226; border-color:#22d3ee; font-weight:700; }
+    #hr-wizard h3 { margin:0 0 8px; font-size:15px; color:#e8edff; }
+    #hr-wizard .hr-row { display:flex; gap:10px; margin-bottom:10px; }
+    #hr-wizard input, #hr-wizard textarea, #hr-wizard select { background:#0b1226; border:1px solid #2c4073; color:#e8edff; border-radius:6px; padding:8px 10px; font-size:13px; flex:1; font-family:inherit; }
+    #hr-wizard textarea { min-height:120px; resize:vertical; }
+    #hr-wizard label { font-size:11px; color:#7b8fc4; text-transform:uppercase; letter-spacing:0.6px; display:block; margin-bottom:4px; }
+    #hr-wizard .hr-btn { background:#22d3ee; color:#0b1226; border:0; border-radius:6px; padding:8px 16px; font-weight:700; cursor:pointer; font-size:13px; }
+    #hr-wizard .hr-btn.secondary { background:transparent; border:1px solid #2c4073; color:#a8b5d9; font-weight:600; }
+    #hr-wizard .hr-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    #hr-wizard table.hr-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:8px; }
+    #hr-wizard table.hr-table th { text-align:left; padding:6px 8px; color:#5a6a9a; font-weight:600; font-size:10px; text-transform:uppercase; border-bottom:1px solid #1e2d52; }
+    #hr-wizard table.hr-table td { padding:6px 8px; border-bottom:1px solid #111a36; vertical-align:top; }
+    #hr-wizard .hr-pill { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; }
+    #hr-wizard .hr-pill.high { background:rgba(239,68,68,0.15); color:#f87171; }
+    #hr-wizard .hr-pill.medium { background:rgba(234,179,8,0.15); color:#eab308; }
+    #hr-wizard .hr-pill.accepted { background:rgba(34,197,94,0.15); color:#22c55e; }
+    #hr-wizard .hr-pill.rejected { background:rgba(239,68,68,0.15); color:#f87171; }
+    #hr-wizard .hr-pill.submitted, #hr-wizard .hr-pill.queued { background:rgba(94,109,255,0.15); color:#8b9dff; }
+    #hr-wizard .hr-card { background:#0f1834; border:1px solid #1e2d52; border-radius:8px; padding:12px; margin-bottom:8px; }
+    #hr-wizard .hr-score { display:inline-block; background:#0f1834; border:1px solid #1e2d52; border-radius:8px; padding:8px 14px; font-weight:700; }
+    #hr-wizard .hr-score.high { color:#22c55e; border-color:#22c55e; }
+    #hr-wizard .hr-score.mid  { color:#eab308; border-color:#eab308; }
+    #hr-wizard .hr-score.low  { color:#f87171; border-color:#f87171; }
+    #hr-wizard pre.hr-cwr { background:#000; color:#22d3ee; font-family:monospace; font-size:11px; padding:12px; border-radius:6px; max-height:240px; overflow:auto; white-space:pre; }
+</style>
+
+<script>
+(function(){
+    var API = '/api/heyroya';
+    var state = {
+        step: 1,
+        publisher: null,
+        works: [],
+        normalized: {},
+        packet: null,
+        queue: null,
+        ack: null,
+        territory: '752',
+        shareBp: 3333,
+    };
+    try { var saved = sessionStorage.getItem('hr_wizard_state'); if (saved) state = JSON.parse(saved); } catch(e){}
+    function persist(){ try { sessionStorage.setItem('hr_wizard_state', JSON.stringify(state)); } catch(e){} }
+
+    function $(sel){ return document.querySelector(sel); }
+    function setStatus(msg, isErr){ var el = $('#hr-status'); el.textContent = msg || ''; el.style.color = isErr ? '#f87171' : '#7b8fc4'; }
+    function setStepBar(){ document.querySelectorAll('#hr-wizard .hr-step').forEach(function(s){ s.classList.toggle('active', Number(s.dataset.step) === state.step); }); }
+
+    async function api(path, opts){
+        opts = opts || {};
+        opts.headers = Object.assign({'Content-Type':'application/json'}, opts.headers || {});
+        var r = await fetch(API + path, opts);
+        var text = await r.text();
+        var data; try { data = text ? JSON.parse(text) : {}; } catch(e){ data = {raw:text}; }
+        if (!r.ok) throw new Error(data.detail || ('HTTP ' + r.status));
+        return data;
+    }
+
+    // ── DEMO MODE ───────────────────────────────────────────────────────
+    // /pages/review.html?demo=1 — seeds a mock catalog and intercepts every
+    // backend call + MusicBrainz lookup so the wizard runs end-to-end offline.
+    // Used for the Stockholm Music Week QR demo.
+    var demoMode = /[?&]demo=1(?:&|$)/.test(location.search);
+    if (demoMode && !state.demoMode) {
+        try { sessionStorage.removeItem('hr_wizard_state'); } catch(e){}
+        state = buildDemoSeed(); persist();
+    } else if (!demoMode && state.demoMode) {
+        try { sessionStorage.removeItem('hr_wizard_state'); } catch(e){}
+        state = {step:1, publisher:null, works:[], normalized:{}, packet:null, queue:null, ack:null, territory:'752', shareBp:3333};
+        persist();
+    }
+
+    function buildDemoSeed(){
+        // Seed is tuned so every issue in the demo is one-click resolvable:
+        // all writers have IPIs, Lars Petersen (foreign) has E-agreement preset,
+        // no empty names, no invalid roles, no missing societies. The only
+        // issues left are: ALL-CAPS name (suggested), split ≠ 100% (redistribute),
+        // and missing ISWC (MusicBrainz search auto-confirms in demo mode).
+        var W = [
+            { id:'demo-w-1', title:'Midnight Sun', iswc:null, is_registered:false, contributors:[
+                { id:'demo-c-1a', name_raw:'ERIK ANDERSSON', name_clean:null, role:'CA', share:50, ipi:'00712984310', society:'PRO' },
+                { id:'demo-c-1b', name_raw:'Anna Lindberg',  name_clean:null, role:'CA', share:40, ipi:'00234567890', society:'PRO' }
+            ]},
+            { id:'demo-w-2', title:'Vinterljus',   iswc:'T-345678901-2', is_registered:true, contributors:[
+                { id:'demo-c-2a', name_raw:'Maria Svensson',   name_clean:null, role:'CA',        share:50, ipi:'00123456789', society:'PRO' },
+                { id:'demo-c-2b', name_raw:'Nordic Music AB',  name_clean:null, role:'publisher', share:50, ipi:'00988777101', society:'PRO' }
+            ]},
+            { id:'demo-w-3', title:'Aurora',       iswc:null, is_registered:true, contributors:[
+                { id:'demo-c-3a', name_raw:'Johan Berg', name_clean:null, role:'CA', share:100, ipi:'00345678901', society:'PRO' }
+            ]},
+            { id:'demo-w-4', title:'Nattljus',     iswc:'T-998877665-4', is_registered:true, contributors:[
+                { id:'demo-c-4a', name_raw:'Karin Andersson',   name_clean:null, role:'CA',        share:60, ipi:'00987654321', society:'PRO' },
+                { id:'demo-c-4b', name_raw:'Lars Petersen',     name_clean:null, role:'CA',        share:30, ipi:'00111222333', society:'TONO', agreement_type:'E' },
+                { id:'demo-c-4c', name_raw:'Polar Publishing',  name_clean:null, role:'publisher', share:10, ipi:'00445566778', society:'PRO' }
+            ]}
+        ];
+        var normalized = {};
+        W.forEach(function(w){ normalized[w.id] = buildDemoNormalize(w); });
+        return {
+            step: 3, demoMode: true,
+            publisher: { id:'demo-pub-0001', name:'Nordic Music AB', contact_email:'splits@nordicmusic.se', pro:'PRO' },
+            works: W.map(function(w){ return { id:w.id, title:w.title, iswc:w.iswc, is_registered:w.is_registered }; }),
+            _demoWorks: W,
+            normalized: normalized,
+            parsedWorks: null, catalogFileName: 'nordic-indie-catalog.csv',
+            packet: null, queue: null, ack: null,
+            territory:'752', shareBp:3333, clientFixed: {}
+        };
+    }
+
+    function buildDemoNormalize(w){
+        var contribs = (w.contributors || []).map(function(c){
+            return { id:c.id, name_raw:c.name_raw, name_clean:c.name_clean, role:c.role, share:c.share, ipi:c.ipi, society:c.society, agreement_type:c.agreement_type||null, original_publisher_name:c.original_publisher_name||null, original_publisher_ipi:c.original_publisher_ipi||null, original_publisher_society:c.original_publisher_society||null };
+        });
+        var score = 100, tasks = [], writerCount = 0;
+        contribs.forEach(function(c){
+            var isWriter = ['CA','A','C'].indexOf((c.role||'').trim()) >= 0;
+            if (isWriter) writerCount++;
+            if (isWriter && !c.ipi) { score -= 20; tasks.push({severity:'fatal', label:'Missing writer IPI', description:(c.name_clean||c.name_raw||'writer') + ' has no IPI'}); }
+            var nm = c.name_clean || c.name_raw || '';
+            if (nm && nm === nm.toUpperCase() && /[A-Z]/.test(nm)) { score -= 5; tasks.push({severity:'warning', label:'Name in ALL CAPS', description:nm}); }
+            if (c.society && c.society !== 'PRO' && !c.agreement_type) { score -= 15; tasks.push({severity:'fatal', label:'Foreign writer — E/SE/AM agreement required', description:(c.name_clean||c.name_raw||'writer') + ' at ' + c.society}); }
+        });
+        if (!w.iswc) {
+            if (w.is_registered) { score -= 15; tasks.push({severity:'fatal', label:'Registered work missing ISWC', description:'Add the ISWC or uncheck "Registered at PRO"'}); }
+            else tasks.push({severity:'optional', label:'No ISWC yet', description:'Normal for new/indie releases'});
+        }
+        var total = contribs.reduce(function(s,c){ return s + (parseFloat(c.share)||0); }, 0);
+        if (Math.abs(total - 100) > 0.1 && contribs.length) { score -= 10; tasks.push({severity:'warning', label:'Split does not total 100%', description:total.toFixed(1) + '% combined'}); }
+        if (writerCount === 0) { score -= 25; tasks.push({severity:'fatal', label:'No writer on this work'}); }
+        if (score < 0) score = 0;
+        var band = score >= 90 ? 'CWR-Ready' : score >= 70 ? 'Needs Minor Fixes' : score >= 40 ? 'Needs Major Fixes' : 'Not Registrable';
+        return {
+            contributors: contribs,
+            conflicts: [],
+            health: { total_score: score, summary_en: band },
+            readiness: { score: score, band: band, is_registered: !!w.is_registered, tasks: tasks }
+        };
+    }
+
+    async function demoApi(path, opts){
+        await new Promise(function(r){ setTimeout(r, 120); });
+        var method = (opts && opts.method) || 'GET';
+        var body = {}; if (opts && opts.body) { try { body = JSON.parse(opts.body); } catch(e){} }
+        var m;
+        if (path === '/publishers' && method === 'POST') return { id:'demo-pub-0001', name:body.name, contact_email:body.contact_email, pro:'PRO' };
+        if (path === '/works' && method === 'POST') return { works_created: state.works };
+        if ((m = path.match(/^\/works\/([^/]+)\/normalize$/)) && method === 'POST') {
+            var src = (state._demoWorks || []).filter(function(w){ return w.id === m[1]; })[0];
+            return src ? buildDemoNormalize(src) : { contributors:[], conflicts:[], health:{total_score:0}, readiness:{score:0, band:'—', tasks:[]} };
+        }
+        if ((m = path.match(/^\/works\/([^/]+)$/)) && method === 'PATCH') {
+            var src2 = (state._demoWorks || []).filter(function(w){ return w.id === m[1]; })[0];
+            if (src2) {
+                if (body.title != null)         src2.title = body.title;
+                if (body.iswc != null)          src2.iswc  = body.iswc;
+                if (body.is_registered != null) src2.is_registered = !!body.is_registered;
+            }
+            return { ok:true };
+        }
+        if ((m = path.match(/^\/contributors\/([^/]+)$/)) && method === 'PATCH') {
+            var cid = m[1];
+            (state._demoWorks || []).forEach(function(w){ (w.contributors || []).forEach(function(c){
+                if (c.id !== cid) return;
+                if (body.name_clean != null) c.name_clean = body.name_clean;
+                if (body.ipi        != null) c.ipi = body.ipi;
+                if (body.role       != null) c.role = body.role;
+                if (body.share      != null) c.share = parseFloat(body.share);
+                if (body.society    != null) c.society = body.society;
+                if (body.agreement_type != null) c.agreement_type = body.agreement_type;
+                if (body.original_publisher_name    != null) c.original_publisher_name    = body.original_publisher_name;
+                if (body.original_publisher_ipi     != null) c.original_publisher_ipi     = body.original_publisher_ipi;
+                if (body.original_publisher_society != null) c.original_publisher_society = body.original_publisher_society;
+            }); });
+            return { ok:true };
+        }
+        if (path.match(/^\/works\/[^/]+\/conflicts\/[^/]+\/resolve$/) && method === 'POST') {
+            if (body && body.contributor_id) {
+                (state._demoWorks || []).forEach(function(w){ (w.contributors || []).forEach(function(c){
+                    if (c.id !== body.contributor_id) return;
+                    if (body.share      !== undefined && body.share !== null) c.share = parseFloat(body.share);
+                    if (body.name_clean != null) c.name_clean = body.name_clean;
+                    if (body.ipi        != null) c.ipi = body.ipi;
+                    if (body.society    != null) c.society = body.society;
+                }); });
+            }
+            return { ok:true };
+        }
+        if (path === '/packets/generate' && method === 'POST') {
+            var pid = 'demo-pkt-' + Date.now().toString(36);
+            state._demoCwrText = buildDemoCwrText();
+            var avg = Math.round(state.works.reduce(function(s,w){ var n = state.normalized[w.id]; return s + (n && n.readiness ? n.readiness.score : 0); }, 0) / Math.max(1, state.works.length));
+            var submittable = state.works.filter(function(w){ var n = state.normalized[w.id]; return n && n.readiness && n.readiness.score >= 70; }).length;
+            return {
+                packet_id: pid, packet_number:'TRP-PACKET-01', cwr_version:'2.1',
+                work_count: state.works.length, line_count: 14, byte_size: state._demoCwrText.length,
+                total_works: state.works.length, submittable_works: state.works.length,
+                health: {
+                    submission_ready: true,
+                    structural: { status:'pass', notes:['HDR/TRL present', 'GRH/GRT aligned', state.works.length + ' NWR records detected'] },
+                    technical:  { status:'pass', notes:['All writer IPIs zero-padded to 11 digits', 'Record sequence numbers sequential', 'Required columns aligned'] },
+                    business:   { status:'pass', warnings:[], notes:['Publisher share 33.33% applied consistently', 'All writer shares sum to 100%'] },
+                    summary_en: 'Packet is CWR v2.1 compliant — all checks pass. Catalog avg readiness: ' + avg + '/100. ' + state.works.length + '/' + state.works.length + ' works submittable to PRO.'
+                }
+            };
+        }
+        if ((m = path.match(/^\/packets\/([^/]+)\/submit$/)) && method === 'POST') return { id:'demo-queue-' + Date.now().toString(36), queue_id:'demo-queue-' + Date.now().toString(36), status:'queued' };
+        if (/^\/queue\/process/.test(path) && method === 'POST') return { processed: state.works.length };
+        if (path === '/acks/ingest' && method === 'POST') return { ok:true };
+        if ((m = path.match(/^\/works\/([^/]+)\/submission$/)) && method === 'GET') {
+            var wid3 = m[1];
+            var rejected = wid3 === 'demo-w-3';
+            return {
+                submission_status: rejected ? 'rejected' : 'accepted',
+                recipient_work_no: rejected ? null : 'PRO-W-' + wid3.slice(-6).toUpperCase(),
+                submission_message: rejected ? 'simulated rejection — missing writer IPI' : null
+            };
+        }
+        return { ok:true };
+    }
+
+    function buildDemoCwrText(){
+        var stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+        return [
+            'HDR TRP-PACKET-001  SAMPLE PUBLISHER                    01.10     ' + stamp + '14:30:00',
+            'GRHNWR                                                   0000001',
+            'NWR00000001MIDNIGHT SUN                                                         T0043553311               UNC Y       ',
+            'SPU0000000100000002010000712984310NORDIC MUSIC AB                                              011',
+            'SWR0000000100000003007129843100050ANDERSSON                                  ERIK                  CA 011',
+            'PWR0000000100000004007129843100  NORDIC MUSIC AB                                  ',
+            'NWR00000002VINTERLJUS                                                          T3456789012               UNC Y       ',
+            'SPU0000000200000002010000988777101NORDIC MUSIC AB                                              011',
+            'SWR0000000200000003001234567890050SVENSSON                                   MARIA                 CA 011',
+            'PWR0000000200000004001234567890  NORDIC MUSIC AB                                  ',
+            'NWR00000003NATTLJUS                                                            T9988776654               UNC Y       ',
+            'SPU0000000300000002010000445566778POLAR PUBLISHING                                             011',
+            'GRT0000001000000012',
+            'TRL0000000300000013'
+        ].join('\n');
+    }
+
+    // Route api() through demoApi() when demo mode is on.
+    var _originalApi = api;
+    api = async function(path, opts){
+        if (state.demoMode) return demoApi(path, opts);
+        return _originalApi(path, opts);
+    };
+
+    window.hrDownloadDemoPacket = function(){
+        var blob = new Blob([state._demoCwrText || buildDemoCwrText()], {type:'text/plain'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a'); a.href = url; a.download = 'trappro-packet.v21'; a.click();
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    };
+
+    if (demoMode) {
+        window.RoyaMB = {
+            lookupIpi: function(name){ return new Promise(function(res){ setTimeout(function(){ res({ score:98, name:name, mbid:'11111111-2222-3333-4444-555555555555', ipi:'00' + String(Math.floor(Math.random()*900000000)+100000000), source:'MusicBrainz IPI Registry · SE (demo)' }); }, 220); }); },
+            getArtistIpi: function(mbid){ return new Promise(function(res){ setTimeout(function(){ res({ name:'Demo Artist', country:'SE', ipis:['00987654321'] }); }, 180); }); },
+            lookupIswc: function(title){ return new Promise(function(res){ setTimeout(function(){ res({ score:96, title:title, mbid:'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', iswc:'T-' + String(Math.floor(Math.random()*900000000)+100000000) + '-1', artists:['Demo Artist'], source:'MusicBrainz Work Registry (demo)' }); }, 220); }); },
+            getWorkIswc: function(mbid){ return new Promise(function(res){ setTimeout(function(){ res({ title:'Demo Work', iswcs:['T-555000111-2'] }); }, 180); }); }
+        };
+        function _showDemoBanner(){
+            // Brown banner removed per Glenn's request — conference attendees
+            // should see the wizard as-is. Auto-confirm still wired up below.
+            _installDemoAutoConfirm();
+        }
+        // Wrap MusicBrainz scan handlers so the "Confirm & assign" second click
+        // fires automatically — conference attendees only click "Search", the
+        // fix applies instantly. Must run after the IIFE has exposed the
+        // window.hrSearch* functions, hence the DOMContentLoaded anchor.
+        function _installDemoAutoConfirm(){
+            if (window._demoAutoConfirmInstalled) return;
+            window._demoAutoConfirmInstalled = true;
+            if (typeof window.hrSearchMb === 'function') {
+                var _origMb = window.hrSearchMb;
+                window.hrSearchMb = async function(wid, cid, contribId, name){
+                    await _origMb(wid, cid, contribId, name);
+                    if ((window._mbPending || {})[cid] && typeof window.hrConfirmMbMatch === 'function') {
+                        setTimeout(function(){ window.hrConfirmMbMatch(wid, cid); }, 400);
+                    }
+                };
+            }
+            if (typeof window.hrSearchMbWork === 'function') {
+                var _origMbW = window.hrSearchMbWork;
+                window.hrSearchMbWork = async function(wid, cid, title){
+                    await _origMbW(wid, cid, title);
+                    if ((window._mbWorkPending || {})[cid] && typeof window.hrConfirmMbIswc === 'function') {
+                        setTimeout(function(){ window.hrConfirmMbIswc(wid, cid); }, 400);
+                    }
+                };
+            }
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _showDemoBanner);
+        else _showDemoBanner();
+
+        // ?demo=1&auto=1 → fast-forward: jump to Step 4 and click Generate so
+        // the attendee lands on the finished CWR packet without any clicks.
+        window._runAutoDemo = function(){
+            if (!/[?&]auto=1(?:&|$)/.test(location.search)) return;
+            setTimeout(function(){
+                state.step = 4;
+                render();
+                setTimeout(function(){
+                    if (typeof window.hrGeneratePacket === 'function') window.hrGeneratePacket();
+                }, 400);
+            }, 300);
+        };
+    }
+    // ── /DEMO MODE ──────────────────────────────────────────────────────
+
+    function render(){
+        // Self-heal: if state.step requires something we don't have, snap back.
+        if (state.step >= 2 && !state.publisher) state.step = 1;
+        if (state.step >= 3 && (!state.works || !state.works.length)) state.step = 2;
+        // Step 4 IS where the packet is generated — don't block entry on missing packet.
+        // Step 5 (Submit) does require a packet, so fall back to step 4 in that case.
+        if (state.step >= 5 && !state.packet) state.step = 4;
+        setStepBar();
+        var body = $('#hr-body');
+        try {
+            if (state.step === 1) return renderStep1(body);
+            if (state.step === 2) return renderStep2(body);
+            if (state.step === 3) return renderStep3(body);
+            if (state.step === 4) return renderStep4(body);
+            if (state.step === 5) return renderStep5(body);
+        } catch(e){
+            body.innerHTML = '<div class="hr-card" style="color:#f87171;">Render error on step ' + state.step + ': ' + (e && e.message ? e.message : e) + '</div>' +
+                '<button class="hr-btn secondary" onclick="hrResetWizard()">↻ Start over</button>';
+        }
+    }
+    window.hrResetWizard = function(){
+        try { sessionStorage.removeItem('hr_wizard_state'); } catch(e){}
+        state = {step:1, publisher:null, works:[], normalized:{}, packet:null, queue:null, ack:null};
+        render();
+    };
+
+    function renderStep1(body){
+        body.innerHTML =
+            '<h3>Publisher</h3>' +
+            '<div class="hr-row"><div style="flex:1;"><label>Publisher name</label><input id="hr-pub-name" placeholder="Sample Publisher Inc." value="' + (state.publisher ? state.publisher.name : '') + '"></div>' +
+            '<div style="flex:1;"><label>Contact email (optional)</label><input id="hr-pub-email" placeholder="splits@traproyaltiespro.com" value="' + (state.publisher && state.publisher.contact_email ? state.publisher.contact_email : '') + '"></div></div>' +
+            '<div style="margin-top:12px;display:flex;gap:8px;align-items:center;">' +
+            '<button class="hr-btn" onclick="hrCreatePublisher()">Save publisher</button>' +
+            (state.publisher ? '<span style="color:#22c55e;font-size:12px;">✓ Saved as ' + state.publisher.name + ' (' + state.publisher.id.slice(0,8) + ')</span>' : '') +
+            (state.publisher ? '<button class="hr-btn secondary" onclick="hrGoStep(2)" style="margin-left:auto;">Next: Works →</button>' : '') +
+            '</div>';
+    }
+    window.hrCreatePublisher = async function(){
+        var name = $('#hr-pub-name').value.trim();
+        var email = $('#hr-pub-email').value.trim() || null;
+        if (!name) { setStatus('Publisher name required', true); return; }
+        setStatus('Saving publisher...');
+        try {
+            var pub = await api('/publishers', {method:'POST', body: JSON.stringify({name:name, contact_email:email})});
+            state.publisher = pub; persist(); setStatus('Publisher saved.'); render();
+        } catch(e){ setStatus(e.message, true); }
+    };
+
+    function renderStep2(body){
+        var preview = state.parsedWorks || [];
+        var previewHtml = '';
+        if (preview.length) {
+            previewHtml = '<table class="hr-table" style="margin-top:10px;"><thead><tr><th>Title</th><th>ISWC</th><th>Writers</th><th>Total share</th></tr></thead><tbody>' +
+                preview.slice(0, 20).map(function(w){
+                    var sum = (w.contributors || []).reduce(function(s,c){ return s + (parseFloat(c.share)||0); }, 0);
+                    var sumCls = sum === 100 ? 'high' : 'low';
+                    return '<tr><td>' + (w.title || '—') + '</td><td>' + (w.iswc || '—') + '</td><td>' + (w.contributors || []).map(function(c){ return c.name + ' (' + (c.role||'?') + ' ' + (c.share||0) + '%)'; }).join(', ') + '</td><td><span class="hr-pill ' + sumCls + '">' + sum + '%</span></td></tr>';
+                }).join('') +
+                (preview.length > 20 ? '<tr><td colspan="4" style="color:#5a6a9a;">…and ' + (preview.length - 20) + ' more</td></tr>' : '') +
+                '</tbody></table>';
+        }
+        body.innerHTML =
+            '<h3>Upload your catalog</h3>' +
+            '<p style="color:#7b8fc4;font-size:12px;margin:0 0 10px;">CSV or JSON. CSV: one row per writer. Required column <code>title</code>. Recognized columns: <code>title, iswc, isrc, name</code> (writer), <code>role</code> (CA/A/C/E/AR/SE/composer/lyricist), <code>share_percent</code> (or <code>share</code>), <code>ipi</code>, <code>society</code> (default PRO).</p>' +
+            '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">' +
+            '<input type="file" id="hr-cat-file" accept=".csv,.json" style="display:none;" onchange="hrLoadCatalogFile(this)">' +
+            '<button class="hr-btn" onclick="document.getElementById(\'hr-cat-file\').click()">📁 Choose CSV / JSON file</button>' +
+            '<button class="hr-btn secondary" onclick="hrLoadSampleCsv()">Use sample data</button>' +
+            '<a href="#" onclick="hrDownloadSampleCsv();return false;" style="color:#22d3ee;font-size:12px;text-decoration:none;">↓ Download sample CSV</a>' +
+            '<span id="hr-file-name" style="color:#22c55e;font-size:12px;margin-left:8px;">' + (state.catalogFileName || '') + '</span>' +
+            '</div>' +
+            previewHtml +
+            '<div style="margin-top:14px;display:flex;gap:8px;">' +
+            '<button class="hr-btn secondary" onclick="hrGoStep(1)">← Back</button>' +
+            '<button class="hr-btn" onclick="hrIntakeWorks()" ' + (preview.length ? '' : 'disabled') + '>Intake ' + (preview.length ? preview.length + ' work(s)' : 'works') + ' →</button>' +
+            (state.works.length ? '<span style="color:#22c55e;font-size:12px;align-self:center;">✓ ' + state.works.length + ' work(s) ingested</span>' : '') +
+            (state.works.length ? '<button class="hr-btn secondary" onclick="hrGoStep(3)" style="margin-left:auto;">Next: Normalize →</button>' : '') +
+            '</div>';
+    }
+
+    var SAMPLE_CSV = 'title,iswc,name,role,share_percent,ipi,society\n' +
+        'Nattens Ljus,T1234567890,Erik Andersson,CA,50,123456789,PRO\n' +
+        'Nattens Ljus,T1234567890,Anna Lindberg,CA,50,234567890,PRO\n' +
+        'Sommarbris,,Erik Andersson,CA,100,123456789,PRO\n' +
+        'Höstvind,T9876543210,Maria Svensson,CA,60,345678901,PRO\n' +
+        'Höstvind,T9876543210,Johan Berg,CA,40,,\n';
+
+    function detectDelim(line){
+        var s = (line.match(/;/g)||[]).length, c = (line.match(/,/g)||[]).length, t = (line.match(/\t/g)||[]).length;
+        if (t > s && t > c) return '\t';
+        if (s > c) return ';';
+        return ',';
+    }
+
+    function parseCsv(text, delim){
+        text = text.replace(/^\uFEFF/, ''); // strip BOM
+        if (!delim) delim = detectDelim(text.split(/\r?\n/)[0] || '');
+        var rows = [];
+        var i = 0, field = '', row = [], inQuotes = false;
+        while (i < text.length) {
+            var ch = text[i];
+            if (inQuotes) {
+                if (ch === '"' && text[i+1] === '"') { field += '"'; i += 2; continue; }
+                if (ch === '"') { inQuotes = false; i++; continue; }
+                field += ch; i++; continue;
+            }
+            if (ch === '"') { inQuotes = true; i++; continue; }
+            if (ch === delim) { row.push(field); field = ''; i++; continue; }
+            if (ch === '\r') { i++; continue; }
+            if (ch === '\n') { row.push(field); rows.push(row); field = ''; row = []; i++; continue; }
+            field += ch; i++;
+        }
+        if (field !== '' || row.length) { row.push(field); rows.push(row); }
+        rows._delim = delim;
+        return rows.filter(function(r){ return r.length && !(r.length === 1 && r[0] === ''); });
+    }
+
+    function csvToWorks(text){
+        var rows = parseCsv(text);
+        if (rows.length < 2) throw new Error('CSV must have a header row + at least one data row');
+        var header = rows[0].map(function(h){ return h.trim().toLowerCase().replace(/^\uFEFF/, ''); });
+        function col(r, names){ for (var k=0;k<names.length;k++){ var idx = header.indexOf(names[k]); if (idx >= 0) return (r[idx] || '').trim(); } return ''; }
+        var TITLE_COLS  = ['title','work','song','work_title','songtitle','song_title','track','track_title','tracktitle','titel','låt','låttitel','verk','verktitel'];
+        var ISWC_COLS   = ['iswc','iswc_code','iswccode','works_code'];
+        var ISRC_COLS   = ['isrc','isrc_code','isrccode'];
+        var NAME_COLS   = ['name','writer','composer','contributor','full_name','fullname','author','songwriter','kompositör','komponist','låtskrivare','textförfattare','upphovsman'];
+        var ROLE_COLS   = ['role','role_code','rolle','roll'];
+        var SHARE_COLS  = ['share_percent','share','share_percentage','percent','percentage','split','split_percent','andel','procent','andel_procent'];
+        var IPI_COLS    = ['ipi','ipi_number','ipi_no','ipi_name_number','ipinameno','cae'];
+        var SOC_COLS    = ['society','pro','collection_society','rights_society','sällskap','rättighetssällskap'];
+        var byTitle = {};
+        var skipped = 0;
+        for (var i=1; i<rows.length; i++) {
+            var r = rows[i];
+            var title = col(r, TITLE_COLS);
+            if (!title) { skipped++; continue; }
+            var iswc = col(r, ISWC_COLS);
+            var key = title + '|' + iswc;
+            if (!byTitle[key]) byTitle[key] = { title: title, iswc: iswc || null, isrc: col(r,ISRC_COLS) || null, contributors: [] };
+            var name = col(r, NAME_COLS);
+            if (!name) { skipped++; continue; }
+            var shareRaw = col(r, SHARE_COLS).replace(',', '.').replace('%','').trim();
+            byTitle[key].contributors.push({
+                name: name,
+                role: col(r, ROLE_COLS) || 'CA',
+                share: shareRaw ? parseFloat(shareRaw) : null,
+                ipi: col(r, IPI_COLS) || null,
+                society: col(r, SOC_COLS) || null,
+            });
+        }
+        var works = Object.keys(byTitle).map(function(k){ return byTitle[k]; });
+        if (works.length === 0) {
+            throw new Error('Parsed 0 works. Detected delimiter "' + (rows._delim === '\t' ? 'TAB' : rows._delim) + '". Header columns: [' + header.join(', ') + ']. Need at least a "title" + "name" (or alias) column. Skipped ' + skipped + ' rows.');
+        }
+        return works;
+    }
+
+    window.hrLoadCatalogFile = function(input){
+        var file = input.files && input.files[0];
+        if (!file) return;
+        state.catalogFileName = file.name; persist();
+        var reader = new FileReader();
+        reader.onload = function(e){
+            try {
+                var text = e.target.result;
+                var works;
+                if (/\.json$/i.test(file.name)) {
+                    works = JSON.parse(text);
+                    if (!Array.isArray(works)) throw new Error('JSON must be an array of works');
+                } else {
+                    works = csvToWorks(text);
+                }
+                state.parsedWorks = works; persist();
+                setStatus('Parsed ' + works.length + ' work(s) from ' + file.name);
+                render();
+            } catch(e){ setStatus('Parse error: ' + e.message, true); }
+        };
+        reader.readAsText(file);
+    };
+
+    window.hrLoadSampleCsv = function(){
+        try { state.parsedWorks = csvToWorks(SAMPLE_CSV); state.catalogFileName = 'sample.csv'; persist(); setStatus('Loaded ' + state.parsedWorks.length + ' sample work(s).'); render(); }
+        catch(e){ setStatus(e.message, true); }
+    };
+
+    window.hrDownloadSampleCsv = function(){
+        var blob = new Blob([SAMPLE_CSV], {type: 'text/csv'});
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a'); a.href = url; a.download = 'trappro-sample-catalog.csv'; a.click();
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    };
+
+    window.hrIntakeWorks = async function(){
+        if (!state.publisher) { setStatus('Create a publisher first', true); state.step = 1; render(); return; }
+        var works = state.parsedWorks;
+        if (!Array.isArray(works) || !works.length) { setStatus('Upload a catalog first', true); return; }
+        setStatus('Ingesting ' + works.length + ' work(s)...');
+        try {
+            var res = await api('/works', {method:'POST', body: JSON.stringify({publisher_id: state.publisher.id, works: works})});
+            state.works = res.works_created; state.normalized = {}; persist();
+            setStatus('Ingested ' + state.works.length + ' work(s).'); render();
+        } catch(e){ setStatus(e.message, true); }
+    };
+
+    function escAttr(s){ return String(s == null ? '' : s).replace(/"/g, '&quot;'); }
+    function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]; }); }
+
+    var WRITER_ROLES = ['CA','A','C','E','AR','SE','composer','lyricist','writer'];
+    function _isUpperAll(s){ return s && s === s.toUpperCase() && /[A-Z]/.test(s); }
+    function _validIswc(s){ if (!s) return false; var t = String(s).replace(/[\s\-\.]/g,''); return /^T\d{9,10}$/i.test(t); }
+
+    // Port of split-verification's buildFixes() — applied per-work.
+    // Identical logic: empty name → "Contributor N"; missing/invalid IPI → "Pending";
+    // share ≤0 or >100 → reset to 0%; total ≠ 100 → proportional redistribute with preview.
+    function buildSvFixes(w, contribs){
+        var fixes = [];
+        var total = 0;
+        contribs.forEach(function(c, i){
+            total += parseFloat(c.share) || 0;
+            var nm = c.name_clean || c.name_raw || '';
+            if (!nm || !String(nm).trim()){
+                fixes.push({
+                    id: 'sv-name-' + c.id, type: 'empty_name', severity: 'high',
+                    description: 'Contributor ' + (i + 1) + ' has no name',
+                    suggestion: 'Assign a Legal Identity Hold — required to route royalties to unidentified contributor',
+                    share: parseFloat(c.share) || 0,
+                    field: 'name_clean', target: c.id
+                });
+            }
+            if (!c.ipi || !String(c.ipi).trim() || c.ipi === 'invalid'){
+                var name = nm || 'Contributor ' + (i + 1);
+                fixes.push({
+                    id: 'sv-ipi-' + c.id, type: 'missing_ipi', severity: 'medium',
+                    description: name + ' is missing an IPI number',
+                    suggestion: 'Search MusicBrainz IPI registry to assign a verified IPI — unverified placeholders will cause routing failures',
+                    contribName: name,
+                    field: 'ipi', target: c.id
+                });
+            }
+            if ((parseFloat(c.share) || 0) <= 0 || parseFloat(c.share) > 100){
+                var name2 = nm || 'Contributor ' + (i + 1);
+                fixes.push({
+                    id: 'sv-pct-' + c.id, type: 'invalid_percentage', severity: 'high',
+                    description: name2 + ' has invalid percentage: ' + c.share + '%',
+                    suggestion: 'Reset percentage to 0%',
+                    suggested: '0', field: 'share', target: c.id
+                });
+            }
+        });
+        if (Math.abs(total - 100) > 0.1 && contribs.length > 0){
+            var newPcts;
+            if (total === 0){
+                var eq = Math.round(1000 / contribs.length) / 10;
+                newPcts = contribs.map(function(_, i){
+                    return i === contribs.length - 1
+                        ? Math.round((100 - eq * (contribs.length - 1)) * 10) / 10
+                        : eq;
+                });
+            } else {
+                newPcts = contribs.map(function(c){ return Math.round((parseFloat(c.share) || 0) * (100 / total) * 10) / 10; });
+                var diff = Math.round((100 - newPcts.reduce(function(a,b){return a+b;}, 0)) * 10) / 10;
+                newPcts[newPcts.length - 1] = Math.round((newPcts[newPcts.length - 1] + diff) * 10) / 10;
+            }
+            var preview = newPcts.map(function(p, i){
+                return (contribs[i].name_clean || contribs[i].name_raw || 'C' + (i + 1)) + ': ' + p + '%';
+            }).join(', ');
+            var fixId = 'sv-sum-' + w.id;
+            window._svMulti = window._svMulti || {};
+            window._svMulti[fixId] = contribs.map(function(c, i){ return { contribId: c.id, share: newPcts[i] }; });
+            fixes.push({
+                id: fixId, type: 'split_sum', severity: 'high',
+                description: 'Total split is ' + total.toFixed(1) + '% — must equal 100%',
+                suggestion: 'Redistribute proportionally → ' + preview,
+                multiSplit: true, target: w.id
+            });
+        }
+        return fixes;
+    }
+
+    function clientSideIssues(w, contribs){
+        var out = [];
+        var pubSoc = (state.publisher && state.publisher.pro ? state.publisher.pro : 'PRO').toUpperCase();
+        if (_isUpperAll(w.title || '')) out.push({id:'cli-title-'+w.id, type:'title_format', severity:'low', description:'Title in ALL CAPS — should be Title Case', suggested:(w.title||'').toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase();}), field:'title', target:w.id});
+        if (!w.iswc) {
+            // Missing ISWC is only a real gap if the work claims to be registered.
+            // For unregistered/new works it's normal — the readiness task surfaces it
+            // as optional without scoring against it.
+            var nmReg = state.normalized[w.id];
+            var isReg = nmReg && nmReg.readiness ? !!nmReg.readiness.is_registered : false;
+            out.push({
+                id:'cli-noiswc-'+w.id, type:'missing_iswc',
+                severity: isReg ? 'medium' : 'low',
+                description: isReg
+                    ? 'Registered work missing ISWC — add the ISWC or uncheck "Registered at PRO"'
+                    : 'No ISWC yet — normal for new/indie releases; search MusicBrainz if you want one now',
+                suggestion:'Search MusicBrainz work registry to find a verified ISWC',
+                field:'iswc', target:w.id, workTitle:w.title,
+            });
+        }
+        else if (!_validIswc(w.iswc)) out.push({id:'cli-badiswc-'+w.id, type:'invalid_iswc', severity:'medium', description:'ISWC "'+w.iswc+'" is not in T-NNNNNNNNN-N format', suggestion:'Search MusicBrainz to find the canonical ISWC for this work', field:'iswc', target:w.id, workTitle:w.title});
+        // CWR v2.1 hard requirement: every NWR needs ≥1 SWR (writer) and ≥1 PWR
+        // (writer↔publisher link). A writer with no IPI produces an invalid PWR
+        // line, so treat missing writer-IPI as blocking here.
+        var writers = (contribs || []).filter(function(c){
+            return WRITER_ROLES.indexOf((c.role || '').trim()) >= 0;
+        });
+        if (writers.length === 0) {
+            out.push({id:'cli-nowriter-'+w.id, type:'missing_writer', severity:'high',
+                description:'No writer on this work — CWR requires ≥1 SWR record per NWR',
+                field:'contributors', target:w.id, workTitle:w.title});
+        }
+        writers.forEach(function(wr){
+            if (!(wr.ipi || '').trim()) {
+                out.push({id:'cli-nopwr-'+wr.id, type:'missing_writer_ipi', severity:'high',
+                    description:'"'+(wr.name_clean||wr.name_raw||'writer')+'" has no IPI — PWR link to publisher cannot be emitted',
+                    field:'ipi', target:wr.id});
+            }
+        });
+        contribs.forEach(function(c){
+            var nm = c.name_clean || c.name_raw || '';
+            if (!c.role) out.push({id:'cli-norole-'+c.id, type:'missing_role', severity:'high', description:'"'+nm+'" has no role code', field:'role', target:c.id});
+            else if (WRITER_ROLES.indexOf((c.role||'').trim()) < 0 && ['publisher','subpublisher','sub_publisher'].indexOf((c.role||'').trim()) < 0)
+                out.push({id:'cli-badrole-'+c.id, type:'invalid_role', severity:'high', description:'"'+nm+'" has unknown role "'+c.role+'"', field:'role', target:c.id, suggested:'CA'});
+            if (!c.society) out.push({id:'cli-nosoc-'+c.id, type:'missing_society', severity:'low', description:'"'+nm+'" has no society — defaulting to PRO', field:'society', target:c.id, suggested:'PRO'});
+            if (_isUpperAll(nm)) out.push({id:'cli-namecase-'+c.id, type:'name_format', severity:'low', description:'"'+nm+'" is ALL CAPS', field:'name_clean', target:c.id, suggested: nm.toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase();})});
+            // Foreign writer — society differs from submitting publisher.
+            // PRO rejects packets without an explicit E/SE/AM declaration in the SPU chain.
+            var soc = (c.society || '').toUpperCase();
+            if (soc && soc !== pubSoc && !c.agreement_type) {
+                out.push({
+                    id: 'cli-foreign-' + c.id,
+                    type: 'foreign_writer_no_agreement',
+                    severity: 'high',
+                    description: '"' + nm + '" is at ' + soc + ', not ' + pubSoc + ' — declare E/SE/AM agreement',
+                    field: 'agreement_type',
+                    target: c.id,
+                    contribName: nm,
+                    writerSociety: soc,
+                    publisherSociety: pubSoc
+                });
+            }
+        });
+        // Append split-verification's identical fix logic (per-work)
+        return out.concat(buildSvFixes(w, contribs));
+    }
+
+    function renderStep3(body){
+        var anyNormalized = Object.keys(state.normalized).length > 0;
+        var workCards = state.works.map(function(w){ return renderWorkCard(w); }).join('');
+        var totalIssues = 0; var fixedIssues = 0;
+        var noIswcUnregistered = 0, noIswcRegistered = 0;
+        state.works.forEach(function(w){
+            var nm = state.normalized[w.id]; if (!nm) return;
+            var clientIss = clientSideIssues(w, nm.contributors || []);
+            var nonDupServer = (nm.conflicts || []).filter(function(c){ return c.type !== 'split_sum' && c.type !== 'missing_ipi'; });
+            var openServer = nonDupServer.filter(function(c){ return !c.resolved; }).length;
+            var openClient = clientIss.filter(function(c){ return !(state.clientFixed||{})[c.id]; }).length;
+            totalIssues += openServer + openClient;
+            fixedIssues += nonDupServer.filter(function(c){ return c.resolved; }).length + clientIss.filter(function(c){ return (state.clientFixed||{})[c.id]; }).length;
+            if (!w.iswc) {
+                var isReg = nm.readiness ? !!nm.readiness.is_registered : false;
+                if (isReg) noIswcRegistered++; else noIswcUnregistered++;
+            }
+        });
+        var iswcBanner = '';
+        if (anyNormalized && (noIswcUnregistered || noIswcRegistered)) {
+            var parts = [];
+            if (noIswcUnregistered) parts.push('<span style="color:#a8b5d9;"><strong style="color:#8b9dff;">' + noIswcUnregistered + '</strong> new/unregistered work(s) without ISWC — normal for indie releases, will be created as new registrations.</span>');
+            if (noIswcRegistered) parts.push('<span style="color:#fcd34d;"><strong>' + noIswcRegistered + '</strong> registered work(s) missing ISWC — either add the ISWC or uncheck "Registered at PRO".</span>');
+            iswcBanner = '<div class="hr-card" style="border-color:#1e2d52;background:rgba(139,157,255,0.06);font-size:12px;line-height:1.5;">' + parts.join('<br>') + '</div>';
+        }
+        body.innerHTML =
+            '<h3>Normalize & resolve conflicts</h3>' +
+            '<p style="color:#7b8fc4;font-size:12px;margin:0 0 10px;">TrapRoyaltiesPro never auto-corrects ownership data. Each issue needs your explicit fix or accept — every confirmed correction also teaches the Master Catalog.</p>' +
+            (anyNormalized ? '<div class="hr-card" style="display:flex;gap:14px;align-items:center;"><strong style="color:#22d3ee;">' + totalIssues + '</strong> open issue(s)' + (fixedIssues ? ' · <span style="color:#22c55e;">' + fixedIssues + ' fixed/accepted</span>' : '') + (totalIssues === 0 ? ' · <span style="color:#22c55e;">✓ ready for packet</span>' : '') + '</div>' : '') +
+            iswcBanner +
+            '<div style="margin:10px 0 14px;display:flex;gap:8px;">' +
+            '<button class="hr-btn" onclick="hrNormalizeAll()">' + (anyNormalized ? '↻ Re-scan all' : '▶ Scan all works') + '</button>' +
+            '<button class="hr-btn secondary" onclick="hrGoStep(2)">← Back</button>' +
+            '<button class="hr-btn" onclick="hrGuardGenerate()" style="margin-left:auto;" ' + (anyNormalized ? '' : 'disabled') + '>Next: Generate Packet →</button>' +
+            '</div>' +
+            workCards;
+        // Auto-trigger first scan if works exist but none normalized yet
+        if (state.works.length && !anyNormalized && !state._scanInFlight) {
+            state._scanInFlight = true;
+            setTimeout(function(){ hrNormalizeAll(); }, 50);
+        }
+    }
+
+    function renderWorkCard(w){
+        var nm = state.normalized[w.id];
+        if (!nm) {
+            return '<div class="hr-card"><div style="display:flex;align-items:center;gap:10px;"><strong style="flex:1;">' + escHtml(w.title) + '</strong><button class="hr-btn secondary" onclick="hrNormalize(\'' + w.id + '\')">Scan</button></div></div>';
+        }
+        // Readiness uses a different color scale than health: score 90+ green, 70–89 yellow, 40–69 orange, <40 red.
+        var readiness = nm.readiness || null;
+        var readinessCls = '', readinessLabel = '';
+        if (readiness) {
+            readinessCls = readiness.score >= 90 ? 'high' : readiness.score >= 70 ? 'mid' : 'low';
+            readinessLabel = readiness.band;
+        }
+        var scoreCls = nm.health.total_score >= 85 ? 'high' : nm.health.total_score >= 60 ? 'mid' : 'low';
+        // Drop server conflict types now superseded by client-side SV checks (split_sum, missing_ipi)
+        var serverConflicts = (nm.conflicts || []).filter(function(c){
+            return !c.resolved && c.type !== 'split_sum' && c.type !== 'missing_ipi';
+        });
+        var clientIss = clientSideIssues(w, nm.contributors || []).filter(function(c){ return !(state.clientFixed||{})[c.id]; });
+        var allIssues = serverConflicts.concat(clientIss);
+        var conflictsHtml = allIssues.length === 0
+            ? '<div style="color:#22c55e;font-size:12px;margin-top:8px;">✓ No issues — ready for packet</div>'
+            : allIssues.map(function(c){
+                  return c.id && String(c.id).indexOf('cli-') === 0
+                      ? renderClientFix(w.id, nm.contributors, c)
+                      : renderConflictFix(w.id, nm.contributors, c);
+              }).join('');
+        var contribTable = '<table class="hr-table" style="margin-top:8px;"><thead><tr><th>Writer</th><th>Role</th><th>Share</th><th>IPI</th><th>Society</th></tr></thead><tbody>' +
+            nm.contributors.map(function(c){
+                return '<tr><td>' + escHtml(c.name_clean || c.name_raw) + '</td><td>' + escHtml(c.role || '—') + '</td><td>' + (c.share == null ? '—' : c.share + '%') + '</td><td>' + (c.ipi || '<span style="color:#f87171;">missing</span>') + '</td><td>' + escHtml(c.society || '—') + '</td></tr>';
+            }).join('') + '</tbody></table>';
+        var readinessPill = readiness
+            ? '<span class="hr-score ' + readinessCls + '" title="CWR readiness · ' + escAttr(readinessLabel) + '">' + readiness.score + ' · ' + escHtml(readinessLabel) + '</span>'
+            : '';
+        var isReg = readiness ? !!readiness.is_registered : !!w.is_registered;
+        var regToggle = '<label style="display:flex;align-items:center;gap:6px;font-size:11px;color:#a8b5d9;cursor:pointer;">' +
+            '<input type="checkbox" ' + (isReg ? 'checked' : '') + ' onchange="hrToggleRegistered(\'' + w.id + '\', this.checked)">' +
+            'Registered at PRO' +
+            '</label>';
+        var tasksHtml = renderReadinessTasks(readiness);
+        return '<div class="hr-card">' +
+            '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">' +
+            '<strong style="flex:1;">' + escHtml(w.title) + '</strong>' +
+            regToggle +
+            readinessPill +
+            '<span class="hr-score ' + scoreCls + '" title="Metadata health">' + nm.health.total_score + '</span>' +
+            '<button class="hr-btn secondary" onclick="hrNormalize(\'' + w.id + '\')">↻ Re-check</button>' +
+            '</div>' +
+            contribTable +
+            tasksHtml +
+            '<div style="margin-top:10px;font-size:11px;color:#7b8fc4;text-transform:uppercase;letter-spacing:0.6px;">Issues (' + allIssues.length + ')</div>' +
+            conflictsHtml +
+            '</div>';
+    }
+
+    function renderReadinessTasks(readiness){
+        if (!readiness || !readiness.tasks || !readiness.tasks.length) return '';
+        var sevMeta = {
+            fatal:    { icon:'✗', color:'#f87171' },
+            warning:  { icon:'⚠', color:'#fcd34d' },
+            info:     { icon:'ℹ', color:'#8b9dff' },
+            optional: { icon:'+', color:'#7b8fc4' },
+            ok:       { icon:'✓', color:'#22c55e' },
+            action:   { icon:'▶', color:'#22d3ee' },
+        };
+        var items = readiness.tasks.map(function(t){
+            var m = sevMeta[t.severity] || sevMeta.info;
+            return '<li style="display:flex;gap:8px;margin:4px 0;font-size:12px;align-items:flex-start;">' +
+                '<span style="color:' + m.color + ';font-weight:700;min-width:14px;">' + m.icon + '</span>' +
+                '<span style="flex:1;"><strong style="color:#e8edff;">' + escHtml(t.label) + '</strong>' +
+                (t.description ? ' — <span style="color:#a8b5d9;">' + escHtml(t.description) + '</span>' : '') +
+                '</span></li>';
+        }).join('');
+        return '<div style="margin-top:10px;padding:8px;border:1px solid #1e2d52;border-radius:6px;background:rgba(15,24,52,0.4);">' +
+            '<div style="font-size:11px;color:#7b8fc4;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">CWR Readiness Tasks</div>' +
+            '<ul style="list-style:none;padding:0;margin:0;">' + items + '</ul>' +
+            '</div>';
+    }
+
+    // Card UI matches TrapRoyaltiesPro split-verification: type-specific enriched flows.
+    function renderClientFix(wid, contribs, c){
+        var sevPill = '<span class="hr-pill ' + c.severity + '">' + c.severity + '</span>';
+        var head = '<div id="sv-card-' + c.id.replace(/[^a-z0-9]/gi,'') + '" style="margin-top:10px;padding:10px;border:1px dashed #1e2d52;border-radius:6px;background:rgba(15,24,52,0.4);">' +
+                   '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">' + sevPill + '<strong style="font-size:13px;">' + c.type.replace(/_/g,' ') + '</strong></div>' +
+                   '<div style="color:#f87171;font-size:13px;margin-bottom:4px;"><i style="font-style:normal;">⚠</i> ' + escHtml(c.description) + '</div>' +
+                   '<div style="color:#22c55e;font-size:12px;margin-bottom:8px;"><i style="font-style:normal;">💡</i> ' + escHtml(c.suggestion || '') + '</div>';
+
+        // empty_name → Legal Identity Hold (3 radio choices + IDENTITY RISK warning)
+        if (c.type === 'empty_name') {
+            var pct = (c.share || 0);
+            var safeId = c.id.replace(/[^a-z0-9]/gi,'');
+            return head +
+                '<div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.35);border-radius:6px;padding:8px;margin-bottom:10px;color:#fca5a5;font-size:12px;">' +
+                '⚠️ <strong>IDENTITY RISK:</strong> ' + pct + '% of royalties will be frozen in the Black Box without a legal hold' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">' +
+                '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;">' +
+                '<input type="radio" name="hold-' + safeId + '" value="TBA - Identity Audit in Progress" style="margin-top:3px;">' +
+                '<span><strong style="color:#e8edff;">TBA - Identity Audit in Progress</strong><br><span style="color:#7b8fc4;">Signals active search — identity audit initiated</span></span>' +
+                '</label>' +
+                '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;">' +
+                '<input type="radio" name="hold-' + safeId + '" value="Anonymous (Work-for-Hire)" style="margin-top:3px;">' +
+                '<span><strong style="color:#e8edff;">Anonymous (Work-for-Hire)</strong><br><span style="color:#7b8fc4;">Only valid if a signed work-for-hire contract exists</span></span>' +
+                '</label>' +
+                '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;">' +
+                '<input type="radio" name="hold-' + safeId + '" value="Disputed Identity - Escrow Requested" style="margin-top:3px;">' +
+                '<span><strong style="color:#e8edff;">Disputed Identity - Escrow Requested</strong><br><span style="color:#7b8fc4;">Strongest hold — forces rights administrator to collect & hold share</span></span>' +
+                '</label>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;">' +
+                '<button class="hr-btn" onclick="hrApplyLegalHold(\'' + wid + '\',\'' + c.id + '\',\'' + c.target + '\')">✓ Apply legal hold</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+                '</div></div>';
+        }
+
+        // missing_ipi → MusicBrainz search flow
+        if (c.type === 'missing_ipi') {
+            var safeId2 = c.id.replace(/[^a-z0-9]/gi,'');
+            return head +
+                '<div id="mb-panel-' + safeId2 + '" style="margin-bottom:10px;">' +
+                '<div style="display:flex;gap:8px;align-items:center;">' +
+                '<button class="hr-btn" onclick="hrSearchMb(\'' + wid + '\',\'' + c.id + '\',\'' + c.target + '\',\'' + escAttr(c.contribName || '') + '\')">🔍 Search MusicBrainz</button>' +
+                '<span style="color:#7b8fc4;font-size:11px;">Queries public MusicBrainz IPI registry (~1 req/sec)</span>' +
+                '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;">' +
+                '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+                '</div></div>';
+        }
+
+        // missing_iswc / invalid_iswc → MusicBrainz work-registry search
+        if (c.type === 'missing_iswc' || c.type === 'invalid_iswc') {
+            var safeIdW = c.id.replace(/[^a-z0-9]/gi,'');
+            var inputIdW = 'iswc-input-' + safeIdW;
+            return head +
+                '<div id="mb-work-panel-' + safeIdW + '" style="margin-bottom:10px;">' +
+                '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+                '<button class="hr-btn" onclick="hrSearchMbWork(\'' + wid + '\',\'' + c.id + '\',\'' + escAttr(c.workTitle || '') + '\')">🔍 Search MusicBrainz works</button>' +
+                '<span style="color:#7b8fc4;font-size:11px;">Queries MusicBrainz work/ISWC registry</span>' +
+                '</div>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;align-items:flex-end;">' +
+                '<div style="flex:1;"><label style="font-size:11px;color:#7b8fc4;">Or enter ISWC manually (T-NNNNNNNNN-N)</label><input id="' + inputIdW + '" placeholder="T-123456789-0"></div>' +
+                '<button class="hr-btn secondary" onclick="hrApplyClientFix(\'' + wid + '\',\'' + c.id + '\',\'iswc\',\'' + c.target + '\',document.getElementById(\'' + inputIdW + '\').value)">Save</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+                '</div></div>';
+        }
+
+        // split_sum → multi-contributor redistribute + preview table + handshake warning
+        if (c.multiSplit) {
+            var previewRows = (window._svMulti[c.id] || []).map(function(m){
+                var tc = contribs.filter(function(x){ return x.id === m.contribId; })[0];
+                var nm = tc ? (tc.name_clean || tc.name_raw || '—') : '—';
+                var old = tc ? (parseFloat(tc.share) || 0) : 0;
+                return '<tr><td style="padding:4px 8px;">' + escHtml(nm) + '</td><td style="padding:4px 8px;color:#7b8fc4;">' + old + '%</td><td style="padding:4px 8px;color:#22c55e;">→ ' + m.share + '%</td></tr>';
+            }).join('');
+            return head +
+                '<table style="width:100%;font-size:12px;margin-bottom:10px;border-collapse:collapse;background:rgba(0,0,0,0.2);border-radius:4px;">' +
+                '<thead><tr style="color:#7b8fc4;text-transform:uppercase;font-size:10px;letter-spacing:0.4px;">' +
+                '<th style="padding:6px 8px;text-align:left;">Contributor</th><th style="padding:6px 8px;text-align:left;">Current</th><th style="padding:6px 8px;text-align:left;">After rescale</th></tr></thead>' +
+                '<tbody>' + previewRows + '</tbody></table>' +
+                '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:6px;padding:8px;margin-bottom:10px;color:#fcd34d;font-size:11px;line-height:1.5;">' +
+                '⚠️ Rescaling will invalidate all prior digital handshakes. All contributors must re-verify adjusted percentages via the SMPT portal before export.' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;">' +
+                '<button class="hr-btn" onclick="hrApplySvSplit(\'' + wid + '\',\'' + c.id + '\')">✓ Apply proportional rescale</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+                '</div></div>';
+        }
+
+        // foreign_writer_no_agreement → agreement-type selector + original publisher fields.
+        // CWR v2.1: writer at a different society than the submitting publisher needs E/SE/AM.
+        if (c.type === 'foreign_writer_no_agreement') {
+            var safeIdF = c.id.replace(/[^a-z0-9]/gi,'');
+            return head +
+                '<div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.35);border-radius:6px;padding:8px;margin-bottom:10px;color:#fcd34d;font-size:12px;line-height:1.5;">' +
+                '⚠️ <strong>FOREIGN WRITER:</strong> PRO will reject the packet unless you declare whether your publisher holds an (E) Original, (SE) Sub-Publishing, or (AM) Administration agreement for this writer.' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;">' +
+                '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;">' +
+                '<input type="radio" name="agr-' + safeIdF + '" value="E" style="margin-top:3px;">' +
+                '<span><strong style="color:#e8edff;">E — Original Publisher</strong><br><span style="color:#7b8fc4;">Your publisher owns the rights directly (no sub-pub deal).</span></span>' +
+                '</label>' +
+                '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;">' +
+                '<input type="radio" name="agr-' + safeIdF + '" value="SE" style="margin-top:3px;">' +
+                '<span><strong style="color:#e8edff;">SE — Sub-Publisher</strong><br><span style="color:#7b8fc4;">You hold sub-pub rights picked up from the original publisher (requires original pub name + IPI).</span></span>' +
+                '</label>' +
+                '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;">' +
+                '<input type="radio" name="agr-' + safeIdF + '" value="AM" style="margin-top:3px;">' +
+                '<span><strong style="color:#e8edff;">AM — Administrator</strong><br><span style="color:#7b8fc4;">You administer without owning shares (requires original pub name + IPI).</span></span>' +
+                '</label>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;">' +
+                '<div style="flex:2;"><label style="font-size:11px;color:#7b8fc4;">Original publisher name (SE/AM only)</label><input id="op-name-' + safeIdF + '" placeholder="e.g. Universal Music Publishing"></div>' +
+                '<div style="flex:1;"><label style="font-size:11px;color:#7b8fc4;">Original publisher IPI</label><input id="op-ipi-' + safeIdF + '" placeholder="00000000000"></div>' +
+                '</div>' +
+                '<div style="display:flex;gap:8px;">' +
+                '<button class="hr-btn" onclick="hrApplyForeignAgreement(\'' + wid + '\',\'' + c.id + '\',\'' + c.target + '\',\'' + safeIdF + '\',\'' + escAttr(c.writerSociety || '') + '\')">✓ Apply agreement</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+                '</div></div>';
+        }
+
+        // Suggested-value flow (one-click accept) — used for invalid_percentage, title_format, name_format, missing_society, invalid_role etc.
+        if (c.suggested != null && c.suggested !== '') {
+            return head +
+                '<div style="display:flex;gap:8px;">' +
+                '<button class="hr-btn" onclick="hrApplyClientFix(\'' + wid + '\',\'' + c.id + '\',\'' + c.field + '\',\'' + c.target + '\',\'' + escAttr(String(c.suggested)) + '\')">✓ Yes, apply</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+                '</div></div>';
+        }
+
+        // Free-form fix (user types value)
+        var inputId = 'cli-input-' + c.id.replace(/[^a-z0-9]/gi,'');
+        return head +
+            '<div style="display:flex;gap:8px;align-items:flex-end;">' +
+            '<div style="flex:1;"><label>New value for ' + escHtml(c.field) + '</label><input id="' + inputId + '" placeholder="enter value..."></div>' +
+            '<button class="hr-btn" onclick="hrApplyClientFix(\'' + wid + '\',\'' + c.id + '\',\'' + c.field + '\',\'' + c.target + '\',document.getElementById(\'' + inputId + '\').value)">Save</button>' +
+            '<button class="hr-btn secondary" onclick="hrAcceptClient(\'' + c.id + '\')">✕ Skip</button>' +
+            '</div></div>';
+    }
+
+    window.hrApplyClientFix = async function(wid, cid, field, targetId, value){
+        if (!value || !String(value).trim()) { setStatus('Enter a value first', true); return; }
+        state.clientFixed = state.clientFixed || {};
+        setStatus('Applying ' + field + ' fix...');
+        try {
+            // Map field → backend update path
+            if (field === 'title' || field === 'iswc') {
+                await api('/works/' + wid, {method:'PATCH', body: JSON.stringify({[field]: value})});
+            } else {
+                // contributor-level fields
+                var body = {actor:'wizard-ui'}; body[field === 'name_clean' ? 'name_clean' : field] = value;
+                await api('/contributors/' + targetId, {method:'PATCH', body: JSON.stringify(body)});
+            }
+            state.clientFixed[cid] = true; persist();
+            await refreshNormalize(wid);
+            setStatus('Fix saved.');
+        } catch(e){
+            // Backend may not have PATCH endpoints yet — still mark fix locally so flow continues
+            state.clientFixed[cid] = true; persist(); render();
+            setStatus('Marked fixed locally (' + e.message + ')', true);
+        }
+    };
+    window.hrAcceptClient = function(cid){
+        state.clientFixed = state.clientFixed || {};
+        state.clientFixed[cid] = true; persist();
+        setStatus('Skipped.'); render();
+    };
+
+    // Multi-contributor share redistribute (SV's total≠100 fix). Pulls precomputed shares
+    // from window._svMulti[cid], updates local state, then PATCHes each contributor.
+    window.hrApplySvSplit = async function(wid, cid){
+        var multi = (window._svMulti || {})[cid];
+        if (!multi || !multi.length) { setStatus('No redistribution data found', true); return; }
+        state.clientFixed = state.clientFixed || {};
+        setStatus('Redistributing shares proportionally...');
+        // Optimistically update local state so the new shares show even if backend PATCH fails
+        var nm = state.normalized[wid];
+        if (nm && nm.contributors) {
+            multi.forEach(function(m){
+                var c = nm.contributors.filter(function(x){ return x.id === m.contribId; })[0];
+                if (c) c.share = m.share;
+            });
+        }
+        try {
+            for (var i = 0; i < multi.length; i++){
+                await api('/contributors/' + multi[i].contribId, {method:'PATCH', body: JSON.stringify({share: multi[i].share, actor: 'wizard-ui'})});
+            }
+            state.clientFixed[cid] = true; persist();
+            await refreshNormalize(wid);
+            setStatus('Shares redistributed.');
+        } catch(e){
+            state.clientFixed[cid] = true; persist(); render();
+            setStatus('Redistributed locally (' + e.message + ')', true);
+        }
+    };
+
+    // Legal Identity Hold — reads selected radio, PATCHes name_clean with chosen label.
+    window.hrApplyLegalHold = async function(wid, cid, contribId){
+        var safeId = cid.replace(/[^a-z0-9]/gi,'');
+        var picked = document.querySelector('input[name="hold-' + safeId + '"]:checked');
+        if (!picked) { setStatus('Select a legal hold option first', true); return; }
+        var val = picked.value;
+        state.clientFixed = state.clientFixed || {};
+        setStatus('Applying legal hold: ' + val);
+        // Optimistic local update so name shows in the table
+        var nm = state.normalized[wid];
+        if (nm && nm.contributors){
+            var tc = nm.contributors.filter(function(x){ return x.id === contribId; })[0];
+            if (tc) tc.name_clean = val;
+        }
+        try {
+            await api('/contributors/' + contribId, {method:'PATCH', body: JSON.stringify({name_clean: val, actor:'wizard-ui'})});
+            state.clientFixed[cid] = true; persist();
+            await refreshNormalize(wid);
+            setStatus('Legal hold applied.');
+        } catch(e){
+            state.clientFixed[cid] = true; persist(); render();
+            setStatus('Applied locally (' + e.message + ')', true);
+        }
+    };
+
+    // Foreign-writer agreement declaration — captures E/SE/AM + original publisher info.
+    // SE/AM require original publisher name + IPI; E is a self-declared direct ownership.
+    window.hrApplyForeignAgreement = async function(wid, cid, contribId, safeIdF, writerSociety){
+        var picked = document.querySelector('input[name="agr-' + safeIdF + '"]:checked');
+        if (!picked) { setStatus('Pick an agreement type (E/SE/AM)', true); return; }
+        var kind = picked.value;
+        var body = { agreement_type: kind, actor: 'wizard-ui' };
+        if (kind === 'SE' || kind === 'AM') {
+            var opName = (document.getElementById('op-name-' + safeIdF) || {}).value || '';
+            var opIpi  = (document.getElementById('op-ipi-'  + safeIdF) || {}).value || '';
+            if (!opName.trim() || !opIpi.trim()) { setStatus('SE/AM requires original publisher name + IPI', true); return; }
+            body.original_publisher_name    = opName.trim();
+            body.original_publisher_ipi     = opIpi.trim();
+            body.original_publisher_society = writerSociety || null;
+        }
+        state.clientFixed = state.clientFixed || {};
+        setStatus('Saving ' + kind + ' agreement…');
+        // Optimistic local update so the check disappears immediately
+        var nm = state.normalized[wid];
+        if (nm && nm.contributors){
+            var tc = nm.contributors.filter(function(x){ return x.id === contribId; })[0];
+            if (tc) {
+                tc.agreement_type = kind;
+                tc.original_publisher_name    = body.original_publisher_name || null;
+                tc.original_publisher_ipi     = body.original_publisher_ipi  || null;
+                tc.original_publisher_society = body.original_publisher_society || null;
+            }
+        }
+        try {
+            await api('/contributors/' + contribId, {method:'PATCH', body: JSON.stringify(body)});
+            state.clientFixed[cid] = true; persist();
+            await refreshNormalize(wid);
+            setStatus('Agreement saved (' + kind + ').');
+        } catch(e){
+            state.clientFixed[cid] = true; persist(); render();
+            setStatus('Applied locally (' + e.message + ')', true);
+        }
+    };
+
+    // MusicBrainz IPI lookup — calls RoyaMB.lookupIpi, renders result panel.
+    window.hrSearchMb = async function(wid, cid, contribId, name){
+        var safeId = cid.replace(/[^a-z0-9]/gi,'');
+        var panel = document.getElementById('mb-panel-' + safeId);
+        if (!panel) return;
+        if (!window.RoyaMB || !window.RoyaMB.lookupIpi){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">MusicBrainz helper not loaded — reload the page.</div>';
+            return;
+        }
+        panel.innerHTML = '<div style="color:#7b8fc4;font-size:12px;">🔎 Scanning MusicBrainz IPI registry for "' + escHtml(name) + '"…</div>';
+        try {
+            var res = await window.RoyaMB.lookupIpi(name);
+            if (res.no_match){
+                panel.innerHTML = '<div style="color:#f87171;font-size:12px;">✗ No MusicBrainz match found for "' + escHtml(name) + '". Use Skip or edit manually.</div>';
+                return;
+            }
+            if (res.uncertain){
+                var opts = (res.candidates || []).map(function(cand, i){
+                    return '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;padding:4px 0;">' +
+                        '<input type="radio" name="mbcand-' + safeId + '" value="' + cand.id + '" data-name="' + escAttr(cand.name) + '" style="margin-top:3px;">' +
+                        '<span><strong style="color:#e8edff;">' + escHtml(cand.name) + '</strong> <span style="color:#7b8fc4;">(' + cand.score + '%)</span>' +
+                        (cand.disambiguation ? '<br><span style="color:#7b8fc4;font-size:11px;">' + escHtml(cand.disambiguation) + '</span>' : '') +
+                        '</span></label>';
+                }).join('');
+                panel.innerHTML = '<div style="color:#fcd34d;font-size:12px;margin-bottom:6px;">⚠ Low-confidence match — pick the correct artist:</div>' +
+                    '<div style="display:flex;flex-direction:column;gap:2px;margin-bottom:8px;">' + opts + '</div>' +
+                    '<button class="hr-btn" onclick="hrPickMbCandidate(\'' + wid + '\',\'' + cid + '\',\'' + contribId + '\')">Fetch IPI for selected</button>';
+                return;
+            }
+            if (res.no_ipi){
+                panel.innerHTML = '<div style="color:#fcd34d;font-size:12px;">⚠ Matched <strong>' + escHtml(res.name) + '</strong> (MBID ' + res.mbid.substring(0,8) + '…) but no IPI on file.</div>' +
+                    '<div style="color:#7b8fc4;font-size:11px;margin-top:4px;">Source: ' + escHtml(res.source) + '</div>';
+                return;
+            }
+            // Confident match with IPI
+            window._mbPending = window._mbPending || {};
+            window._mbPending[cid] = { ipi: res.ipi, name: res.name, source: res.source, contribId: contribId };
+            panel.innerHTML = '<div style="color:#22c55e;font-size:12px;margin-bottom:6px;">✓ Match found (' + res.score + '%):</div>' +
+                '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px;font-size:12px;margin-bottom:8px;">' +
+                '<div><strong style="color:#e8edff;">' + escHtml(res.name) + '</strong>' + (res.disambiguation ? ' <span style="color:#7b8fc4;">(' + escHtml(res.disambiguation) + ')</span>' : '') + '</div>' +
+                '<div style="margin-top:4px;"><strong style="color:#22d3ee;">IPI:</strong> ' + escHtml(res.ipi) + '</div>' +
+                '<div style="color:#7b8fc4;font-size:11px;margin-top:4px;">Source: ' + escHtml(res.source) + '</div>' +
+                '</div>' +
+                '<button class="hr-btn" onclick="hrConfirmMbMatch(\'' + wid + '\',\'' + cid + '\')">✓ Confirm & assign IPI</button>';
+        } catch(e){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">✗ MusicBrainz error: ' + escHtml(e.message) + '</div>';
+        }
+    };
+
+    // Pick a candidate from the uncertain-match radio list and fetch its IPI.
+    window.hrPickMbCandidate = async function(wid, cid, contribId){
+        var safeId = cid.replace(/[^a-z0-9]/gi,'');
+        var picked = document.querySelector('input[name="mbcand-' + safeId + '"]:checked');
+        if (!picked) { setStatus('Pick a candidate first', true); return; }
+        var mbid = picked.value;
+        var pickedName = picked.getAttribute('data-name') || '';
+        var panel = document.getElementById('mb-panel-' + safeId);
+        panel.innerHTML = '<div style="color:#7b8fc4;font-size:12px;">🔎 Fetching IPI for ' + escHtml(pickedName) + '…</div>';
+        try {
+            var d = await window.RoyaMB.getArtistIpi(mbid);
+            var source = 'MusicBrainz IPI Registry' + (d.country ? ' · ' + d.country : '');
+            if (!d.ipis || !d.ipis.length){
+                panel.innerHTML = '<div style="color:#fcd34d;font-size:12px;">⚠ <strong>' + escHtml(d.name) + '</strong> has no IPI on file in MusicBrainz.</div>';
+                return;
+            }
+            window._mbPending = window._mbPending || {};
+            window._mbPending[cid] = { ipi: d.ipis[0], name: d.name, source: source, contribId: contribId };
+            panel.innerHTML = '<div style="color:#22c55e;font-size:12px;margin-bottom:6px;">✓ Candidate selected:</div>' +
+                '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px;font-size:12px;margin-bottom:8px;">' +
+                '<div><strong style="color:#e8edff;">' + escHtml(d.name) + '</strong></div>' +
+                '<div style="margin-top:4px;"><strong style="color:#22d3ee;">IPI:</strong> ' + escHtml(d.ipis[0]) + '</div>' +
+                '<div style="color:#7b8fc4;font-size:11px;margin-top:4px;">Source: ' + escHtml(source) + '</div>' +
+                '</div>' +
+                '<button class="hr-btn" onclick="hrConfirmMbMatch(\'' + wid + '\',\'' + cid + '\')">✓ Confirm & assign IPI</button>';
+        } catch(e){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">✗ MusicBrainz error: ' + escHtml(e.message) + '</div>';
+        }
+    };
+
+    // Confirm the pending MB match — PATCHes contributor.ipi with the looked-up value.
+    window.hrConfirmMbMatch = async function(wid, cid){
+        var pend = (window._mbPending || {})[cid];
+        if (!pend) { setStatus('No pending MB match', true); return; }
+        state.clientFixed = state.clientFixed || {};
+        setStatus('Assigning IPI ' + pend.ipi + '…');
+        var nm = state.normalized[wid];
+        if (nm && nm.contributors){
+            var tc = nm.contributors.filter(function(x){ return x.id === pend.contribId; })[0];
+            if (tc) tc.ipi = pend.ipi;
+        }
+        try {
+            await api('/contributors/' + pend.contribId, {method:'PATCH', body: JSON.stringify({ipi: pend.ipi, actor:'wizard-ui'})});
+            state.clientFixed[cid] = true; persist();
+            await refreshNormalize(wid);
+            setStatus('IPI assigned from MusicBrainz.');
+        } catch(e){
+            state.clientFixed[cid] = true; persist(); render();
+            setStatus('Assigned locally (' + e.message + ')', true);
+        }
+    };
+
+    // MusicBrainz work-registry lookup — searches by title, returns ISWC.
+    window.hrSearchMbWork = async function(wid, cid, title){
+        var safeId = cid.replace(/[^a-z0-9]/gi,'');
+        var panel = document.getElementById('mb-work-panel-' + safeId);
+        if (!panel) return;
+        if (!window.RoyaMB || !window.RoyaMB.lookupIswc){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">MusicBrainz helper not loaded — reload the page.</div>';
+            return;
+        }
+        if (!title || !title.trim()){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">No work title to search — edit the title first.</div>';
+            return;
+        }
+        panel.innerHTML = '<div style="color:#7b8fc4;font-size:12px;">🔎 Scanning MusicBrainz works for "' + escHtml(title) + '"…</div>';
+        try {
+            var res = await window.RoyaMB.lookupIswc(title);
+            if (res.no_match){
+                panel.innerHTML = '<div style="color:#f87171;font-size:12px;">✗ No MusicBrainz work match found for "' + escHtml(title) + '". Enter ISWC manually or Skip.</div>';
+                return;
+            }
+            if (res.uncertain){
+                var opts = (res.candidates || []).map(function(cand){
+                    var credit = cand.artists && cand.artists.length ? ' — ' + cand.artists.slice(0,2).join(', ') : '';
+                    var iswcHint = cand.iswcs && cand.iswcs.length ? ' · ISWC ' + cand.iswcs[0] : ' · no ISWC';
+                    return '<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:12px;padding:4px 0;">' +
+                        '<input type="radio" name="mbwork-' + safeId + '" value="' + cand.id + '" data-title="' + escAttr(cand.title) + '" style="margin-top:3px;">' +
+                        '<span><strong style="color:#e8edff;">' + escHtml(cand.title) + '</strong> <span style="color:#7b8fc4;">(' + cand.score + '%)' + escHtml(iswcHint) + '</span>' +
+                        (credit ? '<br><span style="color:#7b8fc4;font-size:11px;">' + escHtml(credit) + '</span>' : '') +
+                        (cand.disambiguation ? '<br><span style="color:#7b8fc4;font-size:11px;">' + escHtml(cand.disambiguation) + '</span>' : '') +
+                        '</span></label>';
+                }).join('');
+                panel.innerHTML = '<div style="color:#fcd34d;font-size:12px;margin-bottom:6px;">⚠ Low-confidence match — pick the correct work:</div>' +
+                    '<div style="display:flex;flex-direction:column;gap:2px;margin-bottom:8px;">' + opts + '</div>' +
+                    '<button class="hr-btn" onclick="hrPickMbWorkCandidate(\'' + wid + '\',\'' + cid + '\')">Fetch ISWC for selected</button>';
+                return;
+            }
+            if (res.no_iswc){
+                panel.innerHTML = '<div style="color:#fcd34d;font-size:12px;">⚠ Matched <strong>' + escHtml(res.title) + '</strong> (MBID ' + res.mbid.substring(0,8) + '…) but no ISWC registered on this work.</div>' +
+                    '<div style="color:#7b8fc4;font-size:11px;margin-top:4px;">Source: ' + escHtml(res.source) + '</div>';
+                return;
+            }
+            window._mbWorkPending = window._mbWorkPending || {};
+            window._mbWorkPending[cid] = { iswc: res.iswc, title: res.title, source: res.source };
+            panel.innerHTML = '<div style="color:#22c55e;font-size:12px;margin-bottom:6px;">✓ Work match found (' + res.score + '%):</div>' +
+                '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px;font-size:12px;margin-bottom:8px;">' +
+                '<div><strong style="color:#e8edff;">' + escHtml(res.title) + '</strong>' + (res.disambiguation ? ' <span style="color:#7b8fc4;">(' + escHtml(res.disambiguation) + ')</span>' : '') + '</div>' +
+                (res.artists && res.artists.length ? '<div style="color:#7b8fc4;font-size:11px;margin-top:2px;">' + escHtml(res.artists.slice(0,3).join(', ')) + '</div>' : '') +
+                '<div style="margin-top:4px;"><strong style="color:#22d3ee;">ISWC:</strong> ' + escHtml(res.iswc) + '</div>' +
+                '<div style="color:#7b8fc4;font-size:11px;margin-top:4px;">Source: ' + escHtml(res.source) + '</div>' +
+                '</div>' +
+                '<button class="hr-btn" onclick="hrConfirmMbIswc(\'' + wid + '\',\'' + cid + '\')">✓ Confirm & assign ISWC</button>';
+        } catch(e){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">✗ MusicBrainz error: ' + escHtml(e.message) + '</div>';
+        }
+    };
+
+    window.hrPickMbWorkCandidate = async function(wid, cid){
+        var safeId = cid.replace(/[^a-z0-9]/gi,'');
+        var picked = document.querySelector('input[name="mbwork-' + safeId + '"]:checked');
+        if (!picked) { setStatus('Pick a work candidate first', true); return; }
+        var mbid = picked.value;
+        var pickedTitle = picked.getAttribute('data-title') || '';
+        var panel = document.getElementById('mb-work-panel-' + safeId);
+        panel.innerHTML = '<div style="color:#7b8fc4;font-size:12px;">🔎 Fetching ISWC for ' + escHtml(pickedTitle) + '…</div>';
+        try {
+            var d = await window.RoyaMB.getWorkIswc(mbid);
+            if (!d.iswcs || !d.iswcs.length){
+                panel.innerHTML = '<div style="color:#fcd34d;font-size:12px;">⚠ <strong>' + escHtml(d.title) + '</strong> has no ISWC on file in MusicBrainz.</div>';
+                return;
+            }
+            window._mbWorkPending = window._mbWorkPending || {};
+            window._mbWorkPending[cid] = { iswc: d.iswcs[0], title: d.title, source: 'MusicBrainz Work Registry' };
+            panel.innerHTML = '<div style="color:#22c55e;font-size:12px;margin-bottom:6px;">✓ Candidate selected:</div>' +
+                '<div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);border-radius:6px;padding:8px;font-size:12px;margin-bottom:8px;">' +
+                '<div><strong style="color:#e8edff;">' + escHtml(d.title) + '</strong></div>' +
+                '<div style="margin-top:4px;"><strong style="color:#22d3ee;">ISWC:</strong> ' + escHtml(d.iswcs[0]) + '</div>' +
+                '<div style="color:#7b8fc4;font-size:11px;margin-top:4px;">Source: MusicBrainz Work Registry</div>' +
+                '</div>' +
+                '<button class="hr-btn" onclick="hrConfirmMbIswc(\'' + wid + '\',\'' + cid + '\')">✓ Confirm & assign ISWC</button>';
+        } catch(e){
+            panel.innerHTML = '<div style="color:#f87171;font-size:12px;">✗ MusicBrainz error: ' + escHtml(e.message) + '</div>';
+        }
+    };
+
+    window.hrConfirmMbIswc = async function(wid, cid){
+        var pend = (window._mbWorkPending || {})[cid];
+        if (!pend) { setStatus('No pending ISWC match', true); return; }
+        state.clientFixed = state.clientFixed || {};
+        setStatus('Assigning ISWC ' + pend.iswc + '…');
+        // Optimistic local update so the ISWC shows in the work card
+        var work = state.works.filter(function(x){ return x.id === wid; })[0];
+        if (work) work.iswc = pend.iswc;
+        try {
+            await api('/works/' + wid, {method:'PATCH', body: JSON.stringify({iswc: pend.iswc, actor:'wizard-ui'})});
+            state.clientFixed[cid] = true; persist();
+            await refreshNormalize(wid);
+            setStatus('ISWC assigned from MusicBrainz.');
+        } catch(e){
+            state.clientFixed[cid] = true; persist(); render();
+            setStatus('Assigned locally (' + e.message + ')', true);
+        }
+    };
+
+    function findContribByName(contributors, namePart){
+        var lc = (namePart || '').toLowerCase();
+        for (var i=0; i<contributors.length; i++){
+            var n = (contributors[i].name_clean || contributors[i].name_raw || '').toLowerCase();
+            if (n && (n === lc || lc.indexOf(n) >= 0 || n.indexOf(lc) >= 0)) return contributors[i];
+        }
+        return null;
+    }
+
+    function renderConflictFix(wid, contribs, c){
+        var sevPill = '<span class="hr-pill ' + c.severity + '">' + c.severity + '</span>';
+        var head = '<div style="display:flex;align-items:flex-start;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed #1e2d52;"><div style="flex:1;font-size:13px;">' + sevPill + ' <strong>' + c.type.replace(/_/g,' ') + '</strong><div style="color:#a8b5d9;font-size:12px;margin-top:2px;">' + escHtml(c.description) + '</div></div></div>';
+
+        if (c.type === 'missing_ipi') {
+            var nameMatch = (c.description.match(/"([^"]+)"/) || [])[1];
+            var contrib = findContribByName(contribs, nameMatch);
+            if (!contrib) return head + '<div style="color:#f87171;font-size:12px;margin-top:6px;">Could not match writer in contributor list — please re-normalize.</div>';
+            return head +
+                '<div style="display:flex;gap:8px;margin-top:8px;align-items:flex-end;">' +
+                '<div style="flex:1;"><label>Writer name</label><input id="fix-name-' + contrib.id + '" value="' + escAttr(contrib.name_clean || contrib.name_raw) + '"></div>' +
+                '<div style="flex:1;"><label>IPI (9–11 digits)</label><input id="fix-ipi-' + contrib.id + '" placeholder="123456789" pattern="\\d{9,11}"></div>' +
+                '<div style="flex:0 0 110px;"><label>Society</label><input id="fix-soc-' + contrib.id + '" value="' + escAttr(contrib.society || 'PRO') + '"></div>' +
+                '<button class="hr-btn" onclick="hrApplyFix(\'' + wid + '\',\'' + c.id + '\',\'' + contrib.id + '\',\'ipi\')">Apply fix</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptAsIs(\'' + wid + '\',\'' + c.id + '\')">Accept anyway</button>' +
+                '</div>';
+        }
+
+        if (c.type === 'split_sum') {
+            var writerRows = contribs.filter(function(x){ return ['CA','A','C','E','AR','SE','composer','lyricist','writer'].indexOf((x.role||'').trim()) >= 0; });
+            var idsJs = writerRows.map(function(c2){return '\''+c2.id+'\'';}).join(',');
+            return head +
+                '<div style="margin-top:8px;">' +
+                '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;align-items:center;">' +
+                '<span style="font-size:11px;color:#a8b5d9;text-transform:uppercase;letter-spacing:0.6px;margin-right:4px;">Split mode:</span>' +
+                '<button class="hr-btn secondary" title="Divide 100% equally among writers — common for Swedish co-writes" onclick="hrFillEqualSplit(\'' + c.id + '\',[' + idsJs + '])">🇸🇪 Swedish Standard (equal split)</button>' +
+                '<button class="hr-btn secondary" title="Clear inputs so you can enter the shares negotiated in the international co-write deal" onclick="hrClearShares(\'' + c.id + '\',[' + idsJs + '])">🌍 Custom / International Deal</button>' +
+                '</div>' +
+                '<table class="hr-table"><thead><tr><th>Writer</th><th>Role</th><th>New share %</th></tr></thead><tbody>' +
+                writerRows.map(function(c2){ return '<tr><td>' + escHtml(c2.name_clean || c2.name_raw) + '</td><td>' + escHtml(c2.role) + '</td><td><input id="fix-share-' + c2.id + '" type="number" step="0.001" min="0" max="100" value="' + (c2.share == null ? '' : c2.share) + '" style="width:90px;" oninput="hrUpdateShareTotal(\'' + c.id + '\',[' + idsJs + '])"></td></tr>'; }).join('') +
+                '</tbody></table>' +
+                '<div id="share-total-' + c.id + '" style="margin-top:6px;font-size:12px;color:#a8b5d9;"></div>' +
+                '<div style="margin-top:8px;display:flex;gap:8px;">' +
+                '<button class="hr-btn" onclick="hrApplyShareFix(\'' + wid + '\',\'' + c.id + '\',[' + idsJs + '])">Apply shares</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptAsIs(\'' + wid + '\',\'' + c.id + '\')">Accept anyway</button>' +
+                '</div></div>';
+        }
+
+        if (c.type === 'duplicate_writer') {
+            var dupName = (c.description.match(/"([^"]+)"/) || [])[1];
+            var dups = contribs.filter(function(c2){ return ((c2.name_clean || c2.name_raw || '').toLowerCase() === (dupName||'').toLowerCase()); });
+            return head +
+                '<div style="margin-top:8px;font-size:12px;color:#a8b5d9;">' + dups.length + ' rows for "' + escHtml(dupName) + '". Choose the one to keep — others will be removed.</div>' +
+                '<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">' +
+                dups.map(function(c2){ return '<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#e8edff;cursor:pointer;"><input type="radio" name="dup-' + c.id + '" value="' + c2.id + '"> ' + escHtml(c2.name_clean || c2.name_raw) + ' · ' + (c2.role || '?') + ' · ' + (c2.share || 0) + '% · IPI ' + (c2.ipi || 'missing') + '</label>'; }).join('') +
+                '</div>' +
+                '<div style="margin-top:8px;display:flex;gap:8px;">' +
+                '<button class="hr-btn" onclick="hrApplyDupFix(\'' + wid + '\',\'' + c.id + '\',[' + dups.map(function(c2){return '\''+c2.id+'\'';}).join(',') + '])">Keep selected</button>' +
+                '<button class="hr-btn secondary" onclick="hrAcceptAsIs(\'' + wid + '\',\'' + c.id + '\')">Accept all</button>' +
+                '</div>';
+        }
+        return head + '<div style="margin-top:8px;"><button class="hr-btn secondary" onclick="hrAcceptAsIs(\'' + wid + '\',\'' + c.id + '\')">Accept</button></div>';
+    }
+
+    window.hrApplyFix = async function(wid, cid, contribId, kind){
+        var body = { contributor_id: contribId, actor: 'wizard-ui' };
+        if (kind === 'ipi') {
+            var nameEl = $('#fix-name-' + contribId);
+            var ipiEl = $('#fix-ipi-' + contribId);
+            var socEl = $('#fix-soc-' + contribId);
+            body.name_clean = (nameEl.value || '').trim() || null;
+            body.ipi = (ipiEl.value || '').trim() || null;
+            body.society = (socEl.value || '').trim() || null;
+            if (body.ipi && !/^\d{9,11}$/.test(body.ipi)) { setStatus('IPI must be 9–11 digits', true); return; }
+        }
+        setStatus('Applying fix...');
+        try {
+            await api('/works/' + wid + '/conflicts/' + cid + '/resolve', {method:'POST', body: JSON.stringify(body)});
+            await refreshNormalize(wid);
+            setStatus('Fix applied + Master Catalog updated.');
+        } catch(e){ setStatus(e.message, true); }
+    };
+
+    window.hrApplyShareFix = async function(wid, cid, contribIds){
+        var actor = 'wizard-ui';
+        setStatus('Applying share corrections...');
+        try {
+            for (var i=0; i<contribIds.length; i++){
+                var el = $('#fix-share-' + contribIds[i]);
+                if (!el) continue;
+                var val = el.value === '' ? null : parseFloat(el.value);
+                await api('/works/' + wid + '/conflicts/' + cid + '/resolve', {method:'POST', body: JSON.stringify({contributor_id: contribIds[i], share: val, actor: actor})});
+            }
+            await refreshNormalize(wid);
+            setStatus('Shares updated.');
+        } catch(e){ setStatus(e.message, true); }
+    };
+
+    window.hrApplyDupFix = async function(wid, cid, contribIds){
+        var sel = document.querySelector('input[name="dup-' + cid + '"]:checked');
+        if (!sel) { setStatus('Pick a row to keep', true); return; }
+        var keep = sel.value;
+        setStatus('Resolving duplicate (kept ' + keep.slice(0,8) + ')...');
+        try {
+            // Mark conflict resolved with the kept contributor; future slice can DELETE the others
+            await api('/works/' + wid + '/conflicts/' + cid + '/resolve', {method:'POST', body: JSON.stringify({contributor_id: keep, actor: 'wizard-ui'})});
+            await refreshNormalize(wid);
+            setStatus('Duplicate marked resolved (other rows still in DB — manual delete pending).');
+        } catch(e){ setStatus(e.message, true); }
+    };
+
+    window.hrAcceptAsIs = async function(wid, cid){
+        setStatus('Accepting as-is...');
+        try {
+            await api('/works/' + wid + '/conflicts/' + cid + '/resolve', {method:'POST', body: JSON.stringify({actor: 'wizard-ui'})});
+            await refreshNormalize(wid);
+            setStatus('Conflict accepted.');
+        } catch(e){ setStatus(e.message, true); }
+    };
+
+    window.hrFillEqualSplit = function(cid, contribIds){
+        var n = contribIds.length;
+        if (!n) return;
+        var each = Math.round((100 / n) * 1000) / 1000;
+        var last = Math.round((100 - each * (n - 1)) * 1000) / 1000;
+        for (var i=0; i<n; i++){
+            var el = $('#fix-share-' + contribIds[i]);
+            if (el) el.value = (i === n - 1 ? last : each);
+        }
+        window.hrUpdateShareTotal(cid, contribIds);
+    };
+
+    window.hrClearShares = function(cid, contribIds){
+        for (var i=0; i<contribIds.length; i++){
+            var el = $('#fix-share-' + contribIds[i]);
+            if (el) el.value = '';
+        }
+        var first = $('#fix-share-' + contribIds[0]);
+        if (first) first.focus();
+        window.hrUpdateShareTotal(cid, contribIds);
+    };
+
+    window.hrUpdateShareTotal = function(cid, contribIds){
+        var total = 0;
+        for (var i=0; i<contribIds.length; i++){
+            var el = $('#fix-share-' + contribIds[i]);
+            if (el && el.value !== '') total += parseFloat(el.value) || 0;
+        }
+        total = Math.round(total * 1000) / 1000;
+        var out = $('#share-total-' + cid);
+        if (!out) return;
+        var ok = Math.abs(total - 100) < 0.01;
+        out.textContent = 'Total: ' + total + '%' + (ok ? ' ✓ (sums to 100)' : ' — needs to equal 100%');
+        out.style.color = ok ? '#22c55e' : '#f59e0b';
+    };
+
+    async function refreshNormalize(wid){
+        var res = await api('/works/' + wid + '/normalize', {method:'POST'});
+        state.normalized[wid] = res; persist(); render();
+    }
+
+    window.hrNormalize = async function(wid){
+        setStatus('Normalizing ' + wid.slice(0,8) + '...');
+        try { await refreshNormalize(wid); setStatus('Normalized.'); }
+        catch(e){ setStatus(e.message, true); }
+    };
+    window.hrNormalizeAll = async function(){
+        setStatus('Scanning ' + state.works.length + ' work(s)...');
+        for (var i=0;i<state.works.length;i++){
+            try { await refreshNormalize(state.works[i].id); }
+            catch(e){ setStatus('Scan failed on work ' + (i+1) + ': ' + e.message, true); state._scanInFlight = false; return; }
+        }
+        state._scanInFlight = false;
+        var totalIssues = 0;
+        state.works.forEach(function(w){
+            var nm = state.normalized[w.id]; if (!nm) return;
+            var clientIss = clientSideIssues(w, nm.contributors || []).filter(function(c){ return !(state.clientFixed||{})[c.id]; });
+            var serverOpen = (nm.conflicts || []).filter(function(c){ return !c.resolved; }).length;
+            totalIssues += clientIss.length + serverOpen;
+        });
+        setStatus(totalIssues === 0 ? '✓ All clean — proceed to packet.' : 'Scan complete · ' + totalIssues + ' issue(s) need attention.');
+        render();
+    };
+
+    function renderStep4(body){
+        body.innerHTML =
+            '<h3>Generate CWR v2.1 packet</h3>' +
+            '<div class="hr-row"><div style="flex:1;"><label>Submitter name (HDR)</label><input id="hr-sub" value="' + (state.publisher ? state.publisher.name : '') + '"></div>' +
+            '<div style="flex:1;"><label>Sender IPI</label><input id="hr-sip" placeholder="00712984310" value="00712984310"></div></div>' +
+            '<div class="hr-row"><div style="flex:1;"><label>Publisher IPI</label><input id="hr-pip" placeholder="00712984310" value="00712984310"></div>' +
+            '<div style="flex:1;"><label>Collection scope</label>' +
+            '<select id="hr-terr">' +
+              '<option value="2136"' + (state.territory === '2136' ? ' selected' : '') + '>Worldwide Collection (2136)</option>' +
+              '<option value="752"' + (state.territory !== '2136' ? ' selected' : '') + '>Local / Sweden Only (752)</option>' +
+            '</select></div></div>' +
+            '<div class="hr-row"><div style="flex:1;"><label>Publisher share</label>' +
+            '<select id="hr-shr" onchange="hrOnShareChange()">' +
+              '<option value="3333"' + ((state.shareBp || 3333) === 3333 ? ' selected' : '') + '>Swedish standard — 33.33%</option>' +
+              '<option value="5000"' + (state.shareBp === 5000 ? ' selected' : '') + '>International — 50.00%</option>' +
+              '<option value="custom"' + (state.shareBp && state.shareBp !== 3333 && state.shareBp !== 5000 ? ' selected' : '') + '>Custom…</option>' +
+            '</select></div>' +
+            '<div style="flex:1;"><label>Custom share (basis points, 10000 = 100%)</label>' +
+            '<input id="hr-shr-custom" type="number" min="0" max="10000" step="1" value="' + (state.shareBp || 3333) + '" ' +
+                (state.shareBp && state.shareBp !== 3333 && state.shareBp !== 5000 ? '' : 'disabled') + '></div></div>' +
+            '<div style="margin-top:10px;display:flex;gap:8px;">' +
+            '<button class="hr-btn secondary" onclick="hrGoStep(3)">← Back</button>' +
+            '<button class="hr-btn" onclick="hrGeneratePacket()">Generate packet</button>' +
+            (state.packet ? (state.demoMode
+                ? '<a class="hr-btn secondary" href="#" onclick="hrDownloadDemoPacket();return false;">⬇ Download .v21</a>'
+                : '<a class="hr-btn secondary" href="' + API + '/packets/' + state.packet.packet_id + '/download" target="_blank">⬇ Download .v21</a>') : '') +
+            (state.packet ? '<button class="hr-btn secondary" onclick="hrGoStep(5)" style="margin-left:auto;">Next: Submit →</button>' : '') +
+            '</div>' +
+            (state.packet ? '<div class="hr-card" style="margin-top:12px;"><div style="color:#a8b5d9;font-size:12px;margin-bottom:6px;">' + state.packet.work_count + ' works · ' + state.packet.line_count + ' lines · ' + state.packet.byte_size + ' bytes · packet ' + state.packet.packet_id.slice(0,8) + '</div><pre class="hr-cwr" id="hr-cwr-preview">loading...</pre></div>' : '') +
+            (state.packet && state.packet.health ? renderHealthReport(state.packet.health) : '');
+        if (state.packet) hrLoadPreview();
+    }
+
+    function renderHealthReport(h){
+        function icon(status){
+            if (status === 'pass' || status === 'ok') return '<span style="color:#22c55e;">✓</span>';
+            if (status === 'warn') return '<span style="color:#f59e0b;">⚠</span>';
+            return '<span style="color:#ef4444;">✗</span>';
+        }
+        var struct = h.structural || {};
+        var tech = h.technical || {};
+        var biz = h.business || {};
+        var readyBadge = h.submission_ready
+            ? '<span style="color:#22c55e;font-weight:600;">✓ Ready for PRO/ICE submission</span>'
+            : '<span style="color:#ef4444;font-weight:600;">✗ Fix issues before submission</span>';
+        var html = '<div class="hr-card" style="margin-top:12px;">' +
+            '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">' +
+            '<strong style="font-size:14px;">CWR Validation Summary</strong>' +
+            '<span style="margin-left:auto;">' + readyBadge + '</span></div>';
+        // Structural
+        html += '<div style="margin-bottom:10px;"><div style="color:#a8b5d9;font-size:12px;margin-bottom:4px;">' +
+            icon(struct.status) + ' 1. Structural Integrity — ' + (struct.status || '').toUpperCase() + '</div>';
+        if ((struct.notes || []).length) {
+            html += '<ul style="margin:4px 0 0 18px;padding:0;font-size:12px;color:#c7d2ea;">' +
+                struct.notes.map(function(n){ return '<li>' + escHtml(n) + '</li>'; }).join('') +
+                '</ul>';
+        }
+        if ((struct.missing_record_types || []).length) {
+            html += '<div style="color:#ef4444;font-size:12px;margin-top:4px;">Missing record types: ' +
+                escHtml(struct.missing_record_types.join(', ')) + '</div>';
+        }
+        html += '</div>';
+        // Technical
+        html += '<div style="margin-bottom:10px;"><div style="color:#a8b5d9;font-size:12px;margin-bottom:4px;">' +
+            icon(tech.status) + ' 2. Technical Alignment — ' + (tech.status || '').toUpperCase() + '</div>';
+        if ((tech.issues || []).length) {
+            html += '<ul style="margin:4px 0 0 18px;padding:0;font-size:12px;color:#fca5a5;">' +
+                tech.issues.map(function(x){
+                    return '<li><strong>' + escHtml(x.code) + '</strong> (line ' + x.line + '): ' +
+                        escHtml(x.description) + ' — <em>' + escHtml(x.fix || '') + '</em></li>';
+                }).join('') + '</ul>';
+        } else {
+            html += '<div style="font-size:12px;color:#86efac;">No formatting issues detected.</div>';
+        }
+        html += '</div>';
+        // Business
+        html += '<div style="margin-bottom:10px;"><div style="color:#a8b5d9;font-size:12px;margin-bottom:4px;">' +
+            icon(biz.status) + ' 3. Business Logic — ' + (biz.status || '').toUpperCase() + '</div>';
+        if ((biz.warnings || []).length) {
+            html += '<ul style="margin:4px 0 0 18px;padding:0;font-size:12px;color:#fcd34d;">' +
+                biz.warnings.map(function(x){
+                    return '<li><strong>' + escHtml(x.code) + '</strong>: ' +
+                        escHtml(x.description) + ' — <em>' + escHtml(x.fix || '') + '</em></li>';
+                }).join('') + '</ul>';
+        } else {
+            html += '<div style="font-size:12px;color:#86efac;">No business warnings.</div>';
+        }
+        html += '</div>';
+        // Summary
+        if (h.summary_en) {
+            html += '<div style="margin-top:8px;padding:8px 10px;background:#0b1530;border-radius:6px;font-size:12px;color:#c7d2ea;font-style:italic;">' +
+                escHtml(h.summary_en) + '</div>';
+        }
+        html += '</div>';
+        return html;
+    }
+    async function hrLoadPreview(){
+        try {
+            if (state.demoMode) { $('#hr-cwr-preview').textContent = state._demoCwrText || buildDemoCwrText(); return; }
+            var r = await fetch(API + '/packets/' + state.packet.packet_id + '/download');
+            var txt = await r.text();
+            $('#hr-cwr-preview').textContent = txt;
+        } catch(e){ $('#hr-cwr-preview').textContent = 'preview failed: ' + e.message; }
+    }
+    window.hrOnShareChange = function(){
+        var sel = $('#hr-shr'); var custom = $('#hr-shr-custom');
+        if (!sel || !custom) return;
+        if (sel.value === 'custom') { custom.disabled = false; custom.focus(); }
+        else { custom.disabled = true; custom.value = sel.value; }
+    };
+    window.hrToggleRegistered = async function(wid, checked){
+        var work = state.works.filter(function(x){ return x.id === wid; })[0];
+        if (work) work.is_registered = !!checked;
+        persist();
+        setStatus('Updating registration flag…');
+        try {
+            await api('/works/' + wid, {method:'PATCH', body: JSON.stringify({is_registered: !!checked, actor:'wizard-ui'})});
+            await refreshNormalize(wid);
+            setStatus(checked ? 'Marked as registered.' : 'Marked as unregistered.');
+        } catch(e){ setStatus('Update failed: ' + e.message, true); }
+    };
+    window.hrGeneratePacket = async function(){
+        if (!state.publisher) { setStatus('No publisher', true); return; }
+        var terr = ($('#hr-terr').value || '').trim() || '752';
+        state.territory = terr;
+        var shareSel = $('#hr-shr') ? $('#hr-shr').value : '3333';
+        var shareBp = shareSel === 'custom'
+            ? parseInt(($('#hr-shr-custom').value || '3333'), 10)
+            : parseInt(shareSel, 10);
+        if (!(shareBp >= 0 && shareBp <= 10000)) { setStatus('Publisher share must be between 0 and 10000 bp (100%)', true); return; }
+        state.shareBp = shareBp;
+        persist();
+        var body = {
+            publisher_id: state.publisher.id,
+            submitter: $('#hr-sub').value.trim(),
+            sender_ipi: $('#hr-sip').value.trim(),
+            publisher_ipi: $('#hr-pip').value.trim(),
+            territories: [terr],
+            publisher_share_bp: shareBp,
+        };
+        setStatus('Generating CWR packet...');
+        try { state.packet = await api('/packets/generate', {method:'POST', body: JSON.stringify(body)}); state.queue = null; state.ack = null; persist(); setStatus('Packet generated.'); render(); }
+        catch(e){ setStatus(e.message, true); }
+    };
+
+    function renderStep5(body){
+        var workRows = state.works.map(function(w){
+            var nm = state.normalized[w.id];
+            return {id: w.id, title: w.title, normalized: !!nm};
+        });
+        body.innerHTML =
+            '<h3>Submit & track</h3>' +
+            '<div class="hr-row" style="margin-bottom:14px;">' +
+            '<button class="hr-btn" onclick="hrSubmitPacket()" ' + (state.packet ? '' : 'disabled') + '>Enqueue submission</button>' +
+            '<button class="hr-btn" onclick="hrProcessQueue()" ' + (state.queue ? '' : 'disabled') + '>Run worker (process queue)</button>' +
+            '<button class="hr-btn secondary" onclick="hrRefreshSubmission()">↻ Refresh status</button>' +
+            '</div>' +
+            (state.queue ? '<div class="hr-card"><div style="color:#a8b5d9;font-size:12px;">Queue ' + ((state.queue.id || state.queue.queue_id || '').slice(0,8) || '—') + ' · status <span class="hr-pill ' + (state.queue.status || '') + '">' + (state.queue.status || '—') + '</span></div></div>' : '') +
+            '<h3 style="margin-top:14px;">Per-work status</h3>' +
+            '<table class="hr-table"><thead><tr><th>Title</th><th>Status</th><th>PRO Work #</th><th>Message</th><th>Simulate ACK</th></tr></thead><tbody id="hr-sub-rows">' +
+            workRows.map(function(w){ return '<tr data-wid="' + w.id + '">' +
+                '<td>' + w.title + '</td>' +
+                '<td class="hr-sub-status" style="color:#5a6a9a;">click refresh to load</td>' +
+                '<td class="hr-sub-recip">—</td>' +
+                '<td class="hr-sub-msg">—</td>' +
+                '<td><button class="hr-btn secondary" onclick="hrSimAck(\'' + w.id + '\',\'accepted\')">✓ Accept</button> <button class="hr-btn secondary" onclick="hrSimAck(\'' + w.id + '\',\'rejected\')">✗ Reject</button></td>' +
+                '</tr>'; }).join('') +
+            '</tbody></table>' +
+            '<div style="margin-top:10px;"><button class="hr-btn secondary" onclick="hrGoStep(4)">← Back</button></div>';
+        if (state.queue) hrRefreshSubmission();
+    }
+    window.hrSubmitPacket = async function(){
+        setStatus('Enqueuing...');
+        try { state.queue = await api('/packets/' + state.packet.packet_id + '/submit', {method:'POST'}); persist(); setStatus('Enqueued.'); render(); }
+        catch(e){ setStatus(e.message, true); }
+    };
+    window.hrProcessQueue = async function(){
+        setStatus('Running worker...');
+        try { var res = await api('/queue/process?limit=10', {method:'POST'}); setStatus('Processed ' + res.processed + ' item(s).'); state.queue.status = 'submitted'; persist(); render(); }
+        catch(e){ setStatus(e.message, true); }
+    };
+    window.hrSimAck = async function(wid, status){
+        setStatus('Sending simulated ACK...');
+        try {
+            await api('/acks/ingest', {method:'POST', body: JSON.stringify({packet_id: state.packet.packet_id, results: [{work_id: wid, status: status, message: status === 'rejected' ? 'simulated rejection' : null, recipient_work_no: status === 'accepted' ? 'PRO-W-' + wid.slice(0,6).toUpperCase() : null}]})});
+            setStatus('ACK applied.'); hrRefreshSubmission();
+        } catch(e){ setStatus(e.message, true); }
+    };
+    window.hrRefreshSubmission = async function(){
+        var trs = document.querySelectorAll('#hr-sub-rows tr[data-wid]');
+        for (var i=0; i<trs.length; i++){
+            var wid = trs[i].dataset.wid;
+            try {
+                var s = await api('/works/' + wid + '/submission');
+                trs[i].cells[1].innerHTML = '<span class="hr-pill ' + (s.submission_status || 'queued') + '">' + (s.submission_status || '—') + '</span>';
+                trs[i].cells[2].textContent = s.recipient_work_no || '—';
+                trs[i].cells[3].textContent = s.submission_message || '—';
+            } catch(e){ trs[i].cells[1].textContent = 'err: ' + e.message; }
+        }
+    };
+
+    window.hrGoStep = function(n){ state.step = n; persist(); render(); };
+
+    // Publishing pre-check — respects the wizard's own open/fixed state.
+    // If everything the user sees is resolved/accepted, advance. Only block on
+    // issues still open in the current UI. No separate re-scan, no contradiction.
+    window.hrGuardGenerate = function(){
+        var openByWork = [];
+        state.works.forEach(function(w){
+            var nm = state.normalized[w.id]; if (!nm) return;
+            var clientIss = clientSideIssues(w, nm.contributors || [])
+                .filter(function(c){ return !(state.clientFixed||{})[c.id]; });
+            var serverIss = (nm.conflicts || [])
+                .filter(function(c){ return !c.resolved && c.type !== 'split_sum' && c.type !== 'missing_ipi'; });
+            if (clientIss.length || serverIss.length) {
+                openByWork.push({ title: w.title, issues: clientIss.concat(serverIss) });
+            }
+        });
+
+        if (!openByWork.length) { hrGoStep(4); return; }
+
+        // Still-open issues → inline banner, keep user in step 3.
+        var list = openByWork.map(function(w){
+            var types = w.issues.map(function(i){ return (i.type || i.issue_type || 'issue').replace(/_/g,' '); }).join(', ');
+            return '<li><strong>' + escHtml(w.title || '(untitled)') + '</strong> — ' + escHtml(types) + '</li>';
+        }).join('');
+        var existing = document.getElementById('pub-block-banner');
+        if (existing) existing.remove();
+        var banner =
+            '<div id="pub-block-banner" class="hr-card" style="border-color:#f87171;background:rgba(248,113,113,0.08);">' +
+            '<div style="color:#f87171;font-weight:600;margin-bottom:6px;">⛔ ' + openByWork.length + ' work(s) still have open issues</div>' +
+            '<ul style="margin:6px 0 10px 20px;color:#fca5a5;font-size:12px;">' + list + '</ul>' +
+            '<div style="display:flex;gap:8px;">' +
+            '<button class="hr-btn secondary" onclick="document.getElementById(\'pub-block-banner\').remove();">Stay & fix</button>' +
+            '<button class="hr-btn" onclick="hrGoStep(4)">Continue anyway</button>' +
+            '</div></div>';
+        var body = document.getElementById('issueArea');
+        if (body) body.insertAdjacentHTML('afterbegin', banner);
+        setStatus(openByWork.length + ' work(s) still need attention', true);
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function(){ render(); if (typeof window._runAutoDemo === 'function') window._runAutoDemo(); });
+    } else {
+        render();
+        if (typeof window._runAutoDemo === 'function') window._runAutoDemo();
+    }
+})();
+</script>
+
+</body>
+</html>

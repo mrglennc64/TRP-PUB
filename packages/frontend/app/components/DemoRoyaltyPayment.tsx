@@ -101,8 +101,8 @@ export default function DemoRoyaltyPayment({ track, onComplete }: DemoRoyaltyPay
     return (
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-lg mx-auto">
         <div className="text-center py-8">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-10 w-10 text-red-600" />
+          <div className="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="h-10 w-10 text-rose-600" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Something went wrong</h3>
           <p className="text-gray-600 mb-4">{error}</p>
@@ -174,7 +174,7 @@ export default function DemoRoyaltyPayment({ track, onComplete }: DemoRoyaltyPay
 
           <button
             onClick={handleProcess}
-            className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+            className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
           >
             Process Demo Payment
           </button>
@@ -191,8 +191,8 @@ export default function DemoRoyaltyPayment({ track, onComplete }: DemoRoyaltyPay
 
       {step === 'complete' && (
         <div className="text-center py-8">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="h-10 w-10 text-green-600" />
+          <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="h-10 w-10 text-emerald-600" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Payment Complete!</h3>
           <p className="text-gray-600 mb-4">Demo transaction successful</p>

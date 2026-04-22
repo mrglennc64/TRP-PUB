@@ -160,7 +160,7 @@ function LawyerPageInner() {
         {/* Case header */}
         <div className="mb-6">
           <p className="text-xs font-bold tracking-widest text-slate-400 uppercase mb-1">Case Ref: {caseRef}</p>
-          <p className="text-xs font-bold text-orange-500 uppercase tracking-widest mb-3">Registration Gap Detected</p>
+          <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3">Registration Gap Detected</p>
           <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-600">
             <span><strong className="text-[#1a1a2e]">Subject Artist:</strong> {artist || '—'}</span>
             <span className="text-slate-300">·</span>
@@ -198,14 +198,14 @@ function LawyerPageInner() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                       )}
-                      <p className={"text-xs font-semibold " + (item.red ? "text-red-500" : "text-[#1a1a2e]")}>{item.value}</p>
+                      <p className={"text-xs font-semibold " + (item.red ? "text-rose-500" : "text-[#1a1a2e]")}>{item.value}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Blue legal box */}
-              <div className="mt-4 border-l-4 border-blue-500 bg-blue-50 p-4 text-xs text-blue-800 leading-relaxed">
+              <div className="mt-4 border-l-4 border-indigo-500 bg-indigo-50 p-4 text-xs text-indigo-800 leading-relaxed">
                 Data indicates this asset is currently held in <strong>Suspense / Black Box accounts</strong> due to a metadata failure at the registry level. This condition is actionable under SoundExchange's <strong>Featured Artist Letter of Direction (LOD)</strong> framework (17 U.S.C. S.114 & S.112).
                 <br /><br />
                 <strong>Recommended Action:</strong> Submit a Certified LOD Repertoire Chart + Forensic Audit Packet to SoundExchange to initiate correction and retroactive royalty release.

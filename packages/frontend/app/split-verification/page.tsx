@@ -116,8 +116,61 @@ function buildFixes(data: Contributor[]): FixSuggestion[] {
   return fixes
 }
 
+// ── Passcode gate ──────────────────────────────────────────────
+const PASSCODE = process.env.NEXT_PUBLIC_SPLIT_VERIFICATION_PASSCODE || 'TRP-2026'
+const UNLOCK_KEY = 'trp.splitVerification.unlocked'
+
+function PasscodeGate({ children }: { children: React.ReactNode }) {
+  const [unlocked, setUnlocked] = useState(false)
+  const [entered, setEntered] = useState('')
+  const [error, setError] = useState(false)
+  const [ready, setReady] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.sessionStorage.getItem(UNLOCK_KEY) === '1') {
+      setUnlocked(true)
+    }
+    setReady(true)
+  }, [])
+
+  if (!ready) return null
+  if (unlocked) return <>{children}</>
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (entered.trim() === PASSCODE) {
+      window.sessionStorage.setItem(UNLOCK_KEY, '1')
+      setUnlocked(true)
+    } else {
+      setError(true)
+      setEntered('')
+    }
+  }
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#020617', color: '#f1f5f9', fontFamily: 'Inter, system-ui, sans-serif', padding: '2rem' }}>
+      <form onSubmit={submit} style={{ width: '100%', maxWidth: 420, background: '#0f172a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '2.2rem 2rem', boxShadow: '0 20px 60px rgba(0,0,0,0.4)' }}>
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6ee7b7', marginBottom: 10 }}>Restricted</div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.01em', marginBottom: 8 }}>Split Verification</h1>
+        <p style={{ fontSize: 14, color: '#cbd5e1', marginBottom: 20, lineHeight: 1.55 }}>This workspace is protected. Enter the passcode provided by your TrapRoyaltiesPro contact to continue.</p>
+        <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#cbd5e1', marginBottom: 6 }}>Passcode</label>
+        <input
+          type="password"
+          autoFocus
+          value={entered}
+          onChange={(e) => { setEntered(e.target.value); if (error) setError(false) }}
+          style={{ width: '100%', padding: '0.8rem 0.95rem', background: '#1e293b', border: `1px solid ${error ? '#f43f5e' : 'rgba(255,255,255,0.12)'}`, borderRadius: 10, color: '#f1f5f9', fontSize: 15, outline: 'none', letterSpacing: '0.08em' }}
+        />
+        {error && <div style={{ marginTop: 8, fontSize: 12, color: '#f43f5e' }}>Incorrect passcode.</div>}
+        <button type="submit" style={{ marginTop: 18, width: '100%', padding: '0.85rem 1rem', background: 'linear-gradient(135deg,#6366f1,#818cf8)', color: '#fff', fontWeight: 800, fontSize: 14, border: 'none', borderRadius: 10, cursor: 'pointer', letterSpacing: '0.02em' }}>Unlock</button>
+        <div style={{ marginTop: 16, fontSize: 11, color: '#64748b', textAlign: 'center' }}>Access is logged. Do not share this passcode.</div>
+      </form>
+    </div>
+  )
+}
+
 // ── Page ───────────────────────────────────────────────────────
-export default function VerifySplitsPage() {
+function VerifySplitsPageInner() {
   const { demoMode } = useDemoMode()
   const [currentData,     setCurrentData]     = useState<Contributor[]>([])
   const [errors,          setErrors]          = useState<ValidationError[]>([])
@@ -514,7 +567,7 @@ export default function VerifySplitsPage() {
             <div className="flex items-center gap-3 flex-wrap text-sm">
               <span className="bg-[#F1F5F9] px-4 py-2 rounded-full border border-[#E2E8F0] text-[#4A5568]">Label</span>
               <i className="fas fa-arrow-right text-[#CBD5E0]"></i>
-              <span className="bg-red-50 text-[#C53030] px-4 py-2 rounded-full border border-red-200">Split Issues</span>
+              <span className="bg-rose-50 text-[#C53030] px-4 py-2 rounded-full border border-rose-200">Split Issues</span>
               <i className="fas fa-arrow-right text-[#CBD5E0]"></i>
               <span className="bg-[#F1F5F9] px-4 py-2 rounded-full border border-[#E2E8F0] text-[#4A5568]">PRO</span>
               <i className="fas fa-arrow-right text-[#CBD5E0]"></i>
@@ -588,20 +641,20 @@ export default function VerifySplitsPage() {
                   value={lookupTrack}
                   onChange={e => setLookupTrack(e.target.value)}
                   placeholder="Track title..."
-                  className="border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-green-500"
+                  className="border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-emerald-500"
                 />
                 <input
                   value={lookupArtist}
                   onChange={e => setLookupArtist(e.target.value)}
                   placeholder="Artist..."
-                  className="border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-green-500"
+                  className="border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <input
                 value={lookupIsrc}
                 onChange={e => setLookupIsrc(e.target.value)}
                 placeholder="ISRC (e.g. USRC17607839) — or leave blank to search by title"
-                className="w-full border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-green-500 mb-3"
+                className="w-full border border-[#CBD5E0] rounded-lg px-3 py-2 text-sm text-[#1A202C] bg-white focus:outline-none focus:border-emerald-500 mb-3"
               />
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-3 flex-wrap">
@@ -641,13 +694,13 @@ export default function VerifySplitsPage() {
                 <div className="mt-3 space-y-2">
                   {lookupResults.map((r, i) => (
                     <div key={i} className={`rounded-lg p-3 text-xs border ${
-                      r.status === 'found' ? 'border-green-300 bg-green-50' :
+                      r.status === 'found' ? 'border-emerald-300 bg-emerald-50' :
                       r.status === 'manual' ? 'border-yellow-300 bg-yellow-50' :
                       'border-gray-200 bg-gray-50'
                     }`}>
                       <div className="flex items-center gap-2 font-semibold mb-1">
                         <span className={
-                          r.status === 'found' ? 'text-green-700' :
+                          r.status === 'found' ? 'text-emerald-700' :
                           r.status === 'manual' ? 'text-yellow-700' :
                           'text-gray-500'
                         }>
@@ -718,7 +771,7 @@ export default function VerifySplitsPage() {
               </button>
               <button
                 onClick={loadErrorSample}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-red-300 text-red-700 bg-red-50 text-sm font-bold transition-all hover:shadow-md hover:bg-red-100"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-rose-300 text-rose-700 bg-rose-50 text-sm font-bold transition-all hover:shadow-md hover:bg-rose-100"
               >
                 <span className="text-base">⚠️</span>
                 Load Test with Errors
@@ -733,7 +786,7 @@ export default function VerifySplitsPage() {
 
             {/* Error panel */}
             {errors.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 my-4">
+              <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 my-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 text-[#C53030] font-semibold">
                     <i className="fas fa-exclamation-triangle"></i>
@@ -741,7 +794,7 @@ export default function VerifySplitsPage() {
                   </div>
                   <button
                     onClick={handleShowFixes}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#C53030] text-[#C53030] hover:bg-red-100 transition"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#C53030] text-[#C53030] hover:bg-rose-100 transition"
                   >
                     {showFixPanel ? 'Hide Fix Suggestions' : 'Show Fix Suggestions'}
                   </button>
@@ -766,11 +819,11 @@ export default function VerifySplitsPage() {
                       >
                         <div className="flex items-start gap-2 mb-2">
                           <i className="fas fa-exclamation-circle text-[#C53030] text-xs mt-0.5 flex-shrink-0"></i>
-                          <span className="text-red-300 text-xs">{fix.issue}</span>
+                          <span className="text-rose-300 text-xs">{fix.issue}</span>
                         </div>
                         <div className="flex items-start gap-2 mb-3">
                           <i className="fas fa-lightbulb text-xs mt-0.5 flex-shrink-0" style={{ color: '#68D391' }}></i>
-                          <span className="text-green-300 text-xs">{fix.suggestion}</span>
+                          <span className="text-emerald-300 text-xs">{fix.suggestion}</span>
                         </div>
 
                         {fix.status === 'pending' && (
@@ -807,10 +860,10 @@ export default function VerifySplitsPage() {
                                           </p>
                                         )}
                                         {dState === 'matched' && (
-                                          <div className="bg-[#0d1117] border border-green-500/40 rounded-xl p-4 space-y-3">
+                                          <div className="bg-[#0d1117] border border-emerald-500/40 rounded-xl p-4 space-y-3">
                                             <div className="flex items-center gap-2">
-                                              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                              <p className="text-green-400 font-black text-sm tracking-wide">MATCH FOUND</p>
+                                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                              <p className="text-emerald-400 font-black text-sm tracking-wide">MATCH FOUND</p>
                                             </div>
                                             <div className="bg-slate-800 rounded-lg px-4 py-3">
                                               <p className="text-white font-black text-base">{demo.displayName}</p>
@@ -858,7 +911,7 @@ export default function VerifySplitsPage() {
                                     )}
                                     {ipiSearch[fix.id]?.error && (
                                       <div className="space-y-2">
-                                        <p className="text-xs text-orange-400">{ipiSearch[fix.id].error}</p>
+                                        <p className="text-xs text-amber-400">{ipiSearch[fix.id].error}</p>
                                         <button onClick={() => skipFix(fix.id)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#A0AEC0] border border-[#4A5568] transition" style={{ background: 'transparent' }}>
                                           <i className="fas fa-times"></i> Skip (register IPI manually)
                                         </button>
@@ -924,10 +977,10 @@ export default function VerifySplitsPage() {
                                           </p>
                                         )}
                                         {dState === 'matched' && (
-                                          <div className="bg-[#0d1117] border border-green-500/40 rounded-xl p-4 space-y-3">
+                                          <div className="bg-[#0d1117] border border-emerald-500/40 rounded-xl p-4 space-y-3">
                                             <div className="flex items-center gap-2">
-                                              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                              <p className="text-green-400 font-black text-sm tracking-wide">MATCH FOUND</p>
+                                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                              <p className="text-emerald-400 font-black text-sm tracking-wide">MATCH FOUND</p>
                                             </div>
                                             <div className="bg-slate-800 rounded-lg px-4 py-3">
                                               <p className="text-white font-black text-base">{demo.displayName}</p>
@@ -978,10 +1031,10 @@ export default function VerifySplitsPage() {
                                           </p>
                                         )}
                                         {dState === 'matched' && (
-                                          <div className="bg-[#0d1117] border border-green-500/40 rounded-xl p-4 space-y-3">
+                                          <div className="bg-[#0d1117] border border-emerald-500/40 rounded-xl p-4 space-y-3">
                                             <div className="flex items-center gap-2">
-                                              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                              <p className="text-green-400 font-black text-sm tracking-wide">MATCH FOUND</p>
+                                              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                                              <p className="text-emerald-400 font-black text-sm tracking-wide">MATCH FOUND</p>
                                             </div>
                                             <div className="bg-slate-800 rounded-lg px-4 py-3">
                                               <p className="text-white font-black text-base">{demo.displayName}</p>
@@ -1007,7 +1060,7 @@ export default function VerifySplitsPage() {
                                 ) : (
                                   /* Standard name hold options */
                                   <>
-                                    <p className="text-[10px] text-orange-300 font-semibold">
+                                    <p className="text-[10px] text-amber-300 font-semibold">
                                       ⚠️ IDENTITY RISK: {currentData[fix.contributorIndex!]?.percentage ?? 0}% of royalties will be frozen in the Black Box without a legal hold
                                     </p>
                                     <div className="space-y-1.5">
@@ -1077,8 +1130,8 @@ export default function VerifySplitsPage() {
                                             <tr key={ri}>
                                               <td className="px-3 py-2 text-slate-200">{r.name}</td>
                                               <td className="px-3 py-2 text-right text-slate-400 font-mono">{r.original}%</td>
-                                              <td className="px-3 py-2 text-right text-green-300 font-mono font-semibold">{r.rescaled}%</td>
-                                              <td className={`px-3 py-2 text-right font-mono ${r.change < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                                              <td className="px-3 py-2 text-right text-emerald-300 font-mono font-semibold">{r.rescaled}%</td>
+                                              <td className={`px-3 py-2 text-right font-mono ${r.change < 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                                                 {r.change > 0 ? '+' : ''}{r.change}%
                                               </td>
                                             </tr>
@@ -1086,8 +1139,8 @@ export default function VerifySplitsPage() {
                                         </tbody>
                                       </table>
                                     </div>
-                                    <div className="p-2.5 bg-orange-900/30 border border-orange-500/30 rounded-lg">
-                                      <p className="text-[10px] text-orange-300">⚠️ Rescaling will invalidate all prior digital handshakes. All contributors must re-verify adjusted percentages via the SMPT portal before export.</p>
+                                    <div className="p-2.5 bg-amber-900/30 border border-amber-500/30 rounded-lg">
+                                      <p className="text-[10px] text-amber-300">⚠️ Rescaling will invalidate all prior digital handshakes. All contributors must re-verify adjusted percentages via the SMPT portal before export.</p>
                                     </div>
                                     <div className="flex gap-2">
                                       <button onClick={confirmRescale} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition" style={{ background: G }}>
@@ -1157,7 +1210,7 @@ export default function VerifySplitsPage() {
                         e.message.includes(item.name) || (e.message.includes('missing') && !item.name)
                       )
                       return (
-                        <div key={i} className={`rounded-xl border p-3 transition ${hasError ? 'border-red-300 bg-red-50' : 'border-[#E2E8F0] bg-white'}`}>
+                        <div key={i} className={`rounded-xl border p-3 transition ${hasError ? 'border-rose-300 bg-rose-50' : 'border-[#E2E8F0] bg-white'}`}>
                           <div className="grid grid-cols-2 gap-2 mb-2">
                             <div>
                               <label className="text-[10px] font-bold text-[#4A5568] uppercase tracking-wider">Name</label>
@@ -1210,7 +1263,7 @@ export default function VerifySplitsPage() {
                               </div>
                               <button
                                 onClick={() => removeContributor(i)}
-                                className="mb-0.5 w-8 h-8 flex items-center justify-center rounded-lg border border-red-200 text-red-400 hover:bg-red-50 hover:text-red-600 transition text-base flex-shrink-0"
+                                className="mb-0.5 w-8 h-8 flex items-center justify-center rounded-lg border border-rose-200 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition text-base flex-shrink-0"
                                 title="Remove"
                               >
                                 ×
@@ -1377,7 +1430,7 @@ export default function VerifySplitsPage() {
                   </div>
                 </div>
 
-                <div className="bg-red-50 border border-red-100 rounded-lg p-3 text-xs text-[#C53030] flex items-start gap-2 mb-4">
+                <div className="bg-rose-50 border border-rose-100 rounded-lg p-3 text-xs text-[#C53030] flex items-start gap-2 mb-4">
                   <i className="fas fa-info-circle mt-0.5 flex-shrink-0"></i>
                   <span>Georgia state income tax (5.49%) withheld per O.C.G.A. § 48-7-26. Federal withholding may apply separately.</span>
                 </div>
@@ -1463,5 +1516,13 @@ export default function VerifySplitsPage() {
         </footer>
       </div>
     </div>
+  )
+}
+
+export default function VerifySplitsPage() {
+  return (
+    <PasscodeGate>
+      <VerifySplitsPageInner />
+    </PasscodeGate>
   )
 }

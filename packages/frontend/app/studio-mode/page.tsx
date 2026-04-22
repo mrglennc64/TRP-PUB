@@ -115,7 +115,7 @@ export default function StudioModePage() {
               {/* Matter Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Link to Matter <span className="text-red-500">*</span>
+                  Link to Matter <span className="text-rose-500">*</span>
                 </label>
                 <select 
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -132,7 +132,7 @@ export default function StudioModePage() {
               {/* Track Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Track/Project Name <span className="text-red-500">*</span>
+                  Track/Project Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -146,7 +146,7 @@ export default function StudioModePage() {
               {/* Contributors */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-4">
-                  Contributors <span className="text-red-500">*</span>
+                  Contributors <span className="text-rose-500">*</span>
                 </label>
                 
                 {contributors.map((contributor, index) => (
@@ -214,13 +214,13 @@ export default function StudioModePage() {
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total Split:</span>
                     <span className={`text-xl font-bold ${
-                      calculateTotal() === 100 ? 'text-green-600' : 'text-red-600'
+                      calculateTotal() === 100 ? 'text-emerald-600' : 'text-rose-600'
                     }`}>
                       {calculateTotal()}%
                     </span>
                   </div>
                   {calculateTotal() !== 100 && (
-                    <p className="text-sm text-red-600 mt-2">
+                    <p className="text-sm text-rose-600 mt-2">
                       ⚠️ Split must total 100% before sending for signing
                     </p>
                   )}
@@ -242,8 +242,8 @@ export default function StudioModePage() {
         {step === 2 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
             <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-10 h-10 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -274,22 +274,22 @@ export default function StudioModePage() {
             <div className="grid md:grid-cols-2 gap-4 mb-8">
               <button
                 onClick={() => window.location.href = `mailto:?subject=Sign Split Sheet&body=Please sign using this link: ${generatedLink}`}
-                className="flex items-center justify-center space-x-3 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition"
+                className="flex items-center justify-center space-x-3 p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition"
               >
-                <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="text-blue-700 font-medium">Send via Email</span>
+                <span className="text-indigo-700 font-medium">Send via Email</span>
               </button>
               
               <button
                 onClick={sendViaSMS}
-                className="flex items-center justify-center space-x-3 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition"
+                className="flex items-center justify-center space-x-3 p-4 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition"
               >
-                <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                 </svg>
-                <span className="text-green-700 font-medium">Send via SMS</span>
+                <span className="text-emerald-700 font-medium">Send via SMS</span>
               </button>
             </div>
 

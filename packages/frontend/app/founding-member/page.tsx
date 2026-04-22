@@ -62,7 +62,7 @@ export default function FoundingMemberPage() {
       
       <main>
         {/* Hero Section */}
-        <section className="pt-32 pb-20 px-6 bg-gradient-to-r from-purple-600 to-cyan-600 text-white">
+        <section className="pt-32 pb-20 px-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
           <div className="max-w-7xl mx-auto text-center">
             <div className="inline-flex items-center space-x-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-full mb-8 text-sm font-medium">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -118,31 +118,31 @@ export default function FoundingMemberPage() {
                 </div>
                 <ul className="space-y-6 text-lg">
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Full Catalog Audit</strong><p className="text-gray-400">Deep scan of all tracks across PROs, streaming, MLC</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Lifetime 50% Discount</strong><p className="text-gray-400">Half off forever — all features, updates, modules</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Priority Roadmap Input</strong><p className="text-gray-400">Shape features + quarterly strategy sessions</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>White-Glove Onboarding</strong><p className="text-gray-400">Bulk uploads, metadata fixes, team support</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Early Access Perks</strong><p className="text-gray-400">First dibs on AI tools, micro-royalties, new drops</p></div>
@@ -151,10 +151,10 @@ export default function FoundingMemberPage() {
               </div>
 
               {/* Artists */}
-              <div className="bg-gray-900/70 backdrop-blur-md rounded-3xl border-2 border-cyan-600 p-10 shadow-2xl shadow-cyan-900/40">
+              <div className="bg-gray-900/70 backdrop-blur-md rounded-3xl border-2 border-indigo-600 p-10 shadow-2xl shadow-indigo-900/40">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-cyan-800/50 rounded-2xl flex items-center justify-center">
+                    <div className="w-16 h-16 bg-indigo-800/50 rounded-2xl flex items-center justify-center">
                       <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2">
                         <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
                       </svg>
@@ -165,31 +165,31 @@ export default function FoundingMemberPage() {
                 </div>
                 <ul className="space-y-6 text-lg">
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Top Tracks Audit</strong><p className="text-gray-400">Deep dive on your hottest 10+ releases</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Lifetime 50% Discount</strong><p className="text-gray-400">Half off artist plans forever</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Direct Team Access</strong><p className="text-gray-400">Private channel for feedback & questions</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Easy Onboarding</strong><p className="text-gray-400">Pull from Spotify/Apple playlists</p></div>
                   </li>
                   <li className="flex space-x-4">
-                    <svg className="text-green-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg className="text-emerald-400 mt-1 flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/>
                     </svg>
                     <div><strong>Split Proof Tools</strong><p className="text-gray-400">Early access to verification wallet</p></div>
@@ -205,7 +205,7 @@ export default function FoundingMemberPage() {
           <div className="max-w-5xl mx-auto">
             <h2 className="text-5xl font-bold text-center neon-cyan mb-12">Your "Found Money Report" Preview</h2>
             <div className="bg-gray-900/80 rounded-3xl border border-purple-900/50 overflow-hidden shadow-2xl">
-              <div className="h-3 bg-gradient-to-r from-purple-600 to-pink-600"></div>
+              <div className="h-3 bg-gradient-to-r from-purple-600 to-rose-600"></div>
               <div className="p-10">
                 <div className="flex justify-between items-start mb-10">
                   <div>
@@ -215,8 +215,8 @@ export default function FoundingMemberPage() {
                   <div className="bg-purple-900/50 text-purple-300 px-6 py-3 rounded-full font-bold">CONFIDENTIAL</div>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8 mb-12">
-                  <div className="bg-red-900/30 rounded-2xl p-6 text-center">
-                    <p className="text-red-300 mb-2">Unclaimed Royalties</p>
+                  <div className="bg-rose-900/30 rounded-2xl p-6 text-center">
+                    <p className="text-rose-300 mb-2">Unclaimed Royalties</p>
                     <p className="text-4xl font-bold text-white">$87,200</p>
                     <p className="text-sm text-gray-400 mt-2">est. across 18 tracks</p>
                   </div>
@@ -225,8 +225,8 @@ export default function FoundingMemberPage() {
                     <p className="text-4xl font-bold text-white">11 Gaps</p>
                     <p className="text-sm text-gray-400 mt-2">over/under splits detected</p>
                   </div>
-                  <div className="bg-cyan-900/30 rounded-2xl p-6 text-center">
-                    <p className="text-cyan-300 mb-2">PRO Gaps</p>
+                  <div className="bg-indigo-900/30 rounded-2xl p-6 text-center">
+                    <p className="text-indigo-300 mb-2">PRO Gaps</p>
                     <p className="text-4xl font-bold text-white">7 Missing</p>
                     <p className="text-sm text-gray-400 mt-2">registrations incomplete</p>
                   </div>
@@ -242,13 +242,13 @@ export default function FoundingMemberPage() {
                       <p className="text-gray-300 mt-2">BMI registration missing on feature</p>
                     </div>
                     <div className="text-right mt-4 md:mt-0">
-                      <span className="px-4 py-2 bg-red-600/50 text-red-300 rounded-full text-sm font-bold">HIGH</span>
+                      <span className="px-4 py-2 bg-rose-600/50 text-rose-300 rounded-full text-sm font-bold">HIGH</span>
                       <p className="text-xl font-bold text-white mt-2">Est. $4,800 unclaimed</p>
                     </div>
                   </div>
                 </div>
                 <div className="mt-10 text-center">
-                  <button className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-5 px-10 rounded-full text-xl hover:from-purple-500 hover:to-pink-500 transition">
+                  <button className="inline-block bg-gradient-to-r from-purple-600 to-rose-600 text-white font-bold py-5 px-10 rounded-full text-xl hover:from-purple-500 hover:to-rose-500 transition">
                     Download Sample Report
                   </button>
                 </div>
@@ -265,16 +265,16 @@ export default function FoundingMemberPage() {
               <p className="text-xl text-center text-gray-300 mb-12">No commitment. Reviewed in 48 hours. 28 label spots left.</p>
               
               {submitStatus === 'success' && (
-                <div className="mb-8 p-6 bg-green-600/20 border border-green-500 rounded-2xl text-center">
-                  <p className="text-green-400 text-xl font-bold">Application submitted successfully!</p>
-                  <p className="text-green-300 mt-2">We'll review within 48 hours and be in touch.</p>
+                <div className="mb-8 p-6 bg-emerald-600/20 border border-emerald-500 rounded-2xl text-center">
+                  <p className="text-emerald-400 text-xl font-bold">Application submitted successfully!</p>
+                  <p className="text-emerald-300 mt-2">We'll review within 48 hours and be in touch.</p>
                 </div>
               )}
 
               {submitStatus === 'error' && (
-                <div className="mb-8 p-6 bg-red-600/20 border border-red-500 rounded-2xl text-center">
-                  <p className="text-red-400 text-xl font-bold">Something went wrong</p>
-                  <p className="text-red-300 mt-2">Please try again or contact support.</p>
+                <div className="mb-8 p-6 bg-rose-600/20 border border-rose-500 rounded-2xl text-center">
+                  <p className="text-rose-400 text-xl font-bold">Something went wrong</p>
+                  <p className="text-rose-300 mt-2">Please try again or contact support.</p>
                 </div>
               )}
 
@@ -351,7 +351,7 @@ export default function FoundingMemberPage() {
                 <button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full py-6 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-full font-bold text-2xl hover:from-pink-500 hover:to-purple-500 shadow-2xl shadow-pink-900/50 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-6 bg-gradient-to-r from-rose-600 to-purple-600 text-white rounded-full font-bold text-2xl hover:from-rose-500 hover:to-purple-500 shadow-2xl shadow-rose-900/50 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Application – Secure Your Spot'}
                 </button>

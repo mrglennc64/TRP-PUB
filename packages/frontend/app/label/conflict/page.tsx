@@ -68,14 +68,14 @@ export default function ConflictCenterPage() {
               {/* Header */}
               <div className="p-6 flex justify-between items-center" style={{ backgroundColor: 'rgba(239,68,68,0.05)', borderBottom: '1px solid rgba(239,68,68,0.2)' }}>
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 bg-red-500/20 rounded-xl flex items-center justify-center text-red-500 font-bold text-lg">!</div>
+                  <div className="h-12 w-12 bg-rose-500/20 rounded-xl flex items-center justify-center text-rose-500 font-bold text-lg">!</div>
                   <div>
                     <h2 className="font-bold">Conflict ID: #{c.id} — {c.asset}</h2>
                     <p className="text-xs text-slate-500 mono">ISRC: {c.isrc}</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-bold text-red-400 uppercase tracking-widest">{c.overlap} Overlap Detected</span>
+                  <span className="text-xs font-bold text-rose-400 uppercase tracking-widest">{c.overlap} Overlap Detected</span>
                   <p className="text-[10px] text-slate-500 mt-1">{c.status}</p>
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function ConflictCenterPage() {
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-6">Your Verified Claim</h3>
                   <div className="flex items-baseline gap-2 mb-4">
                     <span className="text-5xl font-black mono text-white">{c.ourClaim}</span>
-                    <span className="text-xs text-green-400 font-bold uppercase tracking-tighter">Verified Ledger</span>
+                    <span className="text-xs text-emerald-400 font-bold uppercase tracking-tighter">Verified Ledger</span>
                   </div>
                   <ul className="space-y-3 text-xs text-slate-400">
                     <li>• Source: {c.ourSource}</li>
@@ -98,8 +98,8 @@ export default function ConflictCenterPage() {
                 <div className="p-8 bg-[#0f172a]">
                   <h3 className="text-[10px] font-bold text-slate-500 uppercase mb-6">Rival Claim: {c.rival}</h3>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-5xl font-black mono text-red-400">{c.overlap}</span>
-                    <span className="text-xs text-red-500 font-bold uppercase tracking-tighter">Registry Conflict</span>
+                    <span className="text-5xl font-black mono text-rose-400">{c.overlap}</span>
+                    <span className="text-xs text-rose-500 font-bold uppercase tracking-tighter">Registry Conflict</span>
                   </div>
                   <ul className="space-y-3 text-xs text-slate-400">
                     <li>• Source: {c.rivalSource}</li>

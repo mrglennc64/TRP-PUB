@@ -112,13 +112,13 @@ function fmtMoney(n: number) {
 
 const PRIORITY_META = {
   critical: { label: "Critical", color: "text-rose-400",   bg: "bg-rose-500/15",   border: "border-rose-500/30",   dot: "bg-rose-500"   },
-  high:     { label: "High",     color: "text-orange-400", bg: "bg-orange-500/15", border: "border-orange-500/30", dot: "bg-orange-500" },
+  high:     { label: "High",     color: "text-amber-400", bg: "bg-amber-500/15", border: "border-amber-500/30", dot: "bg-amber-500" },
   medium:   { label: "Medium",   color: "text-yellow-400", bg: "bg-yellow-500/15", border: "border-yellow-500/30", dot: "bg-yellow-400" },
-  low:      { label: "Low",      color: "text-sky-400",    bg: "bg-sky-500/15",    border: "border-sky-500/30",    dot: "bg-sky-400"    },
+  low:      { label: "Low",      color: "text-indigo-400",    bg: "bg-indigo-500/15",    border: "border-indigo-500/30",    dot: "bg-indigo-400"    },
 };
 
 const STATUS_META = {
-  good: { color: "text-green-400", bar: "bg-green-500", badge: "bg-green-500/15 border-green-500/30 text-green-400" },
+  good: { color: "text-emerald-400", bar: "bg-emerald-500", badge: "bg-emerald-500/15 border-emerald-500/30 text-emerald-400" },
   warn: { color: "text-yellow-400",bar: "bg-yellow-500",badge: "bg-yellow-500/15 border-yellow-500/30 text-yellow-400" },
   bad:  { color: "text-rose-400",  bar: "bg-rose-500",  badge: "bg-rose-500/15 border-rose-500/30 text-rose-400" },
 };
@@ -260,11 +260,11 @@ export default function ForensicAuditPage() {
               </button>
             </div>
           ) : (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-4 flex flex-wrap items-center gap-4 no-print">
-              <div className="text-sm font-bold text-green-400">✓ Audit complete — {client.catalog_size} tracks analyzed</div>
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex flex-wrap items-center gap-4 no-print">
+              <div className="text-sm font-bold text-emerald-400">✓ Audit complete — {client.catalog_size} tracks analyzed</div>
               <div className="text-xs text-slate-400">{client.date} · {client.auditor}</div>
               <div className="ml-auto flex gap-2">
-                <button onClick={printPDF} className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded-lg transition">
+                <button onClick={printPDF} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition">
                   ↓ Export PDF
                 </button>
                 <button onClick={() => setGenerated(false)} className="px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold rounded-lg border border-white/10 transition">
@@ -299,14 +299,14 @@ export default function ForensicAuditPage() {
               {activeSection === "summary" && (
                 <div className="print-section space-y-5">
                   {/* Cover block */}
-                  <div className="bg-gradient-to-r from-indigo-900/40 to-violet-900/30 border border-indigo-500/20 rounded-2xl p-6">
+                  <div className="bg-gradient-to-r from-indigo-900/40 to-indigo-900/30 border border-indigo-500/20 rounded-2xl p-6">
                     <div className="text-xs text-indigo-400 font-bold uppercase tracking-widest mb-2">Forensic Royalty Audit Report</div>
                     <h2 className="text-2xl font-black text-white mb-1">{client.name}</h2>
                     <div className="text-slate-400 text-sm mb-4">{client.entity} · {client.audit_period}</div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       {[
                         { label: "Total Leakage", value: fmtMoney(totalLeakage), color: "text-rose-400" },
-                        { label: "Recoverable", value: fmtMoney(recoverableAmt), color: "text-green-400" },
+                        { label: "Recoverable", value: fmtMoney(recoverableAmt), color: "text-emerald-400" },
                         { label: "Affected Tracks", value: affectedTracks, color: "text-yellow-400" },
                         { label: "Critical Issues", value: criticalCount, color: "text-rose-400" },
                       ].map(c => (
@@ -348,9 +348,9 @@ export default function ForensicAuditPage() {
                     <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Estimated Recovery Timeline</div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       {[
-                        { horizon: "30 Days",  action: "ISWC registration + territory filings", amount: 72400 + 48200, color: "text-green-400", border: "border-green-500/20" },
+                        { horizon: "30 Days",  action: "ISWC registration + territory filings", amount: 72400 + 48200, color: "text-emerald-400", border: "border-emerald-500/20" },
                         { horizon: "60–90 Days", action: "Split conflict resolution + IPI registration", amount: 31800 + 14700, color: "text-yellow-400", border: "border-yellow-500/20" },
-                        { horizon: "90–180 Days", action: "ISRC reassignment + Rights Administrator filing", amount: 9100 + 2800 + 2000, color: "text-sky-400", border: "border-sky-500/20" },
+                        { horizon: "90–180 Days", action: "ISRC reassignment + Rights Administrator filing", amount: 9100 + 2800 + 2000, color: "text-indigo-400", border: "border-indigo-500/20" },
                       ].map(r => (
                         <div key={r.horizon} className={`bg-white/5 border ${r.border} rounded-xl p-4`}>
                           <div className="text-xs text-slate-500 mb-1">{r.horizon}</div>
@@ -373,7 +373,7 @@ export default function ForensicAuditPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-xs text-slate-500">Recoverable</div>
-                      <div className="text-lg font-black text-green-400">{fmtMoney(recoverableAmt)}</div>
+                      <div className="text-lg font-black text-emerald-400">{fmtMoney(recoverableAmt)}</div>
                     </div>
                   </div>
                   <div className="divide-y divide-white/5">
@@ -382,8 +382,8 @@ export default function ForensicAuditPage() {
                       return (
                         <div key={i} className={`flex items-start gap-4 px-5 py-4 border-l-4 ${
                           item.priority === "critical" ? "border-rose-500" :
-                          item.priority === "high"     ? "border-orange-500" :
-                          item.priority === "medium"   ? "border-yellow-500" : "border-sky-500"
+                          item.priority === "high"     ? "border-amber-500" :
+                          item.priority === "medium"   ? "border-yellow-500" : "border-indigo-500"
                         }`}>
                           <div className="flex-shrink-0 pt-0.5">
                             <span className={`px-2 py-0.5 text-xs font-bold rounded border ${m.color} ${m.bg} ${m.border}`}>{m.label}</span>
@@ -393,7 +393,7 @@ export default function ForensicAuditPage() {
                             <div className="text-xs text-slate-400 leading-relaxed">{item.description}</div>
                             <div className="flex gap-4 mt-2 text-xs text-slate-500">
                               <span>{item.affected_tracks} track{item.affected_tracks !== 1 ? "s" : ""} affected</span>
-                              <span className={item.recoverable ? "text-green-400" : "text-slate-500"}>
+                              <span className={item.recoverable ? "text-emerald-400" : "text-slate-500"}>
                                 {item.recoverable ? "✓ Recoverable" : "✗ Non-recoverable"}
                               </span>
                             </div>
@@ -517,8 +517,8 @@ export default function ForensicAuditPage() {
                             <div className="text-xs font-bold text-rose-400 mb-1">{c.source_a}</div>
                             <div className="text-sm font-bold text-white font-mono">{c.split_a}</div>
                           </div>
-                          <div className="bg-orange-500/5 border border-orange-500/20 rounded-xl p-3">
-                            <div className="text-xs font-bold text-orange-400 mb-1">{c.source_b}</div>
+                          <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
+                            <div className="text-xs font-bold text-amber-400 mb-1">{c.source_b}</div>
                             <div className="text-sm font-bold text-white font-mono">{c.split_b}</div>
                           </div>
                         </div>

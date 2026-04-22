@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roya • CWR Packet Result (Sample)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#F8FAFC; color:#1A202C; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  a { color:#2B6F4B; text-decoration:none; }
+  .wrap { max-width:960px; margin:0 auto; padding:32px 24px 64px; }
+  .header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand-icon { background:#2B6F4B; color:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .brand-text { font-weight:700; font-size:18px; }
+  .sample-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#2B6F4B; background:#E8F3ED; padding:4px 10px; border-radius:99px; }
+  h1 { font-size:30px; font-weight:800; line-height:1.2; margin-bottom:6px; }
+  .subtitle { color:#64748B; font-size:14px; margin-bottom:24px; }
+  .caption { background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:12px 16px; font-size:13px; color:#166534; margin-bottom:18px; }
+
+  .confidence { background:linear-gradient(135deg,#ECFDF5 0%,#F0FDF4 100%); border:1px solid #86EFAC; border-radius:14px; padding:20px 22px; margin-bottom:18px; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .confidence .score { display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; min-width:110px; }
+  .confidence .score .pct { font-size:44px; font-weight:800; color:#15803D; line-height:1; }
+  .confidence .score .band { margin-top:6px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#fff; background:#16A34A; padding:4px 10px; border-radius:99px; }
+  .confidence .body { flex:1; min-width:240px; }
+  .confidence .body .t { font-size:16px; font-weight:800; color:#14532D; margin-bottom:4px; }
+  .confidence .body .d { font-size:13px; color:#166534; line-height:1.5; }
+  .confidence .body .mini { margin-top:10px; display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:#166534; }
+  .confidence .body .mini span { background:#fff; border:1px solid #BBF7D0; border-radius:99px; padding:3px 10px; font-weight:600; }
+
+  .card { background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:20px; margin-bottom:16px; box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+  .card h2 { font-size:15px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .card h2 .step-pill { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#2B6F4B; background:#E8F3ED; padding:3px 8px; border-radius:99px; }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .form-grid .f label { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#64748B; margin-bottom:4px; }
+  .form-grid .f .v { background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px 12px; font-size:13px; font-weight:500; font-family:'JetBrains Mono',monospace; }
+  .form-grid .f .v.hi { background:#F0FDF4; border-color:#BBF7D0; color:#166534; font-weight:700; font-family:'Inter',sans-serif; }
+
+  .meta-row { display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:#64748B; margin-bottom:10px; }
+  .meta-row b { color:#1A202C; font-weight:700; }
+
+  .cwr-text { background:#0F172A; color:#E2E8F0; border-radius:10px; padding:16px; font-family:'JetBrains Mono',monospace; font-size:11px; overflow-x:auto; line-height:1.7; white-space:pre; }
+  .cwr-text .r { color:#6EE7B7; }
+  .cwr-text .p { color:#FCD34D; }
+  .cwr-text .w { color:#93C5FD; }
+  .cwr-text .c { color:#64748B; }
+
+  .validation { }
+  .v-row { display:flex; align-items:flex-start; gap:12px; padding:14px 0; border-bottom:1px solid #F1F5F9; }
+  .v-row:last-child { border-bottom:0; }
+  .v-row .dot { flex:0 0 22px; height:22px; border-radius:99px; background:#22C55E; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+  .v-row .title { font-weight:700; font-size:14px; margin-bottom:4px; color:#166534; }
+  .v-row ul { list-style:none; padding:0; margin-top:4px; }
+  .v-row ul li { font-size:12px; color:#475569; padding-left:14px; position:relative; line-height:1.7; }
+  .v-row ul li::before { content:'•'; position:absolute; left:0; color:#94A3B8; }
+
+  .ready-banner { background:linear-gradient(135deg,#F0FDF4 0%,#ECFDF5 100%); border:1px solid #86EFAC; border-radius:12px; padding:16px 20px; margin-top:16px; display:flex; align-items:center; gap:12px; }
+  .ready-banner .check { width:32px; height:32px; background:#22C55E; color:#fff; border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; flex:0 0 32px; }
+  .ready-banner .t { font-weight:800; font-size:15px; color:#166534; }
+  .ready-banner .d { font-size:12px; color:#166534; margin-top:2px; }
+
+  .page-nav { margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; }
+  .page-nav a { background:#fff; border:1px solid #E2E8F0; border-radius:99px; padding:8px 16px; font-size:13px; font-weight:600; color:#1A202C; }
+  .page-nav a:hover { border-color:#2B6F4B; color:#2B6F4B; }
+
+  @media (max-width:640px) {
+    h1 { font-size:24px; }
+    .form-grid { grid-template-columns:1fr; }
+    .cwr-text { font-size:10px; }
+    .ready-hero h1 { font-size:20px !important; }
+  }
+
+  .ready-hero { background:linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%); border:1px solid #6EE7B7; border-radius:20px; padding:28px 32px; margin-bottom:20px; text-align:center; }
+  .ready-hero .check-icon { background:#059669; width:56px; height:56px; border-radius:99px; display:inline-flex; align-items:center; justify-content:center; font-size:30px; color:#fff; margin-bottom:14px; box-shadow:0 8px 14px -6px rgba(5,150,105,0.3); }
+  .ready-hero h1 { font-size:26px; font-weight:800; color:#064E3B; margin-bottom:6px; letter-spacing:-0.3px; line-height:1.2; }
+  .ready-hero .sub { font-size:15px; color:#065F46; font-weight:500; margin-bottom:10px; }
+  .ready-hero .badges { display:inline-flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:6px; }
+  .ready-hero .badges span { background:#fff; border-radius:99px; padding:5px 14px; font-size:12px; font-weight:600; color:#065F46; border:1px solid #A7F3D0; }
+  .ready-hero .tally { font-size:13px; margin-top:14px; color:#047857; background:rgba(255,255,255,0.75); display:inline-block; padding:6px 16px; border-radius:99px; font-weight:600; }
+
+  .pack-conf { background:#FEFCE8; border:1px solid #FDE047; border-radius:14px; padding:16px 20px; margin-bottom:20px; }
+  .pack-conf .row { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px; }
+  .pack-conf .row .lead { font-size:14px; color:#713F12; }
+  .pack-conf .row .lead b { color:#15803D; font-weight:800; }
+  .pack-conf .row .rev { font-size:12px; background:#FEF3C7; padding:4px 12px; border-radius:99px; color:#854D0E; font-weight:700; }
+  .pack-conf .note { font-size:12px; margin-top:8px; color:#92400E; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">R</div>
+      <div class="brand-text">Roya</div>
+    </div>
+    <span class="sample-tag">CWR v2.1 Packet Result</span>
+  </div>
+
+  <div class="ready-hero">
+    <div class="check-icon">✓</div>
+    <h1>👉 Submission-Ready. No Further Corrections Required.</h1>
+    <div class="sub">Validated against:</div>
+    <div class="badges">
+      <span>🏗️ Structural rules</span>
+      <span>⚙️ Business logic</span>
+      <span>🌍 Territory constraints</span>
+    </div>
+    <div class="tally">✅ 3 works · 0 errors · 0 warnings · ready for PRO/ICE</div>
+  </div>
+
+  <div class="pack-conf">
+    <div class="row">
+      <div class="lead"><b style="color:#713F12;">📋 Packet confidence:</b> <b>100% pass rate</b> — all structural, business &amp; territory checks cleared.</div>
+      <div class="rev">🧑‍💻 Human-reviewed before generation</div>
+    </div>
+    <div class="note">The Cleaning Wizard walked through each missing field, share imbalance, and territory rule. No silent AI overrides.</div>
+  </div>
+
+  <div class="caption">
+    👤 <b>Human-in-the-loop:</b> this packet is the <i>output</i>. Before generation the Wizard walked a human through every issue — missing IPIs, foreign-writer sub-publishing (E/SE/AM), split-sum checks, duplicate-writer resolution, MusicBrainz/ISWC confirmation. No silent AI fixes.
+  </div>
+
+  <div class="card">
+    <h2><span class="step-pill">Step 4</span> Generate CWR v2.1 packet · submitter settings</h2>
+    <div class="form-grid">
+      <div class="f"><label>Submitter name (HDR)</label><div class="v">roya ab publishing</div></div>
+      <div class="f"><label>Sender IPI</label><div class="v">00712984310</div></div>
+      <div class="f"><label>Publisher IPI</label><div class="v">00712984310</div></div>
+      <div class="f"><label>Collection scope</label><div class="v">Local / Sweden Only (752)</div></div>
+      <div class="f"><label>Publisher share</label><div class="v hi">🇸🇪 Swedish standard — 33.33%</div></div>
+      <div class="f"><label>Custom share (basis points, 10000 = 100%)</label><div class="v">3333</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📄 Generated CWR packet</h2>
+    <div class="meta-row">
+      <span><b>3</b> works</span>
+      <span><b>30</b> lines</span>
+      <span><b>2,664</b> bytes</span>
+      <span>packet <b>068f7776</b></span>
+      <span>version <b>CWR v2.1</b></span>
+    </div>
+<div class="cwr-text"><span class="c">HDR ROYA-DEMO-001  NORDIC MUSIC AB                     01.10     20260420143000</span>
+<span class="c">GRHNWR                                                   0000001</span>
+<span class="r">NWR</span>00000001MIDNIGHT SUN                                                  T0043553311               UNC Y
+<span class="p">SPU</span>0000000100000002010000712984310roya ab publishing                          E 00712984310              011  033330000000000
+SPT0000000100000003  00712984310033330000000000752 I
+<span class="w">SWR</span>0000000100000004001234567890Andersson            Erik                  CA1000005000
+SWT00000001000000050012345678901000005000000000752 I
+PWR00000001000000006007129843100roya ab publishing                          00123456789
+TRL000000010000000700000007
+<span class="r">NWR</span>00000002VINTERLJUS                                                    T3456789012               UNC Y
+<span class="p">SPU</span>0000000200000002010000712984310roya ab publishing                          E 00712984310              011  033330000000000
+SPT0000000200000003  00712984310033330000000000752 I
+<span class="w">SWR</span>0000000200000004000345678901Svensson             Maria                 CA0600003000
+SWT00000002000000050003456789010600003000000000752 I
+PWR00000002000000006007129843100roya ab publishing                          00345678901
+<span class="w">SWR</span>0000000200000007002168495555Berg                 Johan                 CA0400002000
+SWT00000002000000080021684955550400002000000000752 I
+PWR00000002000000009007129843100roya ab publishing                          02168495555
+TRL000000020000000100000010
+<span class="r">NWR</span>00000003AURORA                                                        T9988776654               UNC Y
+<span class="p">SPU</span>0000000300000002010000712984310roya ab publishing                          E 00712984310              011  033330000000000
+SPT0000000300000003  00712984310033330000000000752 I
+<span class="w">SWR</span>0000000300000004000987654321Petersen             Lars                  CA1000005000
+SWT00000003000000050009876543211000005000000000752 I
+PWR00000003000000006007129843100roya ab publishing                          00987654321
+TRL000000030000000700000007
+<span class="c">GRT000000010000000300000030</span>
+<span class="c">TRL000000030000003000000033</span></div>
+  </div>
+
+  <div class="card validation">
+    <h2>✓ CWR Validation Summary</h2>
+
+    <div class="v-row">
+      <div class="dot">✓</div>
+      <div>
+        <div class="title">1. Structural Integrity — PASS</div>
+        <ul>
+          <li>HDR → NWR → SPU → SPT → SWR → SWT → PWR → TRL structure present</li>
+          <li>3 work(s) · 5 SWR record(s) · 5 PWR record(s)</li>
+          <li>Society code 011 (PRO) applied</li>
+          <li>Territory code(s) applied: 752</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="v-row">
+      <div class="dot">✓</div>
+      <div>
+        <div class="title">2. Technical Alignment — PASS</div>
+        <ul>
+          <li>No formatting issues detected</li>
+          <li>Record sequence numbers sequential</li>
+          <li>All required columns present and padded</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="v-row">
+      <div class="dot">✓</div>
+      <div>
+        <div class="title">3. Business Logic — OK</div>
+        <ul>
+          <li>No business warnings</li>
+          <li>Publisher share 33.33% (Swedish standard) applied consistently across works</li>
+          <li>All writer shares sum to 100%</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="ready-banner">
+    <div class="check">✓</div>
+    <div>
+      <div class="t">Ready for PRO / ICE submission</div>
+      <div class="d">Packet has cleared structural, technical, and business checks. The Wizard will hand this file to the Submit step after final human confirmation.</div>
+    </div>
+  </div>
+
+  <div class="page-nav">
+    <a href="/pages/demo-hub.html">← All demos</a>
+    <a href="/pages/demo-cwr-preflight.html">← CWR Pre-Flight</a>
+    <a href="/pages/demo-health-dashboard.html">← Health Dashboard</a>
+    <a href="/pages/review.html?demo=1">→ Try the live Wizard demo</a>
+    <a href="/pages/demo-pilot-signup.html">→ Join the Pilot</a>
+  </div>
+</div>
+</body>
+</html>

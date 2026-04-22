@@ -124,9 +124,9 @@ const LEAKS = [
 
 const COLOR = {
   indigo: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
-  blue:   "bg-blue-500/10 border-blue-500/30 text-blue-400",
+  blue:   "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
   purple: "bg-purple-500/10 border-purple-500/30 text-purple-400",
-  green:  "bg-green-500/10 border-green-500/30 text-green-400",
+  green:  "bg-emerald-500/10 border-emerald-500/30 text-emerald-400",
   orange: "bg-indigo-500/10 border-indigo-500/30 text-indigo-400",
 } as const;
 
@@ -224,7 +224,7 @@ export default function OnboardingPage() {
         </div>
         <div className="mt-8 text-center">
           <Link href="/dashboard"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-red-500/20 border border-red-500/30 text-red-300 font-bold rounded-xl hover:bg-red-500/30 transition">
+            className="inline-flex items-center gap-2 px-6 py-3 bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold rounded-xl hover:bg-rose-500/30 transition">
             Scan your catalog for leaks →
           </Link>
         </div>
@@ -306,7 +306,7 @@ export default function OnboardingPage() {
                 <ul className="space-y-2">
                   {STEPS[activeStep].actions.map((a, j) => (
                     <li key={j} className="flex items-center gap-2 text-sm">
-                      <span className="text-green-400 flex-shrink-0">✓</span>
+                      <span className="text-emerald-400 flex-shrink-0">✓</span>
                       <span className="text-slate-300">{a}</span>
                     </li>
                   ))}

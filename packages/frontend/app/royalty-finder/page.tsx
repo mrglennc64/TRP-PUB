@@ -281,8 +281,8 @@ function RoyaltyFinderContent() {
           </form>
 
           {error && (
-            <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-800 font-medium">{error}</p>
+            <div className="mt-6 p-4 bg-rose-50 border border-rose-200 rounded-lg">
+              <p className="text-rose-800 font-medium">{error}</p>
             </div>
           )}
         </div>
@@ -360,11 +360,11 @@ function RoyaltyFinderContent() {
               <div className="space-y-4">
                 {/* Track header + risk score */}
                 {results.found === false ? (
-                  <div className="p-5 bg-red-900/20 border border-red-500/40 rounded-xl">
+                  <div className="p-5 bg-rose-900/20 border border-rose-500/40 rounded-xl">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-2xl">⚠️</span>
                       <div>
-                        <p className="font-bold text-red-300">ISRC Not Registered</p>
+                        <p className="font-bold text-rose-300">ISRC Not Registered</p>
                         <p className="text-sm text-slate-400">{results.isrc} — not found in MusicBrainz</p>
                       </div>
                     </div>
@@ -395,7 +395,7 @@ function RoyaltyFinderContent() {
                         )}
                       </div>
                       <div className="flex-shrink-0 ml-4 text-center">
-                        <div className={`text-3xl font-black ${results.score === 0 ? 'text-green-400' : results.score <= 25 ? 'text-yellow-400' : results.score <= 50 ? 'text-orange-400' : 'text-red-400'}`}>
+                        <div className={`text-3xl font-black ${results.score === 0 ? 'text-emerald-400' : results.score <= 25 ? 'text-yellow-400' : results.score <= 50 ? 'text-amber-400' : 'text-rose-400'}`}>
                           {results.score}
                         </div>
                         <p className="text-[10px] text-slate-500 uppercase font-bold">Risk/100</p>
@@ -418,10 +418,10 @@ function RoyaltyFinderContent() {
 
                     {/* Gap Finder */}
                     {results.gaps?.length > 0 && (
-                      <div className="border border-orange-500/30 rounded-xl overflow-hidden">
-                        <div className="px-4 py-2 bg-orange-500/10 border-b border-orange-500/20 flex items-center gap-2">
-                          <span className="text-orange-400 text-sm font-black">⚡ GAP FINDER</span>
-                          <span className="text-xs text-orange-300">{results.gaps.length} royalty gap{results.gaps.length !== 1 ? 's' : ''} detected</span>
+                      <div className="border border-amber-500/30 rounded-xl overflow-hidden">
+                        <div className="px-4 py-2 bg-amber-500/10 border-b border-amber-500/20 flex items-center gap-2">
+                          <span className="text-amber-400 text-sm font-black">⚡ GAP FINDER</span>
+                          <span className="text-xs text-amber-300">{results.gaps.length} royalty gap{results.gaps.length !== 1 ? 's' : ''} detected</span>
                         </div>
                         <div className="divide-y divide-white/5">
                           {results.gaps.map((gap: any, i: number) => {
@@ -461,9 +461,9 @@ function RoyaltyFinderContent() {
                       </div>
                     )}
                     {results.gaps?.length === 0 && (
-                      <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-xl flex items-center gap-3">
+                      <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-xl flex items-center gap-3">
                         <span className="text-2xl">✅</span>
-                        <p className="text-sm text-green-300 font-medium">No gaps detected — this recording is fully indexed across MusicBrainz, ListenBrainz, and TheAudioDB.</p>
+                        <p className="text-sm text-emerald-300 font-medium">No gaps detected — this recording is fully indexed across MusicBrainz, ListenBrainz, and TheAudioDB.</p>
                       </div>
                     )}
 
@@ -515,9 +515,9 @@ function RoyaltyFinderContent() {
                                       )}
                                     </div>
                                     {c.ipi ? (
-                                      <span className="text-[10px] font-mono text-green-400">IPI: {c.ipi}</span>
+                                      <span className="text-[10px] font-mono text-emerald-400">IPI: {c.ipi}</span>
                                     ) : (
-                                      <span className="text-[10px] text-orange-400">No IPI</span>
+                                      <span className="text-[10px] text-amber-400">No IPI</span>
                                     )}
                                   </div>
                                 ))}
@@ -531,13 +531,13 @@ function RoyaltyFinderContent() {
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5">Platforms</p>
                               <div className="flex flex-wrap gap-2">
                                 {acrData.platforms.spotify && (
-                                  <a href={acrData.platforms.spotify} target="_blank" rel="noreferrer" className="px-3 py-1 bg-green-800/40 hover:bg-green-700/50 text-green-300 text-[10px] font-bold rounded-lg border border-green-600/30 transition">Spotify ↗</a>
+                                  <a href={acrData.platforms.spotify} target="_blank" rel="noreferrer" className="px-3 py-1 bg-emerald-800/40 hover:bg-emerald-700/50 text-emerald-300 text-[10px] font-bold rounded-lg border border-emerald-600/30 transition">Spotify ↗</a>
                                 )}
                                 {acrData.platforms.applemusic && (
-                                  <a href={acrData.platforms.applemusic} target="_blank" rel="noreferrer" className="px-3 py-1 bg-pink-900/40 hover:bg-pink-800/50 text-pink-300 text-[10px] font-bold rounded-lg border border-pink-600/30 transition">Apple Music ↗</a>
+                                  <a href={acrData.platforms.applemusic} target="_blank" rel="noreferrer" className="px-3 py-1 bg-rose-900/40 hover:bg-rose-800/50 text-rose-300 text-[10px] font-bold rounded-lg border border-rose-600/30 transition">Apple Music ↗</a>
                                 )}
                                 {acrData.platforms.youtube && (
-                                  <a href={acrData.platforms.youtube} target="_blank" rel="noreferrer" className="px-3 py-1 bg-red-900/40 hover:bg-red-800/50 text-red-300 text-[10px] font-bold rounded-lg border border-red-600/30 transition">YouTube ↗</a>
+                                  <a href={acrData.platforms.youtube} target="_blank" rel="noreferrer" className="px-3 py-1 bg-rose-900/40 hover:bg-rose-800/50 text-rose-300 text-[10px] font-bold rounded-lg border border-rose-600/30 transition">YouTube ↗</a>
                                 )}
                                 {acrData.platforms.deezer && (
                                   <a href={acrData.platforms.deezer} target="_blank" rel="noreferrer" className="px-3 py-1 bg-slate-700/60 hover:bg-slate-600/60 text-slate-300 text-[10px] font-bold rounded-lg border border-slate-500/30 transition">Deezer ↗</a>
@@ -555,7 +555,7 @@ function RoyaltyFinderContent() {
                       <Link href="/cwr-generator" className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-indigo-300 text-xs font-bold rounded-lg border border-indigo-500/30 transition">📋 CWR Registration</Link>
                       <Link href={`/free-audit?isrc=${results.isrc}`} className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-slate-300 text-xs font-bold rounded-lg border border-white/10 transition">🔬 Full Forensic Audit</Link>
                       {results.audiodb?.music_video && (
-                        <a href={results.audiodb.music_video} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-red-700/60 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition">🎬 Music Video</a>
+                        <a href={results.audiodb.music_video} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-rose-700/60 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition">🎬 Music Video</a>
                       )}
                     </div>
                   </>

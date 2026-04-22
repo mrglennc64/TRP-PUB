@@ -89,7 +89,7 @@ export default function AboutPage() {
         {/* Glenn Carter */}
         <div className="bg-[#111827] border border-[#1f2937] rounded-2xl p-8 transition-all duration-300 hover:border-[#8b5cf6] hover:-translate-y-1 hover:shadow-[0_20px_40px_-10px_#000]">
           <div className="flex items-center gap-2 mb-5">
-            <span className="text-xs font-bold uppercase tracking-widest text-pink-400 bg-pink-400/10 border border-pink-400/20 rounded-full px-3 py-1">20+ yrs · Music Industry</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-rose-400 bg-rose-400/10 border border-rose-400/20 rounded-full px-3 py-1">20+ yrs · Music Industry</span>
           </div>
           <h2 className="text-lg font-bold mb-0.5">Glenn Carter</h2>
           <p className="text-purple-400 text-sm font-semibold mb-4">Co-Founder, Music Industry Strategy</p>
@@ -105,10 +105,10 @@ export default function AboutPage() {
           <div className="border-t border-gray-800 pt-5">
             <p className="text-xs text-gray-600 uppercase tracking-widest mb-3 font-semibold">Specialties</p>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-pink-300 font-semibold">Forensic Recovery</span></div>
-              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-pink-300 font-semibold">Studio Workflow</span></div>
-              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-pink-300 font-semibold">International Labels</span></div>
-              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-pink-300 font-semibold">Artist Advocacy</span></div>
+              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-rose-300 font-semibold">Forensic Recovery</span></div>
+              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-rose-300 font-semibold">Studio Workflow</span></div>
+              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-rose-300 font-semibold">International Labels</span></div>
+              <div className="bg-gray-900 px-3 py-2 rounded-lg text-center"><span className="text-rose-300 font-semibold">Artist Advocacy</span></div>
             </div>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function AboutPage() {
             that Performance Rights Organizations can trust.&rdquo;
           </p>
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex-shrink-0"></div>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-rose-500 flex-shrink-0"></div>
             <div>
               <p className="font-bold text-white text-sm">Jerome &amp; Glenn Carter</p>
               <p className="text-gray-500 text-xs">Co‑Founders, SMPT — Secured Music Protocol Technology</p>

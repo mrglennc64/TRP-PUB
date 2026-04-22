@@ -23,7 +23,7 @@ const PILLARS = [
     icon: '📅',
     title: 'Monthly Platform Access',
     amount: '$500 / mo',
-    color: 'from-purple-500 to-pink-600',
+    color: 'from-purple-500 to-rose-600',
     items: [
       'Unlimited users & catalog size',
       'Full API access (unlimited requests)',
@@ -36,7 +36,7 @@ const PILLARS = [
     icon: '⚡',
     title: 'Success Fee',
     amount: '5%',
-    color: 'from-green-500 to-emerald-600',
+    color: 'from-emerald-500 to-emerald-600',
     items: [
       'Applied only to recovered royalties',
       'Never on existing revenue streams',
@@ -139,7 +139,7 @@ export default function PartnershipPage() {
             <span className="bg-[#1e293b]/10 rounded-full px-4 py-2">$5,000 Onboarding</span>
             <span className="bg-[#1e293b]/10 rounded-full px-4 py-2">$500 / Month</span>
             <span className="bg-[#1e293b]/10 rounded-full px-4 py-2">5% Success Fee</span>
-            <span className="bg-green-500/20 border border-green-500/30 text-green-300 rounded-full px-4 py-2">Effective {TODAY}</span>
+            <span className="bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 rounded-full px-4 py-2">Effective {TODAY}</span>
           </div>
         </div>
       </div>
@@ -178,7 +178,7 @@ export default function PartnershipPage() {
               <ul className="p-5 space-y-2">
                 {p.items.map((item, j) => (
                   <li key={j} className="flex items-start gap-2 text-sm text-slate-400">
-                    <span className="text-green-500 mt-0.5 flex-shrink-0">✓</span>
+                    <span className="text-emerald-500 mt-0.5 flex-shrink-0">✓</span>
                     {item}
                   </li>
                 ))}
@@ -191,7 +191,7 @@ export default function PartnershipPage() {
         <div className="fade-up mb-16 bg-gradient-to-r from-indigo-900 to-purple-900 rounded-2xl p-8 text-white">
           <div className="grid md:grid-cols-3 gap-6 text-center">
             <div>
-              <div className="text-3xl font-black text-green-400 mb-1">$142,000+</div>
+              <div className="text-3xl font-black text-emerald-400 mb-1">$142,000+</div>
               <div className="text-sm text-indigo-300">Average recovered per label in Year 1</div>
             </div>
             <div>
@@ -199,7 +199,7 @@ export default function PartnershipPage() {
               <div className="text-sm text-indigo-300">Average time to first audit report</div>
             </div>
             <div>
-              <div className="text-3xl font-black text-pink-400 mb-1">50%</div>
+              <div className="text-3xl font-black text-rose-400 mb-1">50%</div>
               <div className="text-sm text-indigo-300">Reduction in dispute resolution time</div>
             </div>
           </div>

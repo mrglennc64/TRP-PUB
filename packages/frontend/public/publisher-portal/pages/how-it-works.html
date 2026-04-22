@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>How It Works · TrapRoyaltiesPro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:#fafcff; color:#0b2b2f; line-height:1.55; }
+.container { max-width:1180px; margin:0 auto; padding:1.2rem 2rem 4rem; }
+a { color:#0b4f3c; }
+.navbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:2.5rem; padding-bottom:0.75rem; border-bottom:1px solid #e2edf2; }
+.logo { font-weight:800; font-size:1.6rem; letter-spacing:-0.02em; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); background-clip:text; -webkit-background-clip:text; color:transparent; }
+.nav-links { display:flex; flex-wrap:wrap; gap:1.6rem; font-weight:500; font-size:0.9rem; align-items:center; }
+.nav-links a { text-decoration:none; color:#2c5f6e; }
+.nav-links a:hover { color:#0b4f3c; }
+.nav-links a.active { color:#0b4f3c; font-weight:700; }
+.demo-badge { background:#eef2f5; padding:0.3rem 0.9rem; border-radius:40px; font-size:0.8rem; font-weight:600; text-decoration:none; color:#2c5f6e; display:inline-flex; align-items:center; gap:6px; }
+.live-dot { display:inline-block; width:8px; height:8px; background:#22c55e; border-radius:50%; margin-right:6px; box-shadow:0 0 0 2px #dcfce7; }
+.icon { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; vertical-align:-4px; }
+.icon-lg { width:28px; height:28px; }
+.page-hero { background:linear-gradient(105deg,#ffffff 0%,#f6fbfd 100%); border-radius:1.6rem; padding:2.6rem 2.4rem; border:1px solid #e2edf2; margin-bottom:2rem; }
+.page-hero h1 { font-size:2.2rem; font-weight:800; letter-spacing:-0.02em; line-height:1.15; margin-bottom:0.85rem; }
+.page-hero h1 .accent { background:linear-gradient(135deg,#0b4f3c,#1b7e5e); background-clip:text; -webkit-background-clip:text; color:transparent; }
+.page-hero p.lead { font-size:1.05rem; color:#3a5a66; max-width:780px; }
+.breadcrumb { font-size:0.82rem; color:#6b8b96; margin-bottom:1rem; }
+.breadcrumb a { color:#2c5f6e; text-decoration:none; }
+.section { background:#fff; border:1px solid #e2edf2; border-radius:1.2rem; padding:2rem 2.2rem; margin-bottom:1.4rem; box-shadow:0 1px 2px rgba(11,43,47,0.03); }
+.section h2 { font-size:1.35rem; font-weight:800; margin-bottom:0.55rem; letter-spacing:-0.01em; }
+.section h3 { font-size:1.02rem; font-weight:700; margin:1.2rem 0 0.4rem; color:#0b4f3c; }
+.section p, .section li { font-size:0.95rem; color:#2c4650; margin-bottom:0.5rem; }
+.section ul, .section ol { padding-left:1.3rem; margin-bottom:0.6rem; }
+.section ul li, .section ol li { margin-bottom:0.3rem; }
+.eyebrow { display:inline-block; font-size:0.75rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#0b4f3c; background:#e6f4ef; padding:0.3rem 0.75rem; border-radius:99px; margin-bottom:0.9rem; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.card { border:1px solid #e2edf2; border-radius:0.9rem; padding:1.2rem 1.3rem; background:#fbfdff; }
+.card .card-icon { width:38px; height:38px; border-radius:10px; background:#e6f4ef; color:#0b4f3c; display:inline-flex; align-items:center; justify-content:center; margin-bottom:0.6rem; }
+.card h4 { font-size:1rem; font-weight:700; margin-bottom:0.35rem; }
+.card p { font-size:0.88rem; color:#4a6370; }
+.step { display:flex; gap:1rem; padding:1rem 0; border-bottom:1px dashed #e2edf2; }
+.step:last-child { border-bottom:0; }
+.step-num { flex-shrink:0; width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.95rem; }
+.step-body h4 { font-size:1.02rem; font-weight:700; margin-bottom:0.3rem; }
+.step-body p { font-size:0.92rem; color:#4a6370; }
+.faq-item { border-bottom:1px solid #e2edf2; padding:1rem 0; }
+.faq-item:last-child { border-bottom:0; }
+.faq-item summary { font-weight:700; font-size:1rem; cursor:pointer; list-style:none; padding-right:1.2rem; position:relative; color:#0b2b2f; }
+.faq-item summary::after { content:'+'; position:absolute; right:0; top:0; color:#0b4f3c; font-weight:400; font-size:1.3rem; }
+.faq-item[open] summary::after { content:'−'; }
+.faq-item p { margin-top:0.6rem; font-size:0.93rem; color:#3a5a66; }
+.doc-row { display:flex; justify-content:space-between; align-items:center; padding:0.9rem 0; border-bottom:1px dashed #e2edf2; }
+.doc-row:last-child { border-bottom:0; }
+.doc-row .doc-title { font-weight:600; font-size:0.97rem; }
+.doc-row .doc-meta { font-size:0.82rem; color:#6b8b96; }
+.doc-row a { text-decoration:none; font-weight:600; font-size:0.88rem; color:#0b4f3c; padding:0.4rem 0.9rem; border:1px solid #0b4f3c; border-radius:99px; }
+.doc-row a:hover { background:#0b4f3c; color:#fff; }
+.btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; padding:0.85rem 1.5rem; border-radius:99px; font-weight:700; text-decoration:none; font-size:0.95rem; }
+.btn-outline { display:inline-flex; align-items:center; gap:0.5rem; border:1.5px solid #0b4f3c; color:#0b4f3c; padding:0.8rem 1.4rem; border-radius:99px; font-weight:700; text-decoration:none; font-size:0.95rem; background:#fff; }
+.cta-strip { background:linear-gradient(135deg,#0b4f3c,#1b7e5e); color:#fff; border-radius:1.2rem; padding:2rem 2.2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
+.cta-strip h3 { font-size:1.35rem; font-weight:800; margin-bottom:0.3rem; }
+.cta-strip p { opacity:0.9; font-size:0.95rem; }
+.cta-strip .btn-primary { background:#fff; color:#0b4f3c; }
+.pricing-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.pricing-card { border:1px solid #e2edf2; border-radius:1rem; padding:1.6rem 1.4rem; background:#fbfdff; }
+.pricing-card.featured { border-color:#0b4f3c; background:#fff; box-shadow:0 4px 16px rgba(11,79,60,0.08); }
+.pricing-card h4 { font-size:1.05rem; font-weight:700; margin-bottom:0.3rem; }
+.pricing-card .price { font-size:1.8rem; font-weight:800; color:#0b4f3c; margin:0.6rem 0; }
+.pricing-card ul { list-style:none; padding:0; margin-top:0.8rem; }
+.pricing-card li { font-size:0.88rem; padding:0.35rem 0; color:#3a5a66; padding-left:1.3rem; position:relative; }
+.pricing-card li::before { content:''; position:absolute; left:0; top:50%; width:0.8rem; height:0.8rem; border-left:2px solid #0b4f3c; border-bottom:2px solid #0b4f3c; transform:translateY(-60%) rotate(-45deg); }
+.footer { margin-top:3rem; padding-top:2rem; border-top:1px solid #e2edf2; font-size:0.82rem; color:#6b8b96; text-align:center; }
+@media (max-width:860px) { .grid-2,.grid-3,.pricing-row { grid-template-columns:1fr; } .page-hero { padding:2rem 1.4rem; } .page-hero h1 { font-size:1.7rem; } .section { padding:1.4rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="navbar">
+    <a href="/publisher-portal" style="text-decoration:none;"><div class="logo">TrapRoyaltiesPro</div></a>
+    <div class="nav-links">
+      <a href="/publisher-portal/pages/how-it-works.html" class="active">How it Works</a>
+      <a href="/publisher-portal/split-verification.html">Split Verification</a>
+      <a href="/publisher-portal/pages/cleaning-wizard.html">Cleaning Wizard</a>
+      <a href="/publisher-portal/pages/publisher.html">For Publishers</a>
+      <a href="/publisher-portal/FAQ.html">FAQ</a>
+      <a href="/publisher-portal/documents.html">Documents</a>
+      <a href="/publisher-portal/pages/preview.html" class="demo-badge">Preview</a>
+      <span class="demo-badge"><span class="live-dot"></span> Live</span>
+    </div>
+  </div>
+  <div class="breadcrumb"><a href="/publisher-portal">Publisher Portal</a> · How It Works</div>
+  <div class="page-hero">
+    <div class="eyebrow">Process</div>
+    <h1>From <span class="accent">messy metadata</span><br>to CWR-ready in four steps</h1>
+    <p class="lead">Upload a catalog. Catch the issues. Confirm every fix. Export a clean registration packet. No integration required, no automatic changes.</p>
+  </div>
+
+  <div class="section">
+    <h2>Four steps from messy metadata to CWR-ready</h2>
+    <p>TrapRoyaltiesPro is a non-destructive pre-validation pass. Every fix is proposed — nothing is auto-written to your catalog without confirmation.</p>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body"><h4>Upload your catalog</h4><p>Drag in a CSV or JSON export of your works. Fields: title, ISRC, ISWC, IPI, publisher, role, share_percent. No integration required — upload once, review, export.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body"><h4>Scan for metadata gaps</h4><p>The analyzer checks every row for missing ISWC, invalid ISRC format, missing IPI for writers/composers, missing publisher, invalid IPI length (must be 9–11 digits), and split totals that don't sum to 100%.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body"><h4>Resolve & enrich</h4><p>Each issue has a one-click fix. For missing IPIs and ISWCs, the wizard queries MusicBrainz directly from your browser (rate-limited 1 req/sec, CORS-compliant). You confirm every match before it's applied.</p></div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body"><h4>Export CWR packet</h4><p>Generate a CWR v2.1 packet for submission to your PRO. Download the cleaned CSV for your DSP delivery pipeline. Every change is logged.</p></div>
+    </div>
+  </div>
+  <div class="section">
+    <h2>What we detect</h2>
+    <div class="grid-3">
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><h4>Identifier gaps</h4><p>Missing ISRC, ISWC, IPI. Invalid format. Mismatches between linked rows.</p></div>
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><h4>Split inconsistencies</h4><p>Multi-writer works where shares don't total 100%. Duplicate contributors with conflicting shares.</p></div>
+      <div class="card"><div class="card-icon"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Registration holes</h4><p>Works missing a publisher share. Writer rows with no matching publisher entry. Foreign society gaps.</p></div>
+    </div>
+  </div>
+  <div class="cta-strip">
+    <div><h3>Ready to scan your catalog?</h3><p>Upload a CSV in under a minute — free preview, no signup.</p></div>
+    <a class="btn-primary" href="/publisher-portal/pages/cleaning-wizard.html">Open Cleaning Wizard</a>
+  </div>
+
+  <div class="footer">
+    © 2026 TrapRoyaltiesPro · Metadata integrity for music publishers · <a href="mailto:hello@traproyaltiespro.com">hello@traproyaltiespro.com</a>
+  </div>
+</div>
+</body>
+</html>

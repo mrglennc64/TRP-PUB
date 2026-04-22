@@ -417,7 +417,7 @@ export default function CWRGeneratorPage() {
                     isActive
                       ? "border-indigo-500/50 bg-indigo-500/5"
                       : work.selected
-                        ? "border-green-500/20 bg-[#0f172a]"
+                        ? "border-emerald-500/20 bg-[#0f172a]"
                         : "border-white/5 bg-[#0f172a] opacity-60"
                   }`}
                 >
@@ -433,9 +433,9 @@ export default function CWRGeneratorPage() {
                       <div className="flex items-center gap-2 flex-wrap mb-1">
                         <span className="text-sm font-bold text-white truncate">{work.title}</span>
                         <span className={`px-2 py-0.5 text-xs font-bold rounded border ${
-                          work.status === "NWR" ? "text-green-400 border-green-500/30 bg-green-500/10" :
+                          work.status === "NWR" ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/10" :
                           work.status === "REV" ? "text-yellow-400 border-yellow-500/30 bg-yellow-500/10" :
-                          "text-blue-400 border-blue-500/30 bg-blue-500/10"
+                          "text-indigo-400 border-indigo-500/30 bg-indigo-500/10"
                         }`}>
                           {work.status}
                         </span>
@@ -490,7 +490,7 @@ export default function CWRGeneratorPage() {
                         </div>
                         <div className={`text-xs mt-1.5 font-semibold ${
                           Math.abs(work.writers.reduce((s, w) => s + w.share, 0) - 100) < 0.1
-                            ? "text-green-400" : "text-rose-400"
+                            ? "text-emerald-400" : "text-rose-400"
                         }`}>
                           Total: {work.writers.reduce((s, w) => s + w.share, 0).toFixed(2)}% (must equal 100%)
                         </div>
@@ -551,7 +551,7 @@ export default function CWRGeneratorPage() {
                   <button onClick={copyAll} className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded-lg text-xs font-semibold transition">
                     Copy All
                   </button>
-                  <button onClick={download} className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-xs font-bold transition">
+                  <button onClick={download} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition">
                     ↓ Download .V21
                   </button>
                 </div>
@@ -568,16 +568,16 @@ export default function CWRGeneratorPage() {
                   </span>
                   <span className="text-slate-500">{generated.split("\r\n").length} records</span>
                   <span className="text-slate-500">{(generated.length / 1024).toFixed(1)} KB</span>
-                  <span className="text-green-400 font-semibold">✓ Valid CWR v2.1</span>
+                  <span className="text-emerald-400 font-semibold">✓ Valid CWR v2.1</span>
                 </div>
 
                 {/* Record breakdown */}
                 <div className="px-4 py-3 border-b border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                   {[
                     { label: "HDR",  desc: "Header", count: 1, color: "text-indigo-400" },
-                    { label: "NWR",  desc: "New Works", count: selectedWorks.filter(w=>w.status==="NWR").length, color: "text-green-400" },
-                    { label: "SWR",  desc: "Writer Records", count: selectedWorks.reduce((s,w)=>s+w.writers.length,0), color: "text-sky-400" },
-                    { label: "SPU",  desc: "Publisher Records", count: selectedWorks.length, color: "text-violet-400" },
+                    { label: "NWR",  desc: "New Works", count: selectedWorks.filter(w=>w.status==="NWR").length, color: "text-emerald-400" },
+                    { label: "SWR",  desc: "Writer Records", count: selectedWorks.reduce((s,w)=>s+w.writers.length,0), color: "text-indigo-400" },
+                    { label: "SPU",  desc: "Publisher Records", count: selectedWorks.length, color: "text-indigo-400" },
                   ].map((r) => (
                     <div key={r.label} className="bg-white/5 rounded-lg p-2">
                       <div className={`text-sm font-black font-mono ${r.color}`}>{r.label}</div>
@@ -592,7 +592,7 @@ export default function CWRGeneratorPage() {
                   ref={textRef}
                   readOnly
                   value={generated}
-                  className="w-full h-96 bg-black/50 font-mono text-xs text-green-400 p-4 resize-none focus:outline-none leading-5"
+                  className="w-full h-96 bg-black/50 font-mono text-xs text-emerald-400 p-4 resize-none focus:outline-none leading-5"
                 />
               </div>
             ) : (

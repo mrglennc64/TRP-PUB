@@ -43,12 +43,12 @@ export default function SpotifyDashboard() {
     return (
       <div className="min-h-screen bg-black text-white p-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-900/50 border border-red-500 rounded-xl p-6">
-            <h2 className="text-xl font-bold text-red-400 mb-2">Error Loading Data</h2>
+          <div className="bg-rose-900/50 border border-rose-500 rounded-xl p-6">
+            <h2 className="text-xl font-bold text-rose-400 mb-2">Error Loading Data</h2>
             <p className="text-gray-300">{error}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-4 bg-red-600 px-4 py-2 rounded hover:bg-red-500"
+              className="mt-4 bg-rose-600 px-4 py-2 rounded hover:bg-rose-500"
             >
               Retry
             </button>
@@ -62,18 +62,18 @@ export default function SpotifyDashboard() {
     <div className="min-h-screen bg-black text-white p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-black mb-8">
-          <span className="text-green-400">🎵 Spotify</span>{" "}
+          <span className="text-emerald-400">🎵 Spotify</span>{" "}
           <span className="text-purple-400">Intelligence</span>
         </h1>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
-            <div className="text-3xl font-bold text-green-400">{stats?.total_playlists || 0}</div>
+          <div className="bg-emerald-900/20 border border-emerald-500/30 rounded-xl p-6">
+            <div className="text-3xl font-bold text-emerald-400">{stats?.total_playlists || 0}</div>
             <div className="text-gray-400">Tracked Playlists</div>
           </div>
-          <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
-            <div className="text-3xl font-bold text-blue-400">{stats?.total_tracks || 0}</div>
+          <div className="bg-indigo-900/20 border border-indigo-500/30 rounded-xl p-6">
+            <div className="text-3xl font-bold text-indigo-400">{stats?.total_tracks || 0}</div>
             <div className="text-gray-400">Total Tracks</div>
           </div>
           <div className="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6">
@@ -89,7 +89,7 @@ export default function SpotifyDashboard() {
         {/* Sample Playlists Preview */}
         {playlists.length > 0 && (
           <div className="mb-8 bg-gray-900/30 rounded-xl p-6">
-            <h2 className="text-xl font-bold mb-4 text-green-400">📋 Recent Playlists</h2>
+            <h2 className="text-xl font-bold mb-4 text-emerald-400">📋 Recent Playlists</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {playlists.slice(0, 4).map((p: any, i: number) => (
                 <div key={i} className="bg-gray-800/50 p-4 rounded-lg">
@@ -104,7 +104,7 @@ export default function SpotifyDashboard() {
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <Link href="/dashboard/spotify/playlists">
-            <div className="bg-gradient-to-br from-green-900 to-green-950 p-6 rounded-xl border border-green-500 hover:scale-105 transition-all cursor-pointer">
+            <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 p-6 rounded-xl border border-emerald-500 hover:scale-105 transition-all cursor-pointer">
               <div className="text-4xl mb-4">📋</div>
               <h3 className="text-xl font-bold mb-2">Playlist Tracker</h3>
               <p className="text-gray-300 text-sm">View all tracked playlists and their performance</p>
@@ -112,7 +112,7 @@ export default function SpotifyDashboard() {
           </Link>
           
           <Link href="/dashboard/spotify/tracks">
-            <div className="bg-gradient-to-br from-blue-900 to-blue-950 p-6 rounded-xl border border-blue-500 hover:scale-105 transition-all cursor-pointer">
+            <div className="bg-gradient-to-br from-indigo-900 to-indigo-950 p-6 rounded-xl border border-indigo-500 hover:scale-105 transition-all cursor-pointer">
               <div className="text-4xl mb-4">🎵</div>
               <h3 className="text-xl font-bold mb-2">Track Popularity</h3>
               <p className="text-gray-300 text-sm">Monitor track popularity scores and trends</p>
